@@ -1,0 +1,19 @@
+{
+  "compound_name": "L-carnitine",
+  "smiles": "C[N+](C)(C)C[C@H](O)CC([O-])=O",
+  "inchikey": "PHIQHXFUZVPYII-ZCFIWIBFSA-N",
+  "hmdb_id": "HMDB0000062",
+  "precursor_mz": 162.1125,
+  "adduct": "[M+H]+",
+  "ionization_mode": "positive",
+  "collision_energy": 20.0,
+  "peaks": [
+    [103.0390, 1000.0],
+    [85.0284, 620.0],
+    [60.0808, 410.0],
+    [58.0651, 280.0],
+    [43.0184, 150.0]
+  ],
+  "source": "synthetic_placeholder",
+  "notes": "Synthetic minimal spectrum. Peaks correspond to known L-carnitine fragments including the trimethylamine loss. Replace with real GNPS data before running library_search tests."
+}

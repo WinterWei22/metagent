@@ -1,0 +1,85 @@
+{
+  "description": "Expected metadata for common HMDB entries. Used by fetch_metabolite_info regression tests. Values sourced from HMDB 5.0.",
+  "entries": [
+    {
+      "hmdb_id": "HMDB0000122",
+      "primary_name": "D-Glucose",
+      "molecular_formula": "C6H12O6",
+      "exact_mass": 180.0634,
+      "inchikey": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+      "kegg_id": "C00031"
+    },
+    {
+      "hmdb_id": "HMDB0000062",
+      "primary_name": "L-Carnitine",
+      "molecular_formula": "C7H15NO3",
+      "exact_mass": 161.1052,
+      "inchikey": "PHIQHXFUZVPYII-ZCFIWIBFSA-N",
+      "kegg_id": "C00318"
+    },
+    {
+      "hmdb_id": "HMDB0001847",
+      "primary_name": "Caffeine",
+      "molecular_formula": "C8H10N4O2",
+      "exact_mass": 194.0804,
+      "inchikey": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+      "kegg_id": "C07481"
+    },
+    {
+      "hmdb_id": "HMDB0000243",
+      "primary_name": "Pyruvic acid",
+      "molecular_formula": "C3H4O3",
+      "exact_mass": 88.0160,
+      "inchikey": "LCTONWCANYUPML-UHFFFAOYSA-N",
+      "kegg_id": "C00022"
+    },
+    {
+      "hmdb_id": "HMDB0000161",
+      "primary_name": "L-Alanine",
+      "molecular_formula": "C3H7NO2",
+      "exact_mass": 89.0477,
+      "inchikey": "QNAYBMKLOCPYGJ-REOHCLBHSA-N",
+      "kegg_id": "C00041"
+    },
+    {
+      "hmdb_id": "HMDB0000289",
+      "primary_name": "Uric acid",
+      "molecular_formula": "C5H4N4O3",
+      "exact_mass": 168.0283,
+      "inchikey": "LEHOTFFKMJEONL-UHFFFAOYSA-N",
+      "kegg_id": "C00366"
+    },
+    {
+      "hmdb_id": "HMDB0000050",
+      "primary_name": "Adenosine",
+      "molecular_formula": "C10H13N5O4",
+      "exact_mass": 267.0968,
+      "inchikey": "OIRDTQYFTABQOQ-KQYNXXCUSA-N",
+      "kegg_id": "C00212"
+    },
+    {
+      "hmdb_id": "HMDB0000073",
+      "primary_name": "Dopamine",
+      "molecular_formula": "C8H11NO2",
+      "exact_mass": 153.0790,
+      "inchikey": "VYFYYTLLBUKUHU-UHFFFAOYSA-N",
+      "kegg_id": "C03758"
+    },
+    {
+      "hmdb_id": "HMDB0000619",
+      "primary_name": "Cholic acid",
+      "molecular_formula": "C24H40O5",
+      "exact_mass": 408.2876,
+      "inchikey": "BHQCQFFYRZLCQQ-OELDTZBJSA-N",
+      "kegg_id": "C00695"
+    },
+    {
+      "hmdb_id": "HMDB0000220",
+      "primary_name": "Palmitic acid",
+      "molecular_formula": "C16H32O2",
+      "exact_mass": 256.2402,
+      "inchikey": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
+      "kegg_id": "C00249"
+    }
+  ]
+}

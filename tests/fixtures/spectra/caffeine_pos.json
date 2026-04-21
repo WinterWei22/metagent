@@ -1,0 +1,19 @@
+{
+  "compound_name": "caffeine",
+  "smiles": "CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+  "inchikey": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+  "hmdb_id": "HMDB0001847",
+  "precursor_mz": 195.0877,
+  "adduct": "[M+H]+",
+  "ionization_mode": "positive",
+  "collision_energy": 25.0,
+  "peaks": [
+    [138.0662, 1000.0],
+    [110.0713, 520.0],
+    [83.0604, 310.0],
+    [69.0447, 180.0],
+    [55.0291, 110.0]
+  ],
+  "source": "synthetic_placeholder",
+  "notes": "Synthetic minimal spectrum. Peaks correspond to characteristic caffeine fragments. Replace with real GNPS data before running library_search tests."
+}
