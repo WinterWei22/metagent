@@ -1,0 +1,10 @@
+# candidate_prefilter — runtime deps only.
+#
+# The build-time HMDB XML ingest (build_pubchem_lite.py) uses only
+# xml.etree.ElementTree from stdlib, so no extra parser dependency is
+# required. RDKit is needed at build time AND at runtime (for the defensive
+# has_reference_spectrum cross-stamp via InChIKey).
+#
+# sqlite3 is stdlib — not listed.
+pydantic==2.8.2
+rdkit==2024.3.5
