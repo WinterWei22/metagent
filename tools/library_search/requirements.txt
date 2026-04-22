@@ -1,0 +1,6 @@
+# library_search — orchestrator-side deps only. Heavy ML deps (torch,
+# pytorch-lightning, dgl, hydra, omegaconf) live in the `diffms` conda env
+# that the MSClipRetriever subprocesses into; do not duplicate them here.
+pydantic==2.8.2
+matchms==0.24.4
+numpy==1.26.4
