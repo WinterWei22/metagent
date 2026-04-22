@@ -168,24 +168,28 @@ class TestMockedPipeline:
         Because we seeded the mock retriever / generator with the truth SMILES,
         the truth MUST appear in both sub-results — anything else indicates
         a regression in tool post-processing (e.g. dedup, filter, sort).
+
+        Compare by InChIKey **connectivity hash** (first '-'-separated
+        segment) rather than full InChIKey: real MS-BART output drops stereo,
+        so a full-key match would fail as soon as real-model paths are wired
+        in. Keeping the mocked and real-model assertions uniform avoids a
+        class of "passes with mock, fails with real model" regressions.
         """
         from rdkit import Chem
 
         _, _, lib_resp, gen_resp = _run_mocked_pipeline(fixture_spectrum)
-        truth_inchikey = Chem.MolToInchiKey(Chem.MolFromSmiles(fixture_spectrum.smiles))
+        truth_conn = Chem.MolToInchiKey(
+            Chem.MolFromSmiles(fixture_spectrum.smiles)
+        ).split("-")[0]
         top_smiles = [c.smiles for c in (lib_resp.candidates + gen_resp.candidates)[:20]]
-        # Compare by InChIKey so stereochemistry differences in the mock don't
-        # trip the assertion — library_search passes SMILES through unchanged,
-        # but molecule_generate canonicalises via RDKit which may restate
-        # stereo.
-        top_inchikeys = set()
+        top_conns = set()
         for smi in top_smiles:
             mol = Chem.MolFromSmiles(smi)
             if mol is not None:
-                top_inchikeys.add(Chem.MolToInchiKey(mol))
-        assert truth_inchikey in top_inchikeys, (
-            f"{fixture_spectrum.compound_name} (truth) not in mocked top-10 union "
-            f"({len(top_inchikeys)} unique structures)."
+                top_conns.add(Chem.MolToInchiKey(mol).split("-")[0])
+        assert truth_conn in top_conns, (
+            f"{fixture_spectrum.compound_name} (truth connectivity {truth_conn}) "
+            f"not in mocked top-10 union ({len(top_conns)} unique connectivity hashes)."
         )
 
 
@@ -283,13 +287,15 @@ def test_realmodel_groundtruth_top10_union_across_fixtures(
         gen_resp = generate(
             GenerateRequest(spectrum=spec, candidate_pool=pool, n_candidates=10),
         )
-        truth_ik = fx.inchikey
-        union_iks = set()
+        # Connectivity hash only — MS-BART does not predict stereo, so a
+        # full-InChIKey compare would systematically miss a correct recovery.
+        truth_conn = fx.inchikey.split("-")[0]
+        union_conns = set()
         for cand in (lib_resp.candidates + gen_resp.candidates)[:20]:
             mol = Chem.MolFromSmiles(cand.smiles)
             if mol is not None:
-                union_iks.add(Chem.MolToInchiKey(mol))
-        if truth_ik in union_iks:
+                union_conns.add(Chem.MolToInchiKey(mol).split("-")[0])
+        if truth_conn in union_conns:
             hits += 1
 
     assert hits >= 2, (
