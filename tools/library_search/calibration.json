@@ -1,0 +1,7 @@
+{
+  "method": "minmax",
+  "min": -1.0,
+  "max": 1.0,
+  "n_samples": 0,
+  "note": "v0 stub calibration. ms-clip raw global similarity is a cosine of L2-normalised embeddings, so the theoretical range is [-1, 1]. This stub maps that full range linearly into [0, 1]. Replace by computing min-max over ~100 real library entries after the first full inference run; update `n_samples` to reflect the count. See tools/library_search/scoring.py::rescale_inhouse_score."
+}
