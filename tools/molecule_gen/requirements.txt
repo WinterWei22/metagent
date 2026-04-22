@@ -1,0 +1,5 @@
+# molecule_generate — orchestrator-side deps only. Heavy ML deps (torch,
+# transformers, selfies) live in the ms-bart conda env invoked via subprocess;
+# do not duplicate them here.
+pydantic==2.8.2
+rdkit==2024.3.5
