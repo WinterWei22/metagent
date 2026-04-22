@@ -74,12 +74,19 @@ class InHouseRetriever(Protocol):
         query_precursor_mz: float,
         adduct: str,
         candidate_smiles: list[str],
+        collision_energy: float | None = None,
     ) -> list[InHouseScore]:
         """Return one ``InHouseScore`` per input SMILES, in the SAME ORDER.
 
         When the model cannot score a given SMILES (e.g. it fails to parse),
         implementations must still return a placeholder ``InHouseScore`` with
         ``raw_global_sim = -1.0`` so downstream fusion sees a usable slot.
+
+        ``collision_energy`` is in eV. Required when the ms-clip checkpoint
+        was trained with ``embed_ce=True`` (true for the current production
+        chemformer_v4 checkpoint). Passing ``None`` falls through to ``0.0``
+        in the TSV, which matches the behaviour ms-clip uses when
+        ``emb_ce=False``.
         """
         ...
 
@@ -133,6 +140,7 @@ class MSClipRetriever:
         query_precursor_mz: float,
         adduct: str,
         candidate_smiles: list[str],
+        collision_energy: float | None = None,
     ) -> list[InHouseScore]:
         if not candidate_smiles:
             return []
@@ -143,6 +151,12 @@ class MSClipRetriever:
                 f"Adduct {adduct!r} is not in the ms-clip MSG ion vocabulary",
                 recoverable=True,
             )
+
+        # ms-clip TSVs use a plain scalar float for the collision_energies
+        # column (see ms-pred/tests/fixtures/tiny_labels.tsv). When the caller
+        # does not know the CE, 0.0 matches what CLIPSmiDataset does when
+        # emb_ce=False.
+        ce_value = 0.0 if collision_energy is None else float(collision_energy)
 
         spec_name = f"metagent_query_{uuid.uuid4().hex[:10]}"
         with tempfile.TemporaryDirectory(prefix="metagent_msclip_") as td:
@@ -165,12 +179,17 @@ class MSClipRetriever:
             }
             (magma_folder / f"pred_{spec_name}.json").write_text(json.dumps(spec_json))
 
-            # 2. Write the TSV of (spec, smiles, ionization, label) rows.
+            # 2. Write the TSV. The collision_energies column is required
+            #    unconditionally here because the checkpoint loader decides
+            #    whether to consume it based on its own hparams — we cannot
+            #    know from this side which checkpoint will be used.
             labels_file = "candidates.tsv"
             with open(data_dir / labels_file, "w") as f:
-                f.write("spec\tsmiles\tionization\tlabel\n")
+                f.write("spec\tsmiles\tionization\tlabel\tcollision_energies\n")
                 for smi in candidate_smiles:
-                    f.write(f"{spec_name}\t{smi}\t{canonical_adduct}\tFalse\n")
+                    f.write(
+                        f"{spec_name}\t{smi}\t{canonical_adduct}\tFalse\t{ce_value}\n"
+                    )
 
             # 3. Shell out to predict_smi.
             env = os.environ.copy()
@@ -223,21 +242,44 @@ class MSClipRetriever:
         return _align_scores_by_smiles(payload, candidate_smiles)
 
 
-def _canonicalise_adduct_for_msclip(adduct: str) -> str | None:
-    """Route the incoming adduct through ``ms_clip.common.ions.standardize_adduct``.
+# Mirror of ``ms_clip.common.ions.ion2onehot_pos`` + ``ion_remap``. Hard-coded
+# locally because the real module transitively ``import torch`` via
+# ``ms_clip.common.chem``, so it cannot load in the torch-less orchestrator env.
+# Keep in sync with ms-pred/src/ms_clip/common/ions.py if new ions are added.
+_MSCLIP_ION_REMAP: dict[str, str] = {
+    # canonical MSG entries
+    "[M+H]+":       "[M+H]+",
+    "[M+Na]+":      "[M+Na]+",
+    "[M+K]+":       "[M+K]+",
+    "[M-H2O+H]+":   "[M-H2O+H]+",
+    "[M+H-H2O]+":   "[M-H2O+H]+",
+    "[M+H3N+H]+":   "[M+H3N+H]+",
+    "[M+NH4]+":     "[M+H3N+H]+",
+    "[M]+":         "[M]+",
+    "[M-H4O2+H]+":  "[M-H4O2+H]+",
+    "[M+H-2H2O]+":  "[M-H4O2+H]+",
+    "[M-2H2O+H]+":  "[M-H4O2+H]+",
+    # unbracketed aliases seen in the wild
+    "M+H":          "[M+H]+",
+    "M+Na":         "[M+Na]+",
+    "M+H-H2O":      "[M-H2O+H]+",
+    "M-H2O+H":      "[M-H2O+H]+",
+    "M+NH4":        "[M+H3N+H]+",
+    "M-2H2O+H":     "[M-H4O2+H]+",
+}
 
-    Returns the canonical MSG ion string, or None when the adduct is outside
-    the model's vocabulary (caller should skip the ms-clip pass for that query).
+
+def _canonicalise_adduct_for_msclip(adduct: str) -> str | None:
+    """Return the canonical MSG adduct string, or None if not supported.
+
+    Mirrors ``ms_clip.common.ions.standardize_adduct`` but stays env-
+    independent so it runs in the orchestrator process without needing torch.
+    Kept in sync with that module: if ms-pred adds a new ion, mirror it in
+    ``_MSCLIP_ION_REMAP`` above.
     """
-    try:
-        from ms_clip.common.ions import standardize_adduct
-    except Exception as exc:
-        logger.debug("ms_clip.common.ions unavailable: %s", exc)
+    if not adduct:
         return None
-    try:
-        return standardize_adduct(adduct)
-    except Exception:
-        return None
+    return _MSCLIP_ION_REMAP.get(adduct.replace(" ", ""))
 
 
 def _align_scores_by_smiles(
@@ -306,6 +348,7 @@ class MockInHouseRetriever:
         query_precursor_mz: float,
         adduct: str,
         candidate_smiles: list[str],
+        collision_energy: float | None = None,
     ) -> list[InHouseScore]:
         self.calls.append(
             {
@@ -314,6 +357,7 @@ class MockInHouseRetriever:
                 "query_precursor_mz": float(query_precursor_mz),
                 "adduct": adduct,
                 "candidate_smiles": list(candidate_smiles),
+                "collision_energy": collision_energy,
             }
         )
         return [

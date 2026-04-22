@@ -121,6 +121,7 @@ def library_search(
                 query_precursor_mz=req.spectrum.precursor_mz,
                 adduct=req.spectrum.adduct,
                 candidate_smiles=unique_smiles,
+                collision_energy=req.spectrum.collision_energy,
             )
         except InHouseModelError as exc:
             logger.warning("ms-clip scoring failed, continuing with modcos only: %s", exc)

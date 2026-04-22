@@ -530,6 +530,181 @@ def test_requires_inhouse_model_roundtrip():
         query_precursor_mz=181.0707,
         adduct="[M+H]+",
         candidate_smiles=[GLUCOSE_SMILES],
+        collision_energy=20.0,
     )
     assert len(result) == 1
     assert isinstance(result[0], InHouseScore)
+
+
+# ---------------------------------------------------------------------------
+# Regression guards for day-1 integration findings (F12, F13)
+# ---------------------------------------------------------------------------
+
+
+def test_canonicalise_adduct_for_msclip_works_without_torch():
+    """Regression guard for F12.
+
+    The helper must not depend on ``ms_clip`` being importable — that package
+    transitively ``import torch`` in its ``common.chem`` module, so attempts to
+    import it from the orchestrator env silently raise and the helper was
+    returning ``None`` for every legitimate adduct. The fix was to hard-code
+    the MSG vocabulary locally; this test asserts the helper returns the
+    expected canonical string directly.
+    """
+    from tools.library_search.model import _canonicalise_adduct_for_msclip
+
+    assert _canonicalise_adduct_for_msclip("[M+H]+") == "[M+H]+"
+    assert _canonicalise_adduct_for_msclip("[M+NH4]+") == "[M+H3N+H]+"
+    assert _canonicalise_adduct_for_msclip("[M+H-H2O]+") == "[M-H2O+H]+"
+    assert _canonicalise_adduct_for_msclip("M+H") == "[M+H]+"
+    assert _canonicalise_adduct_for_msclip(" [M+H]+ ") == "[M+H]+"
+    assert _canonicalise_adduct_for_msclip("[M+WeirdAdduct]+") is None
+    assert _canonicalise_adduct_for_msclip("") is None
+
+
+def test_ms_clip_candidates_tsv_has_collision_energies_column(monkeypatch, tmp_path):
+    """Regression guard for F13.
+
+    ``CLIPSmiDataset.__init__`` does ``dict(df[["spec", "collision_energies"]].values)``
+    when the checkpoint was trained with ``embed_ce=True`` (the production
+    chemformer_v4 checkpoint is). If the column is missing pandas raises
+    ``KeyError`` and the subprocess exits 1. This test monkey-patches
+    ``subprocess.run`` so we can inspect the exact TSV bytes written without
+    needing torch / the real ms-clip env.
+    """
+    import subprocess as _subprocess
+
+    from tools.library_search import model as lsm
+
+    captured: dict = {}
+
+    def fake_run(cmd, *args, **kwargs):
+        data_dir = None
+        save_dir = None
+        for token in cmd:
+            if isinstance(token, str) and token.startswith("data.data_dir="):
+                data_dir = Path(token.split("=", 1)[1])
+            elif isinstance(token, str) and token.startswith("inference.save_dir="):
+                save_dir = Path(token.split("=", 1)[1])
+        assert data_dir is not None and save_dir is not None
+        captured["tsv_text"] = (data_dir / "candidates.tsv").read_text()
+        # Emit a minimal pickle so MSClipRetriever's downstream parsing succeeds.
+        import pickle
+
+        payload = {
+            "spec_names": ["spec_x"],
+            "flags": ["False"],
+            "smiles": ["CCO"],
+            "cosine_similarity": [[0.5]],
+            "local_similarity": [[0.0]],
+            "crossattn_similarity": [[0.0]],
+        }
+        out_pkl = save_dir / "candidates.tsv.pkl"
+        with open(out_pkl, "wb") as f:
+            pickle.dump(payload, f)
+
+        class _Result:
+            returncode = 0
+            stdout = ""
+            stderr = ""
+
+        return _Result()
+
+    monkeypatch.setattr(_subprocess, "run", fake_run)
+    monkeypatch.setattr(lsm.subprocess, "run", fake_run)
+
+    retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+    retriever.score_candidates(
+        query_mz=[100.0, 150.0],
+        query_intensity=[1.0, 0.5],
+        query_precursor_mz=200.0,
+        adduct="[M+H]+",
+        candidate_smiles=["CCO"],
+        collision_energy=20.0,
+    )
+
+    assert "tsv_text" in captured
+    lines = captured["tsv_text"].strip().splitlines()
+    header = lines[0].split("\t")
+    assert "collision_energies" in header, f"missing column in {header}"
+
+    ce_index = header.index("collision_energies")
+    row = lines[1].split("\t")
+    # Plain scalar float — matches ms-pred/tests/fixtures/tiny_labels.tsv.
+    assert float(row[ce_index]) == pytest.approx(20.0)
+
+
+def test_ms_clip_tsv_collision_energies_defaults_to_zero_when_none(
+    monkeypatch, tmp_path
+):
+    """When ``Spectrum.collision_energy`` is None, the TSV carries 0.0 — the
+    same value CLIPSmiDataset would use when ``emb_ce=False``.
+    """
+    import subprocess as _subprocess
+
+    from tools.library_search import model as lsm
+
+    captured: dict = {}
+
+    def fake_run(cmd, *args, **kwargs):
+        for token in cmd:
+            if isinstance(token, str) and token.startswith("data.data_dir="):
+                data_dir = Path(token.split("=", 1)[1])
+                captured["tsv_text"] = (data_dir / "candidates.tsv").read_text()
+            elif isinstance(token, str) and token.startswith("inference.save_dir="):
+                save_dir = Path(token.split("=", 1)[1])
+        import pickle
+
+        payload = {
+            "spec_names": ["spec_x"],
+            "flags": ["False"],
+            "smiles": ["CCO"],
+            "cosine_similarity": [[0.1]],
+            "local_similarity": [[0.0]],
+            "crossattn_similarity": [[0.0]],
+        }
+        with open(save_dir / "candidates.tsv.pkl", "wb") as f:
+            pickle.dump(payload, f)
+
+        class _Result:
+            returncode = 0
+            stdout = ""
+            stderr = ""
+
+        return _Result()
+
+    monkeypatch.setattr(_subprocess, "run", fake_run)
+    monkeypatch.setattr(lsm.subprocess, "run", fake_run)
+
+    retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+    retriever.score_candidates(
+        query_mz=[100.0],
+        query_intensity=[1.0],
+        query_precursor_mz=200.0,
+        adduct="[M+H]+",
+        candidate_smiles=["CCO"],
+        collision_energy=None,
+    )
+
+    header = captured["tsv_text"].splitlines()[0].split("\t")
+    ce_index = header.index("collision_energies")
+    row = captured["tsv_text"].splitlines()[1].split("\t")
+    assert float(row[ce_index]) == 0.0
+
+
+def test_collision_energy_is_threaded_from_spectrum_through_library_search():
+    """End-to-end: Spectrum.collision_energy must reach the retriever."""
+    spectrum = _load_fixture_spectrum("glucose_pos.json")
+    pool = [_prefiltered(smiles=GLUCOSE_SMILES, source_id="X")]
+    retriever = MockInHouseRetriever(smiles_to_score={GLUCOSE_SMILES: 0.5})
+
+    req = LibrarySearchRequest(
+        spectrum=spectrum, candidate_pool=pool, top_k=5, min_score=0.0
+    )
+    library_search(req, retriever=retriever)
+
+    assert retriever.calls, "retriever was not called"
+    captured = retriever.calls[0]
+    assert captured["collision_energy"] == spectrum.collision_energy
+    # glucose fixture sets collision_energy=20.0
+    assert captured["collision_energy"] == pytest.approx(20.0)

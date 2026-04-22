@@ -12,7 +12,10 @@ fused into a single normalised value per candidate.
 - Ideally after `candidate_prefilter` — pass the returned
   `list[PrefilteredCandidate]` as `candidate_pool`. With a pool the tool scores
   only that narrow set and runs fast. Without a pool the tool falls back to
-  scanning the full GNPS v0-usable set, which is slower and noisier.
+  scanning the full GNPS v0-usable set, which is slower and noisier. The pool
+  does not need to be filtered to `has_reference_spectrum=True` — ms-clip
+  scores everything; modified cosine silently skips entries without a GNPS
+  reference.
 - As the first retrieval step once a spectrum is in hand. `molecule_generate`
   is the right follow-up when this tool returns empty or a top score below 0.5.
 
@@ -31,7 +34,7 @@ fused into a single normalised value per candidate.
 | Field | Meaning |
 |---|---|
 | `spectrum` | Preprocessed `Spectrum`. Required. Intensities must be in `[0, 1]` with the base peak at 1.0 (enforced by the schema). |
-| `candidate_pool` | Optional `list[PrefilteredCandidate]` from `candidate_prefilter`. When provided, scoring is restricted to these candidates: ms-clip scores every one; modified cosine scores the subset whose `source_id` resolves in the loaded GNPS pool. When `None`, the tool scans the entire GNPS v0-usable pool. |
+| `candidate_pool` | Optional `list[PrefilteredCandidate]` from `candidate_prefilter`. When provided, scoring is restricted to these candidates: ms-clip scores every one; modified cosine scores the subset whose `source_id` resolves in the loaded GNPS pool. When `None`, the tool scans the entire GNPS v0-usable pool. **The `has_reference_spectrum` flag on each pool entry is informational only** — ms-clip scores the candidate regardless of its value. (The contract originally gated library_search on this flag; the gate was removed once the in-house ms-clip retriever landed because ms-clip does not require a reference spectrum.) |
 | `top_k` | Max number of candidates to return. Default 10. `0` returns an empty list. |
 | `min_score` | Candidates below this fused score are dropped. Default 0.3. Raise to tighten, lower to broaden. |
 | `libraries` | Subset of `["inhouse", "gnps"]`. `"gnps"` enables modified cosine (requires reference spectra); `"inhouse"` enables ms-clip. Default is both. |
