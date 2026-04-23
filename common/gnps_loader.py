@@ -266,6 +266,32 @@ def parse_record(raw: dict) -> GnpsRecord:
 
 
 def iter_records(path: str | Path) -> Iterator[GnpsRecord]:
+    """Yield parsed GnpsRecords from a GNPS dump, dispatching on file extension.
+
+    Supports:
+      - ``.json``: the historical ALL_GNPS_NO_PROPOGATED matchms-cleaned dump.
+      - ``.mgf``: the 2026-04 GNPS2 companion distribution (peaks + metadata).
+      - ``.csv``: rejected — the CSV distribution has no peak column, so it
+        cannot support MS/MS retrieval. The caller should point at the
+        companion ``.mgf`` instead.
+    """
+    p = Path(path)
+    suffix = p.suffix.lower()
+    if suffix == ".json":
+        yield from _iter_records_json(p)
+    elif suffix == ".mgf":
+        yield from _iter_records_mgf(p)
+    elif suffix == ".csv":
+        raise ValueError(
+            f"{p} is a CSV metadata file with no peak column; it cannot "
+            "support MS/MS retrieval. Point METAGENT_GNPS_SPECTRA_PATH at "
+            "the companion .mgf file instead."
+        )
+    else:
+        raise ValueError(f"Unsupported GNPS dump extension: {suffix!r}")
+
+
+def _iter_records_json(path: str | Path) -> Iterator[GnpsRecord]:
     """Yield parsed GnpsRecords from the GNPS JSON export, one at a time.
 
     Reads the full file into memory. For ALL_GNPS_NO_PROPOGATED (~500k records,
@@ -281,6 +307,74 @@ def iter_records(path: str | Path) -> Iterator[GnpsRecord]:
             sid = raw.get("spectrum_id", "<unknown>")
             logger.warning("Failed to parse GNPS record %s: %s", sid, e)
             continue
+
+
+def _iter_records_mgf(path: Path) -> Iterator[GnpsRecord]:
+    """Stream an MGF file into GnpsRecords.
+
+    Parses BEGIN IONS / END IONS blocks. KEY=VALUE header lines (case-
+    insensitive; keys normalised to uppercase) populate metadata. Other
+    non-empty lines inside a block are '<mz> <intensity>' peaks.
+    """
+    with open(path) as f:
+        in_block = False
+        meta: dict[str, str] = {}
+        peaks: list[tuple[float, float]] = []
+        for line in f:
+            s = line.strip()
+            if not s:
+                continue
+            if s == "BEGIN IONS":
+                in_block, meta, peaks = True, {}, []
+                continue
+            if s == "END IONS":
+                if in_block:
+                    try:
+                        yield _mgf_block_to_record(meta, peaks)
+                    except Exception as e:
+                        sid = meta.get("SPECTRUM_ID") or meta.get("SPECTRUMID") or "<unknown>"
+                        logger.warning("Failed to parse MGF block %s: %s", sid, e)
+                in_block = False
+                continue
+            if not in_block:
+                continue
+            # KEY=VALUE header vs '<mz> <intensity>' peak
+            if "=" in s and not s[0].isdigit() and not s[0] in "+-.":
+                k, _, v = s.partition("=")
+                meta[k.strip().upper()] = v.strip()
+            else:
+                parts = s.split()
+                if len(parts) >= 2:
+                    try:
+                        peaks.append((float(parts[0]), float(parts[1])))
+                    except ValueError:
+                        continue
+
+
+def _mgf_block_to_record(meta: dict, peaks: list[tuple[float, float]]) -> GnpsRecord:
+    """Flatten one MGF block into a GnpsRecord using the shared helpers."""
+    spec_id = meta.get("SPECTRUM_ID") or meta.get("SPECTRUMID") or meta.get("TITLE") or ""
+    precursor_raw = meta.get("PRECURSOR_MZ")
+    if not precursor_raw:
+        pep = meta.get("PEPMASS", "").split()
+        precursor_raw = pep[0] if pep else None
+    ms_level_raw = meta.get("MS_LEVEL") or meta.get("MSLEVEL")
+    return GnpsRecord(
+        spectrum_id=str(spec_id),
+        compound_name=_clean_na(meta.get("COMPOUND_NAME")),
+        smiles=_clean_na(meta.get("SMILES")),
+        inchi=_clean_na(meta.get("INCHI")),
+        inchikey=_clean_na(meta.get("INCHIKEY") or meta.get("INCHIKEY_SMILES")),
+        instrument=_clean_na(meta.get("MS_MASS_ANALYZER") or meta.get("INSTRUMENT")),
+        ion_source=_clean_na(meta.get("MS_IONISATION") or meta.get("ION_SOURCE")),
+        ion_mode=_parse_ion_mode(meta.get("IONMODE") or meta.get("ION_MODE")),
+        adduct=_normalise_adduct(meta.get("ADDUCT")),
+        precursor_mz=_parse_precursor_mz(precursor_raw),
+        ms_level=_parse_ms_level(ms_level_raw),
+        peaks=sorted(peaks, key=lambda p: p[0]),
+        library_membership=_clean_na(meta.get("GNPS_LIBRARY_MEMBERSHIP") or meta.get("LIBRARY_MEMBERSHIP")),
+        library_quality=_parse_quality(meta.get("LIBRARYQUALITY")),
+    )
 
 
 def load_v0_usable(path: str | Path) -> list[GnpsRecord]:

@@ -50,6 +50,7 @@ from tools.library_search.scoring import (
 logger = logging.getLogger(__name__)
 
 GNPS_PATH_ENV = "METAGENT_GNPS_PATH"
+GNPS_SPECTRA_PATH_ENV = "METAGENT_GNPS_SPECTRA_PATH"
 _GNPS_CACHE: list | None = None
 
 
@@ -297,31 +298,52 @@ def _collect_scoring_targets(
 
 
 def _load_gnps_records(*, records: list | None, required: bool) -> list | None:
-    """Return a pre-loaded records list, or lazily load from METAGENT_GNPS_PATH.
+    """Return a pre-loaded records list, or lazily load the GNPS spectra dump.
 
-    If the path env var is unset and ``required`` is True, raises
-    ``LibraryUnavailableError``.
+    Looks up the MGF spectra path from ``METAGENT_GNPS_SPECTRA_PATH``. If that
+    is unset, falls back to deriving ``.mgf`` from a ``.csv`` value of
+    ``METAGENT_GNPS_PATH`` (same directory). If neither resolves, returns
+    ``None`` when ``required`` is False (library_search degrades to ms-clip
+    only) or raises ``LibraryUnavailableError`` when ``required`` is True.
     """
     if records is not None:
         return records
     global _GNPS_CACHE
     if _GNPS_CACHE is not None:
         return _GNPS_CACHE
-    path = os.environ.get(GNPS_PATH_ENV)
+
+    path = os.environ.get(GNPS_SPECTRA_PATH_ENV)
+    if not path:
+        meta_path = os.environ.get(GNPS_PATH_ENV)
+        if meta_path and meta_path.endswith(".csv"):
+            candidate = meta_path[:-4] + ".mgf"
+            if os.path.exists(candidate):
+                path = candidate
     if not path:
         if required:
             raise LibraryUnavailableError(
-                f"{GNPS_PATH_ENV} is not set; cannot scan the full GNPS pool. "
+                f"{GNPS_SPECTRA_PATH_ENV} is not set; cannot scan GNPS for peaks. "
                 "Provide a candidate_pool or set the env var."
             )
+        logger.warning(
+            "%s unset and cannot derive from %s; continuing without reference peaks.",
+            GNPS_SPECTRA_PATH_ENV, GNPS_PATH_ENV,
+        )
         return None
+
     try:
         from common.gnps_loader import load_v0_usable
 
         _GNPS_CACHE = load_v0_usable(path)
         return _GNPS_CACHE
     except Exception as exc:
-        raise LibraryUnavailableError(f"failed to load GNPS from {path}: {exc}") from exc
+        if required:
+            raise LibraryUnavailableError(f"failed to load GNPS from {path}: {exc}") from exc
+        logger.warning(
+            "GNPS load failed (%s: %s); continuing without reference peaks.",
+            type(exc).__name__, exc,
+        )
+        return None
 
 
 def _build_gnps_id_index(records: list) -> dict[str, tuple[list[float], list[float], float]]:

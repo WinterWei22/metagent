@@ -22,11 +22,15 @@ export METAGENT_PUBCHEM_LITE_PATH="${_DATA_ROOT}/pubchem_lite.sqlite"
 # fields candidate_prefilter needs). MGF companion is for library_search.
 export METAGENT_GNPS_PATH="${_DATA_ROOT}/gnps/ALL_GNPS_cleaned_enriched.csv"
 
+# MGF companion dump for library_search (peaks + precursor).
+# library_search uses this; candidate_prefilter keeps using the CSV above.
+export METAGENT_GNPS_SPECTRA_PATH="${_DATA_ROOT}/gnps/ALL_GNPS_cleaned.mgf"
+
 unset _DATA_ROOT
 
 # Sanity check: warn (don't fail) if either file is missing, so the caller
 # still gets the export but is alerted to a broken install.
-for _var in METAGENT_PUBCHEM_LITE_PATH METAGENT_GNPS_PATH; do
+for _var in METAGENT_PUBCHEM_LITE_PATH METAGENT_GNPS_PATH METAGENT_GNPS_SPECTRA_PATH; do
     if [ ! -e "${!_var}" ]; then
         echo "warning: ${_var}=${!_var} does not exist" >&2
     fi

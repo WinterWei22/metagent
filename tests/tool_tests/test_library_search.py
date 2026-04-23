@@ -708,3 +708,41 @@ def test_collision_energy_is_threaded_from_spectrum_through_library_search():
     assert captured["collision_energy"] == spectrum.collision_energy
     # glucose fixture sets collision_energy=20.0
     assert captured["collision_energy"] == pytest.approx(20.0)
+
+
+def test_gnps_load_failure_with_pool_degrades_gracefully(monkeypatch, tmp_path):
+    """Regression guard for F15.
+
+    When ``METAGENT_GNPS_SPECTRA_PATH`` points at a missing file and a
+    ``source_pool='gnps'`` entry is in the candidate pool, library_search
+    must not raise — ms-clip should still score the pool so the caller gets
+    a non-empty result.
+    """
+    import tools.library_search as ls_pkg
+
+    ls_pkg.clear_gnps_cache()
+
+    monkeypatch.setenv(
+        "METAGENT_GNPS_SPECTRA_PATH", str(tmp_path / "does_not_exist.mgf")
+    )
+    monkeypatch.delenv("METAGENT_GNPS_PATH", raising=False)
+
+    spectrum = _load_fixture_spectrum("glucose_pos.json")
+    pool = [
+        _prefiltered(
+            smiles="CCO",
+            source_pool="gnps",
+            source_id="CCMSLIB00000MISSING",
+        )
+    ]
+    retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.8})
+
+    req = LibrarySearchRequest(
+        spectrum=spectrum,
+        candidate_pool=pool,
+        top_k=5,
+        min_score=0.0,
+        libraries=["inhouse", "gnps"],
+    )
+    resp = library_search(req, retriever=retriever)
+    assert resp.candidates, "ms-clip pass-through should still yield a candidate"
