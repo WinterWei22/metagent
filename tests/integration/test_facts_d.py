@@ -250,6 +250,114 @@ class TestCooccurrenceReal:
 
 
 # ---------------------------------------------------------------------------
+# Test 3b: hit_count is per-pathway (pins the P-1 fix).
+#
+# Added after Track D landed `fix(pathway_context): per-pathway hit_count`
+# (commit 7d8b097). Before that fix, every PathwayEntry in a response
+# carried the same `1 + len(cooccurring)` aggregate regardless of which
+# pathway the focal and co-observed metabolites actually belonged to. See
+# reports/integration_report_de_2026-04-23.md § P-1 for the rationale and
+# reports/pathway_context_fix_plan_2026-04-23.md § 1 (P-1) for the fix.
+# ---------------------------------------------------------------------------
+
+
+class TestPerPathwayHitCountMock:
+    def test_hit_count_varies_per_pathway_in_mixed_overlap(self, mock_ramp_db):
+        """Query designed to produce mixed counts in the mini RaMP:
+
+        Pyruvate (focal) sits in THREE pathways:
+          - glycolysis-kegg, glycolysis-reactome, alanine-kegg
+
+        Co-observed: [alanine]. Alanine is only in alanine-kegg.
+
+        Expected hit_counts (one per pathway):
+          - glycolysis-kegg:     1  (pyruvate only)
+          - glycolysis-reactome: 1  (pyruvate only)
+          - alanine-kegg:        2  (pyruvate + alanine)
+
+        The pre-fix code would return [2, 2, 2] because it computed
+        `1 + len(cooccurring) = 2` for every pathway.
+        """
+        resp = pathway_context(PathwayContextRequest(
+            metabolite_id="HMDB0000243",
+            co_observed_ids=["HMDB0000161"],
+        ))
+        counts_by_name = {p.name: p.hit_count for p in resp.pathways}
+        # Pin the exact shape — mixed values, alanine pathway gets the
+        # boost, glycolysis pathways do not.
+        assert 3 == len(counts_by_name), f"expected 3 pathways, got {list(counts_by_name)}"
+        assert sorted(counts_by_name.values()) == [1, 1, 2], (
+            f"hit_count distribution must be [1, 1, 2]; got {sorted(counts_by_name.values())}"
+        )
+        assert counts_by_name.get("Alanine, aspartate and glutamate metabolism") == 2, (
+            "alanine-metabolism pathway should have hit_count=2 "
+            "(focal pyruvate + co-observed alanine)"
+        )
+        # Either of the glycolysis entries should have hit_count=1 — alanine
+        # isn't in them.
+        for name, hit in counts_by_name.items():
+            if "Glycolysis" in name:
+                assert hit == 1, (
+                    f"{name!r} should have hit_count=1 (alanine not a member); "
+                    f"got {hit}. Likely regression of P-1."
+                )
+
+    def test_hit_count_never_counts_unresolvable(self, mock_ramp_db):
+        """Unresolvable co-observed IDs contribute nothing to hit_count."""
+        resp = pathway_context(PathwayContextRequest(
+            metabolite_id="HMDB0000122",
+            co_observed_ids=["HMDB9999998", "HMDB9999999"],
+        ))
+        # Glucose sits in 2 pathways (glycolysis-kegg + glycolysis-reactome).
+        # With only unresolvable co-obs, each pathway's hit_count must be 1
+        # (focal only).
+        for p in resp.pathways:
+            assert p.hit_count == 1, (
+                f"{p.name!r}: unresolvable co-obs should not lift hit_count; "
+                f"got {p.hit_count}"
+            )
+
+
+@pytest.mark.requires_ramp_db
+class TestPerPathwayHitCountReal:
+    @pytest.fixture(autouse=True)
+    def _require(self, has_ramp_db):
+        if not has_ramp_db:
+            pytest.skip("RaMP SQLite not found at METAGENT_RAMP_PATH")
+
+    def test_hit_count_has_variance_under_mixed_co_obs(self):
+        """On real RaMP, glucose's 10 pathways include some that share
+        pyruvate / alanine and some that don't. The post-fix distribution
+        must have at least two distinct hit_count values; the pre-fix
+        distribution was always a single uniform value."""
+        resp = pathway_context(PathwayContextRequest(
+            metabolite_id="HMDB0000122",
+            co_observed_ids=["HMDB0000243", "HMDB0000161"],
+        ))
+        counts = [p.hit_count for p in resp.pathways]
+        distinct = set(counts)
+        assert len(distinct) >= 2, (
+            f"real RaMP hit_count collapsed to a single value {distinct}; "
+            "P-1 may have regressed (pre-fix always returned one uniform count)."
+        )
+        # Sanity: no hit_count can exceed focal + |co_obs| = 3.
+        assert max(counts) <= 3
+        assert min(counts) >= 1
+
+    def test_hit_count_unchanged_when_co_obs_is_empty(self):
+        """When no co-observed metabolites are passed, every pathway's
+        hit_count must be exactly 1 (focal-only membership)."""
+        resp = pathway_context(PathwayContextRequest(
+            metabolite_id="HMDB0000122",
+        ))
+        for p in resp.pathways:
+            assert p.hit_count == 1, (
+                f"empty co_observed_ids ⇒ hit_count must be 1 for every "
+                f"pathway; got {p.hit_count} on {p.name!r}"
+            )
+
+
+# ---------------------------------------------------------------------------
 # Test 4: orphan metabolite handled cleanly.
 # ---------------------------------------------------------------------------
 
