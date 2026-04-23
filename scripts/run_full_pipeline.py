@@ -584,14 +584,36 @@ def identify(
         )
     )
 
-    # STAGE 3b — molecule_generate
-    generate_resp = generate_fn(
-        GenerateRequest(
-            spectrum=spectrum,
-            candidate_pool=pool,
-            n_candidates=n_candidates_generate,
+    # STAGE 3b — molecule_generate. Degrade gracefully when a dependency of
+    # C is not available (SIRIUS missing, ms-bart checkpoint missing, etc.).
+    # B's library_search still contributes on its own; the pipeline stays
+    # deterministic and the failure is recorded as a report-level warning.
+    generate_degradation_note: str | None = None
+    try:
+        generate_resp = generate_fn(
+            GenerateRequest(
+                spectrum=spectrum,
+                candidate_pool=pool,
+                n_candidates=n_candidates_generate,
+            )
         )
-    )
+    except ToolError as exc:
+        logger.error("molecule_generate degraded: %s: %s", type(exc).__name__, exc)
+        generate_degradation_note = (
+            f"molecule_generate: {type(exc).__name__}: {exc}"
+        )
+        generate_resp = GenerateResponse(
+            candidates=[], n_generated_raw=0, n_valid=0,
+            explain=f"degraded: {type(exc).__name__}: {exc}",
+        )
+    except FileNotFoundError as exc:
+        # Most common external-binary failure mode (e.g. `sirius` not on PATH).
+        logger.error("molecule_generate degraded on missing binary: %s", exc)
+        generate_degradation_note = f"molecule_generate: binary missing: {exc}"
+        generate_resp = GenerateResponse(
+            candidates=[], n_generated_raw=0, n_valid=0,
+            explain=f"degraded: FileNotFoundError: {exc}",
+        )
 
     # STAGE 4 — merge + dedupe
     merged = _merge_candidates(library_resp.candidates, generate_resp.candidates)
@@ -684,6 +706,8 @@ def identify(
     warnings_list = _summarise_warnings(
         preprocess_resp, prefilter_resp, library_resp, generate_resp, per_cand_notes,
     )
+    if generate_degradation_note is not None:
+        warnings_list.append(generate_degradation_note)
     return IdentificationReport(
         experimental_spectrum=spectrum,
         preprocess_quality_flag=preprocess_resp.quality_flag,

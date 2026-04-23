@@ -735,7 +735,32 @@ class TestFullPipelineFindsTruthReal:
     non-neutral forms, so a full-InChIKey match would be brittle.
     """
 
-    @pytest.mark.parametrize("fixture_name", _FIXTURE_NAMES)
+    @pytest.mark.parametrize(
+        "fixture_name",
+        [
+            "glucose_pos",
+            "caffeine_pos",
+            pytest.param(
+                "lcarnitine_pos",
+                marks=pytest.mark.xfail(
+                    strict=False,
+                    reason=(
+                        "D-1: HMDB stores L-carnitine as the protonated cation "
+                        "(C7H16NO3, 162.113 Da). The fixture precursor 162.1125 "
+                        "[M+H]+ back-calculates to the neutral C7H15NO3 at "
+                        "161.105 Da, which does NOT exist in HMDB or GNPS — "
+                        "those pools index only the cation form. Composition "
+                        "cannot find the truth regardless of B/C configuration. "
+                        "Fix routed to D-2 fixture refresh per "
+                        "reports/delivery_integration_de_2026-04-23.md §6 #8. "
+                        "Unxfail once the fixture is regenerated with precursor "
+                        "163.120 (cation [M+H]+) or the A2 pool indexes the "
+                        "neutral form."
+                    ),
+                ),
+            ),
+        ],
+    )
     def test_truth_in_top5(self, fixture_name):
         req, meta = _load_fixture_with_name(fixture_name)
         report = identify(req, top_k=10, predict_top_n=5)
