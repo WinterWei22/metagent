@@ -1,0 +1,6 @@
+# literature_search — pinned dependencies.
+# requests-mock is dev-only but kept here so a single `pip install -r` sets
+# up everything needed to run the unit tests in isolation.
+requests==2.32.3
+pydantic==2.8.2
+requests-mock==1.12.1
