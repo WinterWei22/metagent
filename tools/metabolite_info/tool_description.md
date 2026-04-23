@@ -86,3 +86,24 @@ LLM call anywhere in this tool, and no randomness. Any field the source
 DB does not carry is returned as `None` or `[]`. If the source DB is
 silent on disease associations for caffeine, you will see an empty list
 — not a plausibly-worded but fabricated entry.
+
+## Zwitterion / protonation hazard (HMDB data characteristic)
+
+HMDB's curated entries sometimes store the **protonated cation** of a
+zwitterionic species rather than the neutral form. Verified example:
+L-carnitine (`HMDB0000062`) carries `molecular_formula="C7H16NO3"` and
+`exact_mass≈162.113` — the extra proton is already in both the formula
+and the mass; the InChIKey ends in `-O` (the protonation layer).
+
+**Downstream impact.** A verifier that computes expected `[M+H]⁺` as
+`exact_mass + 1.00728` will miss the actual experimental precursor by
+~1 Da for species stored in cation form.
+
+**Recommended workaround.** When matching experimental precursors,
+back-compute the neutral mass from `smiles` via RDKit rather than
+trusting `exact_mass` blindly. The `smiles` field always encodes
+structure; the `exact_mass` field encodes whichever protonation state
+the source DB chose to store.
+
+This is a data-quality characteristic of HMDB, not a bug in this tool —
+the tool propagates every field verbatim and never invents values.

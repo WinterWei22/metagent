@@ -344,6 +344,13 @@ def network_neighbours(
     if depth <= 0:
         return [], []
 
+    # The focal's own external IDs, resolved once. `_neighbour_external_ids`
+    # emits sourceId strings (`hmdb:...`, `kegg:...`), so the self-exclusion
+    # set has to live in the same namespace — comparing against
+    # `analyte.ramp_ids` (internal `RAMP_C_...`) would never match and the
+    # focal would echo itself at depth ≥ 2 (finding P-5).
+    focal_ext_ids = focal_external_ids(conn, analyte.ramp_ids)
+
     # Resolve external IDs back to rampIds at each expansion frontier so
     # that deeper queries re-use the same join.
     def _external_to_ramp(ext_ids: list[str]) -> tuple[str, ...]:
@@ -362,8 +369,8 @@ def network_neighbours(
     for _ in range(depth):
         step_up = _neighbour_external_ids(conn, frontier_up_ramps, direction="upstream")
         step_down = _neighbour_external_ids(conn, frontier_down_ramps, direction="downstream")
-        new_up = [x for x in step_up if x not in up_ids and x not in analyte.ramp_ids]
-        new_down = [x for x in step_down if x not in down_ids and x not in analyte.ramp_ids]
+        new_up = [x for x in step_up if x not in up_ids and x not in focal_ext_ids]
+        new_down = [x for x in step_down if x not in down_ids and x not in focal_ext_ids]
         up_ids.update(new_up)
         down_ids.update(new_down)
         frontier_up_ramps = _external_to_ramp(new_up)
@@ -376,6 +383,63 @@ def network_neighbours(
 # ---------------------------------------------------------------------------
 # Pathway co-occurrence
 # ---------------------------------------------------------------------------
+
+
+def pathway_membership(
+    conn: sqlite3.Connection,
+    *,
+    pathway_ramp_ids: list[str],
+    metabolite_ramp_ids: set[str] | list[str] | tuple[str, ...],
+) -> dict[str, set[str]]:
+    """For each pathway in `pathway_ramp_ids`, which of `metabolite_ramp_ids`
+    are members of that pathway?
+
+    One bounded SQL. Returns a dict `{pathwayRampId: set_of_rampIds}` —
+    pathways with no intersection are absent. Used to compute per-pathway
+    hit_count so each PathwayEntry reports an honest count of queried
+    metabolites that actually sit in it, rather than the previous
+    aggregate "1 + any-co-occurrence".
+    """
+    metabolite_ramp_ids = list({rid for rid in metabolite_ramp_ids if rid})
+    if not pathway_ramp_ids or not metabolite_ramp_ids:
+        return {}
+    p_ph = ",".join("?" for _ in pathway_ramp_ids)
+    m_ph = ",".join("?" for _ in metabolite_ramp_ids)
+    cur = conn.execute(
+        f"SELECT pathwayRampId, rampId FROM analytehaspathway "
+        f"WHERE pathwayRampId IN ({p_ph}) AND rampId IN ({m_ph})",
+        (*pathway_ramp_ids, *metabolite_ramp_ids),
+    )
+    out: dict[str, set[str]] = {}
+    for row in cur.fetchall():
+        pid = row["pathwayRampId"]
+        rid = row["rampId"]
+        if pid and rid:
+            out.setdefault(pid, set()).add(rid)
+    return out
+
+
+def focal_external_ids(
+    conn: sqlite3.Connection,
+    ramp_ids: tuple[str, ...] | list[str],
+) -> set[str]:
+    """The set of sourceId strings (e.g. `hmdb:HMDB0000122`, `kegg:C00031`)
+    that point to any of the focal's rampIds.
+
+    Used at depth ≥ 2 to exclude the focal from its own neighbour list —
+    `_neighbour_external_ids` emits `hmdb:...`-style IDs but `Analyte.ramp_ids`
+    carries `RAMP_C_...`-style internal IDs, so a direct comparison never
+    matches and the focal echoes itself.
+    """
+    ramp_ids = list({r for r in ramp_ids if r})
+    if not ramp_ids:
+        return set()
+    placeholders = ",".join("?" for _ in ramp_ids)
+    cur = conn.execute(
+        f"SELECT DISTINCT sourceId FROM source WHERE rampId IN ({placeholders})",
+        ramp_ids,
+    )
+    return {r["sourceId"] for r in cur.fetchall() if r["sourceId"]}
 
 
 def cooccurring_with_focal(

@@ -10,12 +10,16 @@ Contract reminders (docs/TOOL_CONTRACTS.md § Tool 6):
   - A metabolite that resolves but has no pathway rows raises
     MetaboliteNotInNetworkError.
   - A missing / unopenable RaMP DB raises RampUnavailableError.
-  - `cooccurrence_score ∈ [0, 1]`: fraction of co-observed metabolites
-    that share at least one pathway with the focal metabolite. When
-    `co_observed_ids` is empty the score is 0.0 (the schema requires a
-    concrete number; an empty sample context is not evidence of
-    implausibility, it is absence of evidence — the plausibility_summary
-    string is where we explain the distinction).
+  - `cooccurrence_score ∈ [0, 1]`: fraction of *resolvable* co-observed
+    metabolites that share at least one pathway with the focal
+    metabolite. IDs that don't resolve in RaMP don't count against the
+    denominator — they're tallied separately and surfaced in `explain`
+    (finding P-6). When `co_observed_ids` is empty the score is 0.0 —
+    absence of evidence, not evidence of implausibility; the
+    plausibility_summary string spells that out.
+  - `PathwayEntry.hit_count` is PER-pathway: it's the number of queried
+    metabolites (focal + co-observed) that sit in that specific pathway,
+    not a response-wide aggregate (finding P-1).
 """
 from __future__ import annotations
 
@@ -40,20 +44,29 @@ logger = logging.getLogger(__name__)
 def _cooccurrence_score(
     co_observed_ids: list[str],
     cooccurring_ids: set[str],
-) -> float:
-    """Fraction of supplied co-observed IDs that share a pathway with focal.
+    resolvable_ids: set[str],
+) -> tuple[float, int, int]:
+    """Fraction of *resolvable* co-observed IDs that share a pathway with focal.
 
-    Returns 0.0 when the input list is empty. Scores are capped at 1.0 by
-    construction (numerator ≤ denominator).
+    Returns `(score, n_resolvable, n_total_unique)`. IDs the user supplied
+    that RaMP cannot resolve (unknown HMDB accessions, typos, non-human
+    metabolites) are not counted in the denominator, so a sample with 1
+    real match and 9 unresolvable IDs scores 1.0, not 0.1 (finding P-6).
+    Callers surface `n_total_unique - n_resolvable` in the explain string
+    so users know how much input was dropped.
+
+    Returns 0.0 with both counts 0 when the input list is empty.
     """
     if not co_observed_ids:
-        return 0.0
-    # De-duplicate the denominator so repeated IDs don't deflate the score.
+        return 0.0, 0, 0
     unique = {cid.strip() for cid in co_observed_ids if cid and cid.strip()}
     if not unique:
-        return 0.0
-    hits = sum(1 for cid in unique if cid in cooccurring_ids)
-    return hits / len(unique)
+        return 0.0, 0, 0
+    resolvable = unique & resolvable_ids
+    if not resolvable:
+        return 0.0, 0, len(unique)
+    hits = sum(1 for cid in resolvable if cid in cooccurring_ids)
+    return hits / len(resolvable), len(resolvable), len(unique)
 
 
 # ---------------------------------------------------------------------------
@@ -97,24 +110,45 @@ def pathway_context(req: PathwayContextRequest) -> PathwayContextResponse:
                 f"no pathway membership in RaMP."
             )
 
-        # Build PathwayEntry objects. `hit_count` sums the focal
-        # metabolite (always 1) and the number of co-observed IDs present
-        # in this pathway.
+        # Resolve every co-observed ID ONCE so we can (a) compute
+        # per-pathway hit_count by checking which analytes actually sit in
+        # each pathway, and (b) know which co-obs IDs were resolvable so
+        # the cooccurrence_score denominator is honest.
         co_obs_clean = [c.strip() for c in req.co_observed_ids if c and c.strip()]
-        cooccurring = ramp_backend.cooccurring_with_focal(conn, analyte, co_obs_clean)
+        co_obs_analytes: list[tuple[str, ramp_backend.Analyte]] = []
+        resolvable_ids: set[str] = set()
+        for cid in co_obs_clean:
+            a = ramp_backend.resolve_analyte(conn, cid)
+            if a is not None:
+                co_obs_analytes.append((cid, a))
+                resolvable_ids.add(cid)
+
+        # Per-pathway membership index: one bounded SQL answers "for each
+        # pathway in the result set, which of the queried metabolites
+        # (focal + each co-obs) are members?"
+        all_queried_ramps: set[str] = set(analyte.ramp_ids)
+        for _, a in co_obs_analytes:
+            all_queried_ramps.update(a.ramp_ids)
+        membership = ramp_backend.pathway_membership(
+            conn,
+            pathway_ramp_ids=[row.pathway_ramp_id for row in pathway_rows],
+            metabolite_ramp_ids=all_queried_ramps,
+        )
+
+        focal_ramp_set = set(analyte.ramp_ids)
         pathways: list[PathwayEntry] = []
         for row in pathway_rows:
-            # hit_count: focal always counted; co-observed only counted if
-            # they co-occur in ANY pathway with focal — this is the
-            # whole-response aggregate, not per-pathway, to keep the join
-            # cheap. Per-pathway would need a separate query each.
-            hit_count = 1 + len(cooccurring)
+            present = membership.get(row.pathway_ramp_id, set())
+            hit = 1 if focal_ramp_set & present else 0
+            for _, a in co_obs_analytes:
+                if set(a.ramp_ids) & present:
+                    hit += 1
             pathways.append(
                 PathwayEntry(
                     id=row.external_id or row.pathway_ramp_id,
                     name=row.name,
                     source=row.source,  # type: ignore[arg-type]
-                    hit_count=hit_count,
+                    hit_count=hit,
                     url=row.url,
                 )
             )
@@ -123,7 +157,11 @@ def pathway_context(req: PathwayContextRequest) -> PathwayContextResponse:
             conn, analyte, depth=req.neighbour_depth
         )
 
-        score = _cooccurrence_score(co_obs_clean, cooccurring)
+        cooccurring = ramp_backend.cooccurring_with_focal(conn, analyte, co_obs_clean)
+        score, n_resolvable, n_total_unique = _cooccurrence_score(
+            co_obs_clean, cooccurring, resolvable_ids
+        )
+        n_dropped = n_total_unique - n_resolvable
 
         metabolite_name = analyte.common_name or req.metabolite_id.strip()
         plausibility = templates.render_plausibility_summary(
@@ -142,6 +180,11 @@ def pathway_context(req: PathwayContextRequest) -> PathwayContextResponse:
             n_downstream=len(downstream),
             cooccurrence_score=score,
         )
+        if n_dropped > 0:
+            explain += (
+                f" ({n_dropped} of {n_total_unique} co-observed IDs could "
+                "not be resolved against RaMP and were excluded from the score.)"
+            )
 
         return PathwayContextResponse(
             pathways=pathways,

@@ -146,14 +146,19 @@ def _build_mini_ramp_db(db_path: Path) -> None:
         )
 
         # --- Reaction graph -----------------------------------------------
-        # One reaction converts glucose → pyruvate, another pyruvate → alanine.
+        # Glucose ↔ pyruvate (forward + reverse) and pyruvate → alanine.
+        # The reverse edge (RXN_GLUC_SYNTH: pyruvate substrate, glucose
+        # product) is what makes depth≥2 BFS try to echo glucose back
+        # into the focal's own neighbour list — see P-5 test below.
         # substrate_product = 1 means substrate, 0 means product (RaMP v3 convention).
         reaction_rows = [
             # (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name)
-            ("RXN_GLYCO",     "RAMP_C_GLUC", 1, "chebi:4167",  "D-glucose"),
-            ("RXN_GLYCO",     "RAMP_C_PYR",  0, "chebi:15361", "pyruvate"),
-            ("RXN_ALA_TRANS", "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
-            ("RXN_ALA_TRANS", "RAMP_C_ALA",  0, "chebi:16977", "L-alanine"),
+            ("RXN_GLYCO",       "RAMP_C_GLUC", 1, "chebi:4167",  "D-glucose"),
+            ("RXN_GLYCO",       "RAMP_C_PYR",  0, "chebi:15361", "pyruvate"),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_GLUC", 0, "chebi:4167",  "D-glucose"),
+            ("RXN_ALA_TRANS",   "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
+            ("RXN_ALA_TRANS",   "RAMP_C_ALA",  0, "chebi:16977", "L-alanine"),
         ]
         conn.executemany(
             "INSERT INTO reaction2met (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name) VALUES (?, ?, ?, ?, ?)",
@@ -334,3 +339,83 @@ def test_kegg_identifier_also_resolves(ramp_db):
         PathwayContextRequest(metabolite_id="C00022")  # pyruvate
     )
     assert len(resp.pathways) >= 2
+
+
+# ---------------------------------------------------------------------------
+# Regression tests pinning P-1 / P-5 / P-6 semantics (2026-04-23 fix plan).
+# ---------------------------------------------------------------------------
+
+
+def test_hit_count_varies_per_pathway(ramp_db):
+    """A co-observed metabolite that sits in SOME pathways of the focal
+    but not all of them must lift hit_count only on the shared ones,
+    leaving the rest at 1. Before the P-1 fix every PathwayEntry shared
+    the same hit_count regardless of actual membership.
+
+    Setup in the mini DB:
+      pyruvate pathways = {glycolysis-kegg, glycolysis-reactome,
+                           glycolysis-smpdb, alanine-kegg}.
+      alanine  pathways = {alanine-kegg}.
+    Expected hit_counts with focal=pyruvate, co_obs=[alanine]:
+      - three glycolysis pathways → 1 (only pyruvate present)
+      - alanine-kegg              → 2 (pyruvate + alanine)
+    """
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000243",       # pyruvate
+        co_observed_ids=["HMDB0000161"],   # alanine — only in ala_kegg
+    ))
+    counts = sorted({p.hit_count for p in resp.pathways})
+    assert counts == [1, 2], (
+        f"hit_count must vary per pathway; got {counts} "
+        f"(pathways={[(p.name, p.hit_count) for p in resp.pathways]})"
+    )
+    alanine_entry = next(p for p in resp.pathways if "Alanine" in p.name)
+    assert alanine_entry.hit_count == 2
+    glyco_entries = [p for p in resp.pathways if "Glycolysis" in p.name]
+    assert glyco_entries, "mini DB should contain glycolysis pathways"
+    for p in glyco_entries:
+        assert p.hit_count == 1, (p.name, p.hit_count)
+
+
+def test_depth_2_does_not_echo_focal(ramp_db):
+    """The focal must never appear in its own neighbour list at depth ≥ 2.
+
+    The mini DB has glucose ↔ pyruvate edges plus pyruvate → alanine.
+    Pre-fix, `x not in analyte.ramp_ids` compared sourceIds like
+    `hmdb:HMDB0000122` against internal rampIds like `RAMP_C_GLUC`,
+    never matched, and the focal echoed itself back at depth=2.
+    """
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000122",       # glucose
+        neighbour_depth=2,
+    ))
+    forbidden_forms = (
+        "HMDB0000122",
+        "hmdb:HMDB0000122",
+        "C00031",
+        "kegg:C00031",
+    )
+    for form in forbidden_forms:
+        assert form not in resp.upstream_neighbours, (
+            f"depth-2 upstream echoed focal as {form!r}: {resp.upstream_neighbours}"
+        )
+        assert form not in resp.downstream_neighbours, (
+            f"depth-2 downstream echoed focal as {form!r}: {resp.downstream_neighbours}"
+        )
+
+
+def test_unresolvable_co_obs_excluded_from_denominator(ramp_db):
+    """IDs the caller supplies that RaMP cannot resolve must not deflate
+    the score. Before P-6, `1 real match + 9 typos` scored 0.1; now it
+    scores 1.0 and the explain string notes how many were dropped."""
+    fake_ids = [f"HMDB{i:07d}" for i in range(9000000, 9000009)]  # 9 fakes
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000122",                           # glucose
+        co_observed_ids=["HMDB0000243"] + fake_ids,            # 1 real + 9 unresolvable
+    ))
+    assert resp.cooccurrence_score == pytest.approx(1.0), (
+        f"1 real match out of 1 resolvable should be 1.0, got {resp.cooccurrence_score}"
+    )
+    assert "could not be resolved" in resp.explain.lower(), resp.explain
+    # Explain should also surface the drop count.
+    assert "9" in resp.explain, resp.explain

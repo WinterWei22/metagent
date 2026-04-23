@@ -65,8 +65,40 @@ inside the schema contract rather than silently invented.
 - **No invented pathways, neighbours, or scores.** An empty list means
   the DB had no rows — not that the tool gave up.
 - **`cooccurrence_score` is defined precisely** as `|{co_id : shares ≥ 1
-  pathway with focal}| / |co_observed_ids|` after de-duplication. With
-  an empty `co_observed_ids` it is 0.0.
+  pathway with focal}| / |resolvable co_observed_ids|` after
+  de-duplication. IDs the caller supplied that RaMP cannot resolve (typos,
+  non-human metabolites, unknown accessions) are EXCLUDED from the
+  denominator — the number dropped is surfaced in `explain`. An empty
+  `co_observed_ids` list gives 0.0.
+
+## Known limitations in v0
+
+These are characteristics of the RaMP-DB data we cannot fix in the tool;
+callers (orchestrator and verifier) must be aware of them.
+
+- **Direction collapse for central metabolites.** RaMP's reaction graph is
+  densely reversible, so for central metabolites (pyruvate, glucose,
+  L-alanine, …) `upstream_neighbours` and `downstream_neighbours`
+  converge to set-identical lists. Treat the two fields as an undirected
+  neighbourhood in v0; do not read causality into the split.
+
+- **Cofactor dilution.** Cofactors (H₂O, ATP, NADH, CO₂, H⁺, …) carry
+  `is_cofactor=1` in RaMP's `reaction2met` but are NOT filtered. Neighbour
+  lists for central metabolites are therefore dominated by cofactors rather
+  than biologically specific partners.
+
+- **Non-resolvable neighbour IDs.** Some neighbours surface with `chebi:`,
+  `rhea-comp:`, or `polymer:` prefixes that `fetch_metabolite_info`
+  cannot resolve. Consumers that plan to chain
+  `fetch_metabolite_info(neighbour)` should pre-filter to `hmdb:` / `kegg:`
+  prefixes.
+
+- **Guidance.** In v0, orchestrator and verifier SHOULD NOT rank or
+  select candidates by inspecting `upstream_neighbours` /
+  `downstream_neighbours`. Use `pathways` and `cooccurrence_score`
+  instead. A v1 redesign (reaction-direction filter + cofactor filter +
+  HMDB/KEGG-only emit) is tracked as the P-2/3/4 follow-up in the Track
+  D integration report.
 
 ## Setup
 
