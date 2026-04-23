@@ -80,7 +80,8 @@ def _build_mini_ramp_db(db_path: Path) -> None:
                 ramp_cmpd_id      TEXT NOT NULL,
                 substrate_product INTEGER NOT NULL,
                 met_source_id     TEXT,
-                met_name          TEXT
+                met_name          TEXT,
+                is_cofactor       INTEGER NOT NULL DEFAULT 0
             );
             """
         )
@@ -99,6 +100,11 @@ def _build_mini_ramp_db(db_path: Path) -> None:
             ("hmdb:HMDB0000050", "RAMP_C_ADEN_ORPHAN", "hmdb",  "Adenosine",    "hmdb"),
             # Random HMDB that resolves but shares no pathway with glucose.
             ("hmdb:HMDB0001847", "RAMP_C_CAFF",        "hmdb",  "Caffeine",     "hmdb"),
+            # Cofactors — flagged is_cofactor=1 in reaction2met below so P-4
+            # can assert they do NOT appear in neighbour lists by default.
+            ("hmdb:HMDB0002111", "RAMP_C_H2O",         "hmdb",  "Water",        "hmdb"),
+            ("hmdb:HMDB0000538", "RAMP_C_ATP",         "hmdb",  "ATP",          "hmdb"),
+            ("hmdb:HMDB0001487", "RAMP_C_NADH",        "hmdb",  "NADH",         "hmdb"),
         ]
         conn.executemany(
             "INSERT INTO source (sourceId, rampId, IDtype, commonName, dataSource) VALUES (?, ?, ?, ?, ?)",
@@ -151,17 +157,25 @@ def _build_mini_ramp_db(db_path: Path) -> None:
         # product) is what makes depth≥2 BFS try to echo glucose back
         # into the focal's own neighbour list — see P-5 test below.
         # substrate_product = 1 means substrate, 0 means product (RaMP v3 convention).
+        # Real RaMP's reaction2met carries an is_cofactor flag; we model it
+        # as a 6th column so P-4 filtering has data to bite on.
         reaction_rows = [
-            # (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name)
-            ("RXN_GLYCO",       "RAMP_C_GLUC", 1, "chebi:4167",  "D-glucose"),
-            ("RXN_GLYCO",       "RAMP_C_PYR",  0, "chebi:15361", "pyruvate"),
-            ("RXN_GLUC_SYNTH",  "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
-            ("RXN_GLUC_SYNTH",  "RAMP_C_GLUC", 0, "chebi:4167",  "D-glucose"),
-            ("RXN_ALA_TRANS",   "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
-            ("RXN_ALA_TRANS",   "RAMP_C_ALA",  0, "chebi:16977", "L-alanine"),
+            # (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name, is_cofactor)
+            ("RXN_GLYCO",       "RAMP_C_GLUC", 1, "chebi:4167",   "D-glucose", 0),
+            ("RXN_GLYCO",       "RAMP_C_PYR",  0, "chebi:15361",  "pyruvate",  0),
+            # Cofactors of the glycolysis reaction — under the P-4 default
+            # filter these must NOT surface as downstream neighbours of
+            # glucose or upstream neighbours of pyruvate.
+            ("RXN_GLYCO",       "RAMP_C_H2O",  0, "chebi:15377",  "H2O",       1),
+            ("RXN_GLYCO",       "RAMP_C_ATP",  1, "chebi:15422",  "ATP",       1),
+            ("RXN_GLYCO",       "RAMP_C_NADH", 0, "chebi:16908",  "NADH",      1),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_PYR",  1, "chebi:15361",  "pyruvate",  0),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_GLUC", 0, "chebi:4167",   "D-glucose", 0),
+            ("RXN_ALA_TRANS",   "RAMP_C_PYR",  1, "chebi:15361",  "pyruvate",  0),
+            ("RXN_ALA_TRANS",   "RAMP_C_ALA",  0, "chebi:16977",  "L-alanine", 0),
         ]
         conn.executemany(
-            "INSERT INTO reaction2met (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO reaction2met (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name, is_cofactor) VALUES (?, ?, ?, ?, ?, ?)",
             reaction_rows,
         )
         conn.commit()
@@ -402,6 +416,33 @@ def test_depth_2_does_not_echo_focal(ramp_db):
         assert form not in resp.downstream_neighbours, (
             f"depth-2 downstream echoed focal as {form!r}: {resp.downstream_neighbours}"
         )
+
+
+def test_p4_pyruvate_neighbours_exclude_water_atp(ramp_db):
+    """Cofactors (H₂O, ATP, NADH, CO₂, H⁺, …) must not surface as
+    network neighbours. RaMP's `reaction2met.is_cofactor` column is the
+    authoritative flag; the tool's default `_neighbour_external_ids`
+    query excludes rows where it is 1 so the biologically-specific
+    partners aren't drowned out.
+
+    Before the P-4 fix, every cofactor participant of a focal's
+    reactions surfaced in upstream/downstream and dominated the list
+    for central metabolites. The mini DB seeds RXN_GLYCO with H2O
+    (HMDB0002111, product, is_cofactor=1), ATP (HMDB0000538, substrate,
+    is_cofactor=1), and NADH (HMDB0001487, product, is_cofactor=1).
+    """
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000243",     # pyruvate — participates in RXN_GLYCO
+        neighbour_depth=1,
+    ))
+    all_neighbours = resp.upstream_neighbours + resp.downstream_neighbours
+    blacklist = {
+        "hmdb:HMDB0002111", "HMDB0002111",   # water
+        "hmdb:HMDB0000538", "HMDB0000538",   # ATP
+        "hmdb:HMDB0001487", "HMDB0001487",   # NADH
+    }
+    leaks = [n for n in all_neighbours if n in blacklist]
+    assert not leaks, f"cofactors leaked into neighbours: {leaks}"
 
 
 def test_unresolvable_co_obs_excluded_from_denominator(ramp_db):

@@ -258,13 +258,18 @@ def _neighbour_external_ids(
     # Step 2: find every metabolite participating in those reactions with
     # the neighbour role. Chunked so we never blow past SQLite's 999 bound
     # variables — pyruvate routinely participates in >1000 reactions.
+    # Cofactors (H₂O, ATP, NADH, CO₂, H⁺, …) are filtered via
+    # `is_cofactor = 0` so the biologically-specific partners aren't
+    # drowned out (finding P-4). RaMP populates `is_cofactor` on
+    # reaction2met for ~14% of rows.
     neighbour_ramps: set[str] = set()
     focal_set = set(ramp_ids)
     for chunk in _chunks(rxn_ids, 800):
         qph = ",".join("?" for _ in chunk)
         cur = conn.execute(
             f"SELECT DISTINCT ramp_cmpd_id FROM reaction2met "
-            f"WHERE ramp_rxn_id IN ({qph}) AND substrate_product = ?",
+            f"WHERE ramp_rxn_id IN ({qph}) AND substrate_product = ? "
+            f"  AND is_cofactor = 0",
             (*chunk, neighbour_is_substrate),
         )
         for r in cur.fetchall():
