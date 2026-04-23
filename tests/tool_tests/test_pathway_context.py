@@ -471,10 +471,16 @@ def test_p4_pyruvate_neighbours_exclude_water_atp(ramp_db):
     assert not leaks, f"cofactors leaked into neighbours: {leaks}"
 
 
-def test_unresolvable_co_obs_excluded_from_denominator(ramp_db):
+def test_p6_cooccurrence_only_counts_resolvable(ramp_db):
     """IDs the caller supplies that RaMP cannot resolve must not deflate
     the score. Before P-6, `1 real match + 9 typos` scored 0.1; now it
-    scores 1.0 and the explain string notes how many were dropped."""
+    scores 1.0 and the explain string notes how many were dropped.
+
+    Naming: renamed from the original working title
+    `test_unresolvable_co_obs_excluded_from_denominator` to match the
+    Track D follow-up plan's `test_p6_cooccurrence_only_counts_resolvable`
+    identifier, so `grep` stays aligned with the fix-plan nomenclature.
+    """
     fake_ids = [f"HMDB{i:07d}" for i in range(9000000, 9000009)]  # 9 fakes
     resp = pathway_context(PathwayContextRequest(
         metabolite_id="HMDB0000122",                           # glucose
