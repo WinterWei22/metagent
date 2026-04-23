@@ -45,7 +45,14 @@ from tools.pathway_context.errors import (
 
 
 def _build_mini_ramp_db(db_path: Path) -> None:
-    """Populate a tmp RaMP DB covering glucose / pyruvate / alanine plus an orphan."""
+    """Populate a tmp RaMP DB covering glucose / pyruvate / alanine plus an orphan.
+
+    Schema (column names, types) mirrors RaMP v3.0.x exactly — the same
+    backend code that runs here runs against the production dump. The
+    only concession is trimmed column count: we include only what
+    ramp_backend.py reads plus a couple of columns kept for schema
+    fidelity (IDtype on source, pathwaySource on analytehaspathway).
+    """
     conn = sqlite3.connect(db_path)
     try:
         conn.executescript(
@@ -53,92 +60,103 @@ def _build_mini_ramp_db(db_path: Path) -> None:
             CREATE TABLE source (
                 sourceId    TEXT,
                 rampId      TEXT,
+                IDtype      TEXT,
                 commonName  TEXT,
                 dataSource  TEXT
             );
             CREATE TABLE pathway (
                 pathwayRampId  TEXT PRIMARY KEY,
                 sourceId       TEXT,
-                pathwayName    TEXT,
-                type           TEXT
+                type           TEXT,
+                pathwayName    TEXT
             );
             CREATE TABLE analytehaspathway (
                 rampId         TEXT,
-                pathwayRampId  TEXT
+                pathwayRampId  TEXT,
+                pathwaySource  TEXT
             );
             CREATE TABLE reaction2met (
-                rxnRampId    TEXT,
-                rampId       TEXT,
-                isSubstrate  INTEGER
+                ramp_rxn_id       TEXT NOT NULL,
+                ramp_cmpd_id      TEXT NOT NULL,
+                substrate_product INTEGER NOT NULL,
+                met_source_id     TEXT,
+                met_name          TEXT
             );
             """
         )
 
         # --- Source mapping ------------------------------------------------
+        # RaMP v3 stores IDs with a lowercase prefix (e.g. 'hmdb:HMDB0000122').
         sources = [
-            # (sourceId, rampId, commonName, dataSource)
-            ("HMDB0000122", "RAMP_C_GLUC",   "D-Glucose",    "hmdb"),
-            ("C00031",       "RAMP_C_GLUC",   "D-Glucose",    "kegg"),
-            ("HMDB0000243", "RAMP_C_PYR",    "Pyruvate",     "hmdb"),
-            ("C00022",       "RAMP_C_PYR",    "Pyruvate",     "kegg"),
-            ("HMDB0000161", "RAMP_C_ALA",    "L-Alanine",    "hmdb"),
-            ("C00041",       "RAMP_C_ALA",    "L-Alanine",    "kegg"),
+            # (sourceId, rampId, IDtype, commonName, dataSource)
+            ("hmdb:HMDB0000122", "RAMP_C_GLUC",        "hmdb",  "D-Glucose",    "hmdb"),
+            ("kegg:C00031",      "RAMP_C_GLUC",        "kegg",  "D-Glucose",    "hmdb_kegg"),
+            ("hmdb:HMDB0000243", "RAMP_C_PYR",         "hmdb",  "Pyruvate",     "hmdb"),
+            ("kegg:C00022",      "RAMP_C_PYR",         "kegg",  "Pyruvate",     "hmdb_kegg"),
+            ("hmdb:HMDB0000161", "RAMP_C_ALA",         "hmdb",  "L-Alanine",    "hmdb"),
+            ("kegg:C00041",      "RAMP_C_ALA",         "kegg",  "L-Alanine",    "hmdb_kegg"),
             # Orphan: resolves to a rampId but has no analytehaspathway rows.
-            ("HMDB0000050", "RAMP_C_ADEN_ORPHAN", "Adenosine", "hmdb"),
+            ("hmdb:HMDB0000050", "RAMP_C_ADEN_ORPHAN", "hmdb",  "Adenosine",    "hmdb"),
             # Random HMDB that resolves but shares no pathway with glucose.
-            ("HMDB0001847", "RAMP_C_CAFF",   "Caffeine",     "hmdb"),
+            ("hmdb:HMDB0001847", "RAMP_C_CAFF",        "hmdb",  "Caffeine",     "hmdb"),
         ]
         conn.executemany(
-            "INSERT INTO source (sourceId, rampId, commonName, dataSource) VALUES (?, ?, ?, ?)",
+            "INSERT INTO source (sourceId, rampId, IDtype, commonName, dataSource) VALUES (?, ?, ?, ?, ?)",
             sources,
         )
 
         # --- Pathways ------------------------------------------------------
+        # `hmdb` type rows here represent SMPDB content (RaMP surfaces
+        # SMPDB under type='hmdb'); the backend maps it to 'smpdb'.
         pathways = [
-            # (pathwayRampId, sourceId, pathwayName, type)
-            ("RAMP_P_GLYC_KEGG", "hsa00010",     "Glycolysis / Gluconeogenesis", "kegg"),
-            ("RAMP_P_GLYC_REAC", "R-HSA-70171",  "Glycolysis",                   "reactome"),
-            ("RAMP_P_ALA_KEGG",  "hsa00250",     "Alanine, aspartate and glutamate metabolism", "kegg"),
-            ("RAMP_P_CAFF_KEGG", "hsa00232",     "Caffeine metabolism",          "kegg"),
+            # (pathwayRampId, sourceId, type, pathwayName)
+            ("RAMP_P_GLYC_KEGG", "map00010",     "kegg",     "Glycolysis / Gluconeogenesis"),
+            ("RAMP_P_GLYC_REAC", "R-HSA-70171",  "reactome", "Glycolysis"),
+            ("RAMP_P_ALA_KEGG",  "map00250",     "kegg",     "Alanine, aspartate and glutamate metabolism"),
+            ("RAMP_P_CAFF_KEGG", "map00232",     "kegg",     "Caffeine metabolism"),
+            # Throw in an SMPDB (RaMP type='hmdb') pathway so the
+            # smpdb mapping is exercised in the test suite.
+            ("RAMP_P_GLYC_SMP",  "SMP00040",     "hmdb",     "Glycolysis (SMPDB)"),
         ]
         conn.executemany(
-            "INSERT INTO pathway (pathwayRampId, sourceId, pathwayName, type) VALUES (?, ?, ?, ?)",
+            "INSERT INTO pathway (pathwayRampId, sourceId, type, pathwayName) VALUES (?, ?, ?, ?)",
             pathways,
         )
 
         # --- Analyte ↔ pathway ---------------------------------------------
         analyte_pathways = [
-            # Glucose sits in glycolysis from both KEGG and Reactome.
-            ("RAMP_C_GLUC", "RAMP_P_GLYC_KEGG"),
-            ("RAMP_C_GLUC", "RAMP_P_GLYC_REAC"),
-            # Pyruvate sits in glycolysis AND alanine metabolism.
-            ("RAMP_C_PYR",  "RAMP_P_GLYC_KEGG"),
-            ("RAMP_C_PYR",  "RAMP_P_GLYC_REAC"),
-            ("RAMP_C_PYR",  "RAMP_P_ALA_KEGG"),
-            # Alanine sits in alanine metabolism only.
-            ("RAMP_C_ALA",  "RAMP_P_ALA_KEGG"),
-            # Caffeine has its own pathway, disjoint from glycolysis.
-            ("RAMP_C_CAFF", "RAMP_P_CAFF_KEGG"),
+            # Glucose: glycolysis from KEGG + Reactome + SMPDB.
+            ("RAMP_C_GLUC", "RAMP_P_GLYC_KEGG", "kegg"),
+            ("RAMP_C_GLUC", "RAMP_P_GLYC_REAC", "reactome"),
+            ("RAMP_C_GLUC", "RAMP_P_GLYC_SMP",  "hmdb"),
+            # Pyruvate: glycolysis (kegg + reactome + smpdb) AND alanine metabolism (kegg).
+            ("RAMP_C_PYR",  "RAMP_P_GLYC_KEGG", "kegg"),
+            ("RAMP_C_PYR",  "RAMP_P_GLYC_REAC", "reactome"),
+            ("RAMP_C_PYR",  "RAMP_P_GLYC_SMP",  "hmdb"),
+            ("RAMP_C_PYR",  "RAMP_P_ALA_KEGG",  "kegg"),
+            # Alanine: alanine metabolism only.
+            ("RAMP_C_ALA",  "RAMP_P_ALA_KEGG",  "kegg"),
+            # Caffeine: its own pathway, disjoint from glycolysis.
+            ("RAMP_C_CAFF", "RAMP_P_CAFF_KEGG", "kegg"),
             # Adenosine: no rows → orphan.
         ]
         conn.executemany(
-            "INSERT INTO analytehaspathway (rampId, pathwayRampId) VALUES (?, ?)",
+            "INSERT INTO analytehaspathway (rampId, pathwayRampId, pathwaySource) VALUES (?, ?, ?)",
             analyte_pathways,
         )
 
         # --- Reaction graph -----------------------------------------------
-        # One reaction converts glucose → pyruvate (via glycolysis), so
-        # pyruvate is a downstream neighbour of glucose and vice versa.
+        # One reaction converts glucose → pyruvate, another pyruvate → alanine.
+        # substrate_product = 1 means substrate, 0 means product (RaMP v3 convention).
         reaction_rows = [
-            # (rxnRampId, rampId, isSubstrate)
-            ("RXN_GLYCO",     "RAMP_C_GLUC", 1),
-            ("RXN_GLYCO",     "RAMP_C_PYR",  0),
-            # A second reaction: pyruvate + (co-substrate) → alanine
-            ("RXN_ALA_TRANS", "RAMP_C_PYR",  1),
-            ("RXN_ALA_TRANS", "RAMP_C_ALA",  0),
+            # (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name)
+            ("RXN_GLYCO",     "RAMP_C_GLUC", 1, "chebi:4167",  "D-glucose"),
+            ("RXN_GLYCO",     "RAMP_C_PYR",  0, "chebi:15361", "pyruvate"),
+            ("RXN_ALA_TRANS", "RAMP_C_PYR",  1, "chebi:15361", "pyruvate"),
+            ("RXN_ALA_TRANS", "RAMP_C_ALA",  0, "chebi:16977", "L-alanine"),
         ]
         conn.executemany(
-            "INSERT INTO reaction2met (rxnRampId, rampId, isSubstrate) VALUES (?, ?, ?)",
+            "INSERT INTO reaction2met (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name) VALUES (?, ?, ?, ?, ?)",
             reaction_rows,
         )
         conn.commit()

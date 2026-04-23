@@ -1,37 +1,35 @@
 """RaMP-DB SQLite backend for pathway_context.
 
-RaMP integrates KEGG / Reactome / SMPDB / WikiPathways into one relational
-store. The dump is distributed as a SQLite file at
-https://github.com/ncats/RaMP-DB/releases — we point at it via
-METAGENT_RAMP_PATH.
+RaMP integrates KEGG / Reactome / SMPDB (surfaced as `type='hmdb'` in
+RaMP's pathway table) / WikiPathways into one relational store. The dump
+is distributed as a SQLite at https://github.com/ncats/RaMP-DB — we
+point at it via METAGENT_RAMP_PATH.
 
-RaMP's schema carries a lot of biology we do not need (genes, proteins,
-enzymes, ontology classes). This backend reads only the four tables the
-tool actually uses:
+RaMP's schema carries much more biology than we need (genes, proteins,
+enzymes, ontology). This backend reads only four tables, keyed against
+RaMP v3.0.x column names:
 
-- `source(sourceId TEXT, rampId TEXT, commonName TEXT, dataSource TEXT, ...)`
-  Maps an external ID (HMDB0000122, C00031, CHEBI:17234, …) to RaMP's
-  internal analyte id. One compound usually has several source rows, one
-  per data source.
+- `source(sourceId, rampId, IDtype, commonName, dataSource, ...)`
+  Maps an external ID to RaMP's internal analyte id. `sourceId` is
+  lowercase-prefixed (e.g. `hmdb:HMDB0000122`, `kegg:C00031`,
+  `chebi:4167`). One compound commonly has many source rows.
 
-- `pathway(pathwayRampId TEXT PRIMARY KEY, sourceId TEXT, pathwayName TEXT, type TEXT)`
-  Pathway metadata. `type` is one of {kegg, reactome, smpdb, wiki}.
-  `sourceId` is the external pathway ID (hsa00010 for KEGG,
-  R-HSA-70171 for Reactome, etc.) which we turn into a URL.
+- `pathway(pathwayRampId, sourceId, type, pathwayName)`
+  `type` is one of {hmdb, kegg, reactome, wiki, pfocr}. We map `hmdb`
+  → `smpdb` (its `sourceId` column carries SMPDB IDs like SMP00044),
+  `wiki` → `wikipathways`, and silently drop `pfocr` because our
+  schema Literal does not include it (forward-compat with a future
+  schema bump).
 
-- `analytehaspathway(rampId TEXT, pathwayRampId TEXT)`
-  Many-to-many linking analytes to pathways. `pathwaySource` may also be
-  present on the real RaMP schema; we do not rely on it.
+- `analytehaspathway(rampId, pathwayRampId, pathwaySource)`
+  Many-to-many with an extra pathwaySource column we ignore.
 
-- `reaction2met(rxnRampId TEXT, rampId TEXT, isSubstrate INTEGER)`
-  Many-to-many linking metabolites to reactions with a direction flag.
-  `isSubstrate=1` means the metabolite is a substrate in that reaction;
-  `isSubstrate=0` means a product. We infer network neighbours by joining
-  this table to itself through rxnRampId.
-
-We avoid using features that vary between RaMP releases (the exact
-column names around pathway sources, the reaction table spelling). The
-four tables above are stable across RaMP v2.x.
+- `reaction2met(ramp_rxn_id, ramp_cmpd_id, substrate_product,
+                met_source_id, met_name, is_cofactor, ...)`
+  `substrate_product=1` means the metabolite is a substrate; `0` is a
+  product. We self-join this table on ramp_rxn_id to find network
+  neighbours, then JOIN `source` back to render preferred external IDs
+  (HMDB > KEGG > the raw met_source_id).
 """
 from __future__ import annotations
 
@@ -50,17 +48,22 @@ RAMP_ENV_VAR = "METAGENT_RAMP_PATH"
 # skipped — it is not a schema violation to have a RaMP type we don't
 # understand, it's a forward-compat event.
 _TYPE_TO_SOURCE = {
+    # Canonical RaMP v3 values — lowercase.
     "kegg": "kegg",
-    "KEGG": "kegg",
     "reactome": "reactome",
-    "Reactome": "reactome",
-    "REACTOME": "reactome",
+    # `hmdb` in RaMP's pathway.type column is actually SMPDB content — its
+    # sourceId values are SMP00xxx. Our schema Literal is `smpdb`.
+    "hmdb": "smpdb",
     "smpdb": "smpdb",
-    "SMPDB": "smpdb",
     "wiki": "wikipathways",
-    "Wikipathways": "wikipathways",
     "wikipathways": "wikipathways",
-    "WIKIPATHWAYS": "wikipathways",
+    # Case-variant keys kept for robustness across RaMP releases.
+    "KEGG": "kegg",
+    "Reactome": "reactome",
+    "SMPDB": "smpdb",
+    "HMDB": "smpdb",
+    "Wiki": "wikipathways",
+    "Wikipathways": "wikipathways",
 }
 
 _PATHWAY_URL_TEMPLATES = {
@@ -131,18 +134,19 @@ def open_connection(path: str | os.PathLike) -> sqlite3.Connection:
 
 
 def resolve_analyte(conn: sqlite3.Connection, external_id: str) -> Analyte | None:
-    """Resolve an external ID (HMDB, KEGG, ChEBI) to RaMP's internal rampIds.
+    """Resolve an external ID (HMDB, KEGG, ChEBI, PubChem) to RaMP rampIds.
 
-    We do NOT strip prefixes — RaMP stores IDs verbatim (e.g. 'hmdb:HMDB0000122'
-    in older releases, 'HMDB0000122' in newer). We try both forms.
+    RaMP v3 stores source IDs with a lowercase prefix (`hmdb:HMDB0000122`,
+    `kegg:C00031`). We accept both prefixed and bare forms from the
+    caller and try a small set of candidates against the source table.
     """
     ident = external_id.strip()
-    # Try the bare id first.
+    # Try the bare id first — covers the rare case where RaMP has stored
+    # an ID without a prefix (older releases, or odd source rows).
     candidates = [ident]
-    # RaMP v2 sometimes stores KEGG / HMDB IDs with a `prefix:` scheme.
-    if not ident.startswith(("kegg:", "hmdb:", "chebi:", "chemspider:")):
+    if not ident.startswith(("kegg:", "hmdb:", "chebi:", "chemspider:", "pubchem:")):
         candidates.extend(
-            f"{prefix}:{ident}" for prefix in ("hmdb", "kegg", "chebi")
+            f"{prefix}:{ident}" for prefix in ("hmdb", "kegg", "chebi", "pubchem")
         )
 
     placeholders = ",".join("?" for _ in candidates)
@@ -222,10 +226,11 @@ def _neighbour_external_ids(
 ) -> list[str]:
     """Return external IDs one reaction hop away from the focal rampIds.
 
-    `direction='downstream'` returns products of reactions where focal is a
-    substrate; `direction='upstream'` is the reverse. IDs are de-duplicated
-    and we prefer HMDB > KEGG > anything else when one rampId has multiple
-    external identifiers.
+    `direction='downstream'` returns products of reactions where focal is
+    a substrate; `direction='upstream'` is the reverse. For each
+    neighbour rampId we pick the preferred external ID (HMDB > KEGG >
+    ChEBI > other), so the returned list reads the same as what the
+    orchestrator would pass to `fetch_metabolite_info`.
     """
     if not ramp_ids:
         return []
@@ -238,35 +243,77 @@ def _neighbour_external_ids(
     else:
         raise ValueError(f"unknown direction: {direction}")
 
+    # Step 1: find all reactions where focal plays the required role. SQLite
+    # hits rxn2met_met_ramp_id_idx cleanly for this.
     placeholders = ",".join("?" for _ in ramp_ids)
-    sql = (
-        "SELECT DISTINCT s.sourceId AS sid, s.dataSource AS ds "
-        "FROM reaction2met r1 "
-        "JOIN reaction2met r2 ON r1.rxnRampId = r2.rxnRampId "
-        "JOIN source s ON s.rampId = r2.rampId "
-        f"WHERE r1.rampId IN ({placeholders}) "
-        "  AND r1.isSubstrate = ? "
-        "  AND r2.isSubstrate = ? "
-        "  AND r2.rampId NOT IN ({ph})".format(ph=placeholders)
-    )
     cur = conn.execute(
-        sql,
-        (*ramp_ids, focal_is_substrate, neighbour_is_substrate, *ramp_ids),
+        f"SELECT DISTINCT ramp_rxn_id FROM reaction2met "
+        f"WHERE ramp_cmpd_id IN ({placeholders}) AND substrate_product = ?",
+        (*ramp_ids, focal_is_substrate),
     )
+    rxn_ids = [r["ramp_rxn_id"] for r in cur.fetchall() if r["ramp_rxn_id"]]
+    if not rxn_ids:
+        return []
 
-    # Group by rampId → pick preferred external ID.
-    best: dict[str, str] = {}
-    for row in cur.fetchall():
-        sid = (row["sid"] or "").strip()
-        ds = (row["ds"] or "").lower()
-        if not sid:
+    # Step 2: find every metabolite participating in those reactions with
+    # the neighbour role. Chunked so we never blow past SQLite's 999 bound
+    # variables — pyruvate routinely participates in >1000 reactions.
+    neighbour_ramps: set[str] = set()
+    focal_set = set(ramp_ids)
+    for chunk in _chunks(rxn_ids, 800):
+        qph = ",".join("?" for _ in chunk)
+        cur = conn.execute(
+            f"SELECT DISTINCT ramp_cmpd_id FROM reaction2met "
+            f"WHERE ramp_rxn_id IN ({qph}) AND substrate_product = ?",
+            (*chunk, neighbour_is_substrate),
+        )
+        for r in cur.fetchall():
+            rid = r["ramp_cmpd_id"]
+            if rid and rid not in focal_set:
+                neighbour_ramps.add(rid)
+
+    if not neighbour_ramps:
+        return []
+
+    mapping = _preferred_external_ids_batch(conn, neighbour_ramps)
+    return sorted(v for v in mapping.values() if v)
+
+
+def _chunks(seq: list, size: int):
+    for i in range(0, len(seq), size):
+        yield seq[i : i + size]
+
+
+def _preferred_external_ids_batch(
+    conn: sqlite3.Connection,
+    ramp_ids: set[str] | list[str],
+) -> dict[str, str | None]:
+    """Batch-resolve rampIds to their preferred external IDs.
+
+    One SQL per call instead of one per rampId — turns an O(N) round-trip
+    pattern into O(1). For a typical 200-neighbour query that is a ~200×
+    reduction in SQLite overhead.
+    """
+    ramp_ids = list({r for r in ramp_ids if r})
+    if not ramp_ids:
+        return {}
+    placeholders = ",".join("?" for _ in ramp_ids)
+    cur = conn.execute(
+        f"SELECT rampId, sourceId, IDtype, dataSource "
+        f"FROM source WHERE rampId IN ({placeholders})",
+        ramp_ids,
+    )
+    best: dict[str, tuple[int, str]] = {}
+    for r in cur.fetchall():
+        rid = r["rampId"]
+        sid = (r["sourceId"] or "").strip()
+        if not rid or not sid:
             continue
-        key = sid  # already dedup on sourceId
-        # Prefer HMDB > KEGG > anything else if we've seen this sid before.
-        incumbent = best.get(key)
-        if incumbent is None or _source_priority(ds) < _source_priority(incumbent):
-            best[sid] = ds
-    return sorted(best.keys())
+        rank = _source_priority(r["IDtype"] or r["dataSource"] or "")
+        incumbent = best.get(rid)
+        if incumbent is None or rank < incumbent[0]:
+            best[rid] = (rank, sid)
+    return {rid: val[1] for rid, val in best.items()}
 
 
 def _source_priority(datasource: str) -> int:
@@ -277,6 +324,8 @@ def _source_priority(datasource: str) -> int:
         return 1
     if "chebi" in ds:
         return 2
+    if "pubchem" in ds:
+        return 3
     return 99
 
 
@@ -336,26 +385,35 @@ def cooccurring_with_focal(
 ) -> set[str]:
     """Return the subset of `candidate_ids` that share ≥1 pathway with focal.
 
-    This supports the plausibility score: a co-observed metabolite that
-    sits in the same pathway as the focal is evidence that the focal ID is
-    biologically reasonable for this sample. We compute at pathway level
-    rather than reaction level because pathway co-membership is the
-    stronger and more interpretable signal.
+    ONLY pathways of schema-supported type are counted: `kegg`, `reactome`,
+    `hmdb` (surfaced as smpdb), and `wiki` (surfaced as wikipathways).
+    RaMP's `pfocr` content is an OCR-derived figure scrape that pairs
+    metabolites from unrelated papers — including it in co-occurrence
+    completely washes out the signal (glucose and caffeine share three
+    pfocr entries that are each about some tangential review). The
+    schema Literal already excludes pfocr for output rows; we apply the
+    same filter to the scoring numerator so output and score agree.
     """
     if not candidate_ids or not focal.ramp_ids:
         return set()
 
-    # Focal's pathway set.
+    supported_types = tuple(_TYPE_TO_SOURCE.keys())
+    type_placeholders = ",".join("?" for _ in supported_types)
+
+    # Focal's supported-type pathway set.
     focal_placeholders = ",".join("?" for _ in focal.ramp_ids)
     cur = conn.execute(
-        f"SELECT DISTINCT pathwayRampId FROM analytehaspathway WHERE rampId IN ({focal_placeholders})",
-        focal.ramp_ids,
+        f"SELECT DISTINCT ahp.pathwayRampId "
+        f"FROM analytehaspathway ahp "
+        f"JOIN pathway p ON p.pathwayRampId = ahp.pathwayRampId "
+        f"WHERE ahp.rampId IN ({focal_placeholders}) "
+        f"  AND p.type IN ({type_placeholders})",
+        (*focal.ramp_ids, *supported_types),
     )
     focal_pathways = {r["pathwayRampId"] for r in cur.fetchall()}
     if not focal_pathways:
         return set()
 
-    # For each candidate, resolve analyte → pathways and check overlap.
     matches: set[str] = set()
     for cid in candidate_ids:
         cand = resolve_analyte(conn, cid)
@@ -363,8 +421,12 @@ def cooccurring_with_focal(
             continue
         cand_placeholders = ",".join("?" for _ in cand.ramp_ids)
         cur = conn.execute(
-            f"SELECT DISTINCT pathwayRampId FROM analytehaspathway WHERE rampId IN ({cand_placeholders})",
-            cand.ramp_ids,
+            f"SELECT DISTINCT ahp.pathwayRampId "
+            f"FROM analytehaspathway ahp "
+            f"JOIN pathway p ON p.pathwayRampId = ahp.pathwayRampId "
+            f"WHERE ahp.rampId IN ({cand_placeholders}) "
+            f"  AND p.type IN ({type_placeholders})",
+            (*cand.ramp_ids, *supported_types),
         )
         cand_pathways = {r["pathwayRampId"] for r in cur.fetchall()}
         if cand_pathways & focal_pathways:
