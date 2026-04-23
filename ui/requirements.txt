@@ -1,0 +1,12 @@
+# Track UI1 dependencies, pinned to the versions verified against
+# metagent-llm on 2026-04-24. Install into the metagent-llm conda env:
+#
+#   conda run -n metagent-llm pip install -r ui/requirements.txt
+#
+# Do NOT pip install into the project's `diffms` env — those deps belong
+# to the pipeline, not the UI layer.
+
+gradio==5.50.0
+rdkit-pypi==2022.9.5
+matplotlib==3.10.8
+socksio==1.0.0         # required by httpx when a SOCKS proxy is in env
