@@ -25,7 +25,7 @@ This is the first session that composes **all five tracks** (A1, A2, B, C, D1, D
 
 **Composition-layer findings new this session.** Two. (1) `molecule_generate`'s default `SiriusFingerprinter` requires a `sirius` binary that is not installed on this box — pipeline now degrades C gracefully to an empty GenerateResponse and the warning surfaces in the report. (2) The `diffms` conda env does not have `requests_mock` installed, so `tests/integration/test_verifier_e.py` (Track E's mock-path tests) cannot run there; in the host env those tests are fine. Both findings are routed below.
 
-**Honesty about the unresolved.** Per-pathway `hit_count` (P-1) and `network_neighbours` self-echo (P-5) are both fixed by `7d8b097` and `c745894`; the pipeline still does not consume `hit_count` or neighbour fields for ranking, in keeping with the v0-conservative stance the brief asked for. D-1 (HMDB zwitterion mass offset) is honoured by computing `mass_match_indicator` from SMILES via RDKit `ExactMolWt`, never from `MetaboliteInfoResponse.exact_mass`.
+**Honesty about the unresolved.** P-1 (`hit_count`) and P-5 (neighbour self-echo) were fixed earlier by `7d8b097` / `c745894`. P-2, P-3, P-4 and P-6 landed code fixes today (5 commits `8432cbe`…`9d30aca`; see `reports/pathway_context_followups_resolved_2026-04-23.md`) *concurrent with this composition session*. The pipeline still does not consume `hit_count` or neighbour fields for ranking — the scoring formula was locked before those fixes landed — but every raw field is captured on `CandidateReport.pathway_context` for v1 uptake. D-1 (HMDB zwitterion mass offset) is a **data** quirk, not a code bug; it is honoured by computing `mass_match_indicator` from SMILES via RDKit `ExactMolWt`, never from `MetaboliteInfoResponse.exact_mass`.
 
 ---
 
@@ -178,17 +178,19 @@ Not a finding per se — it is the inherent cost of loading a 500k-record MGF. O
 
 Enumerated explicitly so a reader does not have to diff code to verify.
 
-| Constraint | Source | How honoured |
-|---|---|---|
-| `PathwayEntry.hit_count` was whole-response aggregate | P-1 (CRITICAL) | Fixed by `7d8b097`; `c745894` pinned semantics. My pipeline captures `hit_count` verbatim in `candidate_report.pathway_context.pathways[i].hit_count` but **never** uses it for ranking. Scoring uses `pathway_presence_indicator = 1.0 if len(pathways) > 0 else 0.0` only. |
-| `upstream_neighbours` / `downstream_neighbours` direction collapse | P-2 (MAJOR, documented-only) | Captured verbatim, never scored on, no downstream logic reads them. |
-| Neighbour IDs leak `chebi:` / `rhea-comp:` / `polymer:` prefixes | P-3 (MAJOR, documented-only) | Same: captured, never scored on. |
-| No cofactor filter; H₂O / ATP / NADH pollute neighbour lists | P-4 (MAJOR, documented-only) | Same: captured, never scored on. |
-| `network_neighbours` depth-2 self-echo | P-5 (MAJOR) | Fixed by `7d8b097`. Pipeline is neutral to this — we don't ask for depth > 1 by default. |
-| `cooccurrence_score` deflates on unresolvable co-obs | P-6 (MAJOR) | Fixed by `7d8b097`. Pipeline defaults to `co_observed_ids=[]` since single-spectrum identification has no natural co-observed set — removes the surface area entirely. |
-| HMDB stores zwitterions as protonated cations; `exact_mass` has +1 H offset | D-1 (MAJOR, data) | `mass_match_indicator` always uses `_exact_mass_from_smiles(candidate.smiles)` via RDKit `ExactMolWt`, **never** `metabolite_info.exact_mass`. A zwitterion-SMILES heuristic (RDKit formal-charge iteration) appends a `"zwitterion SMILES detected — HMDB may store the protonated cation form (D-1); mass_match_indicator uses the SMILES-derived neutral mass"` note to affected candidates. `TestLcarnitineZwitterionCaveat` pins this behaviour with a mocked HMDB cation response. |
-| HMDB glucose is stereo-specific (α-form, KEGG `C00221`) | D-2 (MAJOR, data) | Connectivity-only InChIKey matching (first 14 chars) throughout. No code path hardcodes `C00031` or `C00221`. |
-| Pre-existing A2 e2e failure on L-carnitine fixture | flagged by brief | xfailed with `strict=False` and a reason string that explains the root cause and points at the D-2 fixture-refresh follow-up. |
+**Status note on timing:** the brief was written assuming P-2 / P-3 / P-4 / P-6 were still documented-only. While this session was writing the composition layer, Track D landed five more commits (`8432cbe`, `90257f2`, `afd044f`, `4e968fa`, `9d30aca`; see `reports/pathway_context_followups_resolved_2026-04-23.md`) that **code-fixed** P-2, P-3, P-4 and pinned P-6 with a regression test. My composition layer still does not rank by those fields (v0 conservatism — the scoring formula is locked and the fields now carry *trustworthy* data but were not design inputs), but they are now safe for the v1 verifier to pick up.
+
+| Constraint | Source | Current state | How the composer honours it |
+|---|---|---|---|
+| `PathwayEntry.hit_count` was whole-response aggregate | P-1 (CRITICAL) | ✅ fixed `7d8b097`, pinned `c745894` | Captured verbatim in `candidate_report.pathway_context.pathways[i].hit_count`; NOT used for ranking. Scoring uses `pathway_presence_indicator = 1.0 if len(pathways) > 0 else 0.0` only. |
+| `upstream_neighbours` / `downstream_neighbours` direction collapse | P-2 (MAJOR) | ✅ fixed `afd044f` (non-empty symmetric diff on pyruvate / glucose / caffeine) | Captured verbatim, never scored on (v0). Safe for v1 extension. |
+| Neighbour IDs leak `chebi:` / `rhea-comp:` / `polymer:` prefixes | P-3 (MAJOR) | ✅ fixed `8432cbe` (100 % hmdb:/kegg: now) | Captured verbatim, never scored on (v0). |
+| No cofactor filter; H₂O / ATP / NADH pollute neighbour lists | P-4 (MAJOR) | ✅ fixed `4e968fa` (is_cofactor=0 default) | Captured verbatim, never scored on (v0). |
+| `network_neighbours` depth-2 self-echo | P-5 (MAJOR) | ✅ fixed `7d8b097` | Pipeline does not ask for depth > 1 by default. |
+| `cooccurrence_score` deflates on unresolvable co-obs | P-6 (MAJOR) | ✅ fixed `7d8b097`, pinned `90257f2` | Composer defaults to `co_observed_ids=[]` since single-spectrum identification has no natural co-observed set — removes surface area regardless. |
+| HMDB stores zwitterions as protonated cations; `exact_mass` has +1 H offset | D-1 (MAJOR, data) | documented + regression-pinned `9d30aca` | `mass_match_indicator` always uses `_exact_mass_from_smiles(candidate.smiles)` via RDKit `ExactMolWt`, **never** `metabolite_info.exact_mass`. Zwitterion-SMILES heuristic (RDKit formal-charge iteration) appends a `"zwitterion SMILES detected — HMDB may store the protonated cation form (D-1); mass_match_indicator uses the SMILES-derived neutral mass"` note to affected candidates. `TestLcarnitineZwitterionCaveat` pins this behaviour with a mocked HMDB cation response. |
+| HMDB glucose is stereo-specific (α-form, KEGG `C00221`) | D-2 (MAJOR, data) | still open — fixture refresh pending | Connectivity-only InChIKey matching (first 14 chars) throughout. No code path hardcodes `C00031` or `C00221`. |
+| Pre-existing A2 e2e failure on L-carnitine fixture | flagged by brief | still open — same D-2 root cause | xfailed with `strict=False` and a reason string that explains the root cause and points at the D-2 fixture-refresh follow-up. |
 
 **LLM tripwire.** The composer does not import from `common.llm_client` and makes no network call that could reach an LLM API. `identify()` is deterministic by construction.
 
@@ -203,7 +205,7 @@ Descending priority. None applied in this session.
 | 1 | maintainer | MAJOR (test data) | **D-2 fixture refresh for L-carnitine.** Regenerate `tests/fixtures/spectra/lcarnitine_pos.json` with precursor 163.120 (= `[M+H]+` of the HMDB cation C₇H₁₆NO₃ at 162.113 Da) OR teach A2 to index both the neutral and cation forms of known zwitterions. Resolves the existing pre-existing A2 failure AND flips the xfail on my `TestFullPipelineFindsTruthReal::test_truth_in_top5[lcarnitine_pos]` to PASS. |
 | 2 | Track C | MINOR (composition) | **FP-1: default fingerprinter requires SIRIUS.** Either ship a SIRIUS binary as part of `docker/molecule_gen.Dockerfile` + document the env setup, or switch the runtime default in `tools/molecule_gen/tool.py::generate` from `SiriusFingerprinter()` to `CandidateFusionFingerprinter(candidates=req.candidate_pool)` when a pool is present. My composer already degrades this gracefully, but it should not be the end state. |
 | 3 | env maintainer | MINOR (env) | **DEP-1: `requests_mock` missing from `diffms`.** Add `requests-mock==1.12.1` to `diffms` requirements. Currently the full integration sweep must be split across `diffms` (A/B/C + D + full) and host (E mock-path) envs. |
-| 4 | Track D | (already routed, still open) | P-2 / P-3 / P-4 neighbour-field fixes. Not a blocker for v0 (pipeline ignores these) but required for v1 if the verifier is to use reaction-adjacency. |
+| 4 | Track D | ✅ RESOLVED 2026-04-23 same day | P-2 / P-3 / P-4 / P-6 neighbour-field + score-honesty fixes landed in `8432cbe`…`9d30aca`. v1 can now pick these fields up in the scoring formula. |
 
 ---
 
@@ -218,7 +220,7 @@ Short answer: **yes, with two caveats.**
 2. The `warnings` list on `IdentificationReport` surfaces every degradation event — empty pool, fetch-missing, pathway-orphan, predict-timeout, fingerprinter-missing — in a form the orchestrator can parse. No degradation fails silently; no field is invented to hide a miss.
 
 **Caveats.**
-- The pipeline does **not** fold `PathwayContextResponse.upstream_neighbours` / `downstream_neighbours` / `hit_count` / `cooccurrence_score` into `evidence_score` in v0, pending P-2 / P-3 / P-4 fixes. The verifier should not either, yet. When those land, a v1 formula extension (e.g. adding a `+ 0.05 * cooccurrence_score` term) can be wired in with no schema change.
+- The pipeline does **not** fold `PathwayContextResponse.upstream_neighbours` / `downstream_neighbours` / `hit_count` / `cooccurrence_score` into `evidence_score` in v0. P-2 / P-3 / P-4 all landed code fixes in the same day as this session (see § 7 status column), so these fields are now trustworthy; they were kept out of scoring purely because the formula was locked before the fixes. A v1 formula extension — e.g. `+ 0.05 * cooccurrence_score` + `+ 0.05 * (len(filtered_neighbours) > 0)` — can safely be added with no schema change, since the raw responses are already captured in every `CandidateReport`.
 - `predicted_spectrum_cosine` is None for any candidate ranked beyond `predict_top_n` — the verifier should treat None as "not evaluated", not as "evaluated, no signal". This is already how `compute_evidence_score` handles it (None → 0.0 weight).
 
 **What needs to happen before the orchestrator is wired on top.** Routing priorities #1 and #2 from § 8 (fixture refresh + fingerprinter default) would take the pipeline from 2 / 3 fixtures passing to 3 / 3, and would remove the most prominent "yellow light" from the audit trail.
