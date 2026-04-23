@@ -418,6 +418,32 @@ def test_depth_2_does_not_echo_focal(ramp_db):
         )
 
 
+def test_p3_no_non_hmdb_kegg_prefixes_in_neighbours(ramp_db):
+    """Neighbour IDs must be resolvable by fetch_metabolite_info.
+
+    The tool now filters `_preferred_external_ids_batch` to
+    IDtype IN ('hmdb','kegg'); any rampId whose only source rows are
+    `chebi:`, `pubchem:`, `rhea-comp:`, `polymer:`, etc. is DROPPED —
+    not emitted with a dead-end prefix the verifier can't chain.
+
+    Before P-3: pyruvate emitted ~42% non-HMDB/KEGG neighbours on the
+    production dump (`chebi:131847` and friends). After P-3 every
+    neighbour is guaranteed HMDB or KEGG.
+    """
+    for focal in ("HMDB0000122", "HMDB0000243", "HMDB0001847"):
+        try:
+            resp = pathway_context(PathwayContextRequest(
+                metabolite_id=focal, neighbour_depth=1,
+            ))
+        except MetaboliteNotInNetworkError:
+            continue  # caffeine has no reaction edges in the mini DB — fine
+        all_neighbours = resp.upstream_neighbours + resp.downstream_neighbours
+        for n in all_neighbours:
+            assert (
+                n.startswith("hmdb:HMDB") or n.startswith("kegg:C")
+            ), f"{focal}: neighbour {n!r} is neither hmdb: nor kegg: prefixed"
+
+
 def test_p4_pyruvate_neighbours_exclude_water_atp(ramp_db):
     """Cofactors (H₂O, ATP, NADH, CO₂, H⁺, …) must not surface as
     network neighbours. RaMP's `reaction2met.is_cofactor` column is the

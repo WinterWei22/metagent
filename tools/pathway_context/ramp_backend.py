@@ -293,19 +293,32 @@ def _preferred_external_ids_batch(
     conn: sqlite3.Connection,
     ramp_ids: set[str] | list[str],
 ) -> dict[str, str | None]:
-    """Batch-resolve rampIds to their preferred external IDs.
+    """Batch-resolve rampIds to their preferred HMDB or KEGG external ID.
 
-    One SQL per call instead of one per rampId — turns an O(N) round-trip
-    pattern into O(1). For a typical 200-neighbour query that is a ~200×
-    reduction in SQLite overhead.
+    Returns `{rampId: sourceId}` for the rampIds that carry at least one
+    HMDB or KEGG mapping; rampIds whose only source rows are `chebi:`,
+    `rhea-comp:`, `polymer:`, `pubchem:`, etc. are OMITTED from the
+    mapping (so callers that resolve `set(mapping.values())` for
+    `fetch_metabolite_info` round-trips never see dead-end IDs —
+    finding P-3).
+
+    One SQL per call instead of one per rampId — turns an O(N)
+    round-trip pattern into O(1). For a typical 200-neighbour query
+    that is a ~200× reduction in SQLite overhead.
     """
     ramp_ids = list({r for r in ramp_ids if r})
     if not ramp_ids:
         return {}
     placeholders = ",".join("?" for _ in ramp_ids)
+    # We SELECT only HMDB / KEGG rows so a rampId with no such mapping
+    # simply has no row in the result — it is dropped from the
+    # neighbour list, which is what P-3 demands. `fetch_metabolite_info`
+    # accepts HMDB / KEGG / InChIKey / SMILES / name; ChEBI and the
+    # others are dead ends for the verifier chain.
     cur = conn.execute(
-        f"SELECT rampId, sourceId, IDtype, dataSource "
-        f"FROM source WHERE rampId IN ({placeholders})",
+        f"SELECT rampId, sourceId, IDtype "
+        f"FROM source WHERE rampId IN ({placeholders}) "
+        f"  AND IDtype IN ('hmdb', 'kegg')",
         ramp_ids,
     )
     best: dict[str, tuple[int, str]] = {}
@@ -314,7 +327,9 @@ def _preferred_external_ids_batch(
         sid = (r["sourceId"] or "").strip()
         if not rid or not sid:
             continue
-        rank = _source_priority(r["IDtype"] or r["dataSource"] or "")
+        # HMDB wins over KEGG when both exist — HMDB carries richer
+        # metadata and the tool-chain is denser there.
+        rank = 0 if (r["IDtype"] or "").lower() == "hmdb" else 1
         incumbent = best.get(rid)
         if incumbent is None or rank < incumbent[0]:
             best[rid] = (rank, sid)
@@ -322,6 +337,12 @@ def _preferred_external_ids_batch(
 
 
 def _source_priority(datasource: str) -> int:
+    """Legacy priority used by `_preferred_external_id` (single-id path).
+
+    Kept for any non-neighbour callers that still want a graceful
+    fallback; the neighbour path now uses the stricter HMDB/KEGG-only
+    filter above (see _preferred_external_ids_batch docstring).
+    """
     ds = (datasource or "").lower()
     if "hmdb" in ds:
         return 0
