@@ -1,19 +1,28 @@
 # Integration tests
 
 End-to-end tests that exercise the `A1 → A2 → (B, C)` pipeline on the
-three fixture spectra under `tests/fixtures/spectra/` plus a short
-negative-case suite. Owned by the integration session (not any single
-track), and layered ABOVE each track's own unit tests — a track's unit
-suite is where bugs in that track are caught; the integration suite is
-where **cross-tool contract drift** is caught.
+three fixture spectra under `tests/fixtures/spectra/`, plus the **Track D
+/ E verifier-readiness** suite added later by the D-E audit session (see
+`reports/integration_report_de_2026-04-23.md`). Owned by the integration
+session (not any single track), and layered ABOVE each track's own unit
+tests — a track's unit suite is where bugs in that track are caught; the
+integration suite is where **cross-tool contract drift** is caught.
 
 ## Files
 
 - `conftest.py` — loads the three JSON fixtures, registers the
-  `requires_*` markers, exposes `fixture_spectrum` (parametrised) and
-  `all_fixtures`, and provides env-presence fixtures.
-- `test_pipeline_e2e.py` — the test file. Two flavors of positive tests
-  (mocked / real-pool) plus four negative tests.
+  `requires_*` markers (A/B/C + D/E), exposes `fixture_spectrum`
+  (parametrised) and `all_fixtures`, env-presence fixtures, and the
+  mini-SQLite builders (`build_mini_hmdb_sqlite`,
+  `build_mini_ramp_sqlite`) + CFM mock stdout helper
+  (`cfm_mock_body`) consumed by the D / E tests.
+- `test_pipeline_e2e.py` — A / B / C pipeline tests.
+- `test_facts_d.py` — verifier-readiness tests for `fetch_metabolite_info`
+  and `pathway_context`. Seven tests, each in a mock class (default,
+  always runs) and a real class (gated on `requires_hmdb_db` /
+  `requires_ramp_db`).
+- `test_verifier_e.py` — verifier-readiness tests for `predict_spectrum`.
+  Seven tests with mock / real split on `requires_cfm_id`.
 - `__init__.py` — empty, makes the dir a Python package so intra-package
   imports work cleanly.
 
@@ -36,6 +45,13 @@ METAGENT_PUBCHEM_LITE_PATH=/path/to/pubchem_lite.sqlite \
 METAGENT_GNPS_PATH=/path/to/ALL_GNPS_NO_PROPOGATED.json \
 METAGENT_MSCLIP_CKPT=/path/to/best.ckpt \
     pytest tests/integration/test_pipeline_e2e.py -v --integration
+
+# Track D / E — verifier-readiness suites. Mock flavour always runs.
+# Wire the three env vars to unlock the real-backend tests.
+METAGENT_HMDB_PATH=/data/…/hmdb.sqlite \
+METAGENT_RAMP_PATH=/data/…/ramp.sqlite \
+METAGENT_CFM_URL=http://127.0.0.1:8088 \
+    pytest tests/integration/test_facts_d.py tests/integration/test_verifier_e.py -v
 ```
 
 The `--integration` flag flips env-gated tests from "skip when absent"
@@ -85,6 +101,71 @@ Marked `requires_pubchem_lite`.
 - `test_pipeline_empty_prefilter_cascades_cleanly` — empty pool → empty library_search, molecule_generate without bonus.
 - `test_pipeline_nonsense_spectrum_returns_empty_from_library_search` — unrelated spectrum → no candidate clears `min_score=0.3`.
 - `test_prefilter_rejects_unknown_adduct` — unknown adduct → `InvalidAdductError`.
+
+### Track D (`test_facts_d.py`) — verifier-readiness
+
+Seven assertions, each split into a `*Mock` and `*Real` class. Mock
+always runs; real skips when `METAGENT_HMDB_PATH` or
+`METAGENT_RAMP_PATH` is unset.
+
+- `TestMetaboliteRoundtrip{Mock,Real}` — every fixture entry round-trips.
+  Strict comparison in mock, flexible in real (InChIKey connectivity
+  block, tolerant formula match for zwitterions; see audit report § D-1).
+- `TestNonexistentId{Mock,Real}` — fake HMDB ID / fake InChIKey / empty
+  identifier: no invention, either `found=False` or `IdentifierFormatError`.
+- `TestCooccurrence{Mock,Real}` — `pathway_context` score with a real
+  pathway co-member > score with a random / unresolvable ID.
+- `TestOrphanMetabolite{Mock,Real}` — orphan / fake ID raises
+  `MetaboliteNotInNetworkError` cleanly.
+- `TestTemplatedSummary{Mock,Real}` — `common.llm_client.chat` tripwire
+  is installed; five real queries produce plausibility_summary under
+  120 words with no LLM-smell tokens.
+- `TestKeggHmdbRoundtrip{Mock,Real}` — fetch by KEGG ID, follow the
+  `hmdb` cross-ref back, same compound.
+- `TestCrossToolInchikeyConsistency{Mock,Real}` — `inchikey(stored_smiles)`
+  computed via `common.rdkit_utils` matches the stored InChIKey (connectivity
+  block). The invariant under test is self-consistency within a single
+  row — not whether stereochemistry is correct.
+
+### Track E (`test_verifier_e.py`) — verifier-readiness
+
+Seven assertions, mock (requests_mock + canned CFM stdout) and real
+(gated on `requires_cfm_id`) paths. A third, marker-less
+`TestPredictRejectsInvalidSmilesBeforeNetwork` runs regardless of the
+shim — the whole point is that no HTTP call happens.
+
+- `TestPredictRoundtrip{Mock,Real}::test_glucose` / `::test_caffeine` —
+  canonical fragments present (glucose 163.06, caffeine 138.07).
+- `TestPredictDeterminism{Mock,Real}` — two identical requests return
+  byte-identical `predicted.mz`, `predicted.intensity`, and `per_energy`.
+- `TestPredictRejectsInvalidSmilesBeforeNetwork` — parametrised over
+  `banana`, `C1CC`, `[X]`, `SELECT * FROM t`; tripwire on
+  `cfm_client.predict`; all raise `InvalidSmilesError` with `calls=[]`.
+- `TestModelVersionPresent{Mock,Real}` — `model_version` non-empty on
+  success; missing `model_version` maps to `CfmUnavailableError`.
+- `TestTimeoutBounded` — `requests.exceptions.Timeout` from a mock
+  adapter maps synchronously to `PredictionTimeoutError` under 2 s
+  wall time.
+- `TestSmilesFromFetch{Mock,Real}` — `fetch_metabolite_info(HMDB0000122).smiles`
+  goes into `predict_spectrum` unmodified and produces a usable spectrum.
+
+## Skip markers for Tracks D / E
+
+| Marker | Required resource | Skip reason when absent |
+|---|---|---|
+| `requires_hmdb_db` | `METAGENT_HMDB_PATH` → existing SQLite file | `HMDB SQLite not found at METAGENT_HMDB_PATH; run tools/metabolite_info/build_hmdb_db.py first.` |
+| `requires_ramp_db` | `METAGENT_RAMP_PATH` → existing SQLite file | `RaMP SQLite not found at METAGENT_RAMP_PATH` |
+| `requires_cfm_id` | `METAGENT_CFM_URL` → running shim with `/healthz` = 200 | `CFM-ID shim unreachable at METAGENT_CFM_URL` |
+| `requires_pubchem_online` | `METAGENT_ALLOW_PUBCHEM=1` | not currently used by any test (reserved for future PubChem-round-trip cases) |
+
+Backend smoke diagnostic:
+
+```bash
+python scripts/audit_de.py
+```
+
+Exits 0 when all three real backends are green, 1 when any tool ran in
+mock-only mode (with a per-tool reason), 2 on an unexpected crash.
 
 ## Scope boundaries
 
