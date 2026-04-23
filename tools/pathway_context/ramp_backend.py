@@ -218,6 +218,64 @@ def pathways_for_analyte(
 # ---------------------------------------------------------------------------
 
 
+def _reaction_contributes(
+    focal_sp: int,
+    rxn_direction: str,
+    requested: str,
+) -> bool:
+    """Does this (focal_sp, reaction_direction) pair contribute partners
+    toward the requested side of the graph?
+
+    RaMP v3 substrate_product semantics (verified against rhea:10269
+    equation `A => B + C` where A carries s_p=0 and B/C carry s_p=1):
+
+        s_p = 0 → equation LEFT  (substrate of the forward-written equation)
+        s_p = 1 → equation RIGHT (product  of the forward-written equation)
+
+    Rhea quartets and why we only trust LR:
+
+    Rhea assigns four consecutive IDs to every chemical reaction, one
+    per `direction` label (`UN` / `LR` / `RL` / `BD`). RaMP stores each
+    of those as a distinct `ramp_rxn_id` with an independent set of
+    `reaction2met` rows. Critically, the LR and RL variants SWAP
+    equation orientation:
+
+        rhea:10269 LR : "A => B + pyruvate"        (pyruvate s_p=1)
+        rhea:10270 RL : "B + pyruvate => A"        (pyruvate s_p=0)
+
+    Counting partners from more than one variant per chemical reaction
+    therefore double-counts the same edge and collapses
+    upstream == downstream for every central metabolite (finding P-2).
+
+    Policy: **only LR variants contribute.** The LR variant is Rhea's
+    canonical left-to-right writing of the reaction, with
+    `substrate_product` aligned to biology. By keying entirely off LR
+    we get one edge per chemical reaction, and upstream / downstream
+    become legitimately asymmetric whenever the focal participates in
+    reactions where it sits on the substrate side in some and the
+    product side in others.
+
+    Trade-off: reactions that are truly bidirectional (BD) lose their
+    "both sides" signal — we model them as forward-only via their LR
+    sibling. This is the honest answer given RaMP's data model: it does
+    not mark *which* LR reactions are biologically reversible, only
+    which Rhea IDs carry the BD label (and those BD ramp_rxn_ids share
+    participants with a sibling LR ramp_rxn_id that's already counted).
+    A v1 could consult the BD sibling's existence as a signal to
+    duplicate the LR partners into both up and down, but that is an
+    additive refinement, not a correctness fix.
+
+    Returns True iff partners of this reaction (non-cofactor,
+    non-focal) should be added to the requested neighbour list.
+    """
+    d = (rxn_direction or "UN").upper()
+    if d != "LR":
+        return False
+    return (requested == "downstream" and focal_sp == 0) or (
+        requested == "upstream" and focal_sp == 1
+    )
+
+
 def _neighbour_external_ids(
     conn: sqlite3.Connection,
     ramp_ids: tuple[str, ...],
@@ -226,51 +284,64 @@ def _neighbour_external_ids(
 ) -> list[str]:
     """Return external IDs one reaction hop away from the focal rampIds.
 
-    `direction='downstream'` returns products of reactions where focal is
-    a substrate; `direction='upstream'` is the reverse. For each
-    neighbour rampId we pick the preferred external ID (HMDB > KEGG >
-    ChEBI > other), so the returned list reads the same as what the
-    orchestrator would pass to `fetch_metabolite_info`.
+    Direction-aware (finding P-2): the reaction graph is interrogated with
+    `reaction.direction` (LR / RL / BD / UN) in the loop, not just
+    `substrate_product`. For central metabolites this means upstream and
+    downstream sets now diverge wherever the focal participates in
+    direction-annotated LR or RL reactions; BD and UN reactions still
+    contribute to both sides (which is the correct answer for
+    bidirectional / unknown-direction reactions).
+
+    Cofactor rows are excluded (P-4) and neighbour sourceIds are
+    restricted to `hmdb:` / `kegg:` prefixes (P-3) via
+    `_preferred_external_ids_batch`.
     """
     if not ramp_ids:
         return []
-    if direction == "downstream":
-        focal_is_substrate = 1
-        neighbour_is_substrate = 0
-    elif direction == "upstream":
-        focal_is_substrate = 0
-        neighbour_is_substrate = 1
-    else:
+    if direction not in ("downstream", "upstream"):
         raise ValueError(f"unknown direction: {direction}")
 
-    # Step 1: find all reactions where focal plays the required role. SQLite
-    # hits rxn2met_met_ramp_id_idx cleanly for this.
+    # Step 1: find every (reaction, focal-role, direction) tuple focal
+    # participates in and decide, per (direction, focal_sp, requested),
+    # whether this reaction contributes partners to the requested side.
+    # One SQL covers both upstream and downstream; the direction logic
+    # lives in Python so the index on ramp_cmpd_id is preserved.
     placeholders = ",".join("?" for _ in ramp_ids)
     cur = conn.execute(
-        f"SELECT DISTINCT ramp_rxn_id FROM reaction2met "
-        f"WHERE ramp_cmpd_id IN ({placeholders}) AND substrate_product = ?",
-        (*ramp_ids, focal_is_substrate),
+        f"SELECT DISTINCT r.ramp_rxn_id, r.substrate_product AS focal_sp, "
+        f"       COALESCE(rxn.direction, 'UN') AS rxn_dir "
+        f"FROM reaction2met r "
+        f"LEFT JOIN reaction rxn ON rxn.ramp_rxn_id = r.ramp_rxn_id "
+        f"WHERE r.ramp_cmpd_id IN ({placeholders})",
+        ramp_ids,
     )
-    rxn_ids = [r["ramp_rxn_id"] for r in cur.fetchall() if r["ramp_rxn_id"]]
-    if not rxn_ids:
+    contributing_rxns: set[str] = set()
+    for row in cur.fetchall():
+        rid = row["ramp_rxn_id"]
+        focal_sp = row["focal_sp"]
+        d = row["rxn_dir"]
+        if rid is None or focal_sp is None:
+            continue
+        if _reaction_contributes(focal_sp, d, direction):
+            contributing_rxns.add(rid)
+
+    if not contributing_rxns:
         return []
 
-    # Step 2: find every metabolite participating in those reactions with
-    # the neighbour role. Chunked so we never blow past SQLite's 999 bound
-    # variables — pyruvate routinely participates in >1000 reactions.
-    # Cofactors (H₂O, ATP, NADH, CO₂, H⁺, …) are filtered via
-    # `is_cofactor = 0` so the biologically-specific partners aren't
-    # drowned out (finding P-4). RaMP populates `is_cofactor` on
-    # reaction2met for ~14% of rows.
+    # Step 2: gather every non-cofactor, non-focal participant of those
+    # reactions as the neighbour pool. Cofactors (P-4) and non-HMDB/KEGG
+    # prefixes (P-3, enforced in _preferred_external_ids_batch below)
+    # are excluded. Chunked so we never blow past SQLite's 999-bound
+    # variable cap — pyruvate routinely participates in >1000 reactions.
     neighbour_ramps: set[str] = set()
     focal_set = set(ramp_ids)
-    for chunk in _chunks(rxn_ids, 800):
+    rxn_list = list(contributing_rxns)
+    for chunk in _chunks(rxn_list, 800):
         qph = ",".join("?" for _ in chunk)
         cur = conn.execute(
             f"SELECT DISTINCT ramp_cmpd_id FROM reaction2met "
-            f"WHERE ramp_rxn_id IN ({qph}) AND substrate_product = ? "
-            f"  AND is_cofactor = 0",
-            (*chunk, neighbour_is_substrate),
+            f"WHERE ramp_rxn_id IN ({qph}) AND is_cofactor = 0",
+            chunk,
         )
         for r in cur.fetchall():
             rid = r["ramp_cmpd_id"]

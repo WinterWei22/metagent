@@ -83,6 +83,10 @@ def _build_mini_ramp_db(db_path: Path) -> None:
                 met_name          TEXT,
                 is_cofactor       INTEGER NOT NULL DEFAULT 0
             );
+            CREATE TABLE reaction (
+                ramp_rxn_id TEXT PRIMARY KEY,
+                direction   TEXT NOT NULL
+            );
             """
         )
 
@@ -105,6 +109,10 @@ def _build_mini_ramp_db(db_path: Path) -> None:
             ("hmdb:HMDB0002111", "RAMP_C_H2O",         "hmdb",  "Water",        "hmdb"),
             ("hmdb:HMDB0000538", "RAMP_C_ATP",         "hmdb",  "ATP",          "hmdb"),
             ("hmdb:HMDB0001487", "RAMP_C_NADH",        "hmdb",  "NADH",         "hmdb"),
+            # Glucose-6-phosphate — non-cofactor downstream of glucose, used
+            # by P-2 to produce an up != down neighbour set under LR/RL
+            # direction semantics.
+            ("hmdb:HMDB0001401", "RAMP_C_G6P",         "hmdb",  "D-Glucose 6-phosphate", "hmdb"),
         ]
         conn.executemany(
             "INSERT INTO source (sourceId, rampId, IDtype, commonName, dataSource) VALUES (?, ?, ?, ?, ?)",
@@ -157,26 +165,55 @@ def _build_mini_ramp_db(db_path: Path) -> None:
         # product) is what makes depth≥2 BFS try to echo glucose back
         # into the focal's own neighbour list — see P-5 test below.
         # substrate_product = 1 means substrate, 0 means product (RaMP v3 convention).
-        # Real RaMP's reaction2met carries an is_cofactor flag; we model it
-        # as a 6th column so P-4 filtering has data to bite on.
+        # Real RaMP v3 substrate_product semantics (verified empirically):
+        #   s_p = 0 → equation LEFT (substrate of the forward equation)
+        #   s_p = 1 → equation RIGHT (product)
+        # The mini DB mirrors those semantics so backend code that keys off
+        # s_p exercises the same logic in-test as against the production
+        # dump. All four reactions are direction='LR' (see `reaction`
+        # inserts below) — combined with an asymmetric participant layout,
+        # this produces glucose/pyruvate sets where upstream != downstream
+        # under the P-2 direction-aware SQL.
+        #
+        # Participant layout (LR = forward-only; s_p=0 on left, 1 on right):
+        #   RXN_GLYCO      : glucose(s=0) → pyruvate(s=1) + cofactors
+        #   RXN_G6P        : glucose(s=0) → G6P(s=1)      (glucose-only downstream)
+        #   RXN_GLUC_SYNTH : pyruvate(s=0) → glucose(s=1) (glucose's only upstream source)
+        #   RXN_ALA_TRANS  : pyruvate(s=0) → alanine(s=1)
         reaction_rows = [
             # (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name, is_cofactor)
-            ("RXN_GLYCO",       "RAMP_C_GLUC", 1, "chebi:4167",   "D-glucose", 0),
-            ("RXN_GLYCO",       "RAMP_C_PYR",  0, "chebi:15361",  "pyruvate",  0),
+            ("RXN_GLYCO",       "RAMP_C_GLUC", 0, "chebi:4167",   "D-glucose", 0),
+            ("RXN_GLYCO",       "RAMP_C_PYR",  1, "chebi:15361",  "pyruvate",  0),
             # Cofactors of the glycolysis reaction — under the P-4 default
             # filter these must NOT surface as downstream neighbours of
             # glucose or upstream neighbours of pyruvate.
-            ("RXN_GLYCO",       "RAMP_C_H2O",  0, "chebi:15377",  "H2O",       1),
-            ("RXN_GLYCO",       "RAMP_C_ATP",  1, "chebi:15422",  "ATP",       1),
-            ("RXN_GLYCO",       "RAMP_C_NADH", 0, "chebi:16908",  "NADH",      1),
-            ("RXN_GLUC_SYNTH",  "RAMP_C_PYR",  1, "chebi:15361",  "pyruvate",  0),
-            ("RXN_GLUC_SYNTH",  "RAMP_C_GLUC", 0, "chebi:4167",   "D-glucose", 0),
-            ("RXN_ALA_TRANS",   "RAMP_C_PYR",  1, "chebi:15361",  "pyruvate",  0),
-            ("RXN_ALA_TRANS",   "RAMP_C_ALA",  0, "chebi:16977",  "L-alanine", 0),
+            ("RXN_GLYCO",       "RAMP_C_H2O",  1, "chebi:15377",  "H2O",       1),
+            ("RXN_GLYCO",       "RAMP_C_ATP",  0, "chebi:15422",  "ATP",       1),
+            ("RXN_GLYCO",       "RAMP_C_NADH", 1, "chebi:16908",  "NADH",      1),
+            ("RXN_G6P",         "RAMP_C_GLUC", 0, "chebi:4167",   "D-glucose", 0),
+            ("RXN_G6P",         "RAMP_C_G6P",  1, "chebi:4170",   "G6P",       0),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_PYR",  0, "chebi:15361",  "pyruvate",  0),
+            ("RXN_GLUC_SYNTH",  "RAMP_C_GLUC", 1, "chebi:4167",   "D-glucose", 0),
+            ("RXN_ALA_TRANS",   "RAMP_C_PYR",  0, "chebi:15361",  "pyruvate",  0),
+            ("RXN_ALA_TRANS",   "RAMP_C_ALA",  1, "chebi:16977",  "L-alanine", 0),
         ]
         conn.executemany(
             "INSERT INTO reaction2met (ramp_rxn_id, ramp_cmpd_id, substrate_product, met_source_id, met_name, is_cofactor) VALUES (?, ?, ?, ?, ?, ?)",
             reaction_rows,
+        )
+        # Reaction directions. All four are LR for this mini DB — that's
+        # enough to produce asymmetric up/down sets for glucose and
+        # pyruvate. The production RaMP v3 dump has a roughly 1:1:1:1
+        # split across LR/RL/BD/UN.
+        reaction_dirs = [
+            ("RXN_GLYCO",      "LR"),
+            ("RXN_G6P",        "LR"),
+            ("RXN_GLUC_SYNTH", "LR"),
+            ("RXN_ALA_TRANS",  "LR"),
+        ]
+        conn.executemany(
+            "INSERT INTO reaction (ramp_rxn_id, direction) VALUES (?, ?)",
+            reaction_dirs,
         )
         conn.commit()
     finally:
@@ -416,6 +453,61 @@ def test_depth_2_does_not_echo_focal(ramp_db):
         assert form not in resp.downstream_neighbours, (
             f"depth-2 downstream echoed focal as {form!r}: {resp.downstream_neighbours}"
         )
+
+
+def test_p2_glucose_upstream_different_from_downstream(ramp_db):
+    """With direction-aware SQL (LR/RL/BD/UN), a focal that participates
+    in LR reactions on both sides — with asymmetric partners — MUST
+    produce upstream and downstream sets that differ.
+
+    In the mini DB:
+        RXN_GLYCO      LR: glucose(s=1)  → pyruvate(s=0) ← focal downstream
+        RXN_G6P        LR: glucose(s=1)  → G6P(s=0)      ← glucose-only downstream
+        RXN_GLUC_SYNTH LR: pyruvate(s=1) → glucose(s=0)  ← focal upstream
+
+    Expected:
+        glucose.downstream = {pyruvate, G6P}
+        glucose.upstream   = {pyruvate}
+        sym_diff           = {G6P}  (non-empty)
+
+    Pre-fix (no direction awareness): upstream == downstream == {pyruvate}
+    because the SQL treated every partner as both up and down.
+    """
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000122",   # glucose
+        neighbour_depth=1,
+    ))
+    up = set(resp.upstream_neighbours)
+    down = set(resp.downstream_neighbours)
+    assert up != down, f"up == down = {up}; direction SQL failed to split"
+    sym_diff = up.symmetric_difference(down)
+    assert sym_diff, f"symmetric difference is empty: up={up} down={down}"
+    # Concrete: G6P is glucose-only downstream, so must be in down and not up.
+    assert "hmdb:HMDB0001401" in down, f"G6P missing from downstream: {down}"
+    assert "hmdb:HMDB0001401" not in up, f"G6P leaked into upstream: {up}"
+
+
+def test_p2_pyruvate_upstream_different_from_downstream(ramp_db):
+    """Pyruvate's LR reaction participation is asymmetric:
+      - RXN_GLYCO     LR: pyruvate(s=0)  → upstream partner = glucose
+      - RXN_GLUC_SYN  LR: pyruvate(s=1)  → downstream partner = glucose (filtered focal echo, but still contributes)
+      - RXN_ALA_TRANS LR: pyruvate(s=1)  → downstream partner = alanine
+
+    Expected:
+        pyruvate.upstream   = {glucose}
+        pyruvate.downstream = {glucose, alanine}
+        sym_diff            = {alanine}  (non-empty)
+    """
+    resp = pathway_context(PathwayContextRequest(
+        metabolite_id="HMDB0000243",   # pyruvate
+        neighbour_depth=1,
+    ))
+    up = set(resp.upstream_neighbours)
+    down = set(resp.downstream_neighbours)
+    assert up != down, f"up == down = {up}"
+    # Alanine is a pyruvate-only downstream (via RXN_ALA_TRANS LR).
+    assert "hmdb:HMDB0000161" in down, f"alanine missing from downstream: {down}"
+    assert "hmdb:HMDB0000161" not in up, f"alanine leaked into upstream: {up}"
 
 
 def test_p3_no_non_hmdb_kegg_prefixes_in_neighbours(ramp_db):
