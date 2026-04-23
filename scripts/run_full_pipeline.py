@@ -345,14 +345,25 @@ def _safe_predict_spectrum(
         )
         return None, None, f"predict_spectrum: unexpected {type(exc).__name__}: {exc}"
 
-    cosine = modified_cosine_score(
-        query_mz=experimental_spectrum.mz,
-        query_intensity=experimental_spectrum.intensity,
-        query_precursor_mz=experimental_spectrum.precursor_mz,
-        ref_mz=resp.predicted.mz,
-        ref_intensity=resp.predicted.intensity,
-        ref_precursor_mz=resp.predicted.precursor_mz,
-    )
+    # Compute modified cosine defensively — a matchms version skew or an
+    # unexpected matchms internal error must not invalidate the entire
+    # candidate's enrichment. We still recorded the predicted spectrum above;
+    # only the similarity metric is degraded.
+    try:
+        cosine = modified_cosine_score(
+            query_mz=experimental_spectrum.mz,
+            query_intensity=experimental_spectrum.intensity,
+            query_precursor_mz=experimental_spectrum.precursor_mz,
+            ref_mz=resp.predicted.mz,
+            ref_intensity=resp.predicted.intensity,
+            ref_precursor_mz=resp.predicted.precursor_mz,
+        )
+    except Exception as exc:
+        logger.error(
+            "predict_spectrum cosine computation failed for %s: %s",
+            candidate.source_id, exc,
+        )
+        return resp, None, f"predict_spectrum: cosine unavailable ({type(exc).__name__})"
     return resp, cosine, None
 
 
@@ -380,12 +391,19 @@ def _pathway_presence_indicator(pw: PathwayContextResponse | None) -> float:
 
 
 def _smiles_zwitterion_hint(smiles: str) -> bool:
-    """Crude: SMILES carries both [+] and [-] inside brackets → flag D-1 caveat.
+    """Return True iff the molecule has BOTH a positive and a negative
+    formal-charge atom (i.e. it is a zwitterion).
 
     Used only to add a display-only note to the CandidateReport when an HMDB
     stored cation mass might be in play. The score logic never depends on this.
     """
-    return "[+" in smiles and "[-" in smiles and "+]" in smiles and "-]" in smiles
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return False
+    charges = [a.GetFormalCharge() for a in mol.GetAtoms()]
+    return any(c > 0 for c in charges) and any(c < 0 for c in charges)
 
 
 # ---------------------------------------------------------------------------
