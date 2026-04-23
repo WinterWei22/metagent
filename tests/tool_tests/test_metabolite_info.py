@@ -420,3 +420,114 @@ def test_missing_db_returns_not_found(monkeypatch):
     )
     assert resp.found is False
     assert resp.source is None
+
+
+# ---------------------------------------------------------------------------
+# D-1 regression: zwitterion / protonated-cation HMDB entries
+# ---------------------------------------------------------------------------
+
+
+def _build_cation_hmdb_db(db_path: Path) -> None:
+    """Build a 1-row HMDB SQLite carrying L-carnitine's HMDB 5.0 cation form.
+
+    Values come directly from the audit's R-4 reproduction against the
+    production dump at /data/weiwentao/llm_agent_metabolomics/hmdb.sqlite:
+      molecular_formula = C7H16NO3
+      exact_mass        = 162.113  (cation, +1 H compared to neutral 161.105)
+      inchikey          = PHIQHXFUZVPYII-ZCFIWIBFSA-O  (terminal -O = proton layer)
+
+    The mini DB is deliberately a separate fixture from _build_mini_hmdb_db
+    so it does not contaminate the other 14 tests that predate the D-1
+    fixture-vs-real divergence.
+    """
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE metabolites (
+                hmdb_id TEXT PRIMARY KEY,
+                primary_name TEXT,
+                molecular_formula TEXT,
+                exact_mass REAL,
+                smiles TEXT,
+                inchikey TEXT,
+                chemical_class TEXT,
+                kegg_id TEXT,
+                chebi_id TEXT,
+                pubchem_cid TEXT,
+                chembl_id TEXT,
+                synonyms_json TEXT,
+                tissue_locations_json TEXT,
+                disease_associations_json TEXT
+            )
+            """
+        )
+        conn.execute(
+            """
+            INSERT INTO metabolites VALUES (
+                'HMDB0000062', 'L-Carnitine', 'C7H16NO3', 162.113018383,
+                'C[N+](C)(C)C[C@H](O)CC(=O)[O-]', 'PHIQHXFUZVPYII-ZCFIWIBFSA-O',
+                'Quaternary ammonium', 'C00318', 'CHEBI:16347', '10917',
+                NULL, '[]', '[]', '[]'
+            )
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_d1_lcarnitine_returns_hmdb_cation_form(tmp_path, monkeypatch):
+    """HMDB 5.0's curated L-carnitine entry is the protonated cation, NOT
+    the neutral zwitterion. The tool must propagate HMDB verbatim — no
+    silent renormalisation to the neutral form — so downstream consumers
+    can detect the built-in +1 H mass offset when matching experimental
+    [M+H]⁺ precursors.
+
+    This is the D-1 data-characteristic the audit (R-4) flagged and the
+    tool description's 'Zwitterion / protonation hazard' section documents.
+    Propagating HMDB verbatim is the correct behaviour; the verifier /
+    orchestrator are the ones that must back-compute the neutral mass
+    from `smiles` via RDKit when precursor matching is load-bearing.
+
+    Reference values from /data/weiwentao/llm_agent_metabolomics/hmdb.sqlite
+    (HMDB 5.0, 217,920 rows) and reproduced here in a 1-row mini DB:
+
+        molecular_formula = C7H16NO3    (cation, not neutral C7H15NO3)
+        exact_mass        = 162.113     (cation, not neutral 161.105)
+        inchikey          = PHIQHXFUZVPYII-ZCFIWIBFSA-O   (trailing -O = proton layer)
+    """
+    db_path = tmp_path / "hmdb_carnitine_cation.sqlite"
+    _build_cation_hmdb_db(db_path)
+    monkeypatch.setattr(
+        hmdb_backend, "resolve_db_path", lambda explicit=None: db_path
+    )
+    monkeypatch.setattr(mona_supplement, "get_index", lambda path=None: None)
+    monkeypatch.delenv(pubchem_backend.PUBCHEM_ALLOW_ENV_VAR, raising=False)
+    monkeypatch.setattr(
+        pubchem_backend, "_get_json",
+        lambda url: pytest.fail(f"PubChem call during D-1 test: {url}"),
+    )
+
+    resp = fetch_metabolite_info(
+        MetaboliteInfoRequest(identifier="HMDB0000062", id_type="hmdb")
+    )
+    assert resp.found is True
+    assert resp.primary_name == "L-Carnitine"
+    # Formula carries the extra H — this is the cation, NOT the neutral zwitterion.
+    assert resp.molecular_formula == "C7H16NO3", (
+        "L-carnitine must be propagated as HMDB's cation C7H16NO3; "
+        "any neutral C7H15NO3 means the tool silently renormalised and "
+        "broke the trust-anchor contract."
+    )
+    # Mass carries the extra proton (~+1.008 Da vs neutral 161.105).
+    assert resp.exact_mass is not None
+    assert abs(resp.exact_mass - 162.113) < 0.01, (
+        f"expected cation mass ≈ 162.113, got {resp.exact_mass}; "
+        "the tool must NOT convert cation mass to neutral."
+    )
+    # InChIKey's terminal -O is the protonation layer; silently flipping
+    # it to -N would be a structural lie.
+    assert resp.inchikey == "PHIQHXFUZVPYII-ZCFIWIBFSA-O", (
+        f"InChIKey protonation layer must be preserved verbatim; got {resp.inchikey!r}"
+    )
