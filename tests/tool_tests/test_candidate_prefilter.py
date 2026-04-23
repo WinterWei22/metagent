@@ -39,7 +39,11 @@ from tools.candidate_prefilter.errors import (
     InvalidAdductError,
     PubChemLiteNotBuiltError,
 )
-from tools.candidate_prefilter.gnps_index import GnpsIndex, GnpsIndexRecord
+from tools.candidate_prefilter.gnps_index import (
+    GnpsIndex,
+    GnpsIndexRecord,
+    inchikey_first_block,
+)
 from tools.candidate_prefilter.pubchem_index import PubChemLiteIndex
 
 
@@ -478,6 +482,181 @@ class TestPrefilter:
             assert c.mass_error_ppm >= 0
             assert c.exact_mass > 0
             assert c.smiles  # non-empty
+
+
+# ---------------------------------------------------------------------------
+# GNPS CSV loader (alternative to the JSON path via common.gnps_loader)
+# ---------------------------------------------------------------------------
+
+
+class TestGnpsCsvLoader:
+    """gnps_index.py also reads the GNPS2 ALL_GNPS_cleaned_enriched CSV dump.
+
+    The autouse fixture in this module installs a hand-built GnpsIndex as the
+    default, so this class explicitly goes through build_index_from_path() to
+    exercise the CSV code path rather than the injected default.
+    """
+
+    def _write_mini_gnps_csv(self, path, rows):
+        """Write a minimal CSV matching the GNPS2 enriched schema."""
+        import csv
+        header = [
+            "scan", "spectrum_id", "collision_energy", "Adduct",
+            "Compound_Source", "Compound_Name", "Precursor_MZ", "ExactMass",
+            "Charge", "Ion_Mode", "Smiles", "INCHI", "InChIKey_smiles",
+            "msManufacturer", "msMassAnalyzer", "msIonisation",
+        ]
+        with open(path, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(header)
+            for i, r in enumerate(rows, 1):
+                w.writerow([
+                    i, r["spectrum_id"], "", "[M+H]1+", "isolated",
+                    r["compound_name"], "100.0", "100.0", "1",
+                    r["ion_mode"], r["smiles"], "", "", "", "",
+                    r["ms_ionisation"],
+                ])
+
+    def test_csv_loader_builds_index_with_positive_soft_ionisation_rows(self, tmp_path):
+        csv_path = tmp_path / "gnps_mini.csv"
+        self._write_mini_gnps_csv(csv_path, [
+            dict(spectrum_id="CCMSLIB00000000001", compound_name="glucose",
+                 smiles="OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+                 ion_mode="positive", ms_ionisation="ESI"),
+            dict(spectrum_id="CCMSLIB00000000002", compound_name="caffeine",
+                 smiles="CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+                 ion_mode="positive", ms_ionisation="ESI"),
+        ])
+        idx = gnps_mod.build_index_from_path(csv_path)
+        assert len(idx) == 2
+        assert len(idx.inchikey_set) == 2
+
+    def test_csv_loader_rejects_negative_mode_and_maldi(self, tmp_path):
+        csv_path = tmp_path / "gnps_mini.csv"
+        self._write_mini_gnps_csv(csv_path, [
+            dict(spectrum_id="CCMSLIB00000000003", compound_name="neg-mode",
+                 smiles="CCO", ion_mode="negative", ms_ionisation="ESI"),
+            dict(spectrum_id="CCMSLIB00000000004", compound_name="maldi-run",
+                 smiles="CCO", ion_mode="positive", ms_ionisation="MALDI"),
+            dict(spectrum_id="CCMSLIB00000000005", compound_name="kept",
+                 smiles="CCO", ion_mode="positive", ms_ionisation="ESI"),
+        ])
+        idx = gnps_mod.build_index_from_path(csv_path)
+        assert len(idx) == 1
+        # ethanol neutral mass = 46.04186; a 5 ppm window covers all CCO rows.
+        hits = idx.search(neutral_mass=46.04186, tolerance_ppm=5.0)
+        assert [h.source_id for h in hits] == ["CCMSLIB00000000005"]
+
+    def test_csv_loader_skips_unparseable_smiles(self, tmp_path):
+        csv_path = tmp_path / "gnps_mini.csv"
+        self._write_mini_gnps_csv(csv_path, [
+            dict(spectrum_id="CCMSLIB00000000006", compound_name="garbage",
+                 smiles="NOT_A_SMILES_STRING[](",
+                 ion_mode="positive", ms_ionisation="ESI"),
+            dict(spectrum_id="CCMSLIB00000000007", compound_name="valid",
+                 smiles="CCO", ion_mode="positive", ms_ionisation="ESI"),
+        ])
+        idx = gnps_mod.build_index_from_path(csv_path)
+        assert len(idx) == 1
+
+    def test_unsupported_extension_raises(self, tmp_path):
+        bad = tmp_path / "gnps.txt"
+        bad.write_text("")
+        with pytest.raises(ValueError, match="Unsupported GNPS file extension"):
+            gnps_mod.build_index_from_path(bad)
+
+
+class TestInchikeyFirstBlockCrossStamp:
+    """Cross-pool has_reference_spectrum matches on connectivity (first 14
+    chars) not the full InChIKey, so stereoisomers of the same compound
+    (e.g. alpha vs beta glucose) still stamp each other as has_ref=True.
+    """
+
+    def test_first_block_helper_handles_edge_cases(self):
+        assert inchikey_first_block("WQZGKKKJIJFFOK-GASJEMHNSA-N") == "WQZGKKKJIJFFOK"
+        assert inchikey_first_block("WQZGKKKJIJFFOK") == "WQZGKKKJIJFFOK"
+        assert inchikey_first_block("") is None
+        assert inchikey_first_block(None) is None
+
+    def test_gnps_index_inchikey_set_returns_first_blocks(self):
+        # Caffeine — two records with the same connectivity but different
+        # middle blocks (simulated stereo variation).
+        recs = [
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB00000000001",
+                compound_name="caffeine-v1",
+                smiles="CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+                inchikey="RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+                molecular_formula="C8H10N4O2",
+                exact_mass=194.0804,
+            ),
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB00000000002",
+                compound_name="caffeine-v2",
+                smiles="CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+                inchikey="RYYVLZVUVIJVGH-FAKEMIDL3Y-K",  # same first block
+                molecular_formula="C8H10N4O2",
+                exact_mass=194.0804,
+            ),
+        ]
+        idx = GnpsIndex(recs)
+        # inchikey_set now stores first-block values, so the two records
+        # collapse to one entry in the set.
+        assert idx.inchikey_set == frozenset({"RYYVLZVUVIJVGH"})
+
+    def test_pubchem_candidate_stereo_variant_stamps_has_ref(self, tmp_path):
+        """A pubchem_lite row with a different stereo variant than GNPS must
+        still be flagged has_reference_spectrum=True.
+        """
+        # Mini pubchem_lite with one row: caffeine with a MADE-UP stereo middle.
+        db = tmp_path / "mini.sqlite"
+        conn = sqlite3.connect(str(db))
+        try:
+            conn.executescript(
+                """
+                CREATE TABLE pubchem_lite (
+                    compound_id TEXT PRIMARY KEY, source TEXT NOT NULL,
+                    name TEXT, smiles TEXT NOT NULL, canonical_smiles TEXT,
+                    inchikey TEXT, molecular_formula TEXT NOT NULL,
+                    exact_mass REAL NOT NULL, pubchem_cid INTEGER, hmdb_id TEXT
+                );
+                CREATE INDEX idx_exact_mass ON pubchem_lite(exact_mass);
+                """
+            )
+            conn.execute(
+                "INSERT INTO pubchem_lite VALUES "
+                "('CID:99999', 'pubchem', 'caffeine-stereo-variant', "
+                " 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C', NULL, "
+                " 'RYYVLZVUVIJVGH-FAKEMIDL3Y-K',"
+                " 'C8H10N4O2', 194.0804, 99999, NULL)"
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+        # GNPS index holds the "canonical" caffeine InChIKey (different middle).
+        gnps_mod.set_default_index(GnpsIndex([
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB_ref",
+                compound_name="caffeine",
+                smiles="CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+                inchikey="RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+                molecular_formula="C8H10N4O2",
+                exact_mass=194.0804,
+            ),
+        ]))
+        pubchem_mod.set_default_index(PubChemLiteIndex(db))
+
+        resp = prefilter(PrefilterRequest(
+            precursor_mz=195.0877, adduct="[M+H]+",
+            pools=["pubchem_lite"], mass_tolerance_ppm=5.0,
+        ))
+        pc = [c for c in resp.candidates if c.source_id == "CID:99999"]
+        assert pc, "Stereo-variant pubchem row should still surface"
+        assert pc[0].has_reference_spectrum, (
+            "Stereo-variant caffeine should match GNPS caffeine on InChIKey "
+            "first-block and therefore has_reference_spectrum=True"
+        )
 
 
 # ---------------------------------------------------------------------------

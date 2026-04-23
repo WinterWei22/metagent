@@ -91,12 +91,16 @@ def prefilter(req: PrefilterRequest) -> PrefilterResponse:
     # 3. Re-stamp has_reference_spectrum across pools. The per-index search
     #    methods already set this for their own rows; this loop guarantees
     #    consistency if an index ever forgets (defensive, cheap).
+    # Cross-pool matching uses InChIKey first-block (connectivity only) —
+    # see gnps_index.inchikey_first_block for why.
     if gnps_inchikeys:
+        from tools.candidate_prefilter.gnps_index import inchikey_first_block
         for c in all_candidates:
             if c.has_reference_spectrum:
                 continue
             ik = _inchikey_for(c.smiles)
-            if ik and ik in gnps_inchikeys:
+            block = inchikey_first_block(ik)
+            if block and block in gnps_inchikeys:
                 # Pydantic BaseModel is mutable by default (no frozen). If
                 # PrefilteredCandidate becomes frozen later, switch to
                 # model_copy(update=...) here.

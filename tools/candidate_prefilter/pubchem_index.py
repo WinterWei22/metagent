@@ -135,7 +135,10 @@ class PubChemLiteIndex:
             # pubchem rows use "CID:<cid>". Falls back to compound_id which
             # is already populated with the native id by build script.
             source_id = hmdb_id or (f"CID:{cid}" if cid else compound_id)
-            has_ref = bool(inchikey and inchikey in gnps_inchikeys)
+            # Cross-pool has_reference_spectrum match uses the InChIKey first
+            # block (connectivity only) — see gnps_index.inchikey_first_block.
+            first_block = inchikey.split("-", 1)[0] if inchikey else None
+            has_ref = bool(first_block and first_block in gnps_inchikeys)
             out.append(
                 PrefilteredCandidate(
                     smiles=smiles,
