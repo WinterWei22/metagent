@@ -20,6 +20,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterator
 
 from schemas.common import PrefilteredCandidate
 
@@ -44,6 +45,25 @@ class GnpsIndexRecord:
     exact_mass: float                # neutral monoisotopic mass in Da
 
 
+def inchikey_first_block(inchikey: str | None) -> str | None:
+    """Return the connectivity-only (first 14-char) block of an InChIKey.
+
+    Cross-pool `has_reference_spectrum` stamping must match on the first
+    block, not the full InChIKey: same compound can have different stereo
+    assignments across HMDB / PubChem / GNPS (alpha vs beta sugars, racemic
+    vs enantiopure, etc.) yielding different middle blocks but identical
+    connectivity. MS/MS cannot distinguish stereoisomers, so first-block
+    matching is the correct semantic for candidate pool cross-referencing.
+    PubChemLite itself uses this principle (collapses CIDs by FirstBlock).
+
+    Returns None if the input is None or empty; otherwise the leading
+    segment before the first dash. Accepts already-first-block strings too.
+    """
+    if not inchikey:
+        return None
+    return inchikey.split("-", 1)[0]
+
+
 class GnpsIndex:
     """Mass-sorted index over GNPS records for fast window queries.
 
@@ -56,8 +76,10 @@ class GnpsIndex:
     def __init__(self, records: list[GnpsIndexRecord]):
         self._records: list[GnpsIndexRecord] = sorted(records, key=lambda r: r.exact_mass)
         self._masses: list[float] = [r.exact_mass for r in self._records]
-        self._inchikey_set: frozenset[str] = frozenset(
-            r.inchikey for r in self._records if r.inchikey
+        # First-block set: see inchikey_first_block() for why full InChIKey
+        # matching is wrong for cross-pool has_reference_spectrum stamping.
+        self._inchikey_first_block_set: frozenset[str] = frozenset(
+            b for b in (inchikey_first_block(r.inchikey) for r in self._records) if b
         )
 
     # ------------------------------------------------------------------
@@ -69,12 +91,14 @@ class GnpsIndex:
 
     @property
     def inchikey_set(self) -> frozenset[str]:
-        """InChIKeys of every GNPS record with a computable InChIKey.
+        """Connectivity-only (first 14-char) InChIKey blocks of every GNPS record.
 
         Used by candidate_prefilter to set `has_reference_spectrum=True` on
-        candidates from other pools whose structure is also in GNPS.
+        candidates from other pools whose structure shares connectivity with
+        a GNPS entry. See `inchikey_first_block` for why we match on the
+        first block rather than the full InChIKey.
         """
-        return self._inchikey_set
+        return self._inchikey_first_block_set
 
     # ------------------------------------------------------------------
     # Queries
@@ -175,19 +199,147 @@ def _index_record_from_gnps(record) -> GnpsIndexRecord | None:
 def build_index_from_path(path: str | Path) -> GnpsIndex:
     """Load the v0-usable GNPS subset from `path`, build and return an index.
 
-    Delegates filtering to common.gnps_loader.load_v0_usable. Records whose
-    SMILES RDKit can't parse are dropped with a debug log.
-    """
-    from common.gnps_loader import load_v0_usable
+    Dispatches on file extension:
+      - .json → common.gnps_loader.load_v0_usable (GNPS2 ALL_GNPS_NO_PROPOGATED dump)
+      - .csv  → _parse_gnps_csv (GNPS2 ALL_GNPS_cleaned_enriched dump)
 
-    records = load_v0_usable(path)
-    indexed: list[GnpsIndexRecord] = []
-    for rec in records:
-        ir = _index_record_from_gnps(rec)
-        if ir is not None:
-            indexed.append(ir)
-    logger.info("GnpsIndex: %d indexed records out of %d usable", len(indexed), len(records))
-    return GnpsIndex(indexed)
+    Both paths apply the same v0 filter: positive ion mode, soft ionisation,
+    valid RDKit-parseable SMILES. Records whose SMILES RDKit can't parse are
+    dropped with a debug log.
+    """
+    path = Path(path)
+    ext = path.suffix.lower()
+
+    if ext == ".json":
+        from common.gnps_loader import load_v0_usable
+
+        records = load_v0_usable(path)
+        indexed: list[GnpsIndexRecord] = []
+        for rec in records:
+            ir = _index_record_from_gnps(rec)
+            if ir is not None:
+                indexed.append(ir)
+        logger.info(
+            "GnpsIndex: %d indexed records out of %d usable (from %s)",
+            len(indexed), len(records), path.name,
+        )
+        return GnpsIndex(indexed)
+
+    if ext == ".csv":
+        indexed = list(_parse_gnps_csv(path))
+        logger.info("GnpsIndex: %d indexed records (from %s)", len(indexed), path.name)
+        return GnpsIndex(indexed)
+
+    raise ValueError(
+        f"Unsupported GNPS file extension {ext!r} at {path}. "
+        f"Expected .json (ALL_GNPS_NO_PROPOGATED dump) or .csv "
+        f"(ALL_GNPS_cleaned_enriched dump)."
+    )
+
+
+# ---------------------------------------------------------------------------
+# CSV path — GNPS2 "ALL_GNPS_cleaned_enriched.csv" format
+# ---------------------------------------------------------------------------
+#
+# Source: https://external.gnps2.org/gnpslibrary — the enriched-CSV alternative
+# to ALL_GNPS_NO_PROPOGATED.json. The CSV omits peak data (peaks live in the
+# companion .mgf file used by library_search) but keeps every field we need
+# for candidate_prefilter's structural index: spectrum_id, Smiles,
+# InChIKey_smiles, Precursor_MZ, ExactMass, Ion_Mode, Adduct, msIonisation.
+#
+# Column header observed 2026-04:
+#   scan, spectrum_id, collision_energy, Adduct, Compound_Source,
+#   Compound_Name, Precursor_MZ, ExactMass, Charge, Ion_Mode, Smiles, INCHI,
+#   InChIKey_smiles, msManufacturer, msMassAnalyzer, msIonisation,
+#   msDissociationMethod, GNPS_library_membership, ppmBetweenExpAndThMass,
+#   classyfire_*, np_classifier_nplikeness
+
+_CSV_REJECT_IONISATION = {"MALDI", "EI", "GC", "APCI-MALDI"}
+
+
+def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
+    """Yield GnpsIndexRecords from a GNPS2 enriched CSV.
+
+    Filters mirror common.gnps_loader's v0-usable check:
+      - Ion_Mode == "positive"
+      - msIonisation is soft (not MALDI / EI / GC)
+      - SMILES parses in RDKit
+
+    For each kept row, (molecular_formula, exact_mass, inchikey) are all
+    recomputed via RDKit so values are canonical and consistent with what
+    pubchem_lite rows produce. CSV-provided ExactMass and InChIKey_smiles
+    are ignored (would be near-identical but not guaranteed identical).
+    """
+    import csv
+    from rdkit import Chem
+    from rdkit.Chem import Descriptors, rdMolDescriptors
+
+    path = Path(csv_path)
+    n_seen = 0
+    n_kept = 0
+    n_rejected_mode = 0
+    n_rejected_ionisation = 0
+    n_rejected_smiles = 0
+
+    # The CSV has long INCHI strings; bump field size limit.
+    csv.field_size_limit(10_000_000)
+
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            n_seen += 1
+
+            ion_mode = (row.get("Ion_Mode") or "").strip().lower()
+            if ion_mode != "positive":
+                n_rejected_mode += 1
+                continue
+
+            ms_ion = (row.get("msIonisation") or "").strip().upper()
+            if ms_ion in _CSV_REJECT_IONISATION:
+                n_rejected_ionisation += 1
+                continue
+
+            smiles = (row.get("Smiles") or "").strip()
+            if not smiles:
+                n_rejected_smiles += 1
+                continue
+
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                n_rejected_smiles += 1
+                continue
+
+            try:
+                exact_mass = float(Descriptors.ExactMolWt(mol))
+                formula = rdMolDescriptors.CalcMolFormula(mol)
+                inchikey = Chem.MolToInchiKey(mol) or None
+            except Exception as e:
+                logger.debug("RDKit failed on SMILES %r: %s", smiles, e)
+                n_rejected_smiles += 1
+                continue
+
+            if exact_mass <= 0:
+                n_rejected_smiles += 1
+                continue
+
+            compound_name = (row.get("Compound_Name") or "").strip() or None
+            spectrum_id = (row.get("spectrum_id") or "").strip()
+
+            n_kept += 1
+            yield GnpsIndexRecord(
+                spectrum_id=spectrum_id,
+                compound_name=compound_name,
+                smiles=smiles,
+                inchikey=inchikey,
+                molecular_formula=formula,
+                exact_mass=exact_mass,
+            )
+
+    logger.info(
+        "GNPS CSV parse: %d rows; kept=%d, rejected_ion_mode=%d, "
+        "rejected_ionisation=%d, rejected_smiles=%d",
+        n_seen, n_kept, n_rejected_mode, n_rejected_ionisation, n_rejected_smiles,
+    )
 
 
 # ---------------------------------------------------------------------------
