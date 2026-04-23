@@ -39,7 +39,14 @@ class PathwayContextResponse(BaseModel):
         ...,
         ge=0.0,
         le=1.0,
-        description="Fraction of immediate neighbours that also appear in co_observed_ids.",
+        description=(
+            "Fraction of co_observed_ids that share at least one pathway with the "
+            "focal metabolite, after de-duplicating the input list. 0.0 when "
+            "co_observed_ids is empty. Pathway co-membership is the signal rather "
+            "than reaction-graph adjacency because RaMP's reaction coverage is "
+            "sparser than its pathway coverage, making neighbour-level scores too "
+            "brittle for plausibility ranking."
+        ),
     )
     plausibility_summary: str = Field(
         ...,

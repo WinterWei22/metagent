@@ -1,0 +1,6 @@
+# pathway_context — runtime deps only.
+#
+# sqlite3 is stdlib. The only pinned dep is pydantic, because the response
+# type is a Pydantic model. No RDKit, no requests — this tool is 100%
+# local and has no LLM path.
+pydantic==2.8.2

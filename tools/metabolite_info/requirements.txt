@@ -1,0 +1,11 @@
+# fetch_metabolite_info — runtime deps only.
+#
+# sqlite3 and urllib are stdlib and not listed here. Pydantic is used to
+# validate the schema types the tool returns; requests is the sole HTTP
+# client and is only imported lazily by pubchem_backend when the operator
+# opts into the PUG-REST fallback. lxml is only needed by build_hmdb_db.py
+# (ingest-time), not at query time — it is therefore pinned here for
+# reproducibility of the full Docker image, but not imported by tool.py.
+pydantic==2.8.2
+requests==2.32.3
+lxml==5.3.0
