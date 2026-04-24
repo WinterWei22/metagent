@@ -33,6 +33,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Callable, Literal
 
+from schemas import LiteratureSearchResponse
 from schemas.molecule import MetaboliteInfoResponse
 from schemas.report import IdentificationReport
 from verifier.claim_classifier import classify_claims
@@ -44,6 +45,7 @@ from verifier.layers import biological as layer_c
 from verifier.layers import consistency as layer_d
 from verifier.layers import factual as layer_b
 from verifier.layers import grounded as layer_a
+from verifier.layers import literature as layer_e
 from verifier.rewriter import is_rewrite_needed, rewrite
 from verifier.schemas import (
     ClaimType,
@@ -55,6 +57,7 @@ from verifier.schemas import (
 
 
 Fetcher = Callable[[str], MetaboliteInfoResponse]
+LiteratureFetcher = Callable[[str], LiteratureSearchResponse]
 
 
 def verify(
@@ -63,12 +66,13 @@ def verify(
     *,
     trace_id: str,
     fetcher: Fetcher | None = None,
+    literature_fetcher: LiteratureFetcher | None = None,
 ) -> VerifiedIdentification:
     """Run the full 4-stage cascade. Always returns; never re-raises.
 
-    ``fetcher`` is dependency-injected for Layer B; pass a mock from tests.
-    Default is the real ``fetch_metabolite_info`` tool, lazy-imported when
-    the layer first needs it.
+    ``fetcher`` is dependency-injected for Layer B (metabolite_info round-
+    trip); ``literature_fetcher`` for Layer E (Europe PMC). Both default to
+    the real tools, lazy-imported when first needed; tests pass mocks.
     """
     warnings: list[str] = []
     llm_calls = 0
@@ -89,7 +93,8 @@ def verify(
         )
 
     verified_v1 = _verify_per_claim(
-        classified_v1, source_report, fetcher=fetcher
+        classified_v1, source_report,
+        fetcher=fetcher, literature_fetcher=literature_fetcher,
     )
     consistency_v1, calls, w = layer_d.detect_consistency_contradictions(
         classified_v1, trace_id=f"{trace_id}.s3_v1"
@@ -138,7 +143,8 @@ def verify(
         )
 
     verified_v2 = _verify_per_claim(
-        classified_v2, source_report, fetcher=fetcher
+        classified_v2, source_report,
+        fetcher=fetcher, literature_fetcher=literature_fetcher,
     )
     consistency_v2, calls, w = layer_d.detect_consistency_contradictions(
         classified_v2, trace_id=f"{trace_id}.s3_v2"
@@ -197,8 +203,9 @@ def _verify_per_claim(
     source_report: IdentificationReport,
     *,
     fetcher: Fetcher | None,
+    literature_fetcher: LiteratureFetcher | None = None,
 ) -> list[VerifiedClaim]:
-    """Dispatch each claim to its layer (A/B/C). Layer D runs separately."""
+    """Dispatch each claim to its layer (A/B/C/E). Layer D runs separately."""
     out: list[VerifiedClaim] = []
     for c in classified:
         if c.claim_type == ClaimType.GROUNDED:
@@ -207,6 +214,12 @@ def _verify_per_claim(
             out.append(layer_b.verify_factual(c, source_report, fetcher=fetcher))
         elif c.claim_type == ClaimType.BIOLOGICAL:
             out.append(layer_c.verify_biological(c, source_report))
+        elif c.claim_type == ClaimType.LITERATURE:
+            out.append(
+                layer_e.verify_literature(
+                    c, source_report, fetcher=literature_fetcher,
+                )
+            )
         elif c.claim_type == ClaimType.CONSISTENCY:
             # Stage 2 should not assign CONSISTENCY directly — Layer D
             # creates those entries. If it ever happens (LLM fallback

@@ -447,3 +447,93 @@ def test_source_llm_output_never_mutated(glucose_report):
     ))
     result = verify(O1_GLUCOSE, glucose_report, trace_id="t-verbatim")
     assert result.source_llm_output == O1_GLUCOSE
+
+
+# ---------------------------------------------------------------------------
+# Track F (literature) acceptance — added after Q2 wired Stage 7
+# ---------------------------------------------------------------------------
+
+
+def test_hallucinated_pmid_caught_by_layer_e(glucose_report):
+    """If the LLM cites a PMID that does not exist in
+    `candidate.literature_records` AND Europe PMC returns 0 results,
+    Layer E flags it CONTRADICTED. This is the Track F analogue of H1
+    (D-Gulose formula) — a fabricated identifier."""
+    from schemas import LiteratureSearchResponse
+    from verifier.agent import verify as verify_with_lit
+
+    # v1 contains one literature claim about a fake PMID
+    v1_claims = [
+        {"claim_text": "D-Gulose has been characterised in PMID 99999999",
+         "subject": "D-Gulose"},
+        {"claim_text": "D-Gulose evidence_score is 0.771",
+         "subject": "D-Gulose"},
+    ]
+    # After rewrite the bad citation is dropped
+    v2_claims = [
+        {"claim_text": "D-Gulose evidence_score is 0.771",
+         "subject": "D-Gulose"},
+    ]
+    rewritten = "## Report\nD-Gulose evidence_score 0.771."
+
+    # A literature_fetcher that returns empty for our fake PMID
+    def empty_fetcher(_query):
+        return LiteratureSearchResponse(
+            records=[], query_used=_query, explain="mock-empty",
+        )
+
+    llm_client.set_mock(_rewrite_cycle_mock_sequence(
+        v1_claims, v2_claims, rewritten,
+    ))
+    result = verify_with_lit(
+        "## Report\nD-Gulose has PMID 99999999. evidence_score 0.771.",
+        glucose_report,
+        trace_id="t-fake-pmid",
+        literature_fetcher=empty_fetcher,
+    )
+    pmid_claims = [c for c in result.claims_v1
+                   if "99999999" in c.claim_text]
+    assert len(pmid_claims) == 1
+    assert pmid_claims[0].verdict == ClaimVerdict.CONTRADICTED
+    assert "0 records" in pmid_claims[0].evidence
+
+
+def test_real_pmid_in_source_records_is_supported(glucose_report):
+    """When the LLM's PMID claim repeats a record the pipeline already
+    showed it (Stage 7), Layer E source-firsts the lookup with no
+    fetcher call."""
+    from schemas import LiteratureRecord
+    from verifier.agent import verify as verify_with_lit
+
+    # Inject a literature_record into the source so source-first hits
+    glucose_report.candidates[0].literature_records = [
+        LiteratureRecord(
+            pmid="22334455",
+            title="Glucose hexose chemistry",
+            abstract="abstract", authors=["A"], year=2020,
+            journal="J. Chem.", doi="10.1000/jc.22334455",
+            url="https://europepmc.org/MED/22334455",
+        ),
+    ]
+    v1_claims = [
+        {"claim_text": "D-Gulose has reference PMID 22334455",
+         "subject": "D-Gulose"},
+        {"claim_text": "D-Gulose evidence_score is 0.771",
+         "subject": "D-Gulose"},
+    ]
+
+    def unused_fetcher(_q):
+        raise AssertionError("fetcher must not be called when source-first hits")
+
+    llm_client.set_mock(_no_rewrite_mock_sequence(v1_claims))
+    result = verify_with_lit(
+        "## Report\nD-Gulose has PMID 22334455.",
+        glucose_report,
+        trace_id="t-source-pmid",
+        literature_fetcher=unused_fetcher,
+    )
+    pmid_claims = [c for c in result.claims_v1
+                   if "22334455" in c.claim_text]
+    assert len(pmid_claims) == 1
+    assert pmid_claims[0].verdict == ClaimVerdict.SUPPORTED
+    assert "literature_records" in (pmid_claims[0].source_field or "")

@@ -42,6 +42,9 @@ types and what each means:
   pathway-context backend.
 - consistency_claim: a claim whose verification depends on comparison to
   other claims in the same report rather than to any external source.
+- literature_claim: a claim that names a specific publication (PMID,
+  DOI, or paraphrases an abstract). Verified by checking that the
+  citation identifier resolves in PubMed / Europe PMC.
 
 Output one line per claim in the format ``<index>: <type>`` — for example::
 

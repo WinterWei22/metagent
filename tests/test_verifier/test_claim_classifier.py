@@ -30,6 +30,15 @@ from verifier.schemas import ClaimType, ExtractedClaim
         ("Caffeine InChIKey is RYYVLZVUVIJVGH-UHFFFAOYSA-N", ClaimType.FACTUAL),
         ("Caffeine is in HMDB0001847", ClaimType.FACTUAL),
         ("Bare formula C6H19NSi2", ClaimType.GROUNDED),
+        # Literature claims — anchored PMID / DOI
+        ("Caffeine has been characterised in PMID 12345678",
+         ClaimType.LITERATURE),
+        ("doi:10.1000/jbc.123 reports this", ClaimType.LITERATURE),
+        ("see 10.1038/nature.2023.001 for details", ClaimType.LITERATURE),
+        # Literature precedence over compound name: a citation makes the
+        # claim a literature claim, not a factual-roundtrip claim
+        ("Caffeine has KEGG ID C07481 according to PMID 12345",
+         ClaimType.LITERATURE),
     ],
 )
 def test_rule_classify(text, expected):

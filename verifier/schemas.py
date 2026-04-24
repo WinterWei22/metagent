@@ -69,6 +69,12 @@ class ClaimType(str, Enum):
     Catches intra-document contradictions (e.g. H1: header formula vs.
     body formula for the same molecule)."""
 
+    LITERATURE = "literature_claim"
+    """Type 5 — verified by PMID / DOI round-trip against Europe PMC, or
+    source-first lookup in ``candidate.literature_records``. Catches
+    hallucinated citations (an LLM-named PMID that does not resolve, or
+    one that does not match the title / journal asserted alongside it)."""
+
 
 class ClaimVerdict(str, Enum):
     """The outcome of running a claim through its layer.

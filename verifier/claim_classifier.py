@@ -59,6 +59,15 @@ _PATHWAY_ID_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Literature claims (PMID / DOI / pubmed) → LITERATURE
+_LITERATURE_RE = re.compile(
+    r"\b(?:PMID|pubmed|doi)[:\s]*\S",
+    re.IGNORECASE,
+)
+# Bare DOI form (10.NNNN/...) without an anchor — common in LLM output
+_BARE_DOI_RE = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+")
+
+
 # Source-report field references → GROUNDED
 _GROUNDED_KEYWORDS = re.compile(
     r"\b("
@@ -156,7 +165,15 @@ def classify_claims(
 
 
 def _rule_classify(claim_text: str) -> ClaimType | None:
-    """Apply the precedence rules. Return None when no rule matches."""
+    """Apply the precedence rules. Return None when no rule matches.
+
+    Literature is checked FIRST — a claim like "Caffeine has PMID 12345"
+    contains a compound name AND a citation, but the citation is the
+    load-bearing assertion (the verifier asks "does this PMID exist?",
+    not "does Caffeine exist?").
+    """
+    if _LITERATURE_RE.search(claim_text) or _BARE_DOI_RE.search(claim_text):
+        return ClaimType.LITERATURE
     if _PATHWAY_KEYWORDS.search(claim_text) or _PATHWAY_ID_RE.search(claim_text):
         return ClaimType.BIOLOGICAL
     if _GROUNDED_KEYWORDS.search(claim_text) or _FORMULA_RE.search(claim_text):
@@ -218,6 +235,8 @@ _TYPE_LITERALS = {
     "biological": ClaimType.BIOLOGICAL,
     "consistency_claim": ClaimType.CONSISTENCY,
     "consistency": ClaimType.CONSISTENCY,
+    "literature_claim": ClaimType.LITERATURE,
+    "literature": ClaimType.LITERATURE,
 }
 
 
