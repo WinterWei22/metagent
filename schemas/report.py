@@ -45,7 +45,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from schemas.common import Candidate, PrefilteredCandidate, Spectrum
+from schemas.common import Candidate, LiteratureRecord, PrefilteredCandidate, Spectrum
 from schemas.molecule import MetaboliteInfoResponse
 from schemas.pathway import PathwayContextResponse
 
@@ -151,6 +151,18 @@ class CandidateReport(BaseModel):
             "Per-candidate caveats and provenance notes. Examples: "
             "'merged from library+generated', 'HMDB stores this as a cation "
             "(D-1)', 'E skipped: CfmUnavailableError'."
+        ),
+    )
+    literature_records: list[LiteratureRecord] = Field(
+        default_factory=list,
+        description=(
+            "Top-k literature hits from Track F (`literature_search`), "
+            "verbatim from Europe PMC / PubMed. Empty when Stage 6 was "
+            "skipped (literature_top_n=0), the candidate ranked outside "
+            "the literature-enrichment window, or the search returned no "
+            "results. Each record carries a verifiable PMID — the verifier "
+            "round-trips PMIDs against Europe PMC to detect hallucinated "
+            "citations."
         ),
     )
 

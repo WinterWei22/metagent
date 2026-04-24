@@ -112,10 +112,42 @@ def _candidate_block(cr: CandidateReport, rank: int, lines: list[str]) -> None:
         if info.chemical_class:
             lines.append(f"- Chemical class: {info.chemical_class}")
 
+    _literature_block(cr, lines)
+
     if cr.notes:
         lines.append("- Notes:")
         for note in cr.notes:
             lines.append(f"    - {note}")
+
+
+def _literature_block(cr: CandidateReport, lines: list[str]) -> None:
+    """Render the candidate's literature_records (Track F output) as a
+    short bulletised block. Empty list → omit entirely (no bullet);
+    populated → one indented sub-bullet per record with PMID, title,
+    journal/year, and the abstract head.
+
+    Truncation rules (kept tight so the user message stays under MiniMax's
+    practical context window):
+      * up to 3 records per candidate (formatter-level cap; pipeline cap
+        is configurable separately via literature_max_results)
+      * abstract truncated to ~200 chars + ellipsis
+    """
+    recs = cr.literature_records
+    if not recs:
+        return
+    shown = recs[:3]
+    extra = len(recs) - len(shown)
+    lines.append(f"- Literature ({len(recs)} record(s)):")
+    for rec in shown:
+        head = rec.abstract.strip().replace("\n", " ")
+        if len(head) > 200:
+            head = head[:200].rstrip() + "…"
+        meta = f"{rec.journal} {rec.year}" if rec.journal else str(rec.year)
+        lines.append(f"    - PMID:{rec.pmid} — {rec.title} ({meta})")
+        if head:
+            lines.append(f"      {head}")
+    if extra > 0:
+        lines.append(f"    - +{extra} more record(s) not shown")
 
 
 def _pathway_line(cr: CandidateReport, lines: list[str]) -> None:

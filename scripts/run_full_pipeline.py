@@ -59,6 +59,9 @@ from schemas import (
     GenerateResponse,
     LibrarySearchRequest,
     LibrarySearchResponse,
+    LiteratureRecord,
+    LiteratureSearchRequest,
+    LiteratureSearchResponse,
     MetaboliteInfoRequest,
     MetaboliteInfoResponse,
     PathwayContextRequest,
@@ -78,9 +81,16 @@ from schemas.report import CandidateReport, IdentificationReport
 from tools.candidate_prefilter import prefilter as _default_prefilter
 from tools.library_search import library_search as _default_library_search
 from tools.library_search.scoring import modified_cosine_score
+from tools.literature import literature_search as _default_literature_search
 from tools.metabolite_info import fetch_metabolite_info as _default_fetch_metabolite_info
 from tools.metabolite_info.errors import IdentifierFormatError
 from tools.molecule_gen import generate as _default_generate
+from tools.molecule_gen.fingerprint import (
+    CandidateFusionFingerprinter,
+    Fingerprinter,
+    FusionStrategy,
+    SiriusFingerprinter,
+)
 from tools.pathway_context import pathway_context as _default_pathway_context
 from tools.pathway_context.errors import MetaboliteNotInNetworkError, RampUnavailableError
 from tools.spectrum_ops import preprocess as _default_preprocess
@@ -92,6 +102,59 @@ from tools.spectrum_predict import (
 )
 
 logger = logging.getLogger("metagent.pipeline")
+
+
+# ---------------------------------------------------------------------------
+# Fingerprint sourcing for Stage 3b (molecule_generate)
+# ---------------------------------------------------------------------------
+
+
+_FUSION_STRATEGIES: tuple[str, ...] = (
+    "retrieved_only_60",
+    "retrieved_only_80",
+    "topn_60",
+    "topn_80",
+)
+_VALID_FP_STRATEGIES: tuple[str, ...] = ("sirius",) + _FUSION_STRATEGIES
+
+
+def _build_fingerprinter(
+    *,
+    strategy: str,
+    library_candidates: list,
+) -> tuple["Fingerprinter | None", str | None]:
+    """Construct the Stage-3b fingerprinter for a given strategy.
+
+    Returns ``(fingerprinter, skip_note)``. When ``skip_note`` is not None
+    the caller short-circuits Stage 3b — fusion with no library candidates
+    has no signal, and SIRIUS-on-empty would be the same. Surfaces the
+    skip reason as a pipeline-level warning.
+    """
+    if strategy not in _VALID_FP_STRATEGIES:
+        raise ValueError(
+            f"unknown fingerprint_strategy {strategy!r}; "
+            f"expected one of {_VALID_FP_STRATEGIES}"
+        )
+
+    if strategy == "sirius":
+        # Legacy path. SIRIUS reads the spectrum directly; the runner does
+        # not need library_candidates here.
+        return SiriusFingerprinter(), None
+
+    # Fusion strategy. Requires at least one library candidate to vote on.
+    if not library_candidates:
+        return None, (
+            f"molecule_generate: skipped — fingerprint_strategy={strategy!r} "
+            "needs at least one library_search candidate to fuse, got 0."
+        )
+
+    return (
+        CandidateFusionFingerprinter(
+            list(library_candidates),
+            strategy=strategy,  # type: ignore[arg-type]
+        ),
+        None,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -368,6 +431,61 @@ def _safe_predict_spectrum(
 
 
 # ---------------------------------------------------------------------------
+# Stage 6 — literature_search safe wrapper (per-candidate)
+# ---------------------------------------------------------------------------
+
+
+def _literature_query_for(candidate: Candidate) -> str | None:
+    """Build the search query for a candidate. Prefer the human-readable
+    name; fall back to None (caller skips Stage 6 for this candidate)
+    rather than searching by raw SMILES — Europe PMC's free-text scoring
+    is poor on SMILES strings and produces noise."""
+    name = (candidate.name or "").strip()
+    if not name:
+        return None
+    return f"{name} mass spectrometry metabolite"
+
+
+def _safe_literature_search(
+    candidate: Candidate,
+    *,
+    max_results: int,
+    literature_search_fn: Callable[..., LiteratureSearchResponse],
+) -> tuple[list[LiteratureRecord], str | None]:
+    """Call F safely. Returns (records, note).
+
+    Tool-layer errors (RateLimitError, network outages) degrade to an
+    empty record list with a per-candidate note — the rest of the
+    enrichment continues. This mirrors the safety pattern of D1 / D2 / E.
+    """
+    query = _literature_query_for(candidate)
+    if query is None:
+        return [], (
+            "literature_search: skipped (candidate has no name; "
+            "free-text query on raw SMILES is too noisy in v0)"
+        )
+    try:
+        resp = literature_search_fn(
+            LiteratureSearchRequest(
+                query=query,
+                max_results=max_results,
+                sources=["europepmc"],
+            )
+        )
+    except ToolError as exc:
+        return [], f"literature_search: {exc.code}: {exc.message}"
+    except Exception as exc:
+        logger.error(
+            "literature_search: UNEXPECTED %s on %s: %s",
+            type(exc).__name__, candidate.source_id, exc,
+        )
+        return [], (
+            f"literature_search: UNEXPECTED {type(exc).__name__}: {exc}"
+        )
+    return list(resp.records), None
+
+
+# ---------------------------------------------------------------------------
 # Score component helpers.
 # ---------------------------------------------------------------------------
 
@@ -534,6 +652,9 @@ def identify(
     co_observed_ids: list[str] | None = None,
     min_library_score: float = 0.3,
     n_candidates_generate: int | None = None,
+    fingerprint_strategy: str = "topn_60",
+    literature_top_n: int = 3,
+    literature_max_results: int = 5,
     # Dependency-injected tool callables — default to the real ones. Tests
     # monkeypatch individual wrappers rather than these, so typical callers
     # leave these alone.
@@ -550,6 +671,9 @@ def identify(
     predict_spectrum_fn: Callable[
         [PredictSpectrumRequest], PredictSpectrumResponse
     ] = _default_predict_spectrum,
+    literature_search_fn: Callable[
+        [LiteratureSearchRequest], LiteratureSearchResponse
+    ] = _default_literature_search,
 ) -> IdentificationReport:
     """Deterministic end-to-end identification. No LLM.
 
@@ -588,32 +712,56 @@ def identify(
     # C is not available (SIRIUS missing, ms-bart checkpoint missing, etc.).
     # B's library_search still contributes on its own; the pipeline stays
     # deterministic and the failure is recorded as a report-level warning.
+    #
+    # Fingerprint sourcing follows ``fingerprint_strategy``:
+    #
+    #   * ``sirius`` — legacy default; ``SiriusFingerprinter`` runs CSI:FingerID
+    #     on the spectrum. Requires SIRIUS on PATH; produces substructure-space
+    #     bits that don't match MS-BART's Morgan training distribution.
+    #   * ``retrieved_only_*`` / ``topn_*`` — production default. Fuses Morgan
+    #     fingerprints of Stage 3a's library candidates (per
+    #     ``MS-BART/preprocess/create_fused_fps.py``). When no library
+    #     candidates are returned, fusion has no input, so Stage 3b is skipped
+    #     with a degradation note.
     generate_degradation_note: str | None = None
-    try:
-        generate_resp = generate_fn(
-            GenerateRequest(
-                spectrum=spectrum,
-                candidate_pool=pool,
-                n_candidates=n_candidates_generate,
+    fingerprinter, fp_skip_note = _build_fingerprinter(
+        strategy=fingerprint_strategy,
+        library_candidates=library_resp.candidates,
+    )
+    if fp_skip_note is not None:
+        generate_degradation_note = fp_skip_note
+        generate_resp = GenerateResponse(
+            candidates=[], n_generated_raw=0, n_valid=0,
+            explain=fp_skip_note,
+        )
+    else:
+        try:
+            generate_resp = generate_fn(
+                GenerateRequest(
+                    spectrum=spectrum,
+                    candidate_pool=pool,
+                    n_candidates=n_candidates_generate,
+                ),
+                fingerprinter=fingerprinter,
             )
-        )
-    except ToolError as exc:
-        logger.error("molecule_generate degraded: %s: %s", type(exc).__name__, exc)
-        generate_degradation_note = (
-            f"molecule_generate: {type(exc).__name__}: {exc}"
-        )
-        generate_resp = GenerateResponse(
-            candidates=[], n_generated_raw=0, n_valid=0,
-            explain=f"degraded: {type(exc).__name__}: {exc}",
-        )
-    except FileNotFoundError as exc:
-        # Most common external-binary failure mode (e.g. `sirius` not on PATH).
-        logger.error("molecule_generate degraded on missing binary: %s", exc)
-        generate_degradation_note = f"molecule_generate: binary missing: {exc}"
-        generate_resp = GenerateResponse(
-            candidates=[], n_generated_raw=0, n_valid=0,
-            explain=f"degraded: FileNotFoundError: {exc}",
-        )
+        except ToolError as exc:
+            logger.error("molecule_generate degraded: %s: %s", type(exc).__name__, exc)
+            generate_degradation_note = (
+                f"molecule_generate: {type(exc).__name__}: {exc}"
+            )
+            generate_resp = GenerateResponse(
+                candidates=[], n_generated_raw=0, n_valid=0,
+                explain=f"degraded: {type(exc).__name__}: {exc}",
+            )
+        except FileNotFoundError as exc:
+            # Most common external-binary failure mode (e.g. `sirius` not on
+            # PATH; SIRIUS-strategy only).
+            logger.error("molecule_generate degraded on missing binary: %s", exc)
+            generate_degradation_note = f"molecule_generate: binary missing: {exc}"
+            generate_resp = GenerateResponse(
+                candidates=[], n_generated_raw=0, n_valid=0,
+                explain=f"degraded: FileNotFoundError: {exc}",
+            )
 
     # STAGE 4 — merge + dedupe
     merged = _merge_candidates(library_resp.candidates, generate_resp.candidates)
@@ -702,12 +850,39 @@ def identify(
     # STAGE 6 — sort by evidence_score descending (stable: higher score wins)
     enriched.sort(key=lambda r: r.evidence_score, reverse=True)
 
-    # STAGE 7 — assemble the report
+    # STAGE 7 — literature_search per top-N (configurable; 0 disables F).
+    # Runs AFTER ranking so the literature budget targets the candidates
+    # the user is most likely to cite. Failures degrade per-candidate; the
+    # rest of the pipeline is unaffected.
+    literature_degradation_count = 0
+    if literature_top_n > 0:
+        for rank in range(min(literature_top_n, len(enriched))):
+            cr = enriched[rank]
+            recs, lit_note = _safe_literature_search(
+                cr.candidate,
+                max_results=literature_max_results,
+                literature_search_fn=literature_search_fn,
+            )
+            cr.literature_records = recs
+            if lit_note:
+                cr.notes.append(lit_note)
+                literature_degradation_count += 1
+
+    # STAGE 8 — assemble the report
     warnings_list = _summarise_warnings(
         preprocess_resp, prefilter_resp, library_resp, generate_resp, per_cand_notes,
     )
     if generate_degradation_note is not None:
         warnings_list.append(generate_degradation_note)
+    if literature_top_n == 0:
+        warnings_list.append(
+            "literature_search: skipped (literature_top_n=0)"
+        )
+    elif literature_degradation_count > 0:
+        warnings_list.append(
+            f"literature_search: {literature_degradation_count} candidate(s) "
+            "ran with degraded output — see candidate notes"
+        )
     return IdentificationReport(
         experimental_spectrum=spectrum,
         preprocess_quality_flag=preprocess_resp.quality_flag,
@@ -819,6 +994,27 @@ def _main(argv: list[str]) -> int:
     parser.add_argument("--output", choices=["json", "md"], default="md")
     parser.add_argument("--top-k", type=int, default=10)
     parser.add_argument("--predict-top-n", type=int, default=5)
+    parser.add_argument(
+        "--fp-strategy",
+        choices=_VALID_FP_STRATEGIES,
+        default=os.environ.get("METAGENT_FP_STRATEGY", "topn_60"),
+        help=(
+            "Fingerprint source for Stage 3b (molecule_generate). "
+            "Default is fusion of library_search candidates; "
+            "set 'sirius' for the legacy CSI:FingerID path. "
+            "Override via METAGENT_FP_STRATEGY env var."
+        ),
+    )
+    parser.add_argument(
+        "--literature-top-n",
+        type=int,
+        default=int(os.environ.get("METAGENT_LITERATURE_TOP_N", "3")),
+        help=(
+            "Number of top-ranked candidates to enrich with literature_search "
+            "(Stage 7). Default 3. Set 0 to skip Track F entirely. "
+            "Override via METAGENT_LITERATURE_TOP_N env var."
+        ),
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -838,7 +1034,11 @@ def _main(argv: list[str]) -> int:
     t0 = time.perf_counter()
     try:
         report = identify(
-            req, top_k=args.top_k, predict_top_n=args.predict_top_n,
+            req,
+            top_k=args.top_k,
+            predict_top_n=args.predict_top_n,
+            fingerprint_strategy=args.fp_strategy,
+            literature_top_n=args.literature_top_n,
         )
     except Exception as exc:
         print(f"pipeline crashed: {type(exc).__name__}: {exc}", file=sys.stderr)
