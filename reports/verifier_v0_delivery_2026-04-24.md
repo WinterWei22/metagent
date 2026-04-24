@@ -283,11 +283,31 @@ per identification**, **~$0.21 for the full 3-fixture pass**.
    (`test_roundtrip_id_not_found_is_unverifiable_*`) lock in the new
    behaviour.
 
-5. **Layer C is membership-only in v0.** Per Track V design and the
-   D/E P-2/3/4/6 audit, `upstream_neighbours` / `downstream_neighbours`
-   / `cooccurrence_score` claims are blanket-marked `unverifiable_v0`.
-   When Track D ships those fixes, lift the gate in
-   `verifier/layers/biological.py` and add neighbour-membership tests.
+5. **Layer C now verifies neighbour membership** (was a known gap when
+   Track V started). The Track V design brief was written before Track
+   D's P-2/P-3/P-4/P-6 fixes landed (commits `afd044f`, `8432cbe`,
+   `4e968fa`, `9bebd3a` — see
+   `reports/pathway_context_followups_resolved_2026-04-23.md`). With
+   `upstream_neighbours` / `downstream_neighbours` now reliable
+   (HMDB/KEGG-only, no cofactor flooding, up ≠ down), Layer C does
+   direction-aware membership lookup against the source's neighbour
+   lists. Five new unit tests in `test_layer_biological.py` lock in:
+   - downstream-direction match → `supported`
+   - upstream-direction match → `supported`
+   - direction-mismatch (claimed upstream, actually downstream) →
+     `contradicted` (real evidence of disagreement)
+   - either-direction "neighbour" claim → `supported` if found in
+     either list
+   - ID claimed but absent from both lists → `unsupported`
+
+   Two limits remain:
+   - **Name-only neighbour claims** (e.g. "X is upstream of pyruvate"
+     with no HMDB / KEGG ID) → `unverifiable_v0`. v0 has no name-to-ID
+     resolver in Layer C; resolving via `fetch_metabolite_info` would
+     bring tool-call complexity into a layer that is otherwise pure.
+   - **Cooccurrence-score claims** still `unverifiable_v0`. P-6 fixed
+     the score computation, but v0 has no qualifier-to-threshold
+     mapping ("high" / "moderate" / "low" → numeric). v1 work.
 
 6. **Literature-claim verification not implemented.** Track F is
    descoped; any LLM claim about PMIDs / DOIs / journal references will

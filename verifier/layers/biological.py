@@ -1,22 +1,31 @@
 """Layer C — verify Type 3 (biological / pathway) claims.
 
 A biological claim asserts a pathway membership, a metabolic context, or a
-network relationship. Verification is *membership-only* in v0:
+network relationship. v0 verifies three shapes:
 
-* Pathway IDs (``map00232``, ``R-HSA-1430728``, ``SMP00525``) are looked up
-  in ``source_report.candidates[*].pathway_context.pathways[*].id``.
-* Pathway *names* (e.g. "galactose metabolism", "Fabry disease") are
-  matched fuzzily against the same pathway entries' ``name`` field.
-* Claims that depend on **upstream / downstream / neighbour** information
-  are marked ``UNVERIFIABLE_V0`` regardless of source contents — the
-  D/E audit (P-2/P-3/P-4/P-6) flagged these fields as unreliable for v0.
-* Cooccurrence-score claims are also ``UNVERIFIABLE_V0`` for the same
-  reason.
+* **Pathway membership** — pathway IDs (``map00232``, ``R-HSA-1430728``,
+  ``SMP00525``) and pathway *names* (e.g. "galactose metabolism") are
+  looked up in
+  ``source_report.candidates[*].pathway_context.pathways``.
+* **Neighbour membership** — claims of the form "X is upstream of Y" /
+  "X is downstream of Y" / "Y is in X's neighbours" are verified against
+  ``upstream_neighbours`` / ``downstream_neighbours``. The
+  ``pathway_context`` tool's neighbour lists were originally flagged
+  unreliable (P-2 up==down collapse, P-3 non-HMDB/KEGG ID leaks, P-4
+  cofactor flooding); all four are now resolved (commits ``afd044f``,
+  ``8432cbe``, ``4e968fa``, ``9bebd3a``) and Layer C uses them as a
+  trust anchor. Name-only neighbour claims that name no resolvable ID
+  still return ``UNVERIFIABLE_V0`` (no v0 name-to-ID resolver in this
+  layer).
+* **Cooccurrence-score claims** — still ``UNVERIFIABLE_V0``. P-6 fixed
+  the score computation (resolvable-only denominator), but the verifier
+  has no v0 mapping from natural-language qualifiers ("high",
+  "moderate") to a numeric threshold.
 
 Source-first only in v0. A future iteration may add a real
 ``pathway_context`` round-trip when the subject has a resolvable HMDB /
 KEGG ID, but for the seed data the formatter already includes every
-pathway the tool returned; a re-query would not surface new evidence.
+pathway and neighbour the tool returned.
 """
 from __future__ import annotations
 
@@ -38,8 +47,15 @@ from verifier.source_lookup import find_candidate_by_name
 
 _NEIGHBOUR_KEYWORDS = re.compile(
     r"\b("
-    r"upstream|downstream|neighbour|neighbor|neighbours|neighbors|"
-    r"co[\s-]?occurrence|co[\s-]?observed|co[\s-]?detected|cooccur"
+    r"upstream|downstream|neighbour|neighbor|neighbours|neighbors"
+    r")\b",
+    re.IGNORECASE,
+)
+
+_COOCCURRENCE_KEYWORDS = re.compile(
+    r"\b("
+    r"co[\s-]?occurrence|co[\s-]?observed|co[\s-]?detected|cooccur|"
+    r"co[\s-]?occurring"
     r")\b",
     re.IGNORECASE,
 )
@@ -51,13 +67,17 @@ _PATHWAY_ID_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Metabolite-shaped IDs (HMDB / KEGG-compound) — used by neighbour lookup.
+# Distinct from the pathway IDs above (``map00232`` etc.).
+_METABOLITE_ID_RE = re.compile(
+    r"\b("
+    r"HMDB\d{6,}|"
+    r"C\d{5}"  # KEGG compound (C followed by exactly 5 digits)
+    r")\b",
+    re.IGNORECASE,
+)
+
 # Heuristics to lift candidate pathway names out of free-text claims.
-# Captures phrases like:
-#   "galactose metabolism"
-#   "Fabry disease"
-#   "caffeine metabolism"
-#   "Galactosemia"
-#   "biological oxidations"
 _PATHWAY_PHRASE_RE = re.compile(
     r"\b("
     r"[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z][A-Za-z0-9-]*){0,4}\s+"
@@ -80,24 +100,17 @@ def verify_biological(
     source_report: IdentificationReport,
 ) -> VerifiedClaim:
     """Verify one biological claim. Source-first; no tool calls in v0."""
-    if _NEIGHBOUR_KEYWORDS.search(claim.claim_text):
+    # Cooccurrence claims need a numeric-threshold mapping that v0 does
+    # not have ("high cooccurrence" → score > X?). Hold these out of
+    # neighbour-membership routing.
+    if _COOCCURRENCE_KEYWORDS.search(claim.claim_text):
         return _unverifiable(
             claim,
             evidence=(
-                "Neighbour / cooccurrence claims are blocked on the "
-                "P-2/P-3/P-4/P-6 D/E audit fixes; verifier returns "
-                "UNVERIFIABLE_V0 rather than risk a false confirmation."
-            ),
-        )
-
-    pathway_ids = _extract_pathway_ids(claim.claim_text)
-    pathway_phrases = _extract_pathway_phrases(claim.claim_text)
-    if not pathway_ids and not pathway_phrases:
-        return _unverifiable(
-            claim,
-            evidence=(
-                "Layer C found no pathway ID or pathway phrase in the claim. "
-                "Cannot map to a membership check at v0."
+                "Cooccurrence-score claims need a v1 mapping from "
+                "qualifiers ('high', 'moderate') to a numeric threshold; "
+                "v0 cannot adjudicate even though P-6 fixed the score's "
+                "computation."
             ),
         )
 
@@ -117,6 +130,22 @@ def verify_biological(
         scope = [(cand_idx, cr)]
     else:
         scope = list(enumerate(source_report.candidates))
+
+    # Neighbour-membership claims get their own routing — they verify
+    # against upstream_neighbours / downstream_neighbours, not pathways.
+    if _NEIGHBOUR_KEYWORDS.search(claim.claim_text):
+        return _verify_neighbour_membership(claim, scope, cand_idx)
+
+    pathway_ids = _extract_pathway_ids(claim.claim_text)
+    pathway_phrases = _extract_pathway_phrases(claim.claim_text)
+    if not pathway_ids and not pathway_phrases:
+        return _unverifiable(
+            claim,
+            evidence=(
+                "Layer C found no pathway ID or pathway phrase in the claim. "
+                "Cannot map to a membership check at v0."
+            ),
+        )
 
     # Layer C only fires when the subject's pathway_context is populated for
     # at least one candidate in scope. If every scope candidate has
@@ -183,12 +212,178 @@ def verify_biological(
 
 
 # ---------------------------------------------------------------------------
+# Neighbour-membership verification (post-P-2/3/4/6 fixes)
+# ---------------------------------------------------------------------------
+
+
+def _verify_neighbour_membership(
+    claim: ClassifiedClaim,
+    scope: list[tuple[int, "CandidateReport"]],
+    cand_idx: int | None,
+) -> VerifiedClaim:
+    """Check whether any HMDB/KEGG ID named in the claim appears in a
+    scope candidate's neighbour lists.
+
+    The neighbour fields became trustworthy after Track D commits
+    afd044f (P-2 up==down collapse), 8432cbe (P-3 non-HMDB/KEGG prefix
+    leaks), 4e968fa (P-4 cofactor flooding). v0 verifies *direction-aware*
+    membership when the claim explicitly says "upstream" or "downstream",
+    or *either-direction* membership for general "neighbour" claims.
+    """
+    # If pathway_context is None across the whole scope, we cannot
+    # adjudicate.
+    if all(cr.pathway_context is None for _, cr in scope):
+        path = (
+            f"candidates[{cand_idx}].pathway_context"
+            if cand_idx is not None
+            else "candidates[*].pathway_context"
+        )
+        return _unverifiable(
+            claim,
+            evidence=f"{path} is None for every candidate in scope.",
+            source_field=path,
+        )
+
+    metab_ids = _extract_metabolite_ids(claim.claim_text)
+    if not metab_ids:
+        # Name-only neighbour claim. v0 has no name-to-ID resolver in
+        # Layer C; soft-fail rather than risk a false confirmation.
+        return _unverifiable(
+            claim,
+            evidence=(
+                "Neighbour claim names no HMDB / KEGG-compound ID; v0 "
+                "Layer C has no name-to-ID resolver. The neighbour list "
+                "stores IDs only (e.g. 'hmdb:HMDB0000243'), so a literal "
+                "ID is required for membership lookup."
+            ),
+        )
+
+    direction = _claim_direction(claim.claim_text)
+
+    for mid in metab_ids:
+        mid_l = mid.lower()
+        for i, cr in scope:
+            if cr.pathway_context is None:
+                continue
+            up_hit = _id_in_neighbour_list(
+                mid_l, cr.pathway_context.upstream_neighbours
+            )
+            down_hit = _id_in_neighbour_list(
+                mid_l, cr.pathway_context.downstream_neighbours
+            )
+            # Direction-aware match.
+            if direction == "upstream" and up_hit:
+                path = (
+                    f"candidates[{i}].pathway_context.upstream_neighbours"
+                )
+                return _supported(
+                    claim,
+                    evidence=f"{mid!r} found in source {path}",
+                    source_field=path,
+                )
+            if direction == "downstream" and down_hit:
+                path = (
+                    f"candidates[{i}].pathway_context.downstream_neighbours"
+                )
+                return _supported(
+                    claim,
+                    evidence=f"{mid!r} found in source {path}",
+                    source_field=path,
+                )
+            if direction == "either" and (up_hit or down_hit):
+                where = "upstream_neighbours" if up_hit else "downstream_neighbours"
+                path = f"candidates[{i}].pathway_context.{where}"
+                return _supported(
+                    claim,
+                    evidence=f"{mid!r} found in source {path}",
+                    source_field=path,
+                )
+            # Direction-mismatch: claimed upstream but found downstream
+            # (or vice versa). This is a real CONTRADICTED — the claim
+            # asserts a relationship that the source actively disagrees
+            # with.
+            if direction == "upstream" and down_hit and not up_hit:
+                path = (
+                    f"candidates[{i}].pathway_context.downstream_neighbours"
+                )
+                return VerifiedClaim(
+                    claim_text=claim.claim_text,
+                    claim_type=claim.claim_type,
+                    verdict=ClaimVerdict.CONTRADICTED,
+                    evidence=(
+                        f"claim says upstream, but {mid!r} is in source "
+                        f"{path} (downstream)"
+                    ),
+                    source_field=path,
+                    correction=None,
+                )
+            if direction == "downstream" and up_hit and not down_hit:
+                path = (
+                    f"candidates[{i}].pathway_context.upstream_neighbours"
+                )
+                return VerifiedClaim(
+                    claim_text=claim.claim_text,
+                    claim_type=claim.claim_type,
+                    verdict=ClaimVerdict.CONTRADICTED,
+                    evidence=(
+                        f"claim says downstream, but {mid!r} is in source "
+                        f"{path} (upstream)"
+                    ),
+                    source_field=path,
+                    correction=None,
+                )
+
+    # Named ID(s) not found in any direction across scope.
+    return VerifiedClaim(
+        claim_text=claim.claim_text,
+        claim_type=claim.claim_type,
+        verdict=ClaimVerdict.UNSUPPORTED,
+        evidence=(
+            f"None of the claimed metabolite IDs ({metab_ids}) appear in "
+            f"any candidate's upstream / downstream neighbour list."
+        ),
+        source_field=None,
+        correction=None,
+    )
+
+
+def _claim_direction(text: str) -> str:
+    """Return 'upstream', 'downstream', or 'either' from claim text."""
+    t = text.lower()
+    has_up = "upstream" in t
+    has_down = "downstream" in t
+    if has_up and not has_down:
+        return "upstream"
+    if has_down and not has_up:
+        return "downstream"
+    return "either"  # "neighbour" / "neighbours" — direction-agnostic
+
+
+def _id_in_neighbour_list(id_lower: str, neighbours: list[str]) -> bool:
+    """RaMP/D-output neighbour entries are stored as 'hmdb:HMDB0000243'
+    or 'kegg:C00022' (post-P-3 fix). Match on the bare ID (case-insens)
+    so a claim text like 'HMDB0000243' resolves regardless of the prefix
+    convention used."""
+    for n in neighbours:
+        n_l = n.lower()
+        if n_l == id_lower or n_l.endswith(":" + id_lower):
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
 def _extract_pathway_ids(text: str) -> list[str]:
     return [m.group(1) for m in _PATHWAY_ID_RE.finditer(text)]
+
+
+def _extract_metabolite_ids(text: str) -> list[str]:
+    """Return HMDB / KEGG-compound IDs (NOT pathway IDs) found in claim
+    text. Used by the neighbour-membership routing."""
+    return [m.group(1) for m in _METABOLITE_ID_RE.finditer(text)]
 
 
 def _extract_pathway_phrases(text: str) -> list[str]:
