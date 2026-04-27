@@ -1,0 +1,5 @@
+# SIRIUS is an external Java application, not a Python package.
+# Install it from https://github.com/sirius-ms/sirius/releases and set:
+#   METAGENT_SIRIUS_PATH=/path/to/sirius
+python-dotenv
+requests
