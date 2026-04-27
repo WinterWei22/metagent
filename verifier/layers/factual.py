@@ -26,7 +26,8 @@ brief is explicit on this: never hard-reject on name difference alone.
 from __future__ import annotations
 
 import re
-from typing import Callable
+from types import SimpleNamespace
+from typing import Any, Callable
 
 from schemas.molecule import MetaboliteInfoRequest, MetaboliteInfoResponse
 from schemas.report import CandidateReport, IdentificationReport
@@ -40,6 +41,7 @@ from verifier.source_lookup import find_candidate_by_name
 
 
 Fetcher = Callable[[str], MetaboliteInfoResponse]
+ClassyfireClassifier = Callable[[Any], Any]
 
 
 # ---------------------------------------------------------------------------
@@ -60,6 +62,49 @@ _ID_EXTRACTORS: list[tuple[re.Pattern, str]] = [
     (_CID_RE, "pubchem_cid"),
     (_CCMSLIB_RE, "ccmslib"),
     (_KEGG_C_RE, "kegg"),
+]
+
+_CLASS_CLAIM_PATTERNS = [
+    re.compile(p, re.IGNORECASE)
+    for p in (
+        r"\bis\s+an?\s+.+",
+        r"\bbelongs\s+to\s+.+",
+        r"\bclassified\s+as\s+.+",
+        r"\bclass(?:ified|ification)?\b",
+        r"\btype\s+of\s+.+",
+    )
+]
+
+_CHEMICAL_CLASS_TERMS = [
+    "purine alkaloid",
+    "amino acid",
+    "fatty acid",
+    "carboxylic acid",
+    "organic acid",
+    "carbonyl compound",
+    "organonitrogen compound",
+    "organooxygen compound",
+    "monosaccharide",
+    "disaccharide",
+    "oligosaccharide",
+    "polysaccharide",
+    "carbohydrate",
+    "nucleoside",
+    "nucleotide",
+    "phenylpropanoid",
+    "polyketide",
+    "flavonoid",
+    "terpenoid",
+    "terpene",
+    "alkaloid",
+    "steroid",
+    "lipid",
+    "hexose",
+    "xanthine",
+    "purine",
+    "pyrimidine",
+    "peptide",
+    "sugar",
 ]
 
 
@@ -95,6 +140,13 @@ def _default_fetcher(identifier: str) -> MetaboliteInfoResponse:
     )
 
 
+def _default_classyfire_classifier(request: Any) -> Any:
+    """Lazy wrapper around the ClassyFire tool."""
+    from tools.classyfire import classify_structure
+
+    return classify_structure(request)
+
+
 # ---------------------------------------------------------------------------
 # Public entry
 # ---------------------------------------------------------------------------
@@ -105,6 +157,7 @@ def verify_factual(
     source_report: IdentificationReport,
     *,
     fetcher: Fetcher | None = None,
+    classyfire_fn: ClassyfireClassifier | None = None,
 ) -> VerifiedClaim:
     """Verify one factual round-trip claim.
 
@@ -113,6 +166,11 @@ def verify_factual(
     a ``MetaboliteInfoResponse`` — used by tests to avoid hitting HMDB.
     """
     ids = _extract_ids(claim.claim_text)
+
+    if not ids and is_chemical_class_claim(claim.claim_text):
+        return _verify_via_classyfire(
+            claim, source_report, classyfire_fn=classyfire_fn,
+        )
 
     if not ids:
         # No usable anchor. We cannot verify a name-only factual claim
@@ -310,6 +368,137 @@ def _verify_via_roundtrip(
         source_field=None,
         correction=None,
     )
+
+
+# ---------------------------------------------------------------------------
+# ClassyFire taxonomy branch
+# ---------------------------------------------------------------------------
+
+
+def is_chemical_class_claim(claim_text: str) -> bool:
+    """Heuristic for taxonomy claims handled by ClassyFire."""
+    low = _norm(claim_text)
+    if not any(term in low for term in _CHEMICAL_CLASS_TERMS):
+        return False
+    return any(p.search(claim_text) for p in _CLASS_CLAIM_PATTERNS)
+
+
+def _verify_via_classyfire(
+    claim: ClassifiedClaim,
+    source_report: IdentificationReport,
+    *,
+    classyfire_fn: ClassyfireClassifier | None,
+) -> VerifiedClaim:
+    smiles = _get_smiles_for_claim(claim, source_report)
+    if smiles is None:
+        return _unverifiable(
+            claim,
+            evidence="No SMILES available for ClassyFire lookup",
+        )
+    claimed_class = _extract_class_from_claim(claim.claim_text)
+    if claimed_class is None:
+        return _unverifiable(
+            claim,
+            evidence="Layer B could not extract the claimed chemical class.",
+        )
+
+    if classyfire_fn is None:
+        try:
+            from tools.classyfire import ClassifyStructureRequest
+        except ModuleNotFoundError as exc:
+            return _unverifiable(
+                claim,
+                evidence=f"ClassyFire not available in this environment: {exc}",
+            )
+        request = ClassifyStructureRequest(smiles=smiles)
+        classyfire_fn = _default_classyfire_classifier
+    else:
+        request = SimpleNamespace(smiles=smiles)
+
+    try:
+        resp = classyfire_fn(request)
+    except Exception as exc:
+        if _exception_name(exc) == "ClassyfireNotFoundError":
+            return _unverifiable(
+                claim,
+                evidence="Compound not in ClassyFire database (novel or rare compound)",
+            )
+        if _exception_name(exc) == "InvalidStructureError":
+            return _unverifiable(
+                claim,
+                evidence=f"ClassyFire could not classify invalid structure: {exc}",
+            )
+        return VerifiedClaim(
+            claim_text=claim.claim_text,
+            claim_type=claim.claim_type,
+            verdict=ClaimVerdict.ERROR,
+            evidence=(
+                f"classify_structure(smiles=...) raised "
+                f"{type(exc).__name__}: {exc}"
+            ),
+        )
+
+    direct_parent = resp.direct_parent.name if resp.direct_parent else "unknown"
+    if resp.matches_claim(claimed_class):
+        return VerifiedClaim(
+            claim_text=claim.claim_text,
+            claim_type=claim.claim_type,
+            verdict=ClaimVerdict.SUPPORTED,
+            evidence=(
+                f"ClassyFire confirms: {direct_parent} "
+                f"(source: {resp.source})"
+            ),
+        )
+
+    return VerifiedClaim(
+        claim_text=claim.claim_text,
+        claim_type=claim.claim_type,
+        verdict=ClaimVerdict.CONTRADICTED,
+        evidence=(
+            f"ClassyFire classifies this compound as {direct_parent!r}, "
+            f"not {claimed_class!r}."
+        ),
+        correction=direct_parent if direct_parent != "unknown" else None,
+    )
+
+
+def _extract_class_from_claim(claim_text: str) -> str | None:
+    low = _norm(claim_text)
+    for term in sorted(_CHEMICAL_CLASS_TERMS, key=len, reverse=True):
+        if term in low:
+            return term
+    return None
+
+
+def _get_smiles_for_claim(
+    claim: ClassifiedClaim,
+    source_report: IdentificationReport,
+) -> str | None:
+    if claim.subject:
+        by_subject, _ = find_candidate_by_name(source_report, claim.subject)
+        if by_subject is not None and by_subject.candidate.smiles:
+            return by_subject.candidate.smiles
+
+    low = _norm(claim.claim_text)
+    for cr in source_report.candidates:
+        if cr.candidate.name and _norm(cr.candidate.name) in low:
+            return cr.candidate.smiles
+        mi = cr.metabolite_info
+        if mi is None:
+            continue
+        if mi.primary_name and _norm(mi.primary_name) in low:
+            return cr.candidate.smiles
+        for syn in mi.synonyms:
+            if _norm(syn) in low:
+                return cr.candidate.smiles
+
+    if len(source_report.candidates) == 1:
+        return source_report.candidates[0].candidate.smiles
+    return None
+
+
+def _exception_name(exc: Exception) -> str:
+    return type(exc).__name__
 
 
 # ---------------------------------------------------------------------------

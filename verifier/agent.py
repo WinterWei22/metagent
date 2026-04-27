@@ -46,6 +46,7 @@ from verifier.layers import consistency as layer_d
 from verifier.layers import factual as layer_b
 from verifier.layers import grounded as layer_a
 from verifier.layers import literature as layer_e
+from verifier.layers import peak_mechanistic as layer_f
 from verifier.rewriter import is_rewrite_needed, rewrite
 from verifier.schemas import (
     ClaimType,
@@ -220,6 +221,8 @@ def _verify_per_claim(
                     c, source_report, fetcher=literature_fetcher,
                 )
             )
+        elif c.claim_type == ClaimType.PEAK_MECHANISTIC:
+            out.append(layer_f.verify_peak_mechanistic(c, source_report))
         elif c.claim_type == ClaimType.CONSISTENCY:
             # Stage 2 should not assign CONSISTENCY directly — Layer D
             # creates those entries. If it ever happens (LLM fallback

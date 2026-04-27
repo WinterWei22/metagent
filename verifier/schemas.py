@@ -70,10 +70,14 @@ class ClaimType(str, Enum):
     body formula for the same molecule)."""
 
     LITERATURE = "literature_claim"
-    """Type 5 — verified by PMID / DOI round-trip against Europe PMC, or
+    """Layer E — verified by PMID / DOI round-trip against Europe PMC, or
     source-first lookup in ``candidate.literature_records``. Catches
     hallucinated citations (an LLM-named PMID that does not resolve, or
     one that does not match the title / journal asserted alongside it)."""
+
+    PEAK_MECHANISTIC = "peak_mechanistic_claim"
+    """Type 5 — verified by peak existence plus SIRIUS fragmentation-tree
+    annotation. Used for fragment / neutral-loss claims at a specific m/z."""
 
 
 class ClaimVerdict(str, Enum):
@@ -123,6 +127,20 @@ class ExtractedClaim(BaseModel):
             "consistency layer to group claims about the same subject."
         ),
     )
+    peak_mz: float | None = Field(
+        None,
+        description=(
+            "For peak-level mechanistic claims, the asserted fragment m/z. "
+            "None for non-peak claims."
+        ),
+    )
+    neutral_loss: str | None = Field(
+        None,
+        description=(
+            "For peak-level mechanistic claims, the asserted neutral loss "
+            "when stated, e.g. 'H2O' or 'water'. None otherwise."
+        ),
+    )
 
 
 class ClassifiedClaim(BaseModel):
@@ -149,6 +167,14 @@ class ClassifiedClaim(BaseModel):
             "``llm`` = Stage 2 fallback call; ``fallback`` = neither matched, "
             "default-routed to a layer (logged for analysis)."
         ),
+    )
+    peak_mz: float | None = Field(
+        None,
+        description="See ``ExtractedClaim.peak_mz``.",
+    )
+    neutral_loss: str | None = Field(
+        None,
+        description="See ``ExtractedClaim.neutral_loss``.",
     )
 
 

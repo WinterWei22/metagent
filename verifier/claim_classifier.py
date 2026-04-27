@@ -101,6 +101,28 @@ _COMPOUND_ID_RE = re.compile(
     re.IGNORECASE,
 )
 
+_PEAK_MZ_RE = re.compile(r"\bm/z\s*=?\s*(\d+(?:\.\d+)?)\b", re.IGNORECASE)
+
+_PEAK_MECHANISTIC_PATTERNS = [
+    re.compile(p, re.IGNORECASE)
+    for p in (
+        r"neutral\s+loss\s+of",
+        r"\[M[+-]H[+-][^\]]+\]",
+        r"fragment(?:ation)?(?:\s+ion)?",
+        r"\bpeak\s+at\b",
+        r"\bloss\s+of\s+\w+",
+        r"ring\s+cleavage",
+        r"bond\s+scission",
+        r"\barises\s+from\b",
+    )
+]
+
+_NEUTRAL_LOSS_ALIASES = (
+    "H2O", "H₂O", "water", "NH3", "ammonia", "CO2", "CO₂",
+    "carbon dioxide", "CO", "carbon monoxide", "CH3", "methyl",
+    "HCl", "hydrogen chloride", "HF", "hydrogen fluoride",
+)
+
 
 # ---------------------------------------------------------------------------
 # Public entry
@@ -154,6 +176,12 @@ def classify_claims(
                 subject=c.subject,
                 claim_type=ct,
                 classifier_source=sources[i],
+                peak_mz=c.peak_mz if c.peak_mz is not None else _extract_peak_mz(c.claim_text),
+                neutral_loss=(
+                    c.neutral_loss
+                    if c.neutral_loss is not None
+                    else _extract_neutral_loss(c.claim_text)
+                ),
             )
         )
     return classified, llm_calls
@@ -174,12 +202,46 @@ def _rule_classify(claim_text: str) -> ClaimType | None:
     """
     if _LITERATURE_RE.search(claim_text) or _BARE_DOI_RE.search(claim_text):
         return ClaimType.LITERATURE
+    if _is_peak_mechanistic_claim(claim_text):
+        return ClaimType.PEAK_MECHANISTIC
     if _PATHWAY_KEYWORDS.search(claim_text) or _PATHWAY_ID_RE.search(claim_text):
         return ClaimType.BIOLOGICAL
     if _GROUNDED_KEYWORDS.search(claim_text) or _FORMULA_RE.search(claim_text):
         return ClaimType.GROUNDED
     if _COMPOUND_ID_RE.search(claim_text):
         return ClaimType.FACTUAL
+    return None
+
+
+def _extract_peak_mz(claim_text: str) -> float | None:
+    m = _PEAK_MZ_RE.search(claim_text)
+    if not m:
+        return None
+    try:
+        return float(m.group(1))
+    except ValueError:  # pragma: no cover - regex should guarantee float-ish
+        return None
+
+
+def _is_peak_mechanistic_claim(claim_text: str) -> bool:
+    if _extract_peak_mz(claim_text) is None:
+        return False
+    return any(p.search(claim_text) for p in _PEAK_MECHANISTIC_PATTERNS)
+
+
+def _extract_neutral_loss(claim_text: str) -> str | None:
+    text = claim_text.lower()
+    for alias in sorted(_NEUTRAL_LOSS_ALIASES, key=len, reverse=True):
+        if alias.lower() in text:
+            return alias
+    patterns = (
+        r"neutral\s+loss\s+of\s+([A-Za-z0-9₂₃₄.+-]+(?:\s+[A-Za-z]+)?)",
+        r"loss\s+of\s+([A-Za-z0-9₂₃₄.+-]+(?:\s+[A-Za-z]+)?)",
+    )
+    for pattern in patterns:
+        m = re.search(pattern, claim_text, flags=re.IGNORECASE)
+        if m:
+            return m.group(1).strip(" .,:;")
     return None
 
 
@@ -237,6 +299,8 @@ _TYPE_LITERALS = {
     "consistency": ClaimType.CONSISTENCY,
     "literature_claim": ClaimType.LITERATURE,
     "literature": ClaimType.LITERATURE,
+    "peak_mechanistic_claim": ClaimType.PEAK_MECHANISTIC,
+    "peak_mechanistic": ClaimType.PEAK_MECHANISTIC,
 }
 
 

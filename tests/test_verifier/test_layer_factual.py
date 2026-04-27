@@ -1,8 +1,6 @@
 """Unit tests for Layer B — factual round-trip (Type 2) claim verification."""
 from __future__ import annotations
 
-import pytest
-
 from schemas.molecule import MetaboliteInfoResponse
 from verifier.layers.factual import verify_factual
 from verifier.schemas import ClaimType, ClaimVerdict, ClassifiedClaim
@@ -17,6 +15,10 @@ def _fc(text, subj):
 
 def _unused_fetcher(_id):  # pragma: no cover — only fails on misuse
     raise AssertionError(f"fetcher should not have been called: {_id}")
+
+
+class ClassyfireNotFoundError(Exception):
+    pass
 
 
 # ---------------------------------------------------------------------------
@@ -160,5 +162,78 @@ def test_no_id_in_claim_is_unverifiable(glucose_report):
         _fc("Caffeine is a stimulant", "Caffeine"),
         glucose_report,
         fetcher=_unused_fetcher,
+    )
+    assert r.verdict == ClaimVerdict.UNVERIFIABLE_V0
+
+
+# ---------------------------------------------------------------------------
+# ClassyFire taxonomy branch
+# ---------------------------------------------------------------------------
+
+
+def _classyfire_resp(*, direct_parent: str, classifications: list[str]):
+    class Resp:
+        source = "cache"
+
+        def __init__(self):
+            self.direct_parent = type("Node", (), {"name": direct_parent})()
+            self.all_classifications = classifications
+
+        def matches_claim(self, claimed_class):
+            low = claimed_class.lower()
+            return any(low in item.lower() for item in self.all_classifications)
+
+    return Resp()
+
+
+def test_caffeine_is_purine_supported(caffeine_report):
+    def classyfire(_req):
+        return _classyfire_resp(
+            direct_parent="Xanthines",
+            classifications=[
+                "Purines and purine derivatives",
+                "Xanthines",
+            ],
+        )
+
+    r = verify_factual(
+        _fc("caffeine is a purine", "Caffeine"),
+        caffeine_report,
+        fetcher=_unused_fetcher,
+        classyfire_fn=classyfire,
+    )
+    assert r.verdict == ClaimVerdict.SUPPORTED
+
+
+def test_glucose_is_amino_acid_contradicted(glucose_report):
+    def classyfire(_req):
+        return _classyfire_resp(
+            direct_parent="Hexoses",
+            classifications=[
+                "Monosaccharides",
+                "Hexoses",
+                "Organooxygen compounds",
+            ],
+        )
+
+    r = verify_factual(
+        _fc("glucose is an amino acid", "Glucose"),
+        glucose_report,
+        fetcher=_unused_fetcher,
+        classyfire_fn=classyfire,
+    )
+    assert r.verdict == ClaimVerdict.CONTRADICTED
+    assert r.correction == "Hexoses"
+
+
+def test_classyfire_not_found_unverifiable(caffeine_report):
+    def classyfire(_req):
+        raise ClassyfireNotFoundError("not found")
+
+    r = verify_factual(
+        _fc("caffeine is a purine", "Caffeine"),
+        caffeine_report,
+        fetcher=_unused_fetcher,
+        classyfire_fn=classyfire,
     )
     assert r.verdict == ClaimVerdict.UNVERIFIABLE_V0
