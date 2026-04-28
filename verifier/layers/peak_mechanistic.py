@@ -47,7 +47,11 @@ def verify_peak_mechanistic(
     sirius_fn: SiriusAnnotator | None = None,
 ) -> VerifiedClaim:
     """Verify one peak-level mechanistic claim against SIRIUS."""
-    mz = claim.peak_mz if claim.peak_mz is not None else _extract_mz(claim.claim_text)
+    mz = (
+        claim.extracted_fields.mz
+        if claim.extracted_fields.mz is not None
+        else claim.peak_mz if claim.peak_mz is not None else _extract_mz(claim.claim_text)
+    )
     if mz is None:
         return _unverifiable(
             claim,
@@ -58,16 +62,24 @@ def verify_peak_mechanistic(
     peak_exists = any(abs(obs_mz - mz) / mz * 1e6 <= 5.0 for obs_mz in spectrum.mz)
     if not peak_exists:
         return VerifiedClaim(
+            claim_id=claim.claim_id,
             claim_text=claim.claim_text,
             claim_type=ClaimType.PEAK_MECHANISTIC,
+            claim_subtype=claim.claim_subtype,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
             verdict=ClaimVerdict.CONTRADICTED,
             evidence=(
                 f"Peak at m/z {mz:.4f} not found in experimental spectrum "
                 f"(5 ppm tolerance). Spectrum has {len(spectrum.mz)} peaks."
             ),
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="peak_mechanistic",
+            trace_summary=f"Peak at m/z {mz:.4f} absent from experimental spectrum",
         )
 
-    if _get_top_candidate(source_report) is None:
+    if _get_top_candidate(claim, source_report) is None:
         return _unverifiable(claim, "No candidate with SMILES available")
 
     if sirius_fn is None:
@@ -100,33 +112,60 @@ def verify_peak_mechanistic(
     annotation = sirius_resp.lookup_fragment(mz=mz, tolerance_ppm=5.0)
     if annotation is None:
         return VerifiedClaim(
+            claim_id=claim.claim_id,
             claim_text=claim.claim_text,
             claim_type=ClaimType.PEAK_MECHANISTIC,
+            claim_subtype=claim.claim_subtype,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
             verdict=ClaimVerdict.UNSUPPORTED,
             evidence=(
                 f"SIRIUS fragmentation tree has no fragment at m/z {mz:.4f} "
                 f"± 5 ppm. Tree has {sirius_resp.tree_node_count} nodes."
             ),
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="peak_mechanistic",
+            tool_called="sirius",
+            trace_summary=f"SIRIUS tree has no fragment at m/z {mz:.4f}",
         )
 
-    claimed_nl = claim.neutral_loss or _extract_neutral_loss(claim.claim_text)
+    claimed_nl = (
+        claim.extracted_fields.neutral_loss
+        or claim.neutral_loss
+        or _extract_neutral_loss(claim.claim_text)
+    )
     if claimed_nl is not None:
         sirius_nl = annotation.neutral_loss_formula or annotation.neutral_loss
         if not _neutral_loss_matches(claimed=claimed_nl, sirius_nl=sirius_nl):
             return VerifiedClaim(
+                claim_id=claim.claim_id,
                 claim_text=claim.claim_text,
                 claim_type=ClaimType.PEAK_MECHANISTIC,
+                claim_subtype=claim.claim_subtype,
+                subject=claim.subject,
+                subject_kind=claim.subject_kind,
+                candidate_ref=claim.candidate_ref,
                 verdict=ClaimVerdict.CONTRADICTED,
                 evidence=(
                     f"SIRIUS assigns neutral loss {sirius_nl!r} at this m/z, "
                     f"but LLM claimed {claimed_nl!r}."
                 ),
                 correction=sirius_nl,
+                extracted_fields=claim.extracted_fields,
+                verifier_layer="peak_mechanistic",
+                tool_called="sirius",
+                trace_summary=f"SIRIUS neutral loss {sirius_nl!r} mismatched",
             )
 
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=ClaimType.PEAK_MECHANISTIC,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.SUPPORTED,
         evidence=(
             f"SIRIUS confirms fragment at m/z {mz:.4f} "
@@ -134,10 +173,16 @@ def verify_peak_mechanistic(
             f"neutral loss {annotation.neutral_loss_formula})."
         ),
         source_field="experimental_spectrum + sirius_fragmentation_tree",
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="peak_mechanistic",
+        tool_called="sirius",
+        trace_summary=f"SIRIUS fragment at m/z {mz:.4f}",
     )
 
 
-def _get_top_candidate(source_report: IdentificationReport):
+def _get_top_candidate(claim: ClassifiedClaim, source_report: IdentificationReport):
+    if claim.candidate_ref is not None and claim.candidate_ref.smiles:
+        return claim.candidate_ref
     if not source_report.candidates:
         return None
     top = source_report.candidates[0]
@@ -205,8 +250,17 @@ def _norm_loss(value: str) -> str:
 
 def _unverifiable(claim: ClassifiedClaim, evidence: str) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=ClaimType.PEAK_MECHANISTIC,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.UNVERIFIABLE_V0,
         evidence=evidence,
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="peak_mechanistic",
+        tool_called="sirius" if "SIRIUS" in evidence else None,
+        trace_summary=evidence,
     )

@@ -123,6 +123,15 @@ def _extract_ids(claim_text: str) -> list[tuple[str, str]]:
     return out
 
 
+def _ids_from_claim(claim: ClassifiedClaim) -> list[tuple[str, str]]:
+    fields = claim.extracted_fields
+    if fields.database_name and fields.database_id:
+        return [(fields.database_name, fields.database_id)]
+    if fields.inchikey:
+        return [("inchikey", fields.inchikey)]
+    return _extract_ids(claim.claim_text)
+
+
 # ---------------------------------------------------------------------------
 # Default fetcher — lazy imported to avoid heavy initialisation at module load
 # ---------------------------------------------------------------------------
@@ -165,7 +174,7 @@ def verify_factual(
     can be replaced with any callable taking an identifier and returning
     a ``MetaboliteInfoResponse`` — used by tests to avoid hitting HMDB.
     """
-    ids = _extract_ids(claim.claim_text)
+    ids = _ids_from_claim(claim)
 
     if not ids and is_chemical_class_claim(claim.claim_text):
         return _verify_via_classyfire(
@@ -271,12 +280,21 @@ def _matched_in_source(
                 source_field=path,
             )
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.SUPPORTED,
         evidence=f"source {path} = {id_value}",
         source_field=path,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        evidence_refs=[],
+        verifier_layer="factual",
+        trace_summary=f"source {path} = {id_value}",
     )
 
 
@@ -298,8 +316,13 @@ def _verify_via_roundtrip(
         info = fetcher(value)
     except Exception as exc:  # tool raised — surface as ERROR, do not retry
         return VerifiedClaim(
+            claim_id=claim.claim_id,
             claim_text=claim.claim_text,
             claim_type=claim.claim_type,
+            claim_subtype=claim.claim_subtype,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
             verdict=ClaimVerdict.ERROR,
             evidence=(
                 f"fetch_metabolite_info({value!r}) raised "
@@ -307,6 +330,10 @@ def _verify_via_roundtrip(
             ),
             source_field=None,
             correction=None,
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="factual",
+            tool_called="metabolite_info",
+            trace_summary=f"fetch_metabolite_info({value!r}) raised",
         )
 
     if not info.found:
@@ -329,6 +356,7 @@ def _verify_via_roundtrip(
                 "PubChem-only CID with METAGENT_ALLOW_PUBCHEM unset); "
                 "v0 cannot disambiguate."
             ),
+            tool_called="metabolite_info",
         )
 
     # Tool resolved the ID. Now check the claimed subject (if any) against
@@ -336,8 +364,13 @@ def _verify_via_roundtrip(
     if claim.subject:
         if _info_name_matches(claim.subject, info):
             return VerifiedClaim(
+                claim_id=claim.claim_id,
                 claim_text=claim.claim_text,
                 claim_type=claim.claim_type,
+                claim_subtype=claim.claim_subtype,
+                subject=claim.subject,
+                subject_kind=claim.subject_kind,
+                candidate_ref=claim.candidate_ref,
                 verdict=ClaimVerdict.SUPPORTED,
                 evidence=(
                     f"fetch_metabolite_info({value!r}) -> primary_name="
@@ -345,6 +378,10 @@ def _verify_via_roundtrip(
                 ),
                 source_field=None,
                 correction=None,
+                extracted_fields=claim.extracted_fields,
+                verifier_layer="factual",
+                tool_called="metabolite_info",
+                trace_summary=f"fetch_metabolite_info({value!r}) resolved",
             )
         # Per H5 design: never CONTRADICTED on names alone.
         return _unverifiable(
@@ -355,18 +392,28 @@ def _verify_via_roundtrip(
                 f"claim names {claim.subject!r}. No canonical-ID basis to "
                 "judge name disagreement — see Track V H5 note."
             ),
+            tool_called="metabolite_info",
         )
 
     # No subject — only the ID was asserted, and the tool resolved it.
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.SUPPORTED,
         evidence=(
             f"fetch_metabolite_info({value!r}) returned found=True"
         ),
         source_field=None,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="factual",
+        tool_called="metabolite_info",
+        trace_summary=f"fetch_metabolite_info({value!r}) returned found=True",
     )
 
 
@@ -422,43 +469,72 @@ def _verify_via_classyfire(
             return _unverifiable(
                 claim,
                 evidence="Compound not in ClassyFire database (novel or rare compound)",
+                tool_called="classyfire",
             )
         if _exception_name(exc) == "InvalidStructureError":
             return _unverifiable(
                 claim,
                 evidence=f"ClassyFire could not classify invalid structure: {exc}",
+                tool_called="classyfire",
             )
         return VerifiedClaim(
+            claim_id=claim.claim_id,
             claim_text=claim.claim_text,
             claim_type=claim.claim_type,
+            claim_subtype=claim.claim_subtype,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
             verdict=ClaimVerdict.ERROR,
             evidence=(
                 f"classify_structure(smiles=...) raised "
                 f"{type(exc).__name__}: {exc}"
             ),
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="factual",
+            tool_called="classyfire",
+            trace_summary="classify_structure(smiles=...) raised",
         )
 
     direct_parent = resp.direct_parent.name if resp.direct_parent else "unknown"
     if resp.matches_claim(claimed_class):
         return VerifiedClaim(
+            claim_id=claim.claim_id,
             claim_text=claim.claim_text,
             claim_type=claim.claim_type,
+            claim_subtype=claim.claim_subtype,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
             verdict=ClaimVerdict.SUPPORTED,
             evidence=(
                 f"ClassyFire confirms: {direct_parent} "
                 f"(source: {resp.source})"
             ),
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="factual",
+            tool_called="classyfire",
+            trace_summary=f"ClassyFire confirms {direct_parent}",
         )
 
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.CONTRADICTED,
         evidence=(
             f"ClassyFire classifies this compound as {direct_parent!r}, "
             f"not {claimed_class!r}."
         ),
         correction=direct_parent if direct_parent != "unknown" else None,
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="factual",
+        tool_called="classyfire",
+        trace_summary=f"ClassyFire classified as {direct_parent}",
     )
 
 
@@ -474,6 +550,10 @@ def _get_smiles_for_claim(
     claim: ClassifiedClaim,
     source_report: IdentificationReport,
 ) -> str | None:
+    if claim.candidate_ref is not None and claim.candidate_ref.smiles:
+        return claim.candidate_ref.smiles
+    if claim.extracted_fields.smiles:
+        return claim.extracted_fields.smiles
     if claim.subject:
         by_subject, _ = find_candidate_by_name(source_report, claim.subject)
         if by_subject is not None and by_subject.candidate.smiles:
@@ -533,12 +613,22 @@ def _unverifiable(
     *,
     evidence: str,
     source_field: str | None = None,
+    tool_called: str | None = None,
 ) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.UNVERIFIABLE_V0,
         evidence=evidence,
         source_field=source_field,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="factual",
+        tool_called=tool_called,
+        trace_summary=evidence,
     )

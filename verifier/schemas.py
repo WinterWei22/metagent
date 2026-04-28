@@ -95,6 +95,119 @@ class ClaimVerdict(str, Enum):
     ERROR = "error"
 
 
+class ClaimSubtype(str, Enum):
+    """More specific semantic shape within a broad ``ClaimType`` route."""
+
+    UNKNOWN = "unknown"
+    FORMULA = "formula"
+    PRECURSOR_MZ = "precursor_mz"
+    NEUTRAL_MASS = "neutral_mass"
+    ADDUCT = "adduct"
+    PEAK_COUNT = "peak_count"
+    EVIDENCE_SCORE = "evidence_score"
+    CANDIDATE_SCORE = "candidate_score"
+    PREDICTED_COSINE = "predicted_cosine"
+    MASS_MATCH = "mass_match"
+    RANKING = "ranking"
+    DATABASE_ID = "database_id"
+    CHEMICAL_TAXONOMY = "chemical_taxonomy"
+    NAME_IDENTITY = "name_identity"
+    PATHWAY_MEMBERSHIP = "pathway_membership"
+    PATHWAY_NEIGHBOUR = "pathway_neighbour"
+    COOCCURRENCE = "cooccurrence"
+    BIOLOGICAL_CONTEXT = "biological_context"
+    LITERATURE_PMID = "literature_pmid"
+    LITERATURE_DOI = "literature_doi"
+    LITERATURE_FREE_TEXT = "literature_free_text"
+    PEAK_EXISTENCE = "peak_existence"
+    FRAGMENT_ASSIGNMENT = "fragment_assignment"
+    NEUTRAL_LOSS = "neutral_loss"
+    RING_CLEAVAGE = "ring_cleavage"
+
+
+class SubjectKind(str, Enum):
+    """Coarse type for the entity named by ``subject``."""
+
+    UNKNOWN = "unknown"
+    CANDIDATE = "candidate"
+    COMPOUND = "compound"
+    PATHWAY = "pathway"
+    DATABASE_ID = "database_id"
+    SPECTRUM = "spectrum"
+    PEAK = "peak"
+    LITERATURE = "literature"
+    CLASS = "class"
+
+
+# ---------------------------------------------------------------------------
+# Typed-claim support records
+# ---------------------------------------------------------------------------
+
+
+class ClaimExtractedFields(BaseModel):
+    """Machine-readable fields parsed from a natural-language claim.
+
+    ``extra='allow'`` lets future parsers add narrow fields without another
+    migration while keeping the first-order fields typed for metrics/UI.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    mz: float | None = None
+    mz_tolerance_ppm: float | None = None
+    formula: str | None = None
+    neutral_mass: float | None = None
+    precursor_mz: float | None = None
+    adduct: str | None = None
+    neutral_loss: str | None = None
+    fragment_formula: str | None = None
+    smiles: str | None = None
+    inchikey: str | None = None
+    database_name: str | None = None
+    database_id: str | None = None
+    pathway_name: str | None = None
+    pathway_id: str | None = None
+    pmid: str | None = None
+    doi: str | None = None
+    score_name: str | None = None
+    score_value: float | None = None
+    rank: int | None = None
+    candidate_name: str | None = None
+
+
+class CandidateRef(BaseModel):
+    """Stable-ish reference to a candidate in ``IdentificationReport``."""
+
+    index: int | None = None
+    path: str | None = None
+    name: str | None = None
+    smiles: str | None = None
+    inchikey: str | None = None
+    source_id: str | None = None
+    match_method: str | None = None
+
+
+class EvidenceRef(BaseModel):
+    """Structured pointer to a field/tool result used as verification evidence."""
+
+    source: str
+    path: str | None = None
+    value: str | float | int | bool | None = None
+    summary: str | None = None
+
+
+class ClaimProvenance(BaseModel):
+    """Where a typed claim and its fields came from."""
+
+    pass_id: Literal["v1", "v2"] | None = None
+    extractor: str | None = None
+    extractor_source: Literal["llm", "rule", "manual"] | None = None
+    classifier_source: Literal["rule", "llm", "fallback"] | None = None
+    parser_version: str | None = None
+    source_span_start: int | None = None
+    source_span_end: int | None = None
+
+
 # ---------------------------------------------------------------------------
 # Per-claim record
 # ---------------------------------------------------------------------------
@@ -110,6 +223,14 @@ class ExtractedClaim(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    claim_id: str | None = Field(
+        None,
+        description="Stable claim identifier within a verifier pass, when assigned.",
+    )
+    source_text: str | None = Field(
+        None,
+        description="Original extracted text before any normalization.",
+    )
     claim_text: str = Field(
         ...,
         description=(
@@ -118,6 +239,10 @@ class ExtractedClaim(BaseModel):
             "Example: 'D-Gulose has molecular formula C7H14O7' — not just "
             "'C7H14O7'."
         ),
+    )
+    normalized_text: str | None = Field(
+        None,
+        description="Normalized claim text used by local parsers.",
     )
     subject: str | None = Field(
         None,
@@ -141,6 +266,22 @@ class ExtractedClaim(BaseModel):
             "when stated, e.g. 'H2O' or 'water'. None otherwise."
         ),
     )
+    claim_subtype: ClaimSubtype = Field(
+        ClaimSubtype.UNKNOWN,
+        description="Optional semantic subtype inferred by local parsers.",
+    )
+    subject_kind: SubjectKind = Field(
+        SubjectKind.UNKNOWN,
+        description="Coarse kind of the claim subject.",
+    )
+    extracted_fields: ClaimExtractedFields = Field(
+        default_factory=ClaimExtractedFields,
+        description="Typed fields parsed from claim_text.",
+    )
+    provenance: ClaimProvenance = Field(
+        default_factory=ClaimProvenance,
+        description="Extraction/parser provenance for audit and metrics.",
+    )
 
 
 class ClassifiedClaim(BaseModel):
@@ -148,7 +289,11 @@ class ClassifiedClaim(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    claim_id: str | None = Field(None, description="See ``ExtractedClaim.claim_id``.")
     claim_text: str = Field(..., description="See ``ExtractedClaim.claim_text``.")
+    normalized_text: str | None = Field(
+        None, description="See ``ExtractedClaim.normalized_text``."
+    )
     subject: str | None = Field(
         None, description="See ``ExtractedClaim.subject``."
     )
@@ -176,6 +321,32 @@ class ClassifiedClaim(BaseModel):
         None,
         description="See ``ExtractedClaim.neutral_loss``.",
     )
+    claim_subtype: ClaimSubtype = Field(
+        ClaimSubtype.UNKNOWN,
+        description="Semantic subtype used by tables/metrics.",
+    )
+    subject_kind: SubjectKind = Field(
+        SubjectKind.UNKNOWN,
+        description="See ``ExtractedClaim.subject_kind``.",
+    )
+    candidate_ref: CandidateRef | None = Field(
+        None,
+        description="Candidate matched during typed normalization, if available.",
+    )
+    extracted_fields: ClaimExtractedFields = Field(
+        default_factory=ClaimExtractedFields,
+        description="See ``ExtractedClaim.extracted_fields``.",
+    )
+    confidence_hint: float | None = Field(
+        None,
+        ge=0.0,
+        le=1.0,
+        description="Optional parser/classifier confidence hint; not a verdict.",
+    )
+    provenance: ClaimProvenance = Field(
+        default_factory=ClaimProvenance,
+        description="Extraction/classification provenance for audit and metrics.",
+    )
 
 
 class VerifiedClaim(BaseModel):
@@ -189,8 +360,22 @@ class VerifiedClaim(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    claim_id: str | None = Field(None, description="Stable claim identifier, if available.")
     claim_text: str = Field(..., description="The atomic statement, verbatim from extraction.")
     claim_type: ClaimType = Field(..., description="Which layer judged this claim.")
+    claim_subtype: ClaimSubtype = Field(
+        ClaimSubtype.UNKNOWN,
+        description="Semantic subtype used by claim tables and metrics.",
+    )
+    subject: str | None = Field(None, description="Claim subject, if propagated.")
+    subject_kind: SubjectKind = Field(
+        SubjectKind.UNKNOWN,
+        description="Coarse kind of the claim subject.",
+    )
+    candidate_ref: CandidateRef | None = Field(
+        None,
+        description="Candidate reference associated with this claim, if known.",
+    )
     verdict: ClaimVerdict = Field(..., description="The layer's verdict.")
     evidence: str = Field(
         ...,
@@ -221,6 +406,91 @@ class VerifiedClaim(BaseModel):
             "(e.g. an internally inconsistent narrative with no canonical fix)."
         ),
     )
+    extracted_fields: ClaimExtractedFields = Field(
+        default_factory=ClaimExtractedFields,
+        description="Typed fields carried through verification.",
+    )
+    evidence_refs: list[EvidenceRef] = Field(
+        default_factory=list,
+        description="Structured evidence references used by the verifier.",
+    )
+    verifier_layer: str | None = Field(
+        None,
+        description="Layer implementation that judged the claim.",
+    )
+    tool_called: str | None = Field(
+        None,
+        description="External tool used for this claim, if any.",
+    )
+    trace_summary: str | None = Field(
+        None,
+        description="Short machine-friendly verification trace summary.",
+    )
+    severity: Literal["info", "minor", "major", "critical"] | None = Field(
+        None,
+        description="UI/metrics severity derived from verdict.",
+    )
+    claim_group_id: str | None = Field(
+        None,
+        description="Group id for linked claims such as consistency contradictions.",
+    )
+    parent_claim_id: str | None = Field(
+        None,
+        description="Previous-pass parent claim id when a rewritten claim is aligned.",
+    )
+
+
+class VerifiedClaimRow(BaseModel):
+    """Flattened row for UI tables and claim-level metrics."""
+
+    claim_id: str
+    claim_text: str
+    claim_type: ClaimType
+    claim_subtype: ClaimSubtype = ClaimSubtype.UNKNOWN
+    subject: str | None = None
+    candidate_ref: CandidateRef | None = None
+    verdict: ClaimVerdict
+    evidence_summary: str
+    source_field: str | None = None
+    correction: str | None = None
+    verifier_layer: str | None = None
+    tool_called: str | None = None
+    trace_summary: str | None = None
+    severity: Literal["info", "minor", "major", "critical"] = "info"
+    claim_group_id: str | None = None
+    parent_claim_id: str | None = None
+    extracted_fields: ClaimExtractedFields = Field(default_factory=ClaimExtractedFields)
+    evidence_refs: list[EvidenceRef] = Field(default_factory=list)
+
+
+class VerifiedClaimTable(BaseModel):
+    """Claim table for one verifier pass."""
+
+    pass_id: Literal["v1", "v2"]
+    rows: list[VerifiedClaimRow] = Field(default_factory=list)
+
+
+class ClaimMetrics(BaseModel):
+    """Aggregate metrics computed from verified claims."""
+
+    total_claims: int = 0
+    supported_claims: int = 0
+    contradicted_claims: int = 0
+    unsupported_claims: int = 0
+    unverifiable_claims: int = 0
+    error_claims: int = 0
+    supported_ratio: float | None = None
+    contradiction_rate: float | None = None
+    unverifiable_rate: float | None = None
+    claim_precision: float | None = None
+    rewrite_improvement: float | None = None
+    per_type_verdict_counts: dict[str, dict[str, int]] = Field(default_factory=dict)
+    per_subtype_verdict_counts: dict[str, dict[str, int]] = Field(default_factory=dict)
+    per_candidate_support_counts: dict[str, dict[str, int]] = Field(default_factory=dict)
+    peak_claim_coverage: float | None = None
+    tool_call_counts: dict[str, int] = Field(default_factory=dict)
+    verification_confidence: float | None = None
+    confidence_components: dict[str, float] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -279,6 +549,14 @@ class VerifiedIdentification(BaseModel):
             "decision, we do not assume the rewriter cannot introduce new "
             "contradictions."
         ),
+    )
+    claim_tables: list[VerifiedClaimTable] = Field(
+        default_factory=list,
+        description="Flattened claim tables for UI and claim-level metrics.",
+    )
+    claim_metrics: ClaimMetrics | None = Field(
+        None,
+        description="Aggregate claim-level metrics computed from the verifier output.",
     )
     overall_verdict: Literal[
         "verified",

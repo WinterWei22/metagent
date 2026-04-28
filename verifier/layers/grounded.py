@@ -32,6 +32,7 @@ from verifier.schemas import (
     ClaimType,
     ClaimVerdict,
     ClassifiedClaim,
+    EvidenceRef,
     VerifiedClaim,
 )
 from verifier.source_lookup import find_candidate_by_name
@@ -72,11 +73,18 @@ def verify_grounded(
     """Verify one grounded claim against ``source_report``. Pure."""
     cand: CandidateReport | None = None
     cand_idx: int | None = None
-    if claim.subject:
+    if claim.candidate_ref is not None and claim.candidate_ref.index is not None:
+        idx = claim.candidate_ref.index
+        if 0 <= idx < len(source_report.candidates):
+            cand, cand_idx = source_report.candidates[idx], idx
+    if cand is None and claim.subject:
         cand, cand_idx = find_candidate_by_name(source_report, claim.subject)
 
     for extractor in (
+        _check_typed_spectrum_field,
+        _check_typed_rank,
         _check_formula,
+        _check_typed_score,
         _check_evidence_score,
         _check_cosine,
         _check_bc_score,
@@ -112,15 +120,16 @@ def _check_formula(
     Unicode-subscript variants ('C₆H₁₂O₆') are normalised to ASCII before
     matching — H1 in the real glucose fixture uses subscripts.
     """
-    if "formula" not in claim.claim_text.lower():
+    typed_formula = claim.extracted_fields.formula
+    if typed_formula is None and "formula" not in claim.claim_text.lower():
         # A bare 'C6H12O6' mentioned without the keyword 'formula' is
         # ambiguous (it might be part of a pathway description). Require
         # an explicit 'formula' cue.
         return None
     m = _FORMULA_RE.search(_normalise_formula_text(claim.claim_text))
-    if not m:
+    if typed_formula is None and not m:
         return None
-    asserted = m.group(1)
+    asserted = typed_formula or m.group(1)
 
     if cand is None or cand.metabolite_info is None:
         return _unsupported(
@@ -153,6 +162,131 @@ def _check_formula(
         source_field=path,
         correction=source_formula,
     )
+
+
+def _check_typed_score(
+    claim: ClassifiedClaim,
+    report: IdentificationReport,
+    cand: CandidateReport | None,
+    cand_idx: int | None,
+) -> VerifiedClaim | None:
+    fields = claim.extracted_fields
+    if fields.score_name is None or fields.score_value is None:
+        return None
+    if cand is None:
+        return _unsupported(
+            claim,
+            evidence=(
+                f"Claim asserts {fields.score_name} {fields.score_value} but "
+                f"subject {claim.subject!r} not matched to any candidate."
+            ),
+        )
+    if fields.score_name == "evidence_score":
+        return _compare_numeric(
+            claim,
+            asserted=fields.score_value,
+            source=cand.evidence_score,
+            source_field=f"candidates[{cand_idx}].evidence_score",
+            tolerance=1e-3,
+        )
+    if fields.score_name == "candidate_score":
+        return _compare_numeric(
+            claim,
+            asserted=fields.score_value,
+            source=cand.candidate.score,
+            source_field=f"candidates[{cand_idx}].candidate.score",
+            tolerance=1e-3,
+        )
+    if fields.score_name == "predicted_cosine":
+        path = f"candidates[{cand_idx}].predicted_spectrum_cosine"
+        if cand.predicted_spectrum_cosine is None:
+            return _unverifiable(
+                claim,
+                evidence=f"{path} is None (spectrum prediction skipped)",
+                source_field=path,
+            )
+        return _compare_numeric(
+            claim,
+            asserted=fields.score_value,
+            source=cand.predicted_spectrum_cosine,
+            source_field=path,
+            tolerance=1e-3,
+        )
+    return None
+
+
+def _check_typed_rank(
+    claim: ClassifiedClaim,
+    report: IdentificationReport,
+    cand: CandidateReport | None,
+    cand_idx: int | None,
+) -> VerifiedClaim | None:
+    rank = claim.extracted_fields.rank
+    if rank is None:
+        return None
+    if cand_idx is None:
+        return _unsupported(
+            claim,
+            evidence=f"Claim asserts rank {rank}, but no candidate_ref resolved.",
+        )
+    asserted_idx = rank - 1
+    path = f"candidates[{cand_idx}]"
+    if asserted_idx == cand_idx:
+        return _supported(
+            claim,
+            evidence=f"candidate_ref {path} matches asserted rank {rank}",
+            source_field=path,
+        )
+    correction = str(cand_idx + 1)
+    return _contradicted(
+        claim,
+        evidence=f"candidate_ref {path} does not match asserted rank {rank}",
+        source_field=path,
+        correction=correction,
+    )
+
+
+def _check_typed_spectrum_field(
+    claim: ClassifiedClaim,
+    report: IdentificationReport,
+    cand: CandidateReport | None,
+    cand_idx: int | None,
+) -> VerifiedClaim | None:
+    fields = claim.extracted_fields
+    if fields.precursor_mz is not None:
+        return _compare_numeric(
+            claim,
+            asserted=fields.precursor_mz,
+            source=report.experimental_spectrum.precursor_mz,
+            source_field="experimental_spectrum.precursor_mz",
+            tolerance=1e-4,
+        )
+    if fields.neutral_mass is not None:
+        return _compare_numeric(
+            claim,
+            asserted=fields.neutral_mass,
+            source=report.neutral_mass_computed,
+            source_field="neutral_mass_computed",
+            tolerance=1e-2,
+        )
+    if fields.adduct is not None and "adduct" in claim.claim_text.lower():
+        source = report.experimental_spectrum.adduct
+        if fields.adduct == source:
+            return _supported(
+                claim,
+                evidence=f"source experimental_spectrum.adduct = {source!r}",
+                source_field="experimental_spectrum.adduct",
+            )
+        return _contradicted(
+            claim,
+            evidence=(
+                f"source experimental_spectrum.adduct = {source!r}, "
+                f"claim asserts {fields.adduct!r}"
+            ),
+            source_field="experimental_spectrum.adduct",
+            correction=source,
+        )
+    return None
 
 
 def _check_evidence_score(
@@ -320,12 +454,21 @@ def _supported(
     claim: ClassifiedClaim, *, evidence: str, source_field: str | None
 ) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.SUPPORTED,
         evidence=evidence,
         source_field=source_field,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        evidence_refs=_evidence_refs(source_field, evidence),
+        verifier_layer="grounded",
+        trace_summary=evidence,
     )
 
 
@@ -337,12 +480,21 @@ def _contradicted(
     correction: str | None,
 ) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.CONTRADICTED,
         evidence=evidence,
         source_field=source_field,
         correction=correction,
+        extracted_fields=claim.extracted_fields,
+        evidence_refs=_evidence_refs(source_field, evidence),
+        verifier_layer="grounded",
+        trace_summary=evidence,
     )
 
 
@@ -350,12 +502,20 @@ def _unsupported(
     claim: ClassifiedClaim, *, evidence: str,
 ) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.UNSUPPORTED,
         evidence=evidence,
         source_field=None,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="grounded",
+        trace_summary=evidence,
     )
 
 
@@ -363,10 +523,25 @@ def _unverifiable(
     claim: ClassifiedClaim, *, evidence: str, source_field: str | None,
 ) -> VerifiedClaim:
     return VerifiedClaim(
+        claim_id=claim.claim_id,
         claim_text=claim.claim_text,
         claim_type=claim.claim_type,
+        claim_subtype=claim.claim_subtype,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
         verdict=ClaimVerdict.UNVERIFIABLE_V0,
         evidence=evidence,
         source_field=source_field,
         correction=None,
+        extracted_fields=claim.extracted_fields,
+        evidence_refs=_evidence_refs(source_field, evidence),
+        verifier_layer="grounded",
+        trace_summary=evidence,
     )
+
+
+def _evidence_refs(source_field: str | None, summary: str) -> list[EvidenceRef]:
+    if source_field is None:
+        return []
+    return [EvidenceRef(source="source_report", path=source_field, summary=summary)]

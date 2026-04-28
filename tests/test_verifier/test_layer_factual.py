@@ -3,7 +3,14 @@ from __future__ import annotations
 
 from schemas.molecule import MetaboliteInfoResponse
 from verifier.layers.factual import verify_factual
-from verifier.schemas import ClaimType, ClaimVerdict, ClassifiedClaim
+from verifier.schemas import (
+    CandidateRef,
+    ClaimExtractedFields,
+    ClaimSubtype,
+    ClaimType,
+    ClaimVerdict,
+    ClassifiedClaim,
+)
 
 
 def _fc(text, subj):
@@ -203,6 +210,39 @@ def test_caffeine_is_purine_supported(caffeine_report):
         classyfire_fn=classyfire,
     )
     assert r.verdict == ClaimVerdict.SUPPORTED
+
+
+def test_classyfire_uses_candidate_ref_smiles(caffeine_report):
+    seen = []
+
+    def classyfire(req):
+        seen.append(req.smiles)
+        return _classyfire_resp(
+            direct_parent="Xanthines",
+            classifications=["Purines and purine derivatives", "Xanthines"],
+        )
+
+    claim = _fc("this compound is a purine", None).model_copy(
+        update={
+            "claim_subtype": ClaimSubtype.CHEMICAL_TAXONOMY,
+            "candidate_ref": CandidateRef(
+                index=0,
+                path="candidates[0]",
+                name="Caffeine",
+                smiles="Cn1cnc2c1c(=O)n(C)c(=O)n2C",
+            ),
+            "extracted_fields": ClaimExtractedFields(),
+        }
+    )
+    r = verify_factual(
+        claim,
+        caffeine_report,
+        fetcher=_unused_fetcher,
+        classyfire_fn=classyfire,
+    )
+    assert r.verdict == ClaimVerdict.SUPPORTED
+    assert seen == ["Cn1cnc2c1c(=O)n(C)c(=O)n2C"]
+    assert r.tool_called == "classyfire"
 
 
 def test_glucose_is_amino_acid_contradicted(glucose_report):

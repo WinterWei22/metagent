@@ -64,6 +64,9 @@ def test_full_cascade_catches_H1_and_corrects_it(glucose_report):
     # consistency v2). No Stage 2 LLM fallback needed since all claims
     # were rule-classifiable.
     assert result.llm_call_count == 5
+    assert [t.pass_id for t in result.claim_tables] == ["v1", "v2"]
+    assert result.claim_metrics is not None
+    assert result.claim_metrics.total_claims == len(result.claims_v2)
 
 
 def test_source_llm_output_preserved_verbatim(glucose_report):

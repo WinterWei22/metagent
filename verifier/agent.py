@@ -36,17 +36,20 @@ from typing import Callable, Literal
 from schemas import LiteratureSearchResponse
 from schemas.molecule import MetaboliteInfoResponse
 from schemas.report import IdentificationReport
+from verifier.candidate_resolution import resolve_candidate_ref
 from verifier.claim_classifier import classify_claims
 from verifier.claim_extractor import (
     ClaimExtractionError,
     extract_claims,
 )
+from verifier.claim_table import build_claim_table
 from verifier.layers import biological as layer_c
 from verifier.layers import consistency as layer_d
 from verifier.layers import factual as layer_b
 from verifier.layers import grounded as layer_a
 from verifier.layers import literature as layer_e
 from verifier.layers import peak_mechanistic as layer_f
+from verifier.metrics import compute_claim_metrics
 from verifier.rewriter import is_rewrite_needed, rewrite
 from verifier.schemas import (
     ClaimType,
@@ -209,6 +212,9 @@ def _verify_per_claim(
     """Dispatch each claim to its layer (A/B/C/E). Layer D runs separately."""
     out: list[VerifiedClaim] = []
     for c in classified:
+        candidate_ref = resolve_candidate_ref(c, source_report)
+        if candidate_ref is not None:
+            c = c.model_copy(update={"candidate_ref": candidate_ref})
         if c.claim_type == ClaimType.GROUNDED:
             out.append(layer_a.verify_grounded(c, source_report))
         elif c.claim_type == ClaimType.FACTUAL:
@@ -277,12 +283,17 @@ def _final(
     llm_calls: int,
     trace_id: str,
 ) -> VerifiedIdentification:
+    table_v1 = build_claim_table(claims_v1, pass_id="v1")
+    table_v2 = build_claim_table(claims_v2, pass_id="v2")
+    metrics = compute_claim_metrics(claims_v1=claims_v1, claims_v2=claims_v2)
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
         rewritten_output=rewritten_output,
         claims_v1=claims_v1,
         claims_v2=claims_v2,
+        claim_tables=[table_v1, table_v2],
+        claim_metrics=metrics,
         overall_verdict=_aggregate_verdict(claims_v2),
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -297,12 +308,17 @@ def _failed(
     warnings: list[str],
     llm_calls: int,
 ) -> VerifiedIdentification:
+    table_v1 = build_claim_table([], pass_id="v1")
+    table_v2 = build_claim_table([], pass_id="v2")
+    metrics = compute_claim_metrics(claims_v1=[], claims_v2=[])
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
         rewritten_output=llm_output,
         claims_v1=[],
         claims_v2=[],
+        claim_tables=[table_v1, table_v2],
+        claim_metrics=metrics,
         overall_verdict="failed",
         verification_warnings=warnings,
         llm_call_count=llm_calls,

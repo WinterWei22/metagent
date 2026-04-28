@@ -4,7 +4,14 @@ from __future__ import annotations
 import pytest
 
 from verifier.layers.grounded import verify_grounded
-from verifier.schemas import ClaimType, ClaimVerdict, ClassifiedClaim
+from verifier.schemas import (
+    CandidateRef,
+    ClaimExtractedFields,
+    ClaimSubtype,
+    ClaimType,
+    ClaimVerdict,
+    ClassifiedClaim,
+)
 
 
 def _gc(text, subj):
@@ -47,6 +54,21 @@ def test_supported_formula_matches_source(glucose_report):
     assert r.verdict == ClaimVerdict.SUPPORTED
 
 
+def test_typed_formula_claim_uses_extracted_fields(glucose_report):
+    claim = _gc("Glucose formula assertion", None).model_copy(
+        update={
+            "claim_subtype": ClaimSubtype.FORMULA,
+            "candidate_ref": CandidateRef(index=0, path="candidates[0]", name="D-Gulose"),
+            "extracted_fields": ClaimExtractedFields(formula="C6H12O6"),
+        }
+    )
+    r = verify_grounded(claim, glucose_report)
+    assert r.verdict == ClaimVerdict.SUPPORTED
+    assert r.verifier_layer == "grounded"
+    assert r.candidate_ref.index == 0
+    assert r.extracted_fields.formula == "C6H12O6"
+
+
 # ---------------------------------------------------------------------------
 # H2 — ppm scalar hallucination
 # ---------------------------------------------------------------------------
@@ -80,6 +102,34 @@ def test_H2_ppm_scalar_is_unsupported(glucose_report):
 def test_numeric_field_verdict(glucose_report, text, subj, expected):
     r = verify_grounded(_gc(text, subj), glucose_report)
     assert r.verdict == expected
+
+
+def test_typed_score_claim_uses_extracted_fields(glucose_report):
+    claim = _gc("The assigned candidate score is present", None).model_copy(
+        update={
+            "candidate_ref": CandidateRef(index=0, path="candidates[0]", name="D-Gulose"),
+            "extracted_fields": ClaimExtractedFields(
+                score_name="evidence_score",
+                score_value=0.771,
+            ),
+        }
+    )
+    r = verify_grounded(claim, glucose_report)
+    assert r.verdict == ClaimVerdict.SUPPORTED
+    assert r.source_field == "candidates[0].evidence_score"
+
+
+def test_candidate_ref_rank_claim_uses_report_order(glucose_report):
+    claim = _gc("D-Gulose is the top candidate", None).model_copy(
+        update={
+            "candidate_ref": CandidateRef(index=0, path="candidates[0]", name="D-Gulose"),
+            "extracted_fields": ClaimExtractedFields(rank=1),
+            "claim_subtype": ClaimSubtype.RANKING,
+        }
+    )
+    r = verify_grounded(claim, glucose_report)
+    assert r.verdict == ClaimVerdict.SUPPORTED
+    assert r.source_field == "candidates[0]"
 
 
 # ---------------------------------------------------------------------------

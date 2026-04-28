@@ -21,6 +21,11 @@ import json
 import re
 
 from common.llm_client import chat, strip_thinking
+from verifier.claim_fields import (
+    infer_claim_subtype,
+    normalize_claim_text,
+    parse_claim_fields,
+)
 from verifier.prompts import extract_claims as prompts
 from verifier.schemas import ExtractedClaim
 
@@ -122,10 +127,19 @@ def extract_claims(llm_output: str, *, trace_id: str) -> list[ExtractedClaim]:
             # Tolerate non-string subjects by coercing to None rather than
             # failing the whole extraction — only claim_text is load-bearing.
             subject = None
+        clean_text = text.strip()
+        normalized = normalize_claim_text(clean_text)
+        fields = parse_claim_fields(clean_text)
         claims.append(
             ExtractedClaim(
-                claim_text=text.strip(),
+                source_text=clean_text,
+                claim_text=clean_text,
+                normalized_text=normalized,
                 subject=subject.strip() if isinstance(subject, str) and subject.strip() else None,
+                peak_mz=fields.mz,
+                neutral_loss=fields.neutral_loss,
+                claim_subtype=infer_claim_subtype(clean_text, fields),
+                extracted_fields=fields,
             )
         )
 

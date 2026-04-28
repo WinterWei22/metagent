@@ -28,6 +28,7 @@ import re
 from typing import Literal
 
 from common.llm_client import chat
+from verifier.claim_fields import infer_claim_subtype, normalize_claim_text, parse_claim_fields
 from verifier.prompts import classify_ambiguous as prompts
 from verifier.schemas import ClaimType, ClassifiedClaim, ExtractedClaim
 
@@ -170,17 +171,31 @@ def classify_claims(
     classified: list[ClassifiedClaim] = []
     for i, c in enumerate(claims):
         ct = decisions[i] if decisions[i] is not None else ClaimType.GROUNDED
+        fields = c.extracted_fields
+        if fields == type(fields)():
+            fields = parse_claim_fields(c.claim_text)
+        peak_mz = c.peak_mz if c.peak_mz is not None else fields.mz
+        neutral_loss = c.neutral_loss if c.neutral_loss is not None else fields.neutral_loss
+        subtype = (
+            c.claim_subtype
+            if c.claim_subtype.value != "unknown"
+            else infer_claim_subtype(c.claim_text, fields, ct)
+        )
         classified.append(
             ClassifiedClaim(
+                claim_id=c.claim_id,
                 claim_text=c.claim_text,
+                normalized_text=c.normalized_text or normalize_claim_text(c.claim_text),
                 subject=c.subject,
                 claim_type=ct,
                 classifier_source=sources[i],
-                peak_mz=c.peak_mz if c.peak_mz is not None else _extract_peak_mz(c.claim_text),
-                neutral_loss=(
-                    c.neutral_loss
-                    if c.neutral_loss is not None
-                    else _extract_neutral_loss(c.claim_text)
+                peak_mz=peak_mz,
+                neutral_loss=neutral_loss,
+                claim_subtype=subtype,
+                subject_kind=c.subject_kind,
+                extracted_fields=fields,
+                provenance=c.provenance.model_copy(
+                    update={"classifier_source": sources[i]}
                 ),
             )
         )

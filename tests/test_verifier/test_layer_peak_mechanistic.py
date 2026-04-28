@@ -8,6 +8,8 @@ from schemas.report import CandidateReport, IdentificationReport
 from verifier.claim_classifier import classify_claims
 from verifier.layers.peak_mechanistic import verify_peak_mechanistic
 from verifier.schemas import (
+    CandidateRef,
+    ClaimExtractedFields,
     ClaimType,
     ClaimVerdict,
     ClassifiedClaim,
@@ -150,6 +152,30 @@ def test_neutral_loss_alias_match():
         sirius_fn=lambda _req: _sirius_response(neutral_loss="H2O"),
     )
     assert r.verdict == ClaimVerdict.SUPPORTED
+
+
+def test_peak_claim_uses_typed_mz_and_neutral_loss():
+    claim = ClassifiedClaim(
+        claim_text="This typed peak claim has no legacy peak_mz",
+        subject="Glucose",
+        claim_type=ClaimType.PEAK_MECHANISTIC,
+        classifier_source="rule",
+        candidate_ref=CandidateRef(
+            index=0,
+            path="candidates[0]",
+            name="Glucose",
+            smiles="OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+        ),
+        extracted_fields=ClaimExtractedFields(mz=163.06, neutral_loss="water"),
+    )
+    r = verify_peak_mechanistic(
+        claim,
+        _report([181.0707, 163.0601]),
+        sirius_fn=lambda _req: _sirius_response(neutral_loss="H2O"),
+    )
+    assert r.verdict == ClaimVerdict.SUPPORTED
+    assert r.tool_called == "sirius"
+    assert r.candidate_ref.smiles
 
 
 def test_sirius_not_installed_unverifiable():
