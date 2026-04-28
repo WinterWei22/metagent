@@ -4,6 +4,10 @@ Use this tool when you need to verify a peak-level fragmentation claim, or
 when the molecular formula of a precursor should be confirmed by a dedicated
 fragmentation-tree algorithm.
 
+The tool supports positive and negative ionization. Pass through the
+preprocessed `Spectrum` unchanged, including its adduct (`[M+H]+`, `[M-H]-`,
+etc.) and `ionization_mode`.
+
 Do not call this tool for simple precursor mass matching; use
 `candidate_prefilter` for that. Do not call it when the spectrum has fewer
 than 5 peaks, because SIRIUS may fail or produce an unreliable tree.

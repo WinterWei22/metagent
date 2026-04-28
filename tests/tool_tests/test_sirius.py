@@ -24,8 +24,9 @@ from tools.sirius.tree_parser import parse_tree_json
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "spectra"
 
 
-def _spectrum_from_fixture(name: str) -> Spectrum:
-    with (FIXTURES / f"{name}_pos.json").open("r", encoding="utf-8") as fh:
+def _spectrum_from_fixture(name: str, *, mode: str = "positive") -> Spectrum:
+    suffix = "neg" if mode == "negative" else "pos"
+    with (FIXTURES / f"{name}_{suffix}.json").open("r", encoding="utf-8") as fh:
         data = json.load(fh)
     peaks = sorted(data["peaks"], key=lambda row: row[0])
     max_i = max(i for _mz, i in peaks)
@@ -132,6 +133,17 @@ def test_glucose_has_water_loss_fragment():
     assert frag.neutral_loss in ("H2O", "H₂O")
 
 
+def test_negative_mode_glucose_has_water_loss_fragment():
+    req = SiriusAnnotateRequest(spectrum=_spectrum_from_fixture("glucose", mode="negative"))
+    resp = sirius_annotate(req, runner=MockSiriusRunner())
+
+    assert resp.predicted_formula == "C6H12O6"
+    frag = resp.lookup_fragment(mz=161.0455, tolerance_ppm=5.0)
+    assert frag is not None
+    assert frag.formula == "C6H10O5"
+    assert frag.neutral_loss in ("H2O", "H₂O")
+
+
 @pytest.mark.requires_sirius
 def test_real_glucose_formula():
     load_dotenv()
@@ -147,3 +159,26 @@ def test_real_glucose_formula():
 
     assert resp.predicted_formula == "C6H12O6"
     assert resp.formula_score > 0.5
+
+
+@pytest.mark.requires_sirius
+def test_real_negative_glucose_formula():
+    load_dotenv()
+    sirius_path = os.environ.get("METAGENT_SIRIUS_PATH") or shutil.which("sirius")
+    if not sirius_path or not Path(sirius_path).exists():
+        pytest.skip("METAGENT_SIRIUS_PATH is not set and sirius is not on PATH.")
+
+    req = SiriusAnnotateRequest(
+        spectrum=_spectrum_from_fixture("glucose", mode="negative"),
+        timeout_seconds=180,
+    )
+    try:
+        resp = sirius_annotate(req)
+    except SiriusNotInstalledError as e:
+        pytest.skip(f"SIRIUS real-path setup unavailable: {e}")
+
+    assert resp.predicted_formula == "C6H12O6"
+    assert resp.formula_score > 0.5
+    frag = resp.lookup_fragment(mz=161.0455, tolerance_ppm=5.0)
+    assert frag is not None
+    assert frag.neutral_loss in ("H2O", "H₂O")

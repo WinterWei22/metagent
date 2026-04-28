@@ -10,9 +10,11 @@ METAGENT_SIRIUS_PATH=/path/to/sirius
 
 SIRIUS requires a one-time login for CSI:FingerID features. This tool only
 uses the `formula` sub-command for molecular formula and fragmentation-tree
-output. On some SIRIUS 6 builds the CLI may still require a login before any
-compound tool runs; in that case the real-path tests will skip or raise a
-typed setup error, while mock-path unit tests remain deterministic.
+output. It supports both positive and negative ionization as long as the input
+`Spectrum.adduct` is a SIRIUS-supported ion type, e.g. `[M+H]+` or `[M-H]-`.
+On some SIRIUS 6 builds the CLI may still require a login before any compound
+tool runs; in that case the real-path tests will skip or raise a typed setup
+error, while mock-path unit tests remain deterministic.
 
 Tested on this machine:
 

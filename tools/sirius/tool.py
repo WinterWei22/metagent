@@ -59,9 +59,6 @@ def sirius_annotate(
     runner: SiriusRunner | None = None,
 ) -> SiriusAnnotateResponse:
     """Annotate one MS/MS spectrum using SIRIUS formula trees."""
-    if req.spectrum.ionization_mode == "negative":
-        raise NotImplementedError("sirius_annotate v0 supports positive ionization only.")
-
     if runner is None:
         sirius_bin = _resolve_sirius_binary()
         sirius_version = _get_sirius_version(
@@ -200,7 +197,11 @@ class MockSiriusRunner:
         sirius_bin: str,
         sirius_version: str,
     ) -> SiriusRunResult:
-        compound = _mock_compound_for(req.spectrum.precursor_mz)
+        compound = _mock_compound_for(
+            req.spectrum.precursor_mz,
+            adduct=req.spectrum.adduct,
+            ionization_mode=req.spectrum.ionization_mode,
+        )
         if self.fixture_dir is not None:
             fixture = self.fixture_dir / compound
             if fixture.exists():
@@ -484,7 +485,15 @@ def _normalise_score(value: str) -> float:
     return max(0.0, min(score, 1.0))
 
 
-def _mock_compound_for(precursor_mz: float) -> str:
+def _mock_compound_for(
+    precursor_mz: float,
+    *,
+    adduct: str = "",
+    ionization_mode: str = "positive",
+) -> str:
+    if ionization_mode == "negative" or adduct.endswith("-"):
+        if abs(precursor_mz - 179.0556) < 2.0:
+            return "glucose_neg"
     known = {
         "glucose": 181.0707,
         "caffeine": 195.0877,
@@ -509,6 +518,32 @@ def _write_mock_output(output_dir: Path, compound: str) -> None:
 
 
 def _mock_payload(compound: str) -> tuple[str, float, dict[str, object]]:
+    if compound == "glucose_neg":
+        return (
+            "C6H12O6",
+            0.93,
+            {
+                "fragments": [
+                    {"id": 0, "molecularFormula": "C6H12O6", "mz": 179.0556, "intensity": 0.0},
+                    {"id": 1, "molecularFormula": "C6H10O5", "mz": 161.0455, "intensity": 100.0},
+                    {"id": 2, "molecularFormula": "C6H8O4", "mz": 143.0349, "intensity": 38.0},
+                    {"id": 3, "molecularFormula": "C4H8O4", "mz": 119.0349, "intensity": 28.0},
+                    {"id": 4, "molecularFormula": "C4H6O3", "mz": 101.0244, "intensity": 22.0},
+                    {"id": 5, "molecularFormula": "C3H6O3", "mz": 89.0244, "intensity": 16.0},
+                    {"id": 6, "molecularFormula": "C3H4O2", "mz": 71.0138, "intensity": 11.0},
+                    {"id": 7, "molecularFormula": "C2H4O2", "mz": 59.0138, "intensity": 8.0},
+                ],
+                "losses": [
+                    {"source": 0, "target": 1, "molecularFormula": "H2O"},
+                    {"source": 1, "target": 2, "molecularFormula": "H2O"},
+                    {"source": 2, "target": 3, "molecularFormula": "C2"},
+                    {"source": 3, "target": 4, "molecularFormula": "H2O"},
+                    {"source": 4, "target": 5, "molecularFormula": "CO"},
+                    {"source": 5, "target": 6, "molecularFormula": "H2O"},
+                    {"source": 6, "target": 7, "molecularFormula": "C"},
+                ],
+            },
+        )
     if compound == "caffeine":
         return (
             "C8H10N4O2",
