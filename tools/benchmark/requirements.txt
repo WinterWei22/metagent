@@ -1,0 +1,5 @@
+matchms>=0.32
+rdkit>=2024.3
+requests>=2.31
+pydantic>=2.5
+tqdm>=4.66

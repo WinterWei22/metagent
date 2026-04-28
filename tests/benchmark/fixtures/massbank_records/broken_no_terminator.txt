@@ -1,0 +1,6 @@
+ACCESSION: SYNTH-BAD-NO-TERMINATOR
+RECORD_TITLE: Broken record (no // terminator)
+CH$NAME: Anything
+PK$NUM_PEAK: 1
+PK$PEAK: m/z int. rel.int.
+  100 1 1

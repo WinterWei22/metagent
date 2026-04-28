@@ -1,0 +1,15 @@
+ACCESSION: SYNTH-BAD-PEAKS
+RECORD_TITLE: Broken record (peak rows are not numeric)
+CH$NAME: PeakGarbage
+CH$FORMULA: C1H1
+CH$SMILES: C
+AC$MASS_SPECTROMETRY: MS_TYPE MS2
+AC$MASS_SPECTROMETRY: ION_MODE POSITIVE
+MS$FOCUSED_ION: PRECURSOR_M/Z 13.008
+MS$FOCUSED_ION: PRECURSOR_TYPE [M+H]+
+PK$NUM_PEAK: 3
+PK$PEAK: m/z int. rel.int.
+  not a number nor a peak
+  also broken garbage 12 34 OK
+  100 5 5
+//
