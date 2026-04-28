@@ -586,10 +586,13 @@ def write_audit_report(
         f"maintainer (Q3).\n"
     )
     if rate_pct > 5:
-        A(f"**Paper-relevant finding:** without this filter, ≥{rate_pct:.0f}% "
-          f"of RIKEN-derived queries have a same-compound or same-id record in "
-          f"the GNPS reference library, which the spike test showed dominates "
-          f"top-1 ranking.\n")
+        if rate_pct >= 99.5:
+            qual = "every one of the sampled RIKEN-derived queries has"
+        else:
+            qual = f"{rate_pct:.0f}% of sampled RIKEN-derived queries have"
+        A(f"**Paper-relevant finding:** without this filter, {qual} "
+          f"a same-compound or same-id record in the GNPS reference "
+          f"library, which the spike test showed dominates top-1 ranking.\n")
 
     # Section 8 — Edge cases and caveats
     A("## Section 8 — Edge cases and caveats\n")
