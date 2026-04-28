@@ -79,6 +79,39 @@ energy2
 163.0601 100.0
 """
 
+# Negative-mode counterpart. Same shape, but peaks reflect glucose [M-H]-
+# fragmentation: the canonical 161.0455 is [M-H-H2O]-, plus the standard
+# water-loss / ring-cleavage series documented in glucose_neg.json. Used
+# by the negative-mode path tests so they don't have to fake [M+H]+ peaks.
+_GLUCOSE_NEG_CFM_STDOUT = """\
+energy0
+59.0138 4.0
+71.0138 6.0
+89.0244 12.0
+101.0244 18.0
+119.0349 30.0
+143.0349 50.0
+161.0455 100.0
+
+energy1
+59.0138 8.0
+71.0138 11.0
+89.0244 16.0
+101.0244 22.0
+119.0349 35.0
+143.0349 60.0
+161.0455 100.0
+
+energy2
+59.0138 28.0
+71.0138 36.0
+89.0244 50.0
+101.0244 65.0
+119.0349 78.0
+143.0349 88.0
+161.0455 100.0
+"""
+
 _GLUCOSE_MODEL_VERSION = "cfm-id-4.0.0"
 
 
@@ -96,6 +129,15 @@ def _reset_cfm_url(monkeypatch):
 @pytest.fixture
 def glucose_fixture() -> dict:
     with open(FIXTURES / "glucose_pos.json", "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+@pytest.fixture
+def glucose_neg_fixture() -> dict:
+    """Negative-mode glucose fixture introduced 2026-04-28 alongside the
+    Tracks A/B/C negative-mode acceptance.
+    """
+    with open(FIXTURES / "glucose_neg.json", "r", encoding="utf-8") as fh:
         return json.load(fh)
 
 
@@ -326,15 +368,66 @@ def test_parser_deduplicates_within_block():
 # ---------------------------------------------------------------------------
 
 
-def test_negative_mode_raises_not_implemented():
+def test_negative_mode_synthetic_passes_through(glucose_neg_fixture):
+    """[M-H]- is the second polarity the upstream CFM-ID image ships
+    pre-trained models for; the tool must propagate it unchanged into the
+    output Spectrum and call the shim with the same mode (the shim picks
+    the [M-H]- model directory based on the request body).
+
+    Mocks the HTTP call with a hand-built CFM-ID stdout containing the
+    canonical glucose [M-H]- water-loss series (161, 143, 119, 101, ...)
+    so the assertion is meaningful without needing a live container.
+    """
+    req = PredictSpectrumRequest(
+        smiles=glucose_neg_fixture["smiles"],
+        adduct="[M-H]-",
+        ionization_mode="negative",
+    )
+    with rm.Mocker() as m:
+        m.post(
+            f"{DEFAULT_URL}/predict",
+            json=_mock_success_body(stdout=_GLUCOSE_NEG_CFM_STDOUT),
+        )
+        resp = predict_spectrum(req)
+
+    assert resp.predicted.ionization_mode == "negative"
+    assert resp.predicted.adduct == "[M-H]-"
+    # [M-H-H2O]- canonical glucose negative-mode fragment.
+    assert any(
+        abs(mz - 161.0455) < 0.01 for mz in resp.predicted.mz
+    ), f"expected [M-H-H2O]- peak near 161.045, got {resp.predicted.mz[:5]}..."
+    # Precursor was computed via _compute_precursor_mz (mw - proton); for
+    # glucose's exact mass 180.0634 that lands near 179.0561.
+    assert abs(resp.predicted.precursor_mz - 179.0561) < 0.01
+    assert max(resp.predicted.intensity) == 1.0
+    # per_energy populated for all three default CFM-ID energies in negative
+    # mode just like positive — the model directory differs but the energy
+    # ramp structure is identical.
+    assert set(resp.per_energy.keys()) == {10.0, 20.0, 40.0}
+    for spec in resp.per_energy.values():
+        assert spec.ionization_mode == "negative"
+
+
+def test_negative_mode_request_reaches_shim_with_correct_mode():
+    """Sanity: the JSON body sent to the shim carries ionization_mode=
+    'negative'. The shim uses this to pick the [M-H]- model directory; if
+    the tool rewrote the mode by mistake (e.g. dropped through a positive-
+    only branch), the shim would silently predict the wrong polarity.
+    """
     req = PredictSpectrumRequest(
         smiles="OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
         adduct="[M-H]-",
         ionization_mode="negative",
     )
-    with rm.Mocker():
-        with pytest.raises(NotImplementedError):
-            predict_spectrum(req)
+    with rm.Mocker() as m:
+        m.post(
+            f"{DEFAULT_URL}/predict",
+            json=_mock_success_body(stdout=_GLUCOSE_NEG_CFM_STDOUT),
+        )
+        predict_spectrum(req)
+        sent = m.last_request.json()
+    assert sent["ionization_mode"] == "negative"
+    assert sent["adduct"] == "[M-H]-"
 
 
 def test_custom_collision_energies_used_as_labels():
@@ -392,5 +485,28 @@ def test_integration_glucose_against_live_cfm():
         ionization_mode="positive",
     )
     resp = predict_spectrum(req)
+    assert len(resp.predicted.mz) >= 1
+    assert resp.model_version.startswith("cfm-id-")
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not _cfm_url_reachable(),
+    reason="METAGENT_CFM_URL is unset or /healthz unreachable",
+)
+def test_integration_glucose_negative_mode_against_live_cfm():
+    """End-to-end against the [M-H]- pre-trained CFM-ID model bundled in
+    the upstream image. The shim selects the model directory based on
+    ``ionization_mode``, so this exercises the negative-mode model path
+    that was previously gated off in v0.
+    """
+    req = PredictSpectrumRequest(
+        smiles="OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+        adduct="[M-H]-",
+        ionization_mode="negative",
+    )
+    resp = predict_spectrum(req)
+    assert resp.predicted.ionization_mode == "negative"
+    assert resp.predicted.adduct == "[M-H]-"
     assert len(resp.predicted.mz) >= 1
     assert resp.model_version.startswith("cfm-id-")

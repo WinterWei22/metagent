@@ -6,15 +6,17 @@ Pipeline:
   1. Validate the SMILES with RDKit up front. CFM-ID's error surface on
      invalid input is ugly; it is much cheaper to reject here than to wait
      60 s for a timeout.
-  2. Forbid v0-unsupported negative ionization per the project-wide scope.
-  3. Call the CFM-ID shim through ``cfm_client``.
-  4. Parse the shim's raw stdout into three energy blocks.
-  5. For each requested collision energy, build a ``Spectrum`` (sorted,
+  2. Call the CFM-ID shim through ``cfm_client``. The shim selects the
+     correct CFM-ID model directory (``[M+H]+`` vs ``[M-H]-``) from
+     ``ionization_mode``; both polarities are pre-trained in the upstream
+     image so the tool does not need polarity-specific handling here.
+  3. Parse the shim's raw stdout into three energy blocks.
+  4. For each requested collision energy, build a ``Spectrum`` (sorted,
      deduped, normalised, capped to ``top_n_peaks``).
-  6. Union those three spectra into a single representative spectrum —
+  5. Union those three spectra into a single representative spectrum —
      taking the maximum intensity per merged m/z so dominant fragments
      from any energy survive — and renormalise.
-  7. Render a templated ``explain`` string (no LLM).
+  6. Render a templated ``explain`` string (no LLM).
 
 CFM-ID 4.0 always emits three energy ramps labelled ``energy0/1/2``; by
 convention these are the pre-trained 10 / 20 / 40 eV models. The tool
@@ -158,13 +160,6 @@ def _compute_precursor_mz(smiles: str, adduct: str) -> float:
 
 
 def predict_spectrum(req: PredictSpectrumRequest) -> PredictSpectrumResponse:
-    # v0 scope gate — negative mode is not tested, so refuse at the boundary
-    # rather than ship an unvalidated code path. Matches spectrum_preprocess.
-    if req.ionization_mode == "negative":
-        raise NotImplementedError(
-            "predict_spectrum v0 supports positive ionization only."
-        )
-
     if not is_valid_smiles(req.smiles):
         raise InvalidSmilesError(
             f"RDKit could not parse SMILES={req.smiles!r}. "

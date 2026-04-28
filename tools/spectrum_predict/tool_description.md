@@ -33,7 +33,7 @@ structural candidate is consistent with what was actually observed.
 |---|---|
 | `smiles` | Candidate structure. Must parse in RDKit. |
 | `adduct` | Experimental adduct, e.g. `"[M+H]+"`. Passed through to CFM-ID and used to set the precursor m/z on the returned Spectrum. |
-| `ionization_mode` | `"positive"` only in v0. `"negative"` raises `NotImplementedError`. |
+| `ionization_mode` | `"positive"` or `"negative"`. Both polarities are pre-trained in CFM-ID 4.0 and the shim picks the corresponding model directory (`[M+H]+` vs `[M-H]-`) automatically. |
 | `collision_energies` | Three eV values used as **labels** for the returned `per_energy` dict. CFM-ID 4.0 ships three fixed pre-trained models (≈10 / 20 / 40 eV); any other list length is overridden to the defaults and noted in `explain`. |
 | `top_n_peaks` | Cap on peaks per spectrum (both per-energy and union). CFM-ID often emits hundreds; default 50 is plenty for cosine scoring. |
 
@@ -64,8 +64,6 @@ structural candidate is consistent with what was actually observed.
   container at `METAGENT_CFM_URL` is not running. The tool cannot proceed
   until an operator fixes it; the orchestrator should fall back to
   verification paths that do not need a predicted spectrum.
-- `NotImplementedError`: negative ionization mode in v0. Not raised as a
-  `ToolError` because the LLM cannot route around it at plan time.
 
 ## What this tool does **not** do
 
