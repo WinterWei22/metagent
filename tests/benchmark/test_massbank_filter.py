@@ -133,6 +133,20 @@ def test_filter_by_instrument_type_substring() -> None:
     assert all("GC" not in r.metadata["instrument_type"] for r in out)
 
 
+def test_filter_by_instrument_type_robust_to_hyphenation() -> None:
+    """Match must work whether MassBank writes ``LC-ESI-Q-TOF`` or
+    ``LC-ESI-QTOF`` (RIKEN's flavour) — both forms are the same instrument."""
+    recs = [
+        _make_normalized(instrument_type="LC-ESI-QTOF"),    # RIKEN style, no hyphen
+        _make_normalized(instrument_type="LC-ESI-Q-TOF"),   # Eawag style, hyphen
+        _make_normalized(instrument_type="LC-ESI-Q-Tof"),   # mixed case
+        _make_normalized(instrument_type="LC-ESI-Q TOF"),   # space variant
+    ]
+    out = filter_records(recs, FilterCriteria(instrument_types=["Q-TOF"]))
+    # All four hyphenation/case variants of "Q-TOF" must match.
+    assert len(out) == 4
+
+
 def test_filter_by_ms_level() -> None:
     recs = [
         _make_normalized(ms_level="MS2"),

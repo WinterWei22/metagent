@@ -99,6 +99,16 @@ class FilterCriteria:
     identification-level field. Kept for API forward-compat."""
 
 
+def _normalise_instrument(s: str) -> str:
+    """Lowercase and strip every non-alphanumeric character.
+
+    Used by :func:`filter_records` so the substring whitelist is robust to
+    MassBank's inconsistent hyphenation: "Q-TOF" / "QTOF" / "Q-Tof" /
+    "Q TOF" all collapse to "qtof".
+    """
+    return "".join(ch for ch in s.lower() if ch.isalnum())
+
+
 # ---------------------------------------------------------------------------
 # Streaming filter
 # ---------------------------------------------------------------------------
@@ -119,8 +129,10 @@ def filter_records(
     drop_reasons: dict[str, int] = {}
 
     mode_set = {m.lower() for m in criteria.ion_mode} if criteria.ion_mode else None
+    # Robust instrument matching: strip non-alphanumeric on both sides so
+    # "Q-TOF" in the whitelist matches "LC-ESI-QTOF", "Q-Tof", "Q TOF", etc.
     inst_substrings = (
-        [s.lower() for s in criteria.instrument_types]
+        [_normalise_instrument(s) for s in criteria.instrument_types]
         if criteria.instrument_types
         else None
     )
@@ -163,7 +175,7 @@ def filter_records(
                 drop_reasons["ms_level"] = drop_reasons.get("ms_level", 0) + 1
                 continue
         if inst_substrings:
-            inst = (meta.get("instrument_type") or "").lower()
+            inst = _normalise_instrument(meta.get("instrument_type") or "")
             if not any(s in inst for s in inst_substrings):
                 drop_reasons["instrument_type"] = drop_reasons.get("instrument_type", 0) + 1
                 continue
