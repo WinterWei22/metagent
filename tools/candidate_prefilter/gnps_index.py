@@ -200,6 +200,30 @@ class GnpsIndex:
 # ---------------------------------------------------------------------------
 
 
+def _is_usable_for_prefilter(record) -> bool:
+    """Mode-flexible v0 filter for prefilter's structural index.
+
+    Mirrors common.gnps_loader.GnpsRecord.is_usable_for_v0 EXCEPT:
+      - Both positive and negative ion modes are accepted
+      - peaks count is not checked (prefilter doesn't use peaks)
+    """
+    if record.ion_mode not in _SUPPORTED_MODES:
+        return False
+    if record.precursor_mz is None or record.precursor_mz <= 0:
+        return False
+    if record.adduct is None:
+        return False
+    if not record.smiles and not record.inchikey:
+        return False
+    if record.ion_source:
+        src = record.ion_source.upper()
+        if "MALDI" in src or src.startswith("EI") or src == "GC":
+            return False
+    if record.ms_level is not None and record.ms_level != 2:
+        return False
+    return True
+
+
 def _index_record_from_gnps(record) -> GnpsIndexRecord | None:
     """Turn a common.gnps_loader.GnpsRecord into a GnpsIndexRecord, or None
     if SMILES can't be parsed / mass can't be computed / ion_mode is unknown.
@@ -262,17 +286,25 @@ def build_index_from_path(path: str | Path) -> GnpsIndex:
     ext = path.suffix.lower()
 
     if ext == ".json":
-        from common.gnps_loader import load_v0_usable
+        # Use iter_records (raw records) + our own filter rather than
+        # load_v0_usable: the latter hard-rejects negative-mode rows in its
+        # is_usable_for_v0 check, and prefilter needs both modes. Our filter
+        # is also slightly more permissive (we don't enforce peaks>=3 since
+        # candidate_prefilter never reads peaks).
+        from common.gnps_loader import iter_records
 
-        records = load_v0_usable(path)
+        n_seen = 0
         indexed: list[GnpsIndexRecord] = []
-        for rec in records:
+        for rec in iter_records(path):
+            n_seen += 1
+            if not _is_usable_for_prefilter(rec):
+                continue
             ir = _index_record_from_gnps(rec)
             if ir is not None:
                 indexed.append(ir)
         logger.info(
-            "GnpsIndex: %d indexed records out of %d usable (from %s)",
-            len(indexed), len(records), path.name,
+            "GnpsIndex: %d indexed records out of %d total (from %s)",
+            len(indexed), n_seen, path.name,
         )
         return GnpsIndex(indexed)
 
