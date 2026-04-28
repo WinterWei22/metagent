@@ -613,7 +613,11 @@ def test_ms_clip_candidates_tsv_has_collision_energies_column(monkeypatch, tmp_p
     monkeypatch.setattr(_subprocess, "run", fake_run)
     monkeypatch.setattr(lsm.subprocess, "run", fake_run)
 
-    retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+    # gpu_id="inherit" skips the nvidia-smi auto-pick subprocess so the
+    # only subprocess.run call routes through our predict_smi fake.
+    retriever = lsm.MSClipRetriever(
+        checkpoint="/tmp/nonexistent.ckpt", gpu_id="inherit"
+    )
     retriever.score_candidates(
         query_mz=[100.0, 150.0],
         query_intensity=[1.0, 0.5],
@@ -676,7 +680,9 @@ def test_ms_clip_tsv_collision_energies_defaults_to_zero_when_none(
     monkeypatch.setattr(_subprocess, "run", fake_run)
     monkeypatch.setattr(lsm.subprocess, "run", fake_run)
 
-    retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+    retriever = lsm.MSClipRetriever(
+        checkpoint="/tmp/nonexistent.ckpt", gpu_id="inherit"
+    )
     retriever.score_candidates(
         query_mz=[100.0],
         query_intensity=[1.0],
@@ -869,7 +875,9 @@ class TestNegativeModeEndToEnd:
         monkeypatch.setattr(_subprocess, "run", fake_run)
         monkeypatch.setattr(lsm.subprocess, "run", fake_run)
 
-        retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+        retriever = lsm.MSClipRetriever(
+            checkpoint="/tmp/nonexistent.ckpt", gpu_id="inherit"
+        )
         retriever.score_candidates(
             query_mz=[100.0],
             query_intensity=[1.0],
@@ -885,3 +893,135 @@ class TestNegativeModeEndToEnd:
         assert row[ion_idx] == "[M+FA-H]-", (
             f"alias [M+HCOO]- should canonicalise to [M+FA-H]-, got {row[ion_idx]!r}"
         )
+
+
+# ---------------------------------------------------------------------------
+# GPU selection (CUDA_VISIBLE_DEVICES routing, 2026-04-28)
+# ---------------------------------------------------------------------------
+
+
+class TestGpuSelection:
+    """Make sure ``MSClipRetriever(gpu_id=...)`` actually pins the subprocess
+    to the requested device, and that the auto-pick path works.
+    """
+
+    def _capture_env(self, monkeypatch, gpu_id):
+        """Spin up an MSClipRetriever, monkey-patch subprocess.run to capture
+        the env passed to the subprocess, and return that env.
+        """
+        import subprocess as _subprocess
+
+        from tools.library_search import model as lsm
+
+        captured: dict = {}
+
+        def fake_run(cmd, *args, **kwargs):
+            for token in cmd:
+                if isinstance(token, str) and token.startswith("inference.save_dir="):
+                    save_dir = Path(token.split("=", 1)[1])
+            captured["env"] = dict(kwargs.get("env") or {})
+            import pickle
+
+            payload = {
+                "spec_names": ["q"],
+                "flags": ["False"],
+                "smiles": ["CCO"],
+                "cosine_similarity": [[0.1]],
+                "local_similarity": [[0.0]],
+                "crossattn_similarity": [[0.0]],
+            }
+            with open(save_dir / "candidates.tsv.pkl", "wb") as f:
+                pickle.dump(payload, f)
+
+            class _Result:
+                returncode = 0
+                stdout = ""
+                stderr = ""
+
+            return _Result()
+
+        monkeypatch.setattr(_subprocess, "run", fake_run)
+        monkeypatch.setattr(lsm.subprocess, "run", fake_run)
+
+        retriever = lsm.MSClipRetriever(
+            checkpoint="/tmp/nonexistent.ckpt", gpu_id=gpu_id
+        )
+        retriever.score_candidates(
+            query_mz=[100.0],
+            query_intensity=[1.0],
+            query_precursor_mz=200.0,
+            adduct="[M+H]+",
+            candidate_smiles=["CCO"],
+            collision_energy=20.0,
+        )
+        return captured["env"]
+
+    def test_explicit_int_gpu_id_pins_device(self, monkeypatch):
+        env = self._capture_env(monkeypatch, gpu_id=3)
+        assert env.get("CUDA_VISIBLE_DEVICES") == "3"
+
+    def test_explicit_string_gpu_id_pins_device(self, monkeypatch):
+        env = self._capture_env(monkeypatch, gpu_id="2")
+        assert env.get("CUDA_VISIBLE_DEVICES") == "2"
+
+    def test_multi_gpu_string_passes_through(self, monkeypatch):
+        env = self._capture_env(monkeypatch, gpu_id="0,1,2")
+        assert env.get("CUDA_VISIBLE_DEVICES") == "0,1,2"
+
+    def test_inherit_keyword_does_not_override(self, monkeypatch):
+        """gpu_id='inherit' must leave CUDA_VISIBLE_DEVICES at whatever the
+        parent process had (here we set the parent value to 'parent-default')."""
+        monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "parent-default")
+        env = self._capture_env(monkeypatch, gpu_id="inherit")
+        assert env.get("CUDA_VISIBLE_DEVICES") == "parent-default"
+
+    def test_auto_pick_calls_nvidia_smi_and_uses_freest(self, monkeypatch):
+        """gpu_id='auto' shells out to nvidia-smi and picks the GPU with
+        the largest free memory."""
+        from tools.library_search import model as lsm
+
+        def fake_nvidia_smi(cmd, *args, **kwargs):
+            assert cmd[0] == "nvidia-smi"
+
+            class _Res:
+                returncode = 0
+                stdout = "0, 1024\n1, 23000\n2, 5000\n"
+                stderr = ""
+
+            return _Res()
+
+        # _auto_pick_gpu uses subprocess.run; patch only the auto-pick path.
+        original_run = lsm.subprocess.run
+
+        def routed_run(cmd, *args, **kwargs):
+            if cmd and cmd[0] == "nvidia-smi":
+                return fake_nvidia_smi(cmd, *args, **kwargs)
+            return original_run(cmd, *args, **kwargs)
+
+        monkeypatch.setattr(lsm.subprocess, "run", routed_run)
+        chosen = lsm._auto_pick_gpu()
+        assert chosen == "1", f"expected GPU 1 (most free), got {chosen!r}"
+
+    def test_auto_pick_falls_back_to_zero_when_nvidia_smi_missing(
+        self, monkeypatch
+    ):
+        from tools.library_search import model as lsm
+
+        def fake_run(cmd, *args, **kwargs):
+            raise FileNotFoundError("nvidia-smi not installed")
+
+        monkeypatch.setattr(lsm.subprocess, "run", fake_run)
+        assert lsm._auto_pick_gpu() == "0"
+
+    def test_env_var_overrides_default(self, monkeypatch):
+        """METAGENT_MSCLIP_GPU=4 with gpu_id=None should pin to 4."""
+        monkeypatch.setenv("METAGENT_MSCLIP_GPU", "4")
+        env = self._capture_env(monkeypatch, gpu_id=None)
+        assert env.get("CUDA_VISIBLE_DEVICES") == "4"
+
+    def test_env_var_inherit_disables_override(self, monkeypatch):
+        """METAGENT_MSCLIP_GPU=inherit means don't touch CUDA_VISIBLE_DEVICES."""
+        monkeypatch.setenv("METAGENT_MSCLIP_GPU", "inherit")
+        monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "from-parent")
+        env = self._capture_env(monkeypatch, gpu_id=None)
+        assert env.get("CUDA_VISIBLE_DEVICES") == "from-parent"

@@ -48,6 +48,7 @@ DEFAULT_MSCLIP_REPO = os.environ.get(
 )
 DEFAULT_CONDA_ENV = os.environ.get("METAGENT_MSCLIP_ENV", "diffms")
 DEFAULT_TIMEOUT_SECONDS = int(os.environ.get("METAGENT_MSCLIP_TIMEOUT", "1800"))
+DEFAULT_GPU_ENV = "METAGENT_MSCLIP_GPU"
 
 
 # ---------------------------------------------------------------------------
@@ -107,6 +108,84 @@ def _resolve_ckpt_path() -> str:
     return ckpt
 
 
+def _resolve_cuda_visible_devices(gpu_id: int | str | None) -> str | None:
+    """Resolve which CUDA device(s) the ms-clip subprocess should see.
+
+    Returns a string suitable for ``CUDA_VISIBLE_DEVICES`` (e.g. ``"1"``,
+    ``"0,1"``), or ``None`` if the caller should inherit the parent process's
+    env unchanged. Resolution order:
+
+      1. If ``gpu_id`` is an explicit ``int`` / non-special ``str`` → use it.
+      2. If ``gpu_id`` is ``"auto"`` → pick the GPU with most free memory via
+         ``nvidia-smi``. Fall back to ``"0"`` if the query fails.
+      3. If ``gpu_id`` is ``None`` → consult ``METAGENT_MSCLIP_GPU``:
+         * unset → auto-pick (same as ``"auto"``)
+         * ``"inherit"`` → return ``None`` (caller inherits)
+         * any other value → treat as explicit
+    """
+    if gpu_id is None:
+        env_val = os.environ.get(DEFAULT_GPU_ENV)
+        if env_val is None:
+            return _auto_pick_gpu()
+        if env_val.lower() == "inherit":
+            return None
+        gpu_id = env_val
+
+    if isinstance(gpu_id, str) and gpu_id.lower() == "auto":
+        return _auto_pick_gpu()
+    if isinstance(gpu_id, str) and gpu_id.lower() == "inherit":
+        return None
+
+    return str(gpu_id)
+
+
+def _auto_pick_gpu() -> str:
+    """Return the index (as a string) of the GPU with most free memory.
+
+    Uses ``nvidia-smi`` because it is universally available where CUDA is.
+    Returns ``"0"`` on any failure — the worst case is that we land on the
+    same GPU the user would have hit by default.
+    """
+    try:
+        result = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=index,memory.free",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (FileNotFoundError, subprocess.SubprocessError) as exc:
+        logger.debug("nvidia-smi unavailable, falling back to GPU 0: %s", exc)
+        return "0"
+    if result.returncode != 0:
+        logger.debug("nvidia-smi exit %d, falling back to GPU 0", result.returncode)
+        return "0"
+
+    rows: list[tuple[int, str]] = []
+    for line in result.stdout.strip().splitlines():
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) < 2:
+            continue
+        try:
+            idx_str = parts[0]
+            free_mb = int(parts[1])
+        except ValueError:
+            continue
+        rows.append((free_mb, idx_str))
+    if not rows:
+        return "0"
+    rows.sort(reverse=True)
+    chosen = rows[0][1]
+    logger.info(
+        "ms-clip: auto-picked GPU %s (free %d MiB)", chosen, rows[0][0]
+    )
+    return chosen
+
+
 class MSClipRetriever:
     """Real ``InHouseRetriever`` backed by the ms-clip ``predict_smi`` CLI.
 
@@ -128,13 +207,27 @@ class MSClipRetriever:
         timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
         batch_size: int = 128,
         num_workers: int = 4,
+        gpu_id: int | str | None = None,
     ):
+        """
+        Args:
+            gpu_id: which CUDA device the subprocess should use.
+                * ``int`` (e.g. ``1``) or ``str`` (e.g. ``"1"``, ``"0,1"``) —
+                  pin to that device, set as ``CUDA_VISIBLE_DEVICES``.
+                * ``"auto"`` — pick the GPU with the most free memory via
+                  ``nvidia-smi``. Falls back to ``"0"`` on any failure.
+                * ``None`` (default) — read from ``METAGENT_MSCLIP_GPU`` env
+                  var; if unset, auto-pick. To explicitly inherit the parent
+                  process's ``CUDA_VISIBLE_DEVICES``, set
+                  ``METAGENT_MSCLIP_GPU=inherit``.
+        """
         self.checkpoint = checkpoint or _resolve_ckpt_path()
         self.conda_env = conda_env
         self.repo_root = repo_root
         self.timeout_seconds = timeout_seconds
         self.batch_size = batch_size
         self.num_workers = num_workers
+        self.gpu_id = gpu_id
 
     def score_candidates(
         self,
@@ -198,6 +291,10 @@ class MSClipRetriever:
             # 3. Shell out to predict_smi.
             env = os.environ.copy()
             env["HYDRA_FULL_ERROR"] = "1"
+            cuda_devices = _resolve_cuda_visible_devices(self.gpu_id)
+            if cuda_devices is not None:
+                env["CUDA_VISIBLE_DEVICES"] = cuda_devices
+                logger.info("ms-clip: using CUDA_VISIBLE_DEVICES=%s", cuda_devices)
             cmd = [
                 "conda", "run", "-n", self.conda_env, "--no-capture-output",
                 "python", "-m", "ms_clip.inference.predict_smi",
