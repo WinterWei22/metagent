@@ -11,7 +11,7 @@ Track C (`ms-bart`) and Track A2 (`pubchem_lite`) setup docs.
 |---|---|---|
 | `METAGENT_MSCLIP_ENV` | `diffms` | Name of the conda env hosting ms-pred / torch. |
 | `METAGENT_MSCLIP_REPO` | `/home/weiwentao/workspace/reconstruct/ms-pred` | Working directory for the subprocess (must contain the ms-pred source tree and `configs/predict_smi.yaml`). |
-| `METAGENT_MSCLIP_CKPT` | `/data/weiwentao/reconstruct/ms-clip/results/chemformer_v4_large_ep3unfroze_20260420_235720/version_0/best.ckpt` | PyTorch Lightning checkpoint consumed by `CLIPModel.load_from_checkpoint`. |
+| `METAGENT_MSCLIP_CKPT` | `/home/weiwentao/workspace/reconstruct/ms-pred/results/v4_spectraverse_20260428_134311/version_0/best.ckpt` | PyTorch Lightning checkpoint consumed by `CLIPModel.load_from_checkpoint`. The current default supports positive **and** negative-mode adducts (spectraverse). The older positive-only `chemformer_v4_large_*` checkpoint is still loadable for regression comparisons; pass it via this env var. |
 | `METAGENT_MSCLIP_TIMEOUT` | `1800` (seconds) | Per-subprocess wall-clock budget. |
 
 ## Build the env

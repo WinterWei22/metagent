@@ -26,8 +26,10 @@ fused into a single normalised value per candidate.
 - Do not call repeatedly for the same query hoping for different outputs —
   scoring is deterministic. Widen `candidate_pool`, drop `min_score`, or raise
   `top_k` instead.
-- Do not call when the adduct is outside positive-mode LC/DI-ESI vocabulary.
-  v0 is positive-mode only; negative-mode queries may be rejected downstream.
+- Do not call when the adduct is outside the supported LC/DI-ESI vocabulary
+  (see "In-house model scope" below). Out-of-vocab adducts cause ms-clip to
+  silently degrade to modified-cosine-only; modified cosine itself is
+  ion-mode-agnostic and continues to work for any adduct.
 
 ## Inputs
 
@@ -81,16 +83,30 @@ Max prevents a missing signal from deflating a legitimate match.
 
 ## In-house model scope
 
-The ms-clip retriever was trained on MassSpecGym (MSG) positive-mode MS/MS
-spectra. Adducts supported natively by the model are enumerated in
-`ms_clip.common.ions.ION_LST` — roughly `[M+H]+`, `[M+Na]+`, `[M+K]+`,
-`[M+NH4]+`, `[M+H-H2O]+`, `[M+H-2H2O]+`, and `[M]+`. Queries with adducts
-outside this set are transparently downgraded to modified-cosine-only; the
-caller does not need to check.
+The default ms-clip retriever (checkpoint `v4_spectraverse_*`) was trained on
+MassSpecGym (MSG) positive-mode plus Spectraverse negative-mode MS/MS spectra.
+Both polarities are supported.
 
-Negative mode and instruments / sources outside LC/DI-ESI are out of scope for
-v0 and may yield unreliable ms-clip scores. The tool does not enforce this at
-input time (the orchestrator is expected to restrict to positive mode in v0).
+Supported adducts (canonical strings in `ms_clip.common.ions.ION_LST`):
+
+| Polarity | Adducts |
+|---|---|
+| Positive | `[M+H]+`, `[M+Na]+`, `[M+K]+`, `[M-H2O+H]+` (= `[M+H-H2O]+`), `[M+H3N+H]+` (= `[M+NH4]+`), `[M]+`, `[M-H4O2+H]+` (= `[M+H-2H2O]+`) |
+| Negative | `[M-H]-`, `[M+FA-H]-` (= `[M+HCOO]-`, formate), `[M+CH3COO]-` (= `[M+OAc]-`, acetate), `[M+Cl]-` |
+
+Common unbracketed aliases (`M+H`, `M-H`, `M+NH4`, etc.) are also accepted
+and canonicalised internally. Queries with adducts outside these sets are
+transparently downgraded to modified-cosine-only; the caller does not need
+to check.
+
+Instruments / sources outside LC/DI-ESI may yield unreliable ms-clip scores.
+The tool does not enforce ion-source restrictions at input time — the
+orchestrator and the GNPS loader's `is_usable_for_v0` gate handle that.
+
+If you point the tool at the older positive-only checkpoint
+(`chemformer_v4_large_*`) via `METAGENT_MSCLIP_CKPT`, negative-mode queries
+will fail in the subprocess and degrade to modified-cosine-only — that is
+safe-by-degradation, not a hard error.
 
 ## Operational notes
 

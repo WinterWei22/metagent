@@ -746,3 +746,142 @@ def test_gnps_load_failure_with_pool_degrades_gracefully(monkeypatch, tmp_path):
     )
     resp = library_search(req, retriever=retriever)
     assert resp.candidates, "ms-clip pass-through should still yield a candidate"
+
+
+# ---------------------------------------------------------------------------
+# Negative-mode (spectraverse checkpoint, 2026-04-28)
+# ---------------------------------------------------------------------------
+
+
+class TestNegativeModeAdductVocab:
+    """Regression guards for the spectraverse checkpoint's expanded ion vocab."""
+
+    def test_canonical_negative_adducts_pass_through(self):
+        from tools.library_search.model import _canonicalise_adduct_for_msclip
+
+        assert _canonicalise_adduct_for_msclip("[M-H]-") == "[M-H]-"
+        assert _canonicalise_adduct_for_msclip("[M+FA-H]-") == "[M+FA-H]-"
+        assert _canonicalise_adduct_for_msclip("[M+CH3COO]-") == "[M+CH3COO]-"
+        assert _canonicalise_adduct_for_msclip("[M+Cl]-") == "[M+Cl]-"
+
+    def test_negative_aliases_canonicalise_to_msg_form(self):
+        from tools.library_search.model import _canonicalise_adduct_for_msclip
+
+        # Bare unbracketed alias
+        assert _canonicalise_adduct_for_msclip("M-H") == "[M-H]-"
+        # Formate (HCOO ≡ FA - H)
+        assert _canonicalise_adduct_for_msclip("[M+HCOO]-") == "[M+FA-H]-"
+        assert _canonicalise_adduct_for_msclip("[M+FA]-") == "[M+FA-H]-"
+        # Acetate (OAc ≡ CH3COO)
+        assert _canonicalise_adduct_for_msclip("[M+OAc]-") == "[M+CH3COO]-"
+        # Whitespace tolerance — the helper strips spaces.
+        assert _canonicalise_adduct_for_msclip(" [M-H]- ") == "[M-H]-"
+
+    def test_unsupported_negative_adduct_returns_none(self):
+        """Adducts not in spectraverse vocab (e.g. [M-2H]2-) must return None
+        so the caller knows to skip the ms-clip pass."""
+        from tools.library_search.model import _canonicalise_adduct_for_msclip
+
+        assert _canonicalise_adduct_for_msclip("[M-2H]2-") is None
+        assert _canonicalise_adduct_for_msclip("[M+TFA-H]-") is None
+
+
+class TestNegativeModeEndToEnd:
+    """library_search must accept a negative-mode Spectrum and route through
+    the ms-clip pass without modcos-only degradation."""
+
+    def test_negative_mode_spectrum_scores_via_inhouse(self):
+        spectrum = Spectrum(
+            mz=[59.0139, 71.0139, 89.0244, 101.0244, 179.0561],
+            intensity=[1.0, 0.6, 0.4, 0.3, 0.2],
+            precursor_mz=179.0561,
+            adduct="[M-H]-",
+            ionization_mode="negative",
+            collision_energy=20.0,
+        )
+        pool = [
+            _prefiltered(
+                smiles=GLUCOSE_SMILES,
+                name="glucose",
+                source_id="HMDB0000122-neg",
+            )
+        ]
+        retriever = MockInHouseRetriever(smiles_to_score={GLUCOSE_SMILES: 0.7})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=pool,
+            top_k=3,
+            min_score=0.0,
+            libraries=["inhouse"],
+        )
+        resp = library_search(req, retriever=retriever)
+        assert resp.candidates, "negative-mode query should still produce a candidate"
+        assert resp.candidates[0].smiles == GLUCOSE_SMILES
+        # Mock returns 0.7; rescaled (-1..1 → 0..1) gives 0.85.
+        assert resp.candidates[0].score == pytest.approx(0.85, abs=1e-6)
+        assert "ms-clip scoring failed" not in resp.explain
+
+        # Verify the adduct made it through to the retriever in canonical form
+        # (the mock receives the raw adduct string, not the canonicalised one —
+        # canonicalisation happens inside MSClipRetriever, not the protocol —
+        # but the call must have happened).
+        assert retriever.calls
+        assert retriever.calls[0]["adduct"] == "[M-H]-"
+
+    def test_negative_mode_tsv_writes_canonical_adduct(self, monkeypatch):
+        """End-to-end: a [M+HCOO]- alias must reach the subprocess TSV as
+        the canonical [M+FA-H]- form, since CLIPSmiDataset only knows the
+        canonical strings.
+        """
+        import subprocess as _subprocess
+
+        from tools.library_search import model as lsm
+
+        captured: dict = {}
+
+        def fake_run(cmd, *args, **kwargs):
+            for token in cmd:
+                if isinstance(token, str) and token.startswith("data.data_dir="):
+                    data_dir = Path(token.split("=", 1)[1])
+                    captured["tsv_text"] = (data_dir / "candidates.tsv").read_text()
+                elif isinstance(token, str) and token.startswith("inference.save_dir="):
+                    save_dir = Path(token.split("=", 1)[1])
+            import pickle
+
+            payload = {
+                "spec_names": ["q"],
+                "flags": ["False"],
+                "smiles": ["CCO"],
+                "cosine_similarity": [[0.2]],
+                "local_similarity": [[0.0]],
+                "crossattn_similarity": [[0.0]],
+            }
+            with open(save_dir / "candidates.tsv.pkl", "wb") as f:
+                pickle.dump(payload, f)
+
+            class _Result:
+                returncode = 0
+                stdout = ""
+                stderr = ""
+
+            return _Result()
+
+        monkeypatch.setattr(_subprocess, "run", fake_run)
+        monkeypatch.setattr(lsm.subprocess, "run", fake_run)
+
+        retriever = lsm.MSClipRetriever(checkpoint="/tmp/nonexistent.ckpt")
+        retriever.score_candidates(
+            query_mz=[100.0],
+            query_intensity=[1.0],
+            query_precursor_mz=200.0,
+            adduct="[M+HCOO]-",  # alias for formate
+            candidate_smiles=["CCO"],
+            collision_energy=20.0,
+        )
+
+        header = captured["tsv_text"].splitlines()[0].split("\t")
+        ion_idx = header.index("ionization")
+        row = captured["tsv_text"].splitlines()[1].split("\t")
+        assert row[ion_idx] == "[M+FA-H]-", (
+            f"alias [M+HCOO]- should canonicalise to [M+FA-H]-, got {row[ion_idx]!r}"
+        )

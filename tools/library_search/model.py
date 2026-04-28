@@ -35,9 +35,13 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 DEFAULT_CKPT_ENV = "METAGENT_MSCLIP_CKPT"
+# v4_spectraverse_* extends the original chemformer_v4 with negative-mode
+# training data (4 extra ion classes: [M-H]-, [M+FA-H]-, [M+CH3COO]-, [M+Cl]-).
+# Backward-compatible with positive-mode queries — the MSG positive vocabulary
+# is preserved at indices 0-6.
 DEFAULT_CKPT_PATH = (
-    "/data/weiwentao/reconstruct/ms-clip/results/"
-    "chemformer_v4_large_ep3unfroze_20260420_235720/version_0/best.ckpt"
+    "/home/weiwentao/workspace/reconstruct/ms-pred/results/"
+    "v4_spectraverse_20260428_134311/version_0/best.ckpt"
 )
 DEFAULT_MSCLIP_REPO = os.environ.get(
     "METAGENT_MSCLIP_REPO", "/home/weiwentao/workspace/reconstruct/ms-pred"
@@ -246,8 +250,17 @@ class MSClipRetriever:
 # locally because the real module transitively ``import torch`` via
 # ``ms_clip.common.chem``, so it cannot load in the torch-less orchestrator env.
 # Keep in sync with ms-pred/src/ms_clip/common/ions.py if new ions are added.
+#
+# Coverage:
+#   * Positive mode (idx 0-6): MSG vocabulary, supported by every checkpoint.
+#   * Negative mode (idx 7-10): added in the spectraverse training run
+#     (default checkpoint v4_spectraverse_*). Older positive-only checkpoints
+#     would technically reject these ions in dataset.py, but the failure mode
+#     surfaces as a subprocess error which library_search catches and degrades
+#     to modified-cosine-only — so passing a negative adduct against a
+#     positive-only checkpoint is safe-by-degradation, not a hard error.
 _MSCLIP_ION_REMAP: dict[str, str] = {
-    # canonical MSG entries
+    # ---- positive mode (canonical) ----
     "[M+H]+":       "[M+H]+",
     "[M+Na]+":      "[M+Na]+",
     "[M+K]+":       "[M+K]+",
@@ -259,13 +272,29 @@ _MSCLIP_ION_REMAP: dict[str, str] = {
     "[M-H4O2+H]+":  "[M-H4O2+H]+",
     "[M+H-2H2O]+":  "[M-H4O2+H]+",
     "[M-2H2O+H]+":  "[M-H4O2+H]+",
-    # unbracketed aliases seen in the wild
+    # ---- positive mode (unbracketed aliases) ----
     "M+H":          "[M+H]+",
     "M+Na":         "[M+Na]+",
+    "M+K":          "[M+K]+",
     "M+H-H2O":      "[M-H2O+H]+",
     "M-H2O+H":      "[M-H2O+H]+",
     "M+NH4":        "[M+H3N+H]+",
     "M-2H2O+H":     "[M-H4O2+H]+",
+    # ---- negative mode (canonical, spectraverse) ----
+    "[M-H]-":       "[M-H]-",
+    "[M+FA-H]-":    "[M+FA-H]-",
+    "[M+CH3COO]-":  "[M+CH3COO]-",
+    "[M+Cl]-":      "[M+Cl]-",
+    # ---- negative mode (common GNPS / vendor aliases) ----
+    "M-H":          "[M-H]-",
+    "[M+HCOO]-":    "[M+FA-H]-",   # formate adduct: HCOO = FA - H
+    "M+HCOO":       "[M+FA-H]-",
+    "[M+FA]-":      "[M+FA-H]-",
+    "M+FA-H":       "[M+FA-H]-",
+    "[M+OAc]-":     "[M+CH3COO]-", # acetate alias
+    "M+OAc":        "[M+CH3COO]-",
+    "M+CH3COO":     "[M+CH3COO]-",
+    "M+Cl":         "[M+Cl]-",
 }
 
 
