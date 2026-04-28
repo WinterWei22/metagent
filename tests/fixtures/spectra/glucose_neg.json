@@ -1,0 +1,21 @@
+{
+  "compound_name": "glucose",
+  "smiles": "OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O",
+  "inchikey": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+  "hmdb_id": "HMDB0000122",
+  "precursor_mz": 179.0556,
+  "adduct": "[M-H]-",
+  "ionization_mode": "negative",
+  "collision_energy": 20.0,
+  "peaks": [
+    [161.0455, 1000.0],
+    [143.0349, 380.0],
+    [119.0349, 280.0],
+    [101.0244, 220.0],
+    [89.0244, 160.0],
+    [71.0138, 110.0],
+    [59.0138, 80.0]
+  ],
+  "source": "synthetic_placeholder",
+  "notes": "Synthetic minimal negative-mode spectrum for glucose [M-H]-. Peaks correspond to known fragments: [M-H-H2O]-, [M-H-2H2O]-, ring cleavages C4H7O4-, C4H5O3-, C3H5O3-, C3H3O2-, C2H3O2-. Replace with real GNPS data before running library_search tests."
+}

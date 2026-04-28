@@ -5,18 +5,22 @@ Signature is locked by `schemas/spectrum.py`; this module only supplies the
 implementation. Deterministic signal processing — no LLM, no I/O.
 
 Pipeline:
-  1. Guard against the v0-unsupported negative ion mode.
-  2. Capture base-peak m/z and intensity in the ORIGINAL scale (needed in the
+  1. Capture base-peak m/z and intensity in the ORIGINAL scale (needed in the
      response even though the output spectrum is later renormalised).
-  3. Sort peaks by m/z ascending (matchms requires sorted input).
-  4. Normalise intensities so the base peak = 1.0 (matchms).
-  5. Drop peaks below `min_relative_intensity` (matchms filter on normalised
+  2. Sort peaks by m/z ascending (matchms requires sorted input).
+  3. Normalise intensities so the base peak = 1.0 (matchms).
+  4. Drop peaks below `min_relative_intensity` (matchms filter on normalised
      scale — safe because intensities are now in [0, 1]).
-  6. Merge near-duplicate peaks within `mz_tolerance_ppm` (intensity-weighted
+  5. Merge near-duplicate peaks within `mz_tolerance_ppm` (intensity-weighted
      centroid for m/z, summed intensity).
-  7. Re-normalise: merging can raise the surviving maximum above 1.0 if two
+  6. Re-normalise: merging can raise the surviving maximum above 1.0 if two
      large peaks fell within tolerance.
-  8. Assign quality_flag and raise InvalidSpectrumError if < 3 peaks survive.
+  7. Assign quality_flag and raise InvalidSpectrumError if < 3 peaks survive.
+
+Polarity is mode-independent at the signal-processing layer; both
+positive and negative `ionization_mode` are accepted and propagated
+unchanged to the output Spectrum. Adduct strings are likewise passed
+through verbatim — adduct standardisation is a downstream concern.
 """
 from __future__ import annotations
 
@@ -31,11 +35,6 @@ from tools.spectrum_ops.filters import merge_peaks_within_ppm
 
 
 def preprocess(req: PreprocessRequest) -> PreprocessResponse:
-    if req.ionization_mode == "negative":
-        raise NotImplementedError(
-            "spectrum_preprocess v0 supports positive ionization only."
-        )
-
     raw_mz = np.asarray(req.raw_mz, dtype=float)
     raw_int = np.asarray(req.raw_intensity, dtype=float)
 

@@ -258,11 +258,35 @@ def test_peaks_outside_ppm_tolerance_are_not_merged():
 
 
 # ---------------------------------------------------------------------------
-# Negative ion mode is out-of-scope for v0 (explicit NotImplementedError)
+# Negative ion mode — signal processing is polarity-independent, so a
+# negative-mode spectrum should preprocess cleanly and propagate both
+# `ionization_mode="negative"` and the negative adduct unchanged.
 # ---------------------------------------------------------------------------
 
 
-def test_negative_mode_is_not_implemented_in_v0():
+def test_negative_mode_fixture_roundtrip():
+    fx = _load_fixture("glucose_neg.json")
+    req = _request_from_fixture(fx)
+    resp = preprocess(req)
+
+    assert resp.spectrum.ionization_mode == "negative"
+    assert resp.spectrum.adduct == "[M-H]-"
+    assert resp.n_peaks_in == len(fx["peaks"])
+    assert resp.n_peaks_out >= 3
+    # Base peak normalised to exactly 1.0
+    assert max(resp.spectrum.intensity) == pytest.approx(1.0)
+    # Original-scale base peak (m/z 161.0455 has intensity 1000.0 in the fixture)
+    assert resp.base_peak_intensity == pytest.approx(1000.0)
+    assert resp.base_peak_mz == pytest.approx(161.0455)
+    # mz ascending
+    assert resp.spectrum.mz == sorted(resp.spectrum.mz)
+    # All intensities in [0, 1]
+    assert all(0.0 <= v <= 1.0 for v in resp.spectrum.intensity)
+
+
+def test_negative_mode_synthetic_passes_through():
+    # Lightweight in-test sanity: minimal hand-built negative-mode peak list
+    # (without leaning on the fixture) still preprocesses cleanly.
     req = PreprocessRequest(
         raw_mz=[100.0, 120.0, 140.0],
         raw_intensity=[1000.0, 500.0, 250.0],
@@ -270,8 +294,11 @@ def test_negative_mode_is_not_implemented_in_v0():
         adduct="[M-H]-",
         ionization_mode="negative",
     )
-    with pytest.raises(NotImplementedError):
-        preprocess(req)
+    resp = preprocess(req)
+    assert resp.spectrum.ionization_mode == "negative"
+    assert resp.spectrum.adduct == "[M-H]-"
+    assert resp.n_peaks_out == 3
+    assert max(resp.spectrum.intensity) == pytest.approx(1.0)
 
 
 # ---------------------------------------------------------------------------

@@ -17,8 +17,6 @@ tool. Do not pass raw peak lists to any other tool.
   have drifted.
 - Do not call it to "guess" a precursor m/z — `precursor_mz` is a required
   input. If you don't know it, stop and ask the user or the preceding tool.
-- Do not call it on negative-mode spectra in v0. It will raise
-  `NotImplementedError`. Positive mode only for now.
 
 ## Inputs
 
@@ -27,7 +25,7 @@ tool. Do not pass raw peak lists to any other tool.
 | `raw_mz`, `raw_intensity` | Peak arrays, same length, non-empty. Any ordering — the tool sorts. |
 | `precursor_mz` | Required, positive. The m/z of the precursor ion as reported by the instrument. |
 | `adduct` | Required, e.g. `"[M+H]+"`. Propagated to the output spectrum unchanged. |
-| `ionization_mode` | `"positive"` only in v0. `"negative"` raises `NotImplementedError`. |
+| `ionization_mode` | `"positive"` or `"negative"`. Propagated unchanged to the output spectrum. Signal processing itself is polarity-independent; downstream tools (prefilter, library search) handle adduct/polarity semantics. |
 | `collision_energy` | Optional, eV. Propagated unchanged. |
 | `min_relative_intensity` | Default `0.01`. Peaks below this fraction of the base peak are dropped. Raise it (e.g. `0.05`) to aggressively denoise; lower it (`0.001`) for sparse low-signal spectra. |
 | `mz_tolerance_ppm` | Default `5.0`. Peaks within this tolerance are merged into one (intensity-weighted centroid). |
@@ -60,8 +58,6 @@ tool. Do not pass raw peak lists to any other tool.
   length-mismatched in a way that bypassed schema validation. Non-recoverable;
   the caller should either relax `min_relative_intensity` and retry, or
   abandon the spectrum.
-- `NotImplementedError` — raised for `ionization_mode="negative"`. Not
-  recoverable in v0.
 - `pydantic.ValidationError` — raised at request construction time for
   length mismatches, non-positive `precursor_mz`, or `min_relative_intensity`
   outside `[0, 1]`. Fix the caller; do not retry.
