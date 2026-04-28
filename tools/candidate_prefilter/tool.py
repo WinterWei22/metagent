@@ -15,7 +15,10 @@ import logging
 from schemas.common import PrefilteredCandidate
 from schemas.prefilter import PrefilterRequest, PrefilterResponse
 
-from tools.candidate_prefilter.adducts import neutral_mass_from_precursor
+from tools.candidate_prefilter.adducts import (
+    neutral_mass_from_precursor,
+    polarity_for,
+)
 from tools.candidate_prefilter.errors import PubChemLiteNotBuiltError
 from tools.candidate_prefilter import gnps_index as _gnps_index_mod
 from tools.candidate_prefilter import pubchem_index as _pubchem_index_mod
@@ -45,23 +48,27 @@ def prefilter(req: PrefilterRequest) -> PrefilterResponse:
         only "hmdb" returns an empty n_by_pool["hmdb"]=0 (not an error). The
         explain string makes this observable to the LLM.
     """
-    # 1. Neutral mass (may raise InvalidAdductError)
+    # 1. Neutral mass + ionisation mode (both may raise InvalidAdductError)
     neutral_mass = neutral_mass_from_precursor(req.precursor_mz, req.adduct)
+    ion_mode = polarity_for(req.adduct)  # "positive" | "negative"
 
     # 2a. GNPS index is always loaded (we need its inchikey set even if
     #     "gnps" isn't in the requested pools). Empty index is acceptable —
     #     has_reference_spectrum just stays False for everything.
+    #     Cross-pool matching is mode-aware: only same-mode GNPS InChIKeys
+    #     count as "has a reference spectrum the query can be matched against".
     gnps_idx = _gnps_index_mod.get_default_index()
-    gnps_inchikeys = gnps_idx.inchikey_set
+    gnps_inchikeys = gnps_idx.inchikey_set_for(ion_mode)
 
     all_candidates: list[PrefilteredCandidate] = []
     n_by_pool: dict[str, int] = {}
 
-    # 2b. GNPS pool
+    # 2b. GNPS pool — same-mode records only
     if "gnps" in req.pools:
         gnps_candidates = gnps_idx.search(
             neutral_mass=neutral_mass,
             tolerance_ppm=req.mass_tolerance_ppm,
+            ion_mode=ion_mode,
             formula=req.molecular_formula,
         )
         n_by_pool["gnps"] = len(gnps_candidates)

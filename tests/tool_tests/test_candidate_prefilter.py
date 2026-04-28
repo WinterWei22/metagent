@@ -156,8 +156,15 @@ def mini_pubchem_db(tmp_path) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _gnps_records_for(compounds: list[tuple[str, str, str]]) -> list[GnpsIndexRecord]:
-    """Build GnpsIndexRecords from (ccmslib_id, name, smiles) triples."""
+def _gnps_records_for(
+    compounds: list[tuple[str, str, str]],
+    ion_mode: str = "positive",
+) -> list[GnpsIndexRecord]:
+    """Build GnpsIndexRecords from (ccmslib_id, name, smiles) triples.
+
+    All records share the given ion_mode; pass "negative" to build a fake
+    negative-mode index for mode-specific tests.
+    """
     out: list[GnpsIndexRecord] = []
     for ccmslib_id, name, smiles in compounds:
         exact, formula, inchikey = _exact_mass_formula_inchikey(smiles)
@@ -169,6 +176,7 @@ def _gnps_records_for(compounds: list[tuple[str, str, str]]) -> list[GnpsIndexRe
                 inchikey=inchikey,
                 molecular_formula=formula,
                 exact_mass=exact,
+                ion_mode=ion_mode,
             )
         )
     return out
@@ -529,23 +537,32 @@ class TestGnpsCsvLoader:
         ])
         idx = gnps_mod.build_index_from_path(csv_path)
         assert len(idx) == 2
-        assert len(idx.inchikey_set) == 2
+        # Positive-mode partition holds both; negative is empty.
+        assert len(idx.inchikey_set_for("positive")) == 2
+        assert len(idx.inchikey_set_for("negative")) == 0
 
-    def test_csv_loader_rejects_negative_mode_and_maldi(self, tmp_path):
+    def test_csv_loader_keeps_negative_mode_rejects_maldi(self, tmp_path):
+        """v0.2: negative mode is now KEPT. MALDI / unknown ionisation are rejected."""
         csv_path = tmp_path / "gnps_mini.csv"
         self._write_mini_gnps_csv(csv_path, [
             dict(spectrum_id="CCMSLIB00000000003", compound_name="neg-mode",
                  smiles="CCO", ion_mode="negative", ms_ionisation="ESI"),
             dict(spectrum_id="CCMSLIB00000000004", compound_name="maldi-run",
                  smiles="CCO", ion_mode="positive", ms_ionisation="MALDI"),
-            dict(spectrum_id="CCMSLIB00000000005", compound_name="kept",
+            dict(spectrum_id="CCMSLIB00000000005", compound_name="kept-pos",
                  smiles="CCO", ion_mode="positive", ms_ionisation="ESI"),
         ])
         idx = gnps_mod.build_index_from_path(csv_path)
-        assert len(idx) == 1
-        # ethanol neutral mass = 46.04186; a 5 ppm window covers all CCO rows.
-        hits = idx.search(neutral_mass=46.04186, tolerance_ppm=5.0)
-        assert [h.source_id for h in hits] == ["CCMSLIB00000000005"]
+        # 1 positive (kept-pos) + 1 negative (neg-mode); MALDI dropped.
+        assert idx.count_for("positive") == 1
+        assert idx.count_for("negative") == 1
+        # Mode-specific search returns the right one.
+        pos_hits = idx.search(neutral_mass=46.04186, tolerance_ppm=5.0,
+                              ion_mode="positive")
+        assert [h.source_id for h in pos_hits] == ["CCMSLIB00000000005"]
+        neg_hits = idx.search(neutral_mass=46.04186, tolerance_ppm=5.0,
+                              ion_mode="negative")
+        assert [h.source_id for h in neg_hits] == ["CCMSLIB00000000003"]
 
     def test_csv_loader_skips_unparseable_smiles(self, tmp_path):
         csv_path = tmp_path / "gnps_mini.csv"
@@ -589,6 +606,7 @@ class TestInchikeyFirstBlockCrossStamp:
                 inchikey="RYYVLZVUVIJVGH-UHFFFAOYSA-N",
                 molecular_formula="C8H10N4O2",
                 exact_mass=194.0804,
+                ion_mode="positive",
             ),
             GnpsIndexRecord(
                 spectrum_id="CCMSLIB00000000002",
@@ -597,12 +615,15 @@ class TestInchikeyFirstBlockCrossStamp:
                 inchikey="RYYVLZVUVIJVGH-FAKEMIDL3Y-K",  # same first block
                 molecular_formula="C8H10N4O2",
                 exact_mass=194.0804,
+                ion_mode="positive",
             ),
         ]
         idx = GnpsIndex(recs)
-        # inchikey_set now stores first-block values, so the two records
-        # collapse to one entry in the set.
-        assert idx.inchikey_set == frozenset({"RYYVLZVUVIJVGH"})
+        # inchikey_set_for("positive") stores first-block values, so the two
+        # records collapse to one entry in the set.
+        assert idx.inchikey_set_for("positive") == frozenset({"RYYVLZVUVIJVGH"})
+        # Negative mode partition is independent and empty.
+        assert idx.inchikey_set_for("negative") == frozenset()
 
     def test_pubchem_candidate_stereo_variant_stamps_has_ref(self, tmp_path):
         """A pubchem_lite row with a different stereo variant than GNPS must
@@ -643,6 +664,7 @@ class TestInchikeyFirstBlockCrossStamp:
                 inchikey="RYYVLZVUVIJVGH-UHFFFAOYSA-N",
                 molecular_formula="C8H10N4O2",
                 exact_mass=194.0804,
+                ion_mode="positive",
             ),
         ]))
         pubchem_mod.set_default_index(PubChemLiteIndex(db))
@@ -657,6 +679,116 @@ class TestInchikeyFirstBlockCrossStamp:
             "Stereo-variant caffeine should match GNPS caffeine on InChIKey "
             "first-block and therefore has_reference_spectrum=True"
         )
+
+
+# ---------------------------------------------------------------------------
+# Negative-mode (v0.2): mode-aware queries and has_reference_spectrum
+# ---------------------------------------------------------------------------
+
+
+class TestNegativeMode:
+    """v0.2 changes: GnpsIndex partitions by mode; tool.py derives mode
+    from req.adduct; has_reference_spectrum is True only when GNPS has
+    same-mode coverage of the candidate's connectivity.
+    """
+
+    def test_polarity_for_known_adducts(self):
+        from tools.candidate_prefilter.adducts import polarity_for
+        assert polarity_for("[M+H]+") == "positive"
+        assert polarity_for("[M+Na]+") == "positive"
+        assert polarity_for("[M-H]-") == "negative"
+        assert polarity_for("[M+FA-H]-") == "negative"
+
+    def test_polarity_for_unknown_adduct_raises(self):
+        from tools.candidate_prefilter.adducts import polarity_for
+        with pytest.raises(InvalidAdductError):
+            polarity_for("banana")
+
+    def test_negative_adduct_query_returns_candidates(self):
+        """Glucose [M-H]- at 179.0561 → neutral 180.0634 → pubchem_lite still
+        finds it (the SQLite is mode-agnostic). GNPS pool only sees
+        negative-mode records, which our autouse fixture has none of, so
+        gnps count is 0 — but pubchem_lite delivers regardless.
+        """
+        resp = prefilter(PrefilterRequest(
+            precursor_mz=179.0561, adduct="[M-H]-",
+            mass_tolerance_ppm=5.0,
+        ))
+        # Same neutral mass as the [M+H]+ test → same pubchem_lite hits.
+        ids = {c.source_id for c in resp.candidates if c.source_pool == "pubchem_lite"}
+        assert any("HMDB0000122" in i for i in ids)
+        # Fake GNPS in autouse fixture is positive-only, so under [M-H]-
+        # the gnps pool is empty.
+        assert resp.n_by_pool.get("gnps", 0) == 0
+
+    def test_has_reference_spectrum_is_mode_specific(self):
+        """A pubchem candidate matches has_ref=True only against same-mode
+        GNPS data. Same connectivity but only in opposite-mode GNPS → False.
+        """
+        # Build a GNPS index with caffeine in NEGATIVE mode only.
+        idx = GnpsIndex([
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB_neg",
+                compound_name="caffeine-neg",
+                smiles="CN1C=NC2=C1C(=O)N(C)C(=O)N2C",
+                inchikey="RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+                molecular_formula="C8H10N4O2",
+                exact_mass=194.0804,
+                ion_mode="negative",
+            ),
+        ])
+        gnps_mod.set_default_index(idx)
+
+        # Caffeine [M+H]+ → positive query. GNPS only has it in negative.
+        resp = prefilter(PrefilterRequest(
+            precursor_mz=195.0877, adduct="[M+H]+",
+            pools=["pubchem_lite"], mass_tolerance_ppm=5.0,
+        ))
+        caffeine_pc = [c for c in resp.candidates
+                       if c.source_pool == "pubchem_lite"
+                       and "HMDB0001847" in c.source_id]
+        assert caffeine_pc
+        # Cross-pool stamp should NOT trigger because GNPS has caffeine in
+        # the WRONG mode.
+        assert all(not c.has_reference_spectrum for c in caffeine_pc)
+
+        # Same query under [M-H]- → should now stamp has_ref=True.
+        resp_neg = prefilter(PrefilterRequest(
+            precursor_mz=193.0731, adduct="[M-H]-",
+            pools=["pubchem_lite"], mass_tolerance_ppm=5.0,
+        ))
+        caffeine_pc_neg = [c for c in resp_neg.candidates
+                           if c.source_pool == "pubchem_lite"
+                           and "HMDB0001847" in c.source_id]
+        assert caffeine_pc_neg
+        assert all(c.has_reference_spectrum for c in caffeine_pc_neg)
+
+    def test_records_with_unknown_mode_are_dropped_from_index(self):
+        # ion_mode='unknown' → ignored at construction.
+        idx = GnpsIndex([
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB_unknown",
+                compound_name="ethanol-unknown-mode",
+                smiles="CCO",
+                inchikey="LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+                molecular_formula="C2H6O",
+                exact_mass=46.04186,
+                ion_mode="unknown",
+            ),
+            GnpsIndexRecord(
+                spectrum_id="CCMSLIB_pos",
+                compound_name="ethanol",
+                smiles="CCO",
+                inchikey="LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+                molecular_formula="C2H6O",
+                exact_mass=46.04186,
+                ion_mode="positive",
+            ),
+        ])
+        # Only the positive one survives.
+        assert len(idx) == 1
+        assert idx.count_for("positive") == 1
+        assert idx.count_for("negative") == 0
 
 
 # ---------------------------------------------------------------------------

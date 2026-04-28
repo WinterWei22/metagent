@@ -70,9 +70,12 @@ before calling.
     - `molecular_formula` — canonical Hill form.
     - `exact_mass` — neutral monoisotopic mass (Daltons).
     - `mass_error_ppm` — absolute ppm deviation from the query's neutral mass.
-    - `has_reference_spectrum` — `True` iff this candidate's InChIKey is also
-      present in the GNPS pool, regardless of its own `source_pool`. Use this
-      flag to decide whether `library_search` can score this candidate.
+    - `has_reference_spectrum` — `True` iff this candidate's InChIKey
+      first-block is present in the GNPS pool **at the same ionization mode
+      as the query** (derived from the adduct's polarity). A candidate that
+      exists in GNPS only under the opposite mode flags `False` because
+      `library_search` cannot match cross-mode. Use this flag to decide
+      whether `library_search` can score this candidate.
 - `neutral_mass_computed` — the neutral exact mass used for the search.
 - `n_by_pool` — dict of how many candidates came from each queried pool
   (pre-cap; the final candidates list may be shorter if `max_candidates` cut it).

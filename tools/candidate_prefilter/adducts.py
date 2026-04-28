@@ -101,3 +101,22 @@ def neutral_mass_from_precursor(precursor_mz: float, adduct: str) -> float:
         )
     rule = _ADDUCT_TABLE[adduct]
     return rule.neutral_mass(precursor_mz)
+
+
+def polarity_for(adduct: str) -> str:
+    """Return "positive" or "negative" for a supported adduct.
+
+    Used by tool.py to derive the query's ionization mode from the adduct
+    string, so cross-pool has_reference_spectrum stamping only matches GNPS
+    records in the same mode (Track B's library_search cannot meaningfully
+    score a negative-mode query against a positive-mode reference spectrum).
+
+    Raises:
+        InvalidAdductError: if `adduct` is not in the supported table.
+    """
+    if adduct not in _ADDUCT_TABLE:
+        raise InvalidAdductError(
+            f"Unsupported adduct {adduct!r}. Supported adducts: "
+            f"{', '.join(supported_adducts())}."
+        )
+    return _ADDUCT_TABLE[adduct].polarity

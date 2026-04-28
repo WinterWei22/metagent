@@ -43,6 +43,7 @@ class GnpsIndexRecord:
     inchikey: str | None             # canonical InChIKey if RDKit could compute one
     molecular_formula: str           # canonical Hill form from RDKit
     exact_mass: float                # neutral monoisotopic mass in Da
+    ion_mode: str                    # "positive" | "negative" — drives mode-aware queries
 
 
 def inchikey_first_block(inchikey: str | None) -> str | None:
@@ -64,41 +65,74 @@ def inchikey_first_block(inchikey: str | None) -> str | None:
     return inchikey.split("-", 1)[0]
 
 
-class GnpsIndex:
-    """Mass-sorted index over GNPS records for fast window queries.
+_SUPPORTED_MODES: tuple[str, ...] = ("positive", "negative")
 
-    Internally stores records in a list sorted by exact_mass ascending; mass
-    queries run in O(log n + k) via bisect. For the v0 GNPS v0-usable set
-    (~100k records after filtering), linear scan would also be fine, but
-    bisect is free to implement and scales.
+
+class GnpsIndex:
+    """Mass-sorted, mode-partitioned index over GNPS records.
+
+    GNPS contains both positive- and negative-mode reference spectra. Track B
+    (library_search) cannot meaningfully score a query of one mode against a
+    reference of the other mode, so this index keeps separate per-mode
+    indices. Mass queries (search) and `has_reference_spectrum` cross-stamping
+    (inchikey_set_for) are mode-aware: callers pass the query's ion mode
+    and only same-mode GNPS data is consulted.
+
+    Records with unknown / empty ion_mode are dropped at construction (no
+    way to know which mode they'd answer for).
     """
 
     def __init__(self, records: list[GnpsIndexRecord]):
-        self._records: list[GnpsIndexRecord] = sorted(records, key=lambda r: r.exact_mass)
-        self._masses: list[float] = [r.exact_mass for r in self._records]
-        # First-block set: see inchikey_first_block() for why full InChIKey
-        # matching is wrong for cross-pool has_reference_spectrum stamping.
-        self._inchikey_first_block_set: frozenset[str] = frozenset(
-            b for b in (inchikey_first_block(r.inchikey) for r in self._records) if b
-        )
+        # Drop records with unknown ion_mode upfront — they can't answer any
+        # mode-specific query, so they're dead weight.
+        usable = [r for r in records if r.ion_mode in _SUPPORTED_MODES]
+
+        # Per-mode mass-sorted lists. We materialise both even if one mode is
+        # empty so callers don't have to guard.
+        self._records_by_mode: dict[str, list[GnpsIndexRecord]] = {
+            mode: sorted(
+                (r for r in usable if r.ion_mode == mode),
+                key=lambda r: r.exact_mass,
+            )
+            for mode in _SUPPORTED_MODES
+        }
+        self._masses_by_mode: dict[str, list[float]] = {
+            mode: [r.exact_mass for r in self._records_by_mode[mode]]
+            for mode in _SUPPORTED_MODES
+        }
+
+        # First-block sets per mode: see inchikey_first_block() for why we
+        # match on the first 14 chars rather than the full InChIKey.
+        self._inchikey_first_block_set_by_mode: dict[str, frozenset[str]] = {
+            mode: frozenset(
+                b for b in (
+                    inchikey_first_block(r.inchikey)
+                    for r in self._records_by_mode[mode]
+                ) if b
+            )
+            for mode in _SUPPORTED_MODES
+        }
 
     # ------------------------------------------------------------------
     # Introspection
     # ------------------------------------------------------------------
 
     def __len__(self) -> int:
-        return len(self._records)
+        return sum(len(v) for v in self._records_by_mode.values())
 
-    @property
-    def inchikey_set(self) -> frozenset[str]:
-        """Connectivity-only (first 14-char) InChIKey blocks of every GNPS record.
+    def count_for(self, mode: str) -> int:
+        """Number of records in the given mode (0 if unknown mode)."""
+        return len(self._records_by_mode.get(mode, []))
+
+    def inchikey_set_for(self, mode: str) -> frozenset[str]:
+        """Connectivity-only (first 14-char) InChIKey blocks of GNPS records
+        in the given ion mode.
 
         Used by candidate_prefilter to set `has_reference_spectrum=True` on
         candidates from other pools whose structure shares connectivity with
-        a GNPS entry. See `inchikey_first_block` for why we match on the
-        first block rather than the full InChIKey.
+        a same-mode GNPS entry. Returns an empty set for unknown modes.
         """
-        return self._inchikey_first_block_set
+        return self._inchikey_first_block_set_by_mode.get(mode, frozenset())
 
     # ------------------------------------------------------------------
     # Queries
@@ -108,18 +142,29 @@ class GnpsIndex:
         self,
         neutral_mass: float,
         tolerance_ppm: float,
+        ion_mode: str,
         formula: str | None = None,
     ) -> list[PrefilteredCandidate]:
-        """Return GNPS candidates whose exact mass is within tolerance of
-        `neutral_mass`. If `formula` is given, also filter by exact formula
-        string match.
+        """Return GNPS candidates in `ion_mode` whose exact mass is within
+        tolerance of `neutral_mass`. If `formula` is given, also filter by
+        exact formula string match.
+
+        Mode is REQUIRED — there is no sensible "any mode" answer because the
+        downstream library_search cannot bridge modes anyway.
 
         Candidates are returned with `source_pool="gnps"`,
-        `has_reference_spectrum=True` (every GNPS record by definition has
-        a spectrum). `source_id` is the CCMSLIB accession. mass_error_ppm
-        is the absolute ppm deviation from `neutral_mass`.
+        `has_reference_spectrum=True` (every GNPS record has a spectrum, and
+        we already filtered to the caller's mode). `source_id` is the
+        CCMSLIB accession. mass_error_ppm is the absolute ppm deviation.
         """
         if neutral_mass <= 0:
+            return []
+        if ion_mode not in _SUPPORTED_MODES:
+            return []
+
+        records = self._records_by_mode[ion_mode]
+        masses = self._masses_by_mode[ion_mode]
+        if not records:
             return []
 
         abs_tol = tolerance_ppm * 1e-6 * neutral_mass
@@ -127,11 +172,11 @@ class GnpsIndex:
 
         from bisect import bisect_left, bisect_right
 
-        i = bisect_left(self._masses, lo)
-        j = bisect_right(self._masses, hi)
+        i = bisect_left(masses, lo)
+        j = bisect_right(masses, hi)
 
         out: list[PrefilteredCandidate] = []
-        for rec in self._records[i:j]:
+        for rec in records[i:j]:
             if formula is not None and rec.molecular_formula != formula:
                 continue
             ppm_err = abs(rec.exact_mass - neutral_mass) / neutral_mass * 1e6
@@ -157,7 +202,7 @@ class GnpsIndex:
 
 def _index_record_from_gnps(record) -> GnpsIndexRecord | None:
     """Turn a common.gnps_loader.GnpsRecord into a GnpsIndexRecord, or None
-    if SMILES can't be parsed / mass can't be computed.
+    if SMILES can't be parsed / mass can't be computed / ion_mode is unknown.
 
     RDKit import is local so this module stays importable without RDKit
     installed (the tool raises at query time instead).
@@ -166,6 +211,11 @@ def _index_record_from_gnps(record) -> GnpsIndexRecord | None:
     from rdkit.Chem import Descriptors, rdMolDescriptors
 
     if not record.smiles:
+        return None
+    if record.ion_mode not in _SUPPORTED_MODES:
+        # GnpsRecord.ion_mode is already normalised to "positive"/"negative"/None
+        # by common.gnps_loader. Unknown mode → drop (can't answer mode-specific
+        # has_reference_spectrum questions).
         return None
     mol = Chem.MolFromSmiles(record.smiles)
     if mol is None:
@@ -193,6 +243,7 @@ def _index_record_from_gnps(record) -> GnpsIndexRecord | None:
         inchikey=inchikey,
         molecular_formula=formula,
         exact_mass=float(exact_mass),
+        ion_mode=record.ion_mode,
     )
 
 
@@ -260,10 +311,14 @@ _CSV_REJECT_IONISATION = {"MALDI", "EI", "GC", "APCI-MALDI"}
 def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
     """Yield GnpsIndexRecords from a GNPS2 enriched CSV.
 
-    Filters mirror common.gnps_loader's v0-usable check:
-      - Ion_Mode == "positive"
+    Filters:
+      - Ion_Mode in {"positive", "negative"} (unknown / empty → reject)
       - msIonisation is soft (not MALDI / EI / GC)
       - SMILES parses in RDKit
+
+    Both positive and negative modes are kept; the GnpsIndex partitions
+    them so mode-aware queries (search / inchikey_set_for) only see the
+    relevant slice.
 
     For each kept row, (molecular_formula, exact_mass, inchikey) are all
     recomputed via RDKit so values are canonical and consistent with what
@@ -276,7 +331,7 @@ def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
 
     path = Path(csv_path)
     n_seen = 0
-    n_kept = 0
+    n_kept = {"positive": 0, "negative": 0}
     n_rejected_mode = 0
     n_rejected_ionisation = 0
     n_rejected_smiles = 0
@@ -290,7 +345,7 @@ def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
             n_seen += 1
 
             ion_mode = (row.get("Ion_Mode") or "").strip().lower()
-            if ion_mode != "positive":
+            if ion_mode not in _SUPPORTED_MODES:
                 n_rejected_mode += 1
                 continue
 
@@ -325,7 +380,7 @@ def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
             compound_name = (row.get("Compound_Name") or "").strip() or None
             spectrum_id = (row.get("spectrum_id") or "").strip()
 
-            n_kept += 1
+            n_kept[ion_mode] += 1
             yield GnpsIndexRecord(
                 spectrum_id=spectrum_id,
                 compound_name=compound_name,
@@ -333,12 +388,14 @@ def _parse_gnps_csv(csv_path: str | Path) -> Iterator[GnpsIndexRecord]:
                 inchikey=inchikey,
                 molecular_formula=formula,
                 exact_mass=exact_mass,
+                ion_mode=ion_mode,
             )
 
     logger.info(
-        "GNPS CSV parse: %d rows; kept=%d, rejected_ion_mode=%d, "
-        "rejected_ionisation=%d, rejected_smiles=%d",
-        n_seen, n_kept, n_rejected_mode, n_rejected_ionisation, n_rejected_smiles,
+        "GNPS CSV parse: %d rows; kept_positive=%d, kept_negative=%d, "
+        "rejected_ion_mode=%d, rejected_ionisation=%d, rejected_smiles=%d",
+        n_seen, n_kept["positive"], n_kept["negative"],
+        n_rejected_mode, n_rejected_ionisation, n_rejected_smiles,
     )
 
 
