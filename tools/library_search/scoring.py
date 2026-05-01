@@ -69,7 +69,16 @@ def modified_cosine_score(
     """
     import numpy as np
     from matchms import Spectrum
-    from matchms.similarity import ModifiedCosine
+
+    # matchms 0.32 renamed ModifiedCosine -> ModifiedCosineGreedy AND changed
+    # `pair()` return type from a numpy structured object (indexable by
+    # 'score' / 'matches') to a plain ``Tuple[float, int]``. Compat shim
+    # below covers both vintages so this file imports + scores correctly
+    # against matchms ∈ {<0.32 (ModifiedCosine), ≥0.32 (ModifiedCosineGreedy)}.
+    try:
+        from matchms.similarity import ModifiedCosine  # type: ignore[attr-defined]
+    except ImportError:  # matchms ≥ 0.32
+        from matchms.similarity import ModifiedCosineGreedy as ModifiedCosine
 
     try:
         # matchms Spectrum requires mz ascending. Sort the (mz, intensity)
@@ -95,7 +104,19 @@ def modified_cosine_score(
             tolerance=tolerance, mz_power=mz_power, intensity_power=intensity_power
         )
         result = scorer.pair(q, r)
-        score = float(result["score"]) if hasattr(result, "__getitem__") else float(result)
+        # matchms 0.32+ returns ``Tuple[float, int]``; older versions a
+        # numpy structured array indexable by 'score'. Try the common
+        # extraction paths in turn.
+        if isinstance(result, tuple):
+            score = float(result[0])
+        elif hasattr(result, "__getitem__"):
+            try:
+                score = float(result["score"])
+            except (TypeError, KeyError, IndexError, ValueError):
+                # numpy 0-d / generic array → fall back to int-index
+                score = float(result[0])
+        else:
+            score = float(result)
     except Exception as exc:
         logger.debug("modified cosine pair scoring failed: %s", exc)
         return 0.0

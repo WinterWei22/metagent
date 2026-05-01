@@ -126,6 +126,103 @@ _NEUTRAL_LOSS_ALIASES = (
 
 
 # ---------------------------------------------------------------------------
+# Sub-6 enrichment-claim patterns (Type 6a / 6b / 6d)
+# ---------------------------------------------------------------------------
+
+# 6a — SET_ENRICHMENT: claims about a *set* of compounds being enriched in /
+# pointing to / dominating a pathway. Two clusters of phrasing:
+#
+#   (i)  Explicit enrichment vocabulary
+#         "X is/are enriched in Y" / "fold-enrichment" / "FDR < ..." /
+#         "pathway analysis identified Y" / "top pathway" / "most enriched"
+#   (ii) Collective subject + pathway-as-predicate (Day 3 §4 P1 fix —
+#         Sub-6 baseline LLM rarely uses "enriched in" verbatim; instead
+#         emits "the dominant pathway affected is X" or "the metabolites
+#         suggest disruption of Y"):
+#         "(the) dominant / primary / most affected (metabolic) pathway"
+#         "(the) dominant theme is ..."
+#         "the (differential) metabolites / data / profile / signal
+#          [+ collective-subject phrases] suggests / indicates / points to /
+#          reflects ... <pathway-y predicate>"
+#
+# pathway_membership style ("dCMP is in pyrimidine metabolism") is
+# **deliberately not** caught here — that lives in BIOLOGICAL (Layer 6c
+# pathway_membership subtype). Subject-grammar cut: collective set →
+# SET_ENRICHMENT, single compound → BIOLOGICAL (eval guide pitfall #1).
+_SET_ENRICHMENT_RE = re.compile(
+    r"("
+    # (i) explicit enrichment vocab
+    r"\b(?:are|is|were|was)\s+(?:significantly\s+|strongly\s+)?enriched\s+in\b"
+    r"|\benrichment\s+(?:was\s+detected|analysis|in|for)\b"
+    r"|\bpathway\s+analysis\s+(?:identified|revealed|returned|highlighted|suggests?)\b"
+    r"|\b(?:top|most\s+(?:likely|enriched))\s+pathway\b"
+    r"|\b(?:show|shows|showed|exhibit|exhibits|exhibited)\s+(?:strong\s+)?enrichment\b"
+    r"|\bFDR\s*[<>]?\s*0?\.\d"
+    r"|\bfold[-\s]enrichment\b"
+    # (ii-a) "(the) dominant / primary / main / most affected pathway"
+    r"|\b(?:dominant|primary|main|principal|most\s+(?:affected|likely\s+affected)|"
+    r"most\s+strongly\s+(?:implicated|affected))\s+(?:metabolic\s+)?pathway\b"
+    # (ii-b) "(pathway) is the dominant pathway affected" — pathway as subject
+    r"|\bis\s+the\s+(?:dominant|primary|main|principal|most\s+affected)\s+pathway\b"
+    # (ii-c) "the dominant theme / signal / pattern / pathway is ..."
+    r"|\b(?:the\s+)?dominant\s+theme\s+is\b"
+    # (ii-d) collective-subject + pathway-y predicate. The leading anchor
+    # is "(the )?<collective subject>" appearing AT START of the claim,
+    # optionally followed by a short prepositional phrase
+    # ("in pyrimidine metabolites" — see "coordinated changes in X
+    # metabolites suggest Y"), then an
+    # "implicates/suggests/indicates/points to" verb. The intervening
+    # phrase is bounded to ≤ 6 tokens to avoid runaway matches.
+    r"|^\s*(?:the\s+)?(?:differential\s+)?(?:metabolites?|data|profile|signal|"
+    r"results?|set|combination|coordinated\s+changes?)\b"
+    r"(?:\s+\w[\w-]*){0,6}\s+"
+    r"(?:strongly\s+|primarily\s+|collectively\s+)?"
+    r"(?:suggests?|indicates?|imply|implies|implicate[ds]?|"
+    r"points?\s+to|reflects?|are\s+consistent\s+with|"
+    r"(?:cluster|converge)\s+(?:in|into|on))\b"
+    # (ii-e) "differential abundance in these metabolites suggests ..."
+    r"|\bdifferential\s+abundance\s+in\s+these\s+(?:metabolites|compounds)\s+"
+    r"(?:suggests?|indicates?)\b"
+    r")",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+# 6b — DRIVER_METABOLITE: "X is/are key driver(s) of Y" / "X drive(s) the
+# pathway" / "X is the central metabolite". Keyword-led so we don't
+# accidentally capture pathway-membership claims.
+_DRIVER_RE = re.compile(
+    r"\b("
+    r"key\s+(?:driver|drivers|metabolite|contributor|marker)s?"
+    r"|main\s+(?:driver|contributor|marker)s?"
+    r"|principal\s+marker"
+    r"|primarily\s+driven\s+by"
+    r"|driv(?:e|es|en|ing)\s+(?:the\s+)?"
+    r"(?:pathway|enrichment|signal|response)"
+    r"|(?:are|is)\s+the\s+(?:central|principal|primary)\s+"
+    r"(?:metabolite|driver|contributor|marker)s?"
+    r"|are\s+the\s+(?:main|principal|primary)\s+contributors"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# 6d — PATHWAY_RELATIONSHIP: directional or shared-content between two
+# pathways. Most specific; runs before generic BIOLOGICAL.
+_RELATIONSHIP_RE = re.compile(
+    r"\b("
+    r"cross[-\s]?talk"
+    r"|share[ds]?\s+\w*\s*(?:intermediates?|metabolites?|compounds?)"
+    r"|share\s+a\s+common\s+intermediate"
+    r"|common\s+intermediate"
+    r"|converge[s]?\s+on"
+    r"|(?:is|are)\s+upstream\s+of"
+    r"|(?:is|are)\s+downstream\s+of"
+    r"|feeds?\s+into"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+# ---------------------------------------------------------------------------
 # Public entry
 # ---------------------------------------------------------------------------
 
@@ -214,11 +311,25 @@ def _rule_classify(claim_text: str) -> ClaimType | None:
     contains a compound name AND a citation, but the citation is the
     load-bearing assertion (the verifier asks "does this PMID exist?",
     not "does Caffeine exist?").
+
+    Sub-6 enrichment patterns (PATHWAY_RELATIONSHIP, DRIVER_METABOLITE,
+    SET_ENRICHMENT) are checked BEFORE generic BIOLOGICAL because
+    "X metabolism shares intermediates with Y" matches both
+    ``_PATHWAY_KEYWORDS`` and ``_RELATIONSHIP_RE`` — but the relationship
+    is the load-bearing assertion. Order: most specific → least.
     """
     if _LITERATURE_RE.search(claim_text) or _BARE_DOI_RE.search(claim_text):
         return ClaimType.LITERATURE
     if _is_peak_mechanistic_claim(claim_text):
         return ClaimType.PEAK_MECHANISTIC
+    # Sub-6 enrichment claim types — checked before BIOLOGICAL because
+    # they share the pathway / metabolism vocabulary.
+    if _RELATIONSHIP_RE.search(claim_text):
+        return ClaimType.PATHWAY_RELATIONSHIP
+    if _DRIVER_RE.search(claim_text):
+        return ClaimType.DRIVER_METABOLITE
+    if _SET_ENRICHMENT_RE.search(claim_text):
+        return ClaimType.SET_ENRICHMENT
     if _PATHWAY_KEYWORDS.search(claim_text) or _PATHWAY_ID_RE.search(claim_text):
         return ClaimType.BIOLOGICAL
     if _GROUNDED_KEYWORDS.search(claim_text) or _FORMULA_RE.search(claim_text):
@@ -310,12 +421,17 @@ _TYPE_LITERALS = {
     "factual": ClaimType.FACTUAL,
     "biological_claim": ClaimType.BIOLOGICAL,
     "biological": ClaimType.BIOLOGICAL,
+    "biological_significance": ClaimType.BIOLOGICAL,
     "consistency_claim": ClaimType.CONSISTENCY,
     "consistency": ClaimType.CONSISTENCY,
     "literature_claim": ClaimType.LITERATURE,
     "literature": ClaimType.LITERATURE,
     "peak_mechanistic_claim": ClaimType.PEAK_MECHANISTIC,
     "peak_mechanistic": ClaimType.PEAK_MECHANISTIC,
+    # Sub-6 enrichment types
+    "set_enrichment": ClaimType.SET_ENRICHMENT,
+    "driver_metabolite": ClaimType.DRIVER_METABOLITE,
+    "pathway_relationship": ClaimType.PATHWAY_RELATIONSHIP,
 }
 
 

@@ -51,6 +51,101 @@ def test_rule_classify_returns_none_on_ambiguous():
 
 
 # ---------------------------------------------------------------------------
+# P1 regression — Sub-6 SET_ENRICHMENT routing fix (Day 3 §4)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Real misclassified Sub-6B claims (verbatim from sub6b_verdicts.jsonl)
+        "The dominant pathway affected is glycerolipid metabolism/TAG biosynthesis",
+        "Pyrimidine metabolism is the dominant pathway affected",
+        "Methionine/Sulfur Amino Acid Metabolism is the most affected pathway",
+        "The metabolites strongly suggest perturbation of pyrimidine metabolism as the primary pathway",
+        "Differential metabolites point to disruption of several interconnected pathways",
+        "Coordinated changes in pyrimidine metabolites suggest altered nucleotide demand",
+        "The data indicate dysregulation of arachidonic acid metabolism",
+        "The dominant theme is glycerolipid metabolism",
+        # Pre-existing canonical phrasings — must still classify correctly
+        "These metabolites are enriched in Tyrosine metabolism",
+        "Pathway analysis identified Statin inhibition as the top hit",
+    ],
+)
+def test_set_enrichment_p1_rule_classify(text):
+    """P1 fix: collective-subject + pathway-as-predicate phrasings now
+    route to SET_ENRICHMENT (previously fell through to BIOLOGICAL via
+    the pathway/metabolism keyword catch-all)."""
+    assert _rule_classify(text) == ClaimType.SET_ENRICHMENT
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Counter-examples that match the existing pathway/metabolism keyword
+        # and resolve deterministically to BIOLOGICAL — must STILL be
+        # BIOLOGICAL after the P1 widening.
+        "dCMP is in pyrimidine metabolism",
+        "Ureidosuccinic acid represents an early node in the pyrimidine pathway",
+        "Tyrosine metabolism is dysregulated in Parkinson's disease",
+        "Caffeine maps to KEGG pathway map00232",
+    ],
+)
+def test_biological_stays_biological_after_p1(text):
+    """P1 must NOT over-classify: pathway_membership / single-compound
+    pathway claims still rule-classify as BIOLOGICAL."""
+    assert _rule_classify(text) == ClaimType.BIOLOGICAL
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Single-compound role/process claims — no pathway/metabolism
+        # keyword, so the rule classifier returns None and the LLM
+        # fallback labels them. They MUST NOT route to SET_ENRICHMENT
+        # via rule (the LLM will class them as biological_claim per the
+        # updated few-shots).
+        "Glutathione is involved in oxidative stress response",
+        "Polyamines regulate protein synthesis",
+        "Acrolein presence indicates oxidative damage to polyunsaturated fatty acids",
+    ],
+)
+def test_single_compound_claims_dont_route_to_set_enrichment_via_rule(text):
+    """Defensive: P1 widening must not capture single-compound role
+    claims by mistake. They fall through to LLM fallback (None)."""
+    out = _rule_classify(text)
+    assert out != ClaimType.SET_ENRICHMENT
+    # Single-compound role claims have no pathway-keyword anchor →
+    # rule classifier returns None, LLM fallback decides.
+    assert out is None or out == ClaimType.BIOLOGICAL
+
+
+def test_pathway_relationship_still_wins_over_set_enrichment():
+    """Precedence: relationship-shaped phrasings outrank set_enrichment
+    even when they include 'dominant' / 'primary' qualifiers."""
+    # 'shares intermediates' — pathway_relationship
+    assert (
+        _rule_classify(
+            "Tyrosine metabolism shares intermediates with Phenylalanine metabolism"
+        )
+        == ClaimType.PATHWAY_RELATIONSHIP
+    )
+    # 'upstream of' — pathway_relationship
+    assert (
+        _rule_classify("Methionine metabolism is upstream of polyamine biosynthesis")
+        == ClaimType.PATHWAY_RELATIONSHIP
+    )
+
+
+def test_driver_metabolite_still_wins_over_set_enrichment():
+    """Precedence: driver-shaped phrasings outrank set_enrichment."""
+    assert (
+        _rule_classify("Tyrosine and DOPA are the key drivers of this enrichment")
+        == ClaimType.DRIVER_METABOLITE
+    )
+
+
+# ---------------------------------------------------------------------------
 # classify_claims — rule + LLM fallback
 # ---------------------------------------------------------------------------
 
