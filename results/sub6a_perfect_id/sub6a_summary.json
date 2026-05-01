@@ -1,0 +1,18 @@
+{
+  "n_tasks": 14,
+  "n_ok": 14,
+  "n_error": 0,
+  "id_strategy": "perfect_id",
+  "top1_pathway_strict_rate": 0.21428571428571427,
+  "top3_pathway_acceptance_rate": 0.21428571428571427,
+  "driver_precision_mean": 0.5392857142857143,
+  "driver_recall_mean": 0.2602040816326531,
+  "false_noise_rate_mean": 0.3892857142857143,
+  "off_pathway_count_mean": 6.571428571428571,
+  "narrative_chars_mean": 2575.6428571428573,
+  "identification_accuracy_mean": 1.0,
+  "elapsed_id_seconds_total": 0.000528356060385704,
+  "elapsed_llm_seconds_total": 583.1933016758412,
+  "elapsed_seconds_total": 583.1942503489554,
+  "elapsed_seconds_mean": 41.65673216778253
+}
