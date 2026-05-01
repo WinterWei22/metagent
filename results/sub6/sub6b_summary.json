@@ -1,0 +1,14 @@
+{
+  "n_tasks": 20,
+  "n_ok": 20,
+  "n_error": 0,
+  "top1_pathway_strict_rate": 0.3,
+  "top3_pathway_acceptance_rate": 0.35,
+  "driver_precision_mean": 0.75,
+  "driver_recall_mean": 0.4322619047619048,
+  "false_noise_rate_mean": 0.25,
+  "off_pathway_count_mean": 5.7,
+  "narrative_chars_mean": 2189.0,
+  "elapsed_seconds_total": 779.2242629248649,
+  "elapsed_seconds_mean": 38.961213146243246
+}

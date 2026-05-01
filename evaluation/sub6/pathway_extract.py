@@ -24,13 +24,82 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-# Words that can follow a pathway name. The capture group ((?:[A-Z][\w-]*\s+)
-# {0,4}[A-Z][\w-]*) accepts 1-5 capitalised tokens, hyphens allowed.
+# Words that can follow a pathway name. The capture group accepts 1-5
+# capitalised tokens then any-case final token, hyphens allowed.
+# Whitespace is restricted to **horizontal** ([ \t]) so the regex never
+# spans newlines — prior version used \s+ and ate "## Affected Metabolic
+# Pathways\n\nThe dominant pathway" as one (multi-line) match.
 _PATHWAY_RE = re.compile(
-    r"\b((?:[A-Z][\w'-]+\s+){0,4}[A-Za-z0-9'-]+)\s+"
+    r"\b((?:[A-Z][\w'-]+[ \t]+){0,4}[A-Za-z0-9'-]+)[ \t]+"
     r"(pathway|metabolism|biosynthesis|catabolism|degradation|"
     r"cycle|signalling|signaling|shunt)\b"
 )
+
+# Tokens that strip from a pathway-name candidate before checking whether
+# any meaningful content remains. Mirrors metrics.py — kept here so the
+# extractor can pre-filter mentions that contribute zero biological content
+# (e.g. "Metabolism", "biosynthetic pathway"). Kept in sync manually; the
+# constants in metrics.py are the source of truth.
+_PATHWAY_SUFFIX_FOR_CONTENT = frozenset(
+    {
+        "pathway",
+        "pathways",
+        "metabolism",
+        "catabolism",
+        "anabolism",
+        "biosynthesis",
+        "degradation",
+        "cycle",
+        "signalling",
+        "signaling",
+        "shunt",
+        "fate",
+    }
+)
+_GENERIC_STOP_TOKENS = frozenset(
+    {
+        "a", "an", "and", "the", "of", "in", "for", "on", "or", "to", "by",
+        # Generic adjectives often mis-captured as multi-token "heads".
+        "biosynthetic", "metabolic", "metabolism", "general", "broad",
+        "specific", "common", "central", "primary", "main", "key",
+        "dominant", "major", "important", "critical", "relevant",
+        "affected", "implicated", "active", "underlying", "candidate",
+        "global", "associated", "given", "listed", "mentioned", "related",
+        "various", "multiple", "several", "other", "additional", "further",
+        "alternative", "unrelated", "broader", "single", "shared",
+        "their", "its", "such", "including", "involving", "involved",
+        "this", "these", "those", "any", "prominent", "coherent",
+    }
+)
+_TOKEN_RE_LOCAL = re.compile(r"[A-Za-z0-9]+")
+
+
+def _has_meaningful_content(text: str) -> bool:
+    """True iff at least one content token survives suffix+stop stripping.
+
+    Used to drop pathway mentions like "Metabolism" / "biosynthetic
+    pathway" / "the metabolism" — they pass the regex but carry no
+    biological identity.
+    """
+    toks = {t.lower() for t in _TOKEN_RE_LOCAL.findall(text)}
+    return bool(toks - _PATHWAY_SUFFIX_FOR_CONTENT - _GENERIC_STOP_TOKENS)
+
+
+# Markdown stripping. Headers (#+ leading), emphasis (**...**, *...*) and
+# inline code spans are converted to plain text so the regex doesn't catch
+# the markup glyphs as a "head".
+_MD_HEADER_RE = re.compile(r"^[ \t]*#{1,6}[ \t]+", re.MULTILINE)
+_MD_BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
+_MD_ITALIC_RE = re.compile(r"(?<!\*)\*([^*\n]+)\*(?!\*)")
+_MD_CODE_RE = re.compile(r"`([^`\n]+)`")
+
+
+def _strip_markdown(text: str) -> str:
+    text = _MD_HEADER_RE.sub("", text)
+    text = _MD_BOLD_RE.sub(r"\1", text)
+    text = _MD_ITALIC_RE.sub(r"\1", text)
+    text = _MD_CODE_RE.sub(r"\1", text)
+    return text
 
 # Heads that look like pathway names but are really evaluative adjectives
 # / determiners / generic nouns. The 'urea cycle' / 'tca cycle' style names
@@ -108,6 +177,12 @@ _DRIVER_MARKERS = (
     "are drivers",
     "is a driver",
 )
+# Word-boundary regex for markers — avoids 'drive' substring matching inside
+# 'driver section' / 'overdrive' / etc. Build once at import time.
+_DRIVER_MARKER_RE = re.compile(
+    r"\b(?:" + "|".join(re.escape(m) for m in _DRIVER_MARKERS) + r")\b",
+    re.IGNORECASE,
+)
 
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 _NORM_SPACES = re.compile(r"\s+")
@@ -140,16 +215,26 @@ def extract_pathway_mentions(
        .pathway_name``). Catches single-token disease pathways like
        ``Alkaptonuria`` that the generic pattern cannot.
     """
+    # Strip markdown so heading prefixes / **bold** glyphs don't get
+    # captured as part of a pathway head. Length-preserving where it
+    # matters (offsets shift, but we only use ordering).
+    narrative_clean = _strip_markdown(narrative)
     found: list[tuple[int, PathwayMention]] = []  # (offset, mention)
     seen: set[str] = set()
 
     # --- generic pattern ------------------------------------------------
-    for m in _PATHWAY_RE.finditer(narrative):
+    for m in _PATHWAY_RE.finditer(narrative_clean):
         head, kind = m.group(1).strip(), m.group(2).strip()
         head_tokens = head.split()
         if len(head_tokens) == 1 and head_tokens[0].lower() in _HEAD_STOPLIST:
             continue
+        # Multi-token head: also reject if the LAST head token is a generic
+        # adjective ("Most Affected Metabolic" → last="Metabolic" → drop).
+        if len(head_tokens) > 1 and head_tokens[-1].lower() in _HEAD_STOPLIST:
+            continue
         text = f"{head} {kind}"
+        if not _has_meaningful_content(text):
+            continue
         canon = _canonicalise(text)
         if canon in seen:
             continue
@@ -162,11 +247,14 @@ def extract_pathway_mentions(
         for name in sorted(set(known_pathway_names), key=len, reverse=True):
             if not name:
                 continue
+            # Names like "Metabolism" alone carry no content — drop.
+            if not _has_meaningful_content(name):
+                continue
             canon = _canonicalise(name)
             if canon in seen:
                 continue
             pat = re.compile(r"\b" + re.escape(name) + r"\b", re.IGNORECASE)
-            m = pat.search(narrative)
+            m = pat.search(narrative_clean)
             if m is None:
                 continue
             seen.add(canon)
@@ -176,16 +264,60 @@ def extract_pathway_mentions(
     return [pm for _, pm in found]
 
 
+# Markdown headers whose text suggests the section enumerates drivers.
+# Matches '### 2. Key Drivers', '## Driver Compounds', '## Key Pathway
+# Drivers', etc. Header level + leading numbering tolerated.
+_DRIVER_SECTION_HEADER_RE = re.compile(
+    r"^[ \t]*#{1,6}[ \t]+.*\bdriver", re.MULTILINE | re.IGNORECASE
+)
+_ANY_HEADER_RE = re.compile(r"^[ \t]*#{1,6}[ \t]+", re.MULTILINE)
+
+
+def _extract_driver_sections(narrative: str) -> list[str]:
+    """Return the body text of every header section whose title contains
+    'driver'. Section ends at the next header of any level.
+
+    LLMs frequently structure narratives as ``### 2. Key Drivers`` followed
+    by a bullet list — the sentence-marker rule misses bullets like
+    ``- **Compound** is the upstream driver`` because the sentence has
+    ``driver`` as a bare word, not in a multi-word marker phrase.
+    """
+    sections: list[str] = []
+    matches = list(_DRIVER_SECTION_HEADER_RE.finditer(narrative))
+    if not matches:
+        return sections
+    # Find all header offsets to know where to stop each section.
+    header_starts = [m.start() for m in _ANY_HEADER_RE.finditer(narrative)]
+    for hm in matches:
+        body_start = narrative.find("\n", hm.end())
+        if body_start == -1:
+            body_start = hm.end()
+        # Find the next header strictly after hm.start().
+        next_header = next((s for s in header_starts if s > hm.start()), len(narrative))
+        sections.append(narrative[body_start:next_header])
+    return sections
+
+
 def extract_driver_mentions(
     narrative: str,
     candidate_names: list[str],
 ) -> list[str]:
     """Return canonical compound names cited as drivers in the narrative.
 
-    A name is a "claimed driver" when it appears in the same sentence as
-    one of the driver markers above. We use sentence-level co-occurrence
-    rather than fixed-window scanning because driver-statements typically
-    reference 2-4 compounds in a single clause.
+    Two complementary rules — a name is a claimed driver if **either**
+    holds:
+
+    1. **Sentence-level marker rule** — the name appears in a sentence
+       that also contains one of ``_DRIVER_MARKERS`` (``key driver``,
+       ``drives``, ``responsible for`` …). Catches prose statements.
+    2. **Driver-section rule** — the name appears in the body of a
+       markdown section whose header contains the word ``driver``
+       (e.g. ``### 2. Key Drivers`` followed by a bullet list).
+       Catches the very common LLM pattern of listing drivers under a
+       dedicated heading.
+
+    Order: section-rule hits come first (mirroring the document layout),
+    then sentence-rule hits. De-duplicated.
     """
     if not candidate_names:
         return []
@@ -200,12 +332,22 @@ def extract_driver_mentions(
         re.IGNORECASE,
     )
 
-    sentences = _SENTENCE_SPLIT.split(narrative)
     seen: set[str] = set()
     out: list[str] = []
+
+    # 1. Driver-section rule.
+    for body in _extract_driver_sections(narrative):
+        for m in pattern.finditer(body):
+            canonical = name_lookup[m.group(1).lower()]
+            if canonical in seen:
+                continue
+            seen.add(canonical)
+            out.append(canonical)
+
+    # 2. Sentence-marker rule.
+    sentences = _SENTENCE_SPLIT.split(narrative)
     for sent in sentences:
-        sent_low = sent.lower()
-        if not any(marker in sent_low for marker in _DRIVER_MARKERS):
+        if not _DRIVER_MARKER_RE.search(sent):
             continue
         for m in pattern.finditer(sent):
             canonical = name_lookup[m.group(1).lower()]
