@@ -98,12 +98,9 @@ _KEGG_METABOLISM_NUMBERS: list[int] = [
 _KEGG_METABOLISM_NUMBERS = sorted(set(_KEGG_METABOLISM_NUMBERS))
 
 
-_RELATIONSHIP_KEYWORDS = (
-    "is upstream of", "are upstream of", "is downstream of", "are downstream of",
-    "feeds into", "feed into", "feeding into", "fed into",
-    "downstream product of", "upstream product of",
-    "feeds the", "feeds back",
-    "downstream of", "upstream of",  # bare prepositional, last
+from tools.kegg.claim_extraction import (  # noqa: E402
+    _RELATIONSHIP_KEYWORDS,
+    extract_compound_pair as _extract_compound_pair_impl,
 )
 
 
@@ -171,32 +168,10 @@ def _collect_kegg_ids_from_tasks(task_paths: list[Path]) -> tuple[set[str], dict
 
 
 def _extract_compound_pair(claim_text: str) -> tuple[str | None, str | None]:
-    """Heuristic: find the (subject, object) compound names in
-    'X is upstream of Y' / 'X is downstream of Y' / 'X feeds into Y'.
-
-    Returns (None, None) when the heuristic can't isolate two endpoints.
-    No KEGG resolution here — just text extraction. Verifier Layer 6d
-    will resolve to ``cpd:C<NNNNN>`` IDs at verification time.
+    """Thin wrapper preserving the script's original symbol name; the
+    real implementation lives in ``tools.kegg.claim_extraction``.
     """
-    txt = re.sub(r"\s+", " ", claim_text.strip())
-    txt_lc = txt.lower()
-    for kw in _RELATIONSHIP_KEYWORDS:
-        idx = txt_lc.find(kw)
-        if idx == -1:
-            continue
-        left = txt[:idx].strip(" ,.;:")
-        right = txt[idx + len(kw):].strip(" ,.;:")
-        # Trim subordinate clauses on the right side. Cut at the first comma
-        # or "in <pathway>" preposition so the object isn't a long sentence.
-        right = re.split(
-            r"\s+(?:in|via|within|through|of\s+the)\s+",
-            right,
-            maxsplit=1,
-        )[0]
-        right = re.split(r"[,.;]", right, maxsplit=1)[0].strip()
-        if left and right:
-            return left.strip(), right.strip()
-    return None, None
+    return _extract_compound_pair_impl(claim_text)
 
 
 def _collect_compound_pairs(verdict_paths: list[Path]) -> list[dict]:

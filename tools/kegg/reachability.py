@@ -150,6 +150,24 @@ def resolve_compound_to_kegg(
         if cpd_id is not None:
             return cpd_id, src
 
+    # Strip a trailing "process" noun ("X generation" / "X synthesis" /
+    # "X formation" / "X production" / "X biosynthesis" / "X catabolism")
+    # — LLM often tacks these onto a bare compound name when describing
+    # an upstream/downstream chain. Don't strip "X metabolism" because
+    # that legitimately turns a compound into a pathway phrase that
+    # belongs to the pathway-pair branch instead.
+    process_suffix = re.search(
+        r"\s+(generation|synthesis|formation|production|biosynthesis|catabolism)$",
+        norm,
+        flags=re.IGNORECASE,
+    )
+    if process_suffix:
+        head = norm[: process_suffix.start()].strip()
+        if head:
+            cpd_id, src = _resolve_alias_table(conn, head, None)
+            if cpd_id is not None:
+                return cpd_id, src
+
     return None, None
 
 
