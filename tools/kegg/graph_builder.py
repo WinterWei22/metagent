@@ -58,6 +58,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import sqlite3
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -172,6 +173,43 @@ def _normalise_alias(s: str) -> str:
     return " ".join(str(s).strip().split()).lower()
 
 
+def _name_variants(canonical: str) -> list[str]:
+    """Generate deterministic spelling variants the LLM is likely to
+    use even when the curated pool stores only one canonical form.
+
+    Index-time expansion is preferable to query-time guessing because
+    the alias table is the single source of truth — a downstream
+    layer that prints "could not resolve" doesn't have to know about
+    these heuristics.
+
+    Variants:
+      L-/D- prefix add or strip:    "L-Methionine"  ↔ "Methionine"
+                                    "Methionine"    ↔ "L-Methionine"
+      ic acid ↔ ate suffix:         "Pyruvic acid"  ↔ "Pyruvate"
+                                    "Pyruvate"      ↔ "Pyruvic acid"
+
+    Caller deduplicates via the (alias, compound_id) PK on insert.
+    """
+    out: list[str] = [canonical]
+    norm = canonical.lower().strip()
+
+    # L-/D- prefix toggle
+    m_strip = re.match(r"^[ld][\-\s]+(.+)", norm)
+    if m_strip:
+        out.append(m_strip.group(1))
+    else:
+        out.append(f"l-{norm}")
+        out.append(f"d-{norm}")
+
+    # "ic acid" ↔ "ate"
+    if norm.endswith("ic acid"):
+        out.append(norm[: -len("ic acid")] + "ate")
+    elif norm.endswith("ate"):
+        out.append(norm[: -len("ate")] + "ic acid")
+
+    return out
+
+
 def load_curated_pool_aliases(curated_path: Path) -> list[tuple[str, str, str]]:
     """Yield (alias, kegg_compound_id, source) rows from the curated
     HMDB-mammalian pool. Source is ``'name'`` / ``'inchikey14'`` /
@@ -204,7 +242,13 @@ def load_curated_pool_aliases(curated_path: Path) -> list[tuple[str, str, str]]:
             ):
                 if not value:
                     continue
-                rows.append((_normalise_alias(value), kegg, source))
+                if source == "name":
+                    # Expand to deterministic variants (L-/D-, ic acid /
+                    # ate) so the LLM's looser phrasing still resolves.
+                    for v in _name_variants(value):
+                        rows.append((_normalise_alias(v), kegg, source))
+                else:
+                    rows.append((_normalise_alias(value), kegg, source))
     # Dedup
     return list({(a, k, s) for a, k, s in rows})
 
@@ -339,12 +383,27 @@ def build_reaction_graph(
                     (alias, kegg_id, source),
                 )
                 n_aliases += 1
-                # Also propagate human-readable name to compounds.name
-                if source == "name":
+
+            # Back-fill compounds.name from the curated pool's canonical
+            # name field (NOT from alias variants — "l-test compound"
+            # etc. are searchable but should not become the displayed
+            # name).
+            with curated_path.open() as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    r = json.loads(line)
+                    name = r.get("name")
+                    kegg = r.get("kegg_id")
+                    if not name or not kegg:
+                        continue
+                    if not kegg.startswith("cpd:"):
+                        kegg = f"cpd:{kegg}"
                     conn.execute(
                         "UPDATE compounds SET name = COALESCE(name, ?) "
                         "WHERE compound_id = ?",
-                        (alias, kegg_id),
+                        (_normalise_alias(name), kegg),
                     )
 
         conn.commit()

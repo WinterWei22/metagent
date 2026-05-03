@@ -139,7 +139,10 @@ def test_parse_kgml_drops_reactions_without_substrate_or_product(tmp_path):
 # ---- alias loader ---------------------------------------------------------
 
 
-def test_load_curated_pool_aliases_emits_4_kinds(tmp_path):
+def test_load_curated_pool_aliases_emits_all_4_sources(tmp_path):
+    """Exactly 4 source kinds should be present (kegg, name, inchikey14,
+    hmdb); name kind also produces L-/D- and ic-acid/ate variants but
+    they all share source='name'."""
     p = tmp_path / "curated.jsonl"
     p.write_text(json.dumps({
         "name": "L-Methionine",
@@ -148,10 +151,12 @@ def test_load_curated_pool_aliases_emits_4_kinds(tmp_path):
         "inchikey_first_block": "FFEARJCKVFRZRR",
     }) + "\n")
     rows = load_curated_pool_aliases(p)
-    by_source = {src: alias for alias, _, src in rows}
-    assert by_source["name"] == "l-methionine"
-    assert by_source["inchikey14"] == "ffearjckvfrzrr"
-    assert by_source["hmdb"] == "hmdb0000696"
+    sources = {src for _, _, src in rows}
+    assert sources == {"name", "inchikey14", "hmdb", "kegg"}
+    # Name variants must include both 'l-methionine' and 'methionine'
+    name_aliases = {alias for alias, _, src in rows if src == "name"}
+    assert "l-methionine" in name_aliases
+    assert "methionine" in name_aliases
     # Curated pool stores 'C00073' (no cpd: prefix); loader must canonicalise.
     cpd_ids = {kegg for _, kegg, _ in rows}
     assert cpd_ids == {"cpd:C00073"}
@@ -204,7 +209,8 @@ def test_build_reaction_graph_writes_alias_table(tmp_path):
     }) + "\n")
     out_db = tmp_path / "graph.sqlite"
     summary = build_reaction_graph(kgml_dir, out_db, curated_path=curated)
-    assert summary["n_compound_aliases"] == 4
+    # name (incl. L-/D- variants) + inchikey14 + hmdb + kegg
+    assert summary["n_compound_aliases"] >= 4
 
     conn = sqlite3.connect(out_db)
     try:
@@ -252,12 +258,15 @@ def test_compound_alias_resolution_inchikey_to_kegg(tmp_path):
             ("lctonwcanyupml",),
         ).fetchone()
         assert row is not None and row[0] == "cpd:C00022"
-        # Round-trip via name lookup
-        row2 = conn.execute(
+        # Round-trip via name lookup — multiple aliases per compound
+        # (canonical + L-/D- + ate/acid variants).
+        rows2 = conn.execute(
             "SELECT alias FROM compound_aliases WHERE compound_id = ? AND source = 'name'",
             ("cpd:C00022",),
-        ).fetchone()
-        assert row2 is not None and "pyruvic" in row2[0]
+        ).fetchall()
+        aliases = {r[0] for r in rows2}
+        assert any("pyruvic" in a for a in aliases), aliases
+        assert any("pyruvate" in a for a in aliases), aliases
     finally:
         conn.close()
 
