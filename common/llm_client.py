@@ -31,8 +31,27 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 MINIMAX_BASE_URL = "https://api.minimaxi.com/v1"
-DEFAULT_MODEL = "MiniMax-M2.7"
-DEFAULT_MAX_TOKENS = 127_900
+_DEFAULT_MINIMAX_MODEL = "MiniMax-M2.7"
+
+# Provider switch (env-driven). Default is the historical MiniMax path so
+# every existing test/runner stays bit-identical. Set
+# `METAGENT_LLM_PROVIDER=openai` to route via an OpenAI-compatible endpoint
+# (real OpenAI, viviai.cc relay, Azure OAI, etc.).
+PROVIDER = (os.environ.get("METAGENT_LLM_PROVIDER") or "minimax").strip().lower()
+
+# OpenAI-compat config (only consulted when PROVIDER=='openai').
+_OPENAI_BASE_URL = (
+    os.environ.get("METAGENT_OPENAI_BASE_URL") or "https://api.openai.com/v1"
+).rstrip("/")
+_OPENAI_DEFAULT_MODEL = os.environ.get("METAGENT_OPENAI_MODEL") or "gpt-5.5"
+
+DEFAULT_MODEL = (
+    _OPENAI_DEFAULT_MODEL if PROVIDER == "openai" else _DEFAULT_MINIMAX_MODEL
+)
+# OpenAI's reasoning-class models reject the legacy 127.9k MiniMax cap.
+# Use a per-provider default; runtime callers can still pass max_tokens
+# explicitly to override.
+DEFAULT_MAX_TOKENS = 16_384 if PROVIDER == "openai" else 127_900
 
 # ---------------------------------------------------------------------------
 # Call logging
@@ -66,21 +85,37 @@ _MOCK_INDEX = 0
 
 
 def _configure_openai() -> Any:
-    """Configure the legacy openai==0.28 client for MiniMax. Called on first chat()."""
+    """Configure the legacy openai==0.28 client for the active provider.
+
+    Provider choice is driven by ``METAGENT_LLM_PROVIDER`` (default
+    ``minimax``). The openai 0.28 SDK is reused for both — only the
+    base URL + API key + auth-header workaround differ.
+    """
     import openai
     import requests
 
-    api_key = os.environ.get("MINIMAX_API_KEY", "")
-    if not api_key:
-        raise RuntimeError(
-            "MINIMAX_API_KEY is not set. Export it or use set_mock() in tests."
-        )
+    if PROVIDER == "openai":
+        api_key = os.environ.get("METAGENT_OPENAI_API_KEY", "")
+        if not api_key:
+            raise RuntimeError(
+                "METAGENT_LLM_PROVIDER=openai but METAGENT_OPENAI_API_KEY is unset."
+            )
+        base_url = _OPENAI_BASE_URL
+    else:
+        api_key = os.environ.get("MINIMAX_API_KEY", "")
+        if not api_key:
+            raise RuntimeError(
+                "MINIMAX_API_KEY is not set. Export it or use set_mock() in tests."
+            )
+        base_url = MINIMAX_BASE_URL
 
     openai.api_type = "open_ai"
-    openai.api_base = MINIMAX_BASE_URL
+    openai.api_base = base_url
     openai.api_key = api_key
 
     # Force Authorization header — works around openai 0.28 + custom base 1004 error.
+    # Note: requests.Session uses HTTP/1.1 by default, which sidesteps the HTTP/2
+    # POST-corruption issue we observed at certain proxies (see Track Sub-6 fixes).
     session = requests.Session()
     session.headers["Authorization"] = "Bearer " + api_key
     openai.requestssession = session  # type: ignore[attr-defined]
@@ -188,11 +223,21 @@ def chat_raw(
             response_raw = content
         else:
             openai = _configure_openai()
+            # OpenAI deprecated `max_tokens` for reasoning-class models
+            # (gpt-5.x / o1 / o3 / o4) in favour of
+            # `max_completion_tokens`. Switch the field at the wire level
+            # for the openai provider; MiniMax keeps the legacy name.
+            create_kwargs: dict = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+            }
+            if PROVIDER == "openai":
+                create_kwargs["max_completion_tokens"] = max_tokens
+            else:
+                create_kwargs["max_tokens"] = max_tokens
             response = openai.ChatCompletion.create(  # type: ignore[attr-defined]
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
+                **create_kwargs,
             )
             try:
                 response_raw = response["choices"][0]["message"]["content"]

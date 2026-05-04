@@ -1,0 +1,65 @@
+{
+  "track": "sub6b",
+  "n_tasks": 20,
+  "n_ok": 20,
+  "n_error": 0,
+  "total_claims": 1024,
+  "verifier_llm_calls_total": 0,
+  "verdicts_total": {
+    "supported": 89,
+    "unsupported": 323,
+    "contradicted": 32,
+    "unverifiable_v0": 580
+  },
+  "verdict_rates": {
+    "supported": 0.0869140625,
+    "unsupported": 0.3154296875,
+    "contradicted": 0.03125,
+    "unverifiable_v0": 0.56640625
+  },
+  "claims_by_type": {
+    "set_enrichment": 67,
+    "driver_metabolite": 19,
+    "pathway_relationship": 73,
+    "biological_claim": 780,
+    "grounded_claim": 47,
+    "factual_claim": 0,
+    "literature_claim": 0,
+    "peak_mechanistic": 0,
+    "consistency": 0
+  },
+  "verdicts_by_type": {
+    "set_enrichment": {
+      "supported": 3,
+      "unsupported": 0,
+      "contradicted": 26,
+      "unverifiable_v0": 38
+    },
+    "driver_metabolite": {
+      "supported": 11,
+      "unsupported": 4,
+      "contradicted": 4,
+      "unverifiable_v0": 0
+    },
+    "pathway_relationship": {
+      "supported": 4,
+      "unsupported": 2,
+      "contradicted": 1,
+      "unverifiable_v0": 66
+    },
+    "biological_claim": {
+      "supported": 71,
+      "unsupported": 317,
+      "contradicted": 0,
+      "unverifiable_v0": 392
+    },
+    "grounded_claim": {
+      "supported": 0,
+      "unsupported": 0,
+      "contradicted": 0,
+      "unverifiable_v0": 47
+    }
+  },
+  "tasks_with_any_supported_set_enrichment": 3,
+  "tasks_with_any_contradicted_driver": 2
+}
