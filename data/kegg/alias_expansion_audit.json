@@ -1,0 +1,13 @@
+{
+  "graph_db_path": "data/kegg/reaction_graph.sqlite",
+  "ramp_db_path": "/data/weiwentao/llm_agent_metabolomics/ramp.sqlite",
+  "ramp_db_md5": "c50066befe7a82825cccbbed37261c3f",
+  "n_graph_compounds": 4307,
+  "n_compounds_with_ramp_kegg": 2393,
+  "n_unique_ramp_ids_touched": 2343,
+  "n_alias_rows_attempted": 105172,
+  "n_alias_rows_before": 925,
+  "n_alias_rows_after": 53925,
+  "n_alias_rows_added": 53000,
+  "elapsed_seconds": 18.195245139300823
+}
