@@ -68,6 +68,27 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip the api_key.txt fallback (for tests using mocked chat)",
     )
+    p.add_argument(
+        "--mass-tolerance-ppm",
+        type=float,
+        default=None,
+        help=(
+            "Phase A: optional precursor-mass window (ppm) for Sub-6A "
+            "library_search Path B. When set, library_search narrows the "
+            "GNPS pool to records within ±tol_ppm of each query's "
+            "precursor m/z BEFORE scoring/dedup. Recommended 10 (HRMS); "
+            "leave unset for the original full-pool scan."
+        ),
+    )
+    p.add_argument(
+        "--output-suffix",
+        default=None,
+        help=(
+            "Optional suffix appended to the Sub-6A narrative output "
+            "filename, e.g. '_phase_a' yields sub6a_narratives_phase_a.jsonl. "
+            "Used to keep variant outputs from clobbering frozen baselines."
+        ),
+    )
     args = p.parse_args(argv)
 
     if not (args.sub6a or args.sub6b or args.both):
@@ -115,11 +136,18 @@ def main(argv: list[str] | None = None) -> int:
 
         sub6a_in = tasks_dir / "sub6a_e2e_tasks.jsonl"
         # Output filename embeds strategy so runs don't clobber each other.
-        suffix = "_perfect_id" if args.id_strategy == "perfect_id" else ""
+        # --output-suffix takes precedence over the auto strategy suffix so
+        # variants like Phase A can be named explicitly without losing the
+        # frozen v3 'sub6a_narratives.jsonl' file.
+        if args.output_suffix:
+            suffix = args.output_suffix
+        else:
+            suffix = "_perfect_id" if args.id_strategy == "perfect_id" else ""
         sub6a_out = out_dir / f"sub6a_narratives{suffix}.jsonl"
         print(
             f"=== Sub-6A ({args.id_strategy}): {sub6a_in} → {sub6a_out} "
-            f"(limit={args.limit}, top_k={args.top_k}) ==="
+            f"(limit={args.limit}, top_k={args.top_k}, "
+            f"mass_tolerance_ppm={args.mass_tolerance_ppm}) ==="
         )
         lookup = None
         if args.id_strategy == "perfect_id":
@@ -135,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
             caller=f"sub6a_baseline_{args.id_strategy}",
             strategy=args.id_strategy,
             lookup=lookup,
+            mass_tolerance_ppm=args.mass_tolerance_ppm,
         )
         ok = sum(1 for r in results if r.error is None)
         print(f"Sub-6A: processed {len(results)} tasks, ok={ok}, fail={len(results)-ok}")

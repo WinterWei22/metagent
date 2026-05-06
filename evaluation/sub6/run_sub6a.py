@@ -99,6 +99,7 @@ def run_sub6a(
     top_k: int = 20,
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
+    mass_tolerance_ppm: float | None = None,
 ) -> Sub6AResult:
     """Process one Sub-6A task end-to-end.
 
@@ -122,6 +123,7 @@ def run_sub6a(
             library_search_fn=library_search_fn,
             strategy=strategy,
             lookup=lookup,
+            mass_tolerance_ppm=mass_tolerance_ppm,
         )
         ident_list.append(ident)
     elapsed_id = time.perf_counter() - t_id
@@ -192,6 +194,7 @@ def run_sub6a_batch(
     limit: int | None = None,
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
+    mass_tolerance_ppm: float | None = None,
 ) -> list[Sub6AResult]:
     """Iterate ``tasks_path`` (JSONL), append ``Sub6AResult`` rows to
     ``output_path``, skipping already-completed task_ids.
@@ -224,6 +227,7 @@ def run_sub6a_batch(
                 top_k=top_k,
                 strategy=strategy,
                 lookup=lookup,
+                mass_tolerance_ppm=mass_tolerance_ppm,
             )
             append_jsonl(output_path, asdict(r))
             results.append(r)

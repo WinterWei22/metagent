@@ -81,15 +81,26 @@ def library_search(
     use_gnps = "gnps" in libraries
 
     # ---- gather the set of (smiles, ref_spectrum | None) pairs to score ----
+    excluded_ids: frozenset[str] | None = (
+        frozenset(req.excluded_source_ids) if req.excluded_source_ids else None
+    )
     targets = _collect_scoring_targets(
         req.candidate_pool,
         want_gnps=use_gnps,
         gnps_records=gnps_records,
+        mass_tolerance_ppm=req.mass_tolerance_ppm,
+        query_precursor_mz=req.spectrum.precursor_mz,
+        excluded_source_ids=excluded_ids,
     )
     if not targets:
         return _empty_response(
             libraries_searched=sorted(libraries),
-            reason=_explain_empty(req.candidate_pool, use_gnps),
+            reason=_explain_empty(
+                req.candidate_pool,
+                use_gnps,
+                mass_tolerance_ppm=req.mass_tolerance_ppm,
+                query_precursor_mz=req.spectrum.precursor_mz,
+            ),
         )
 
     # ---- modified cosine pass ----
@@ -226,6 +237,9 @@ def _collect_scoring_targets(
     *,
     want_gnps: bool,
     gnps_records: list | None,
+    mass_tolerance_ppm: float | None = None,
+    query_precursor_mz: float | None = None,
+    excluded_source_ids: frozenset[str] | None = None,
 ) -> list[_ScoringTarget]:
     """Materialise the flat list of candidates to score.
 
@@ -234,7 +248,22 @@ def _collect_scoring_targets(
     sources (pubchem_lite, hmdb) leave ref fields as None (ms-clip only).
 
     Path B: iterate the full GNPS v0-usable pool. Every record contributes one
-    target with its own peaks as the reference.
+    target with its own peaks as the reference. When
+    ``mass_tolerance_ppm`` is set (Path B only), records whose
+    ``precursor_mz`` is outside ±tol_ppm of ``query_precursor_mz`` are
+    filtered out *before* scoring — this is the precursor-mass window
+    pre-filter (Phase A) that prevents wrong-mass compounds with a
+    high-modcos peak coincidence from outranking the true compound's
+    other-condition GNPS reference spectra.
+
+    When ``excluded_source_ids`` is set (Path B only), records whose
+    ``spectrum_id`` is in the set are dropped *before* the dedup-by-
+    SMILES stage. This complements the caller-side self-exclusion audit
+    in ``evaluation.sub6.identification.identify_spectrum``: under a
+    tight mass window the candidate pool may collapse onto a handful of
+    SMILES, and a self-match (score=1.0) would otherwise absorb every
+    other record sharing its SMILES at the dedup step, leaving the
+    caller-side audit nothing to filter.
     """
     if candidate_pool is not None:
         gnps_by_id: dict[str, tuple[list[float], list[float], float]] = {}
@@ -273,6 +302,40 @@ def _collect_scoring_targets(
     if not want_gnps:
         return []
     records = _load_gnps_records(records=gnps_records, required=True) or []
+
+    # Optional precursor-mass window pre-filter (Phase A). Applied BEFORE
+    # the per-record peak / smiles / precursor sanity check so the debug
+    # log reflects the user's request exactly.
+    if mass_tolerance_ppm is not None and query_precursor_mz is not None:
+        n_before = len(records)
+        tol_da = float(query_precursor_mz) * float(mass_tolerance_ppm) / 1e6
+        lo, hi = float(query_precursor_mz) - tol_da, float(query_precursor_mz) + tol_da
+        records = [
+            rec for rec in records
+            if rec.precursor_mz is not None and lo <= float(rec.precursor_mz) <= hi
+        ]
+        logger.debug(
+            "mass-window filter: %d → %d records (±%g ppm of %.4f Da, "
+            "window [%.4f, %.4f])",
+            n_before, len(records), mass_tolerance_ppm,
+            float(query_precursor_mz), lo, hi,
+        )
+
+    # Optional self-exclusion (augments the caller-side audit; see docstring
+    # rationale). Applied AFTER the mass window so the debug counts make
+    # sense, and BEFORE the validity check so records lacking peaks/smiles
+    # are still excluded too.
+    if excluded_source_ids:
+        n_before = len(records)
+        records = [
+            rec for rec in records
+            if getattr(rec, "spectrum_id", None) not in excluded_source_ids
+        ]
+        logger.debug(
+            "self-exclusion filter: %d → %d records (excluded set size %d)",
+            n_before, len(records), len(excluded_source_ids),
+        )
+
     targets = []
     for rec in records:
         if not rec.peaks or not rec.smiles or not rec.precursor_mz:
@@ -409,11 +472,25 @@ def _empty_response(*, libraries_searched: list[str], reason: str) -> LibrarySea
     )
 
 
-def _explain_empty(candidate_pool, use_gnps: bool) -> str:
+def _explain_empty(
+    candidate_pool,
+    use_gnps: bool,
+    *,
+    mass_tolerance_ppm: float | None = None,
+    query_precursor_mz: float | None = None,
+) -> str:
     if candidate_pool is not None and len(candidate_pool) == 0:
         return "Candidate pool was empty; no candidates to score."
     if candidate_pool is None and not use_gnps:
         return "No candidate_pool provided and 'gnps' is not in requested libraries."
+    # Path B + mass-window filter wiped out every record — most informative.
+    if (candidate_pool is None and use_gnps
+            and mass_tolerance_ppm is not None
+            and query_precursor_mz is not None):
+        return (
+            f"no GNPS records within ±{mass_tolerance_ppm:g} ppm of precursor "
+            f"m/z {float(query_precursor_mz):.4f}"
+        )
     return "No scorable targets materialised from the requested libraries."
 
 

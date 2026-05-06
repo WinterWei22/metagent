@@ -190,6 +190,7 @@ def identify_spectrum(
     library_search_fn: LibSearchFn | None = None,
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
+    mass_tolerance_ppm: float | None = None,
 ) -> SpectrumIdentification:
     """Top-1 identification for one spectrum, with self-match exclusion.
 
@@ -201,6 +202,15 @@ def identify_spectrum(
     in-house retriever — we want to compare query spectra against GNPS
     reference spectra, not against arbitrary SMILES. Set ``libraries``
     to add ``"inhouse"`` for ms-clip when needed.
+
+    ``mass_tolerance_ppm`` (Phase A): when non-None, library_search's
+    Path B narrows the GNPS pool to records whose precursor_mz is within
+    ±tol_ppm of the query — see schemas.LibrarySearchRequest.
+    ``exclusion_source_ids`` is *also* threaded into the request via
+    ``LibrarySearchRequest.excluded_source_ids`` so library_search can
+    drop self-matches *before* its dedup-by-SMILES step. The post-call
+    exclusion sweep below is preserved as an audit (existing logic
+    stays per the original Phase A scope contract).
     """
     if strategy == "perfect_id":
         return identify_spectrum_perfect(sp, lookup=lookup)
@@ -233,6 +243,8 @@ def identify_spectrum(
         top_k=top_k,
         min_score=min_score,
         libraries=list(libraries),
+        mass_tolerance_ppm=mass_tolerance_ppm,
+        excluded_source_ids=sorted(exclusion_source_ids) or None,
     )
     fn = library_search_fn or _default_library_search()
     try:

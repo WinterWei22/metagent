@@ -1025,3 +1025,197 @@ class TestGpuSelection:
         monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "from-parent")
         env = self._capture_env(monkeypatch, gpu_id=None)
         assert env.get("CUDA_VISIBLE_DEVICES") == "from-parent"
+
+
+# ---------------------------------------------------------------------------
+# Phase A — precursor-mass window pre-filter on the no-pool fallback (Path B)
+# ---------------------------------------------------------------------------
+
+
+def _phase_a_make_record(*, sid: str, precursor_mz: float,
+                         smiles: str = "CCO",
+                         compound_name: str = "ethanol") -> "GnpsRecord":
+    """Build a tiny synthetic GnpsRecord with three peaks at the precursor."""
+    from common.gnps_loader import GnpsRecord
+    return GnpsRecord(
+        spectrum_id=sid,
+        compound_name=compound_name,
+        smiles=smiles,
+        inchi=None,
+        inchikey=None,
+        instrument="Orbitrap",
+        ion_source="LC-ESI",
+        ion_mode="positive",
+        adduct="[M+H]+",
+        precursor_mz=precursor_mz,
+        ms_level=2,
+        peaks=[
+            (precursor_mz - 18.0106, 1000.0),
+            (precursor_mz - 36.0211, 400.0),
+            (precursor_mz - 44.9977, 300.0),
+        ],
+        library_membership="GNPS-LIBRARY",
+        library_quality=1,
+    )
+
+
+def _phase_a_make_query_spectrum(precursor_mz: float = 200.000) -> Spectrum:
+    """Build a 3-peak synthetic Spectrum at the requested precursor."""
+    return Spectrum(
+        mz=[precursor_mz - 18.0106, precursor_mz - 36.0211, precursor_mz - 44.9977],
+        intensity=[1.0, 0.4, 0.3],
+        precursor_mz=precursor_mz,
+        adduct="[M+H]+",
+        ionization_mode="positive",
+    )
+
+
+class TestMassWindowFilter:
+    """4 acceptance tests for the Phase A precursor-mass window pre-filter.
+
+    All four exercise Path B (no candidate_pool) so the filter actually runs.
+    Mock retriever ensures deterministic, env-independent scoring.
+    """
+
+    def test_mass_filter_narrows_pool(self):
+        """Three GNPS records at 100/200/300 Da; query @ 200 with ±10 ppm
+        must score only the 200 Da record."""
+        records = [
+            _phase_a_make_record(sid="R-100", precursor_mz=100.000),
+            _phase_a_make_record(sid="R-200", precursor_mz=200.000),
+            _phase_a_make_record(sid="R-300", precursor_mz=300.000),
+        ]
+        spectrum = _phase_a_make_query_spectrum(precursor_mz=200.000)
+        retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.5})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=None,
+            top_k=5,
+            min_score=0.0,
+            libraries=["gnps"],
+            mass_tolerance_ppm=10.0,
+        )
+        resp = library_search(req, retriever=retriever, gnps_records=records)
+        assert resp.n_total_compared == 1, (
+            f"expected exactly the 200 Da record to survive the ±10 ppm filter, "
+            f"got n_total_compared={resp.n_total_compared}"
+        )
+        # source_id propagation
+        assert resp.candidates and resp.candidates[0].source_id == "R-200"
+
+    def test_mass_filter_zero_records_returns_empty(self):
+        """Query mass with NO records within ±N ppm — empty candidates with
+        a mass-filter-specific explain string (acceptance per prompt §D1)."""
+        records = [
+            _phase_a_make_record(sid="R-100", precursor_mz=100.000),
+            _phase_a_make_record(sid="R-300", precursor_mz=300.000),
+        ]
+        spectrum = _phase_a_make_query_spectrum(precursor_mz=200.000)
+        retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.5})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=None,
+            top_k=5,
+            min_score=0.0,
+            libraries=["gnps"],
+            mass_tolerance_ppm=10.0,
+        )
+        resp = library_search(req, retriever=retriever, gnps_records=records)
+        assert resp.candidates == []
+        # Author note: the actual explain string is "no GNPS records within
+        # ±10 ppm of precursor m/z 200.0000". Compare lowercased to be
+        # robust to phrasing tweaks.
+        assert "no gnps records within" in resp.explain.lower()
+        # Numeric details must surface so the orchestrator / debug logs are
+        # actionable — both the tolerance and the offending precursor.
+        assert "10" in resp.explain
+        assert "200.0000" in resp.explain
+
+    def test_mass_filter_default_none_preserves_behaviour(self):
+        """Without mass_tolerance_ppm the pool must be scored verbatim — the
+        backward-compat invariant called out in prompt §D1.
+
+        Same fixture as test_mass_filter_narrows_pool but no filter: all 3
+        records must reach the scorer.
+        """
+        records = [
+            _phase_a_make_record(sid="R-100", precursor_mz=100.000),
+            _phase_a_make_record(sid="R-200", precursor_mz=200.000),
+            _phase_a_make_record(sid="R-300", precursor_mz=300.000),
+        ]
+        spectrum = _phase_a_make_query_spectrum(precursor_mz=200.000)
+        retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.5})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=None,
+            top_k=5,
+            min_score=0.0,
+            libraries=["gnps"],
+            # mass_tolerance_ppm intentionally omitted — backward compat.
+        )
+        resp = library_search(req, retriever=retriever, gnps_records=records)
+        assert resp.n_total_compared == 3, (
+            "without a mass filter every GNPS record must reach the scorer; "
+            f"got n_total_compared={resp.n_total_compared}"
+        )
+
+    def test_mass_filter_ppm_arithmetic(self):
+        """ppm boundary: query @ 200.000, tol = 10 ppm.
+        Pool record A at 200.001 (5 ppm) MUST pass.
+        Pool record B at 200.005 (25 ppm) MUST be filtered out.
+        """
+        records = [
+            _phase_a_make_record(sid="R-A-5ppm", precursor_mz=200.001),
+            _phase_a_make_record(sid="R-B-25ppm", precursor_mz=200.005),
+        ]
+        spectrum = _phase_a_make_query_spectrum(precursor_mz=200.000)
+        retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.5})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=None,
+            top_k=5,
+            min_score=0.0,
+            libraries=["gnps"],
+            mass_tolerance_ppm=10.0,
+        )
+        resp = library_search(req, retriever=retriever, gnps_records=records)
+        assert resp.n_total_compared == 1
+        assert resp.candidates and resp.candidates[0].source_id == "R-A-5ppm"
+
+    def test_excluded_source_ids_keeps_other_record_with_same_smiles(self):
+        """Augment-vs-move regression test for the dedup-self-exclusion
+        interaction discovered during D3 smoke.
+
+        Scenario: two GNPS records share SMILES "CCO" (same compound,
+        different conditions). Record SELF is the query's own GNPS spectrum
+        (perfect 1.0 self-match against itself). Record OTHER is a real
+        reference at lower score. With NO excluded_source_ids, dedup-by-
+        SMILES picks SELF as the survivor and a downstream caller-side
+        self-exclusion sweep would leave 0 candidates for this SMILES.
+
+        With excluded_source_ids={SELF}, library_search drops SELF before
+        dedup so OTHER survives and represents "CCO" — which is what the
+        downstream caller actually wants.
+        """
+        records = [
+            _phase_a_make_record(sid="SELF", precursor_mz=200.0001),
+            _phase_a_make_record(sid="OTHER", precursor_mz=200.001),
+        ]
+        spectrum = _phase_a_make_query_spectrum(precursor_mz=200.000)
+        retriever = MockInHouseRetriever(smiles_to_score={"CCO": 0.5})
+        req = LibrarySearchRequest(
+            spectrum=spectrum,
+            candidate_pool=None,
+            top_k=5,
+            min_score=0.0,
+            libraries=["gnps"],
+            mass_tolerance_ppm=10.0,
+            excluded_source_ids=["SELF"],
+        )
+        resp = library_search(req, retriever=retriever, gnps_records=records)
+        assert resp.n_total_compared == 1, (
+            "exactly OTHER should reach the scorer after SELF is dropped; "
+            f"got n_total_compared={resp.n_total_compared}"
+        )
+        assert resp.candidates
+        assert resp.candidates[0].source_id == "OTHER"

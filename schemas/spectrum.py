@@ -72,6 +72,32 @@ class LibrarySearchRequest(BaseModel):
     libraries: list[Literal["inhouse", "gnps"]] = Field(
         default_factory=lambda: ["inhouse", "gnps"]
     )
+    mass_tolerance_ppm: float | None = Field(
+        None,
+        ge=0.0,
+        le=1000.0,
+        description=(
+            "Optional precursor-mass window (ppm) for the no-candidate-pool "
+            "fallback path. When set, the GNPS scan only scores records whose "
+            "precursor_mz is within ±tol_ppm of req.spectrum.precursor_mz. "
+            "Default None preserves the original full-pool scan; recommended "
+            "10 ppm for HRMS data."
+        ),
+    )
+    excluded_source_ids: list[str] | None = Field(
+        None,
+        description=(
+            "Optional list of GNPS spectrum_ids to remove from the no-pool "
+            "fallback path BEFORE deduplication and scoring. The original "
+            "self-exclusion contract is the caller's responsibility (see "
+            "evaluation.sub6.identification.identify_spectrum); this field "
+            "augments — does not replace — that audit by also keeping "
+            "self-matches out of the in-tool dedup-by-SMILES step, which "
+            "otherwise lets a 1.0 self-match absorb every other record "
+            "sharing its SMILES once a tight mass-window has been applied. "
+            "Default None preserves the original behaviour."
+        ),
+    )
 
 
 class LibrarySearchResponse(BaseModel):
