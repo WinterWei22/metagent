@@ -134,17 +134,60 @@ def verify_biological_sub6(
             ctx=EnrichmentContext(),
         )
 
-    # Pathway-name plausibility against ground-truth + top-10.
-    pathway_name = (
-        claim.extracted_fields.pathway_name
-        or _first_phrase(text)
-    )
+    # ------------------------------------------------------------------
+    # Phase B: build a list of pathway-phrase candidates with provenance.
+    # The original logic only used the FIRST phrase _first_phrase produced;
+    # Phase A narratives bury the RaMP-resolvable noun in subordinate
+    # clauses ("during the X step of de-novo Y"), so we also try the
+    # _normalise_phrase variants. Each candidate carries a
+    # `phrase_resolution_path` tag so D5 can stratify contra origins.
+    # ------------------------------------------------------------------
+    extracted_pathway_name = claim.extracted_fields.pathway_name
+    first_phrase_pathway = _first_phrase(text)
     pathway_id = (
         claim.extracted_fields.pathway_id
         or _first_id(text)
     )
 
-    if not pathway_name and not pathway_id:
+    pathway_candidates: list[tuple[str, str]] = []  # (phrase, resolution_path)
+    seen_phrases: set[str] = set()
+
+    def _push_candidate(phrase: str | None, path: str) -> None:
+        if not phrase:
+            return
+        norm = phrase.strip().lower()
+        if not norm or norm in seen_phrases:
+            return
+        seen_phrases.add(norm)
+        pathway_candidates.append((phrase.strip(), path))
+
+    # 1) extracted_fields.pathway_name — same provenance tag as v6/v7-C
+    #    used to label "first_phrase" so backward-compat is preserved.
+    _push_candidate(extracted_pathway_name, "first_phrase")
+    # 2) raw _first_phrase output
+    _push_candidate(first_phrase_pathway, "first_phrase")
+    # 3) normalised variants (Phase B Fix-1) — only seeded from the
+    #    extractor / _first_phrase output. We deliberately do NOT
+    #    normalise the raw claim text: that would turn pure-role talk
+    #    ("X plays a fundamental biological role") into a 'pathway
+    #    candidate' even though the claim has no pathway shape, breaking
+    #    the historical UV0 short-circuit.
+    base_for_normalise = extracted_pathway_name or first_phrase_pathway
+    if base_for_normalise:
+        for variant in _normalise_phrase(base_for_normalise):
+            _push_candidate(variant, "normalise")
+
+    # If we have absolutely nothing — no pathway-shape phrase AND no
+    # pathway_id — keep the historical UVO short-circuit. The reverse-
+    # fuzz fall-through stays gated behind "forward resolution had
+    # something to try but failed", so pure-role claims like "X plays
+    # a fundamental biological role" do not get auto-promoted by
+    # compound-side reverse-lookup. This preserves the historical
+    # decision boundary in the test suite while still letting Phase A's
+    # mechanism-talk claims (which DO carry a phrase-shape via
+    # ``_first_phrase`` or ``_normalise_phrase``) flow through to
+    # reverse-fuzz when the forward resolver fails.
+    if not pathway_candidates and not pathway_id:
         return _unverifiable(
             claim,
             evidence=(
@@ -170,7 +213,20 @@ def verify_biological_sub6(
     ]
 
     norm_text = _normalise(text)
-    norm_claim = _normalise(pathway_name) if pathway_name else None
+
+    # Top-pathways / ground-truth match: ONLY uses the original first_phrase
+    # / extracted pathway name — not normalise variants. Rationale: the
+    # forward (top_pathways) match path is already permissive (substring +
+    # canonical reverse-search); piping multiple normalise variants through
+    # it tends to over-resolve borderline phrases ("phospholipid synthesis"
+    # → "phospholipid metabolism" matching a generic top pathway) and
+    # converts some legitimate v6 contra verdicts into spurious supp. The
+    # contra helper below — which checks compound × pathway membership in
+    # RaMP — DOES try the full candidate list, so normalise still extends
+    # contra resolution as designed.
+    forward_resolution_path = "first_phrase"
+    forward_pathway_name = extracted_pathway_name or first_phrase_pathway
+    norm_claim = _normalise(forward_pathway_name) if forward_pathway_name else None
 
     for i, p in enumerate(candidates):
         canon = _normalise(p.get("pathway_name") or "")
@@ -185,10 +241,11 @@ def verify_biological_sub6(
                     f"({_kind_for_index(i)})."
                 ),
                 ctx=EnrichmentContext(
-                    claimed_pathway=pathway_name,
+                    claimed_pathway=forward_pathway_name,
                     claimed_pathway_id=pathway_id,
                     matched_top_pathways=matched_top,
                     pathway_match_method="id",
+                    tool_evidence={"phrase_resolution_path": forward_resolution_path},
                 ),
             )
         if norm_claim and canon and (
@@ -197,16 +254,17 @@ def verify_biological_sub6(
             return _supported(
                 claim,
                 evidence=(
-                    f"Pathway phrase {pathway_name!r} matches "
+                    f"Pathway phrase {forward_pathway_name!r} matches "
                     f"{p.get('pathway_name')!r} in task context "
                     f"({_kind_for_index(i)})."
                 ),
                 ctx=EnrichmentContext(
-                    claimed_pathway=pathway_name,
+                    claimed_pathway=forward_pathway_name,
                     matched_top_pathways=matched_top,
                     pathway_match_method=(
                         "exact" if canon == norm_claim else "substring_either"
                     ),
+                    tool_evidence={"phrase_resolution_path": forward_resolution_path},
                 ),
             )
         # Reverse: canonical name appears verbatim in claim text.
@@ -221,6 +279,7 @@ def verify_biological_sub6(
                     claimed_pathway=p.get("pathway_name"),
                     matched_top_pathways=matched_top,
                     pathway_match_method="substring_either",
+                    tool_evidence={"phrase_resolution_path": forward_resolution_path},
                 ),
             )
 
@@ -244,6 +303,7 @@ def verify_biological_sub6(
                             claimed_pathway_id=pathway_id,
                             matched_top_pathways=matched_top,
                             pathway_match_method="id",
+                            tool_evidence={"phrase_resolution_path": "first_phrase"},
                         ),
                     )
 
@@ -252,19 +312,62 @@ def verify_biological_sub6(
     # Returns one of {SUPPORTED, CONTRADICTED, UNSUPPORTED, None} —
     # None means the helper couldn't make a call (resolution failed,
     # DB unavailable, etc.); fall through to the historical UNSUPPORTED.
+    # Phase B: try each pathway candidate in order; first non-None wins.
     # ------------------------------------------------------------------
-    contra_check = _check_compound_pathway_membership_in_ramp(
+    contra_resolution_path: str | None = None
+    contra_check: VerifiedClaim | None = None
+    # Always try at least the first_phrase / extracted phrase first to
+    # match v6/v7-C decision points exactly. If that returns None and we
+    # have additional candidates (normalise variants), try them too.
+    contra_candidates_to_try: list[tuple[str | None, str]] = (
+        [(c, p) for c, p in pathway_candidates] or [(None, "first_phrase")]
+    )
+    for cand_phrase, cand_path in contra_candidates_to_try:
+        contra_check = _check_compound_pathway_membership_in_ramp(
+            claim=claim,
+            text=text,
+            pathway_phrase=cand_phrase,
+            pathway_id=pathway_id,
+            ramp_db_path=db_path,
+            ramp_conn=conn,
+            matched_top=matched_top,
+        )
+        if contra_check is not None:
+            contra_resolution_path = cand_path
+            break
+
+    if contra_check is not None:
+        # Tag the verdict with phrase_resolution_path for D5 stratification.
+        if contra_check.enrichment_context is not None:
+            ev = dict(contra_check.enrichment_context.tool_evidence or {})
+            ev.setdefault("phrase_resolution_path", contra_resolution_path or "first_phrase")
+            contra_check.enrichment_context.tool_evidence = ev
+        return contra_check
+
+    # ------------------------------------------------------------------
+    # Phase B Fix-2: reverse-fuzz fall-through. The LLM uses a phrase the
+    # forward resolver can't catch (mechanism / role talk like
+    # "Pyruvate accumulation indicates remodeled glycolytic balance");
+    # query RaMP for the resolved compound's known pathways and check
+    # whether any pathway-name stem is word-bounded in the claim text.
+    # The matched RaMP pathway then re-enters the contra helper as the
+    # pathway_phrase input — same decision tree, just a better input.
+    # ------------------------------------------------------------------
+    rev_check = _try_reverse_fuzz_recheck(
         claim=claim,
         text=text,
-        pathway_phrase=pathway_name,
         pathway_id=pathway_id,
         ramp_db_path=db_path,
         ramp_conn=conn,
         matched_top=matched_top,
     )
-    if contra_check is not None:
-        return contra_check
+    if rev_check is not None:
+        return rev_check
 
+    # Final UNSUPPORTED fall-through.
+    final_phrase_for_evidence = (
+        pathway_candidates[0][0] if pathway_candidates else None
+    )
     return VerifiedClaim(
         claim_id=claim.claim_id,
         claim_text=claim.claim_text,
@@ -273,18 +376,25 @@ def verify_biological_sub6(
         subject=claim.subject,
         subject_kind=claim.subject_kind,
         candidate_ref=claim.candidate_ref,
-        verdict=ClaimVerdict.UNSUPPORTED,
+        verdict=(
+            ClaimVerdict.UNSUPPORTED if (final_phrase_for_evidence or pathway_id)
+            else ClaimVerdict.UNVERIFIABLE_V0
+        ),
         evidence=(
-            f"Pathway {(pathway_name or pathway_id)!r} not present in "
+            f"Pathway {(final_phrase_for_evidence or pathway_id)!r} not present in "
             "this task's ground_truth_pathway, top_pathways[:10], or "
             "RaMP. Treated as unsupported (no positive evidence) rather "
             "than contradicted."
+        ) if (final_phrase_for_evidence or pathway_id) else (
+            "Layer biological_sub6 found no pathway phrase / ID, and "
+            "no compound-side reverse-fuzz hit. Free-text biological "
+            "role claims are out of v0 scope."
         ),
         extracted_fields=claim.extracted_fields,
         verifier_layer="biological_sub6",
         trace_summary="pathway not found in task context or RaMP",
         enrichment_context=EnrichmentContext(
-            claimed_pathway=pathway_name,
+            claimed_pathway=final_phrase_for_evidence,
             claimed_pathway_id=pathway_id,
             matched_top_pathways=matched_top,
             pathway_match_method="none",
@@ -350,6 +460,112 @@ def _unverifiable(
         trace_summary="biological_sub6 unverifiable",
         enrichment_context=ctx,
     )
+
+
+# ---------------------------------------------------------------------------
+# Phase B reverse-fuzz fall-through (track_layer6c_phrase_resolver_phase_b)
+# ---------------------------------------------------------------------------
+
+
+def _try_reverse_fuzz_recheck(
+    *,
+    claim: ClassifiedClaim,
+    text: str,
+    pathway_id: str | None,
+    ramp_db_path: str | None,
+    ramp_conn: sqlite3.Connection | None,
+    matched_top: list,
+) -> VerifiedClaim | None:
+    """Phase B Fix-2 fall-through: when forward pathway resolution fails,
+    query RaMP for the resolved compound's known pathways and stem-match
+    them against the claim text. The matched RaMP pathway then re-enters
+    ``_check_compound_pathway_membership_in_ramp`` as the
+    ``pathway_phrase`` input — same decision tree, just a better input.
+
+    Returns ``None`` when the compound doesn't resolve, no eligible RaMP
+    pathway stem matches, or the contra helper still returns ``None``.
+    """
+    # Lazy imports — keep module import cheap.
+    try:
+        from tools.kegg.reachability import resolve_compound_to_kegg
+    except Exception:  # pragma: no cover
+        return None
+
+    db = _resolve_ramp_path(ramp_db_path)
+    if ramp_conn is None and db is None:
+        return None
+
+    # Open RaMP cursor + KEGG conn just like the contra helper does.
+    try:
+        ramp_ctx = _ramp_connection(conn=ramp_conn, path=db)
+    except Exception:  # pragma: no cover
+        return None
+
+    kegg_path = os.environ.get("METAGENT_KEGG_PATH")
+    if not kegg_path:
+        from pathlib import Path as _Path
+        default_kegg = (
+            _Path(__file__).resolve().parents[2] / "data" / "kegg" / "reaction_graph.sqlite"
+        )
+        if default_kegg.exists():
+            kegg_path = str(default_kegg)
+    if not kegg_path:
+        return None
+    kegg_conn: sqlite3.Connection | None = None
+    try:
+        kegg_conn = sqlite3.connect(f"file:{kegg_path}?mode=ro", uri=True)
+    except sqlite3.Error:
+        return None
+
+    try:
+        with ramp_ctx as cursor:
+            cpd_id = _resolve_compound_subject(claim, text, kegg_conn)
+            if not cpd_id:
+                return None
+            ramp_id = _kegg_to_ramp_id(cursor, cpd_id)
+            if not ramp_id:
+                return None
+
+            rev_hit = _reverse_fuzz_pathway(
+                claim_text=text,
+                compound_kegg_id=cpd_id,
+                ramp_cursor=cursor,
+            )
+            if rev_hit is None:
+                return None
+            rev_pathway_name, rev_stem = rev_hit
+    finally:
+        if kegg_conn is not None:
+            try:
+                kegg_conn.close()
+            except Exception:  # pragma: no cover
+                pass
+
+    # Re-enter the contra helper with the reverse-fuzzed pathway as input.
+    # Because the pathway came from this compound's known set, the helper
+    # SHOULD return SUPPORTED — but we let the helper decide so the
+    # decision tree stays single-source-of-truth.
+    re_check = _check_compound_pathway_membership_in_ramp(
+        claim=claim,
+        text=text,
+        pathway_phrase=rev_pathway_name,
+        pathway_id=pathway_id,
+        ramp_db_path=ramp_db_path,
+        ramp_conn=ramp_conn,
+        matched_top=matched_top,
+    )
+    if re_check is None:
+        return None
+
+    # Tag the verdict with phrase_resolution_path = "reverse_fuzz" + the
+    # matched stem so D5 can audit.
+    if re_check.enrichment_context is not None:
+        ev = dict(re_check.enrichment_context.tool_evidence or {})
+        ev["phrase_resolution_path"] = "reverse_fuzz"
+        ev["reverse_fuzz_pathway"] = rev_pathway_name
+        ev["reverse_fuzz_stem"] = rev_stem
+        re_check.enrichment_context.tool_evidence = ev
+    return re_check
 
 
 # ---------------------------------------------------------------------------
@@ -791,3 +1007,321 @@ def _top_actual_pathways(
     non_generic = [r for r in rows if not is_generic(r[1] or "")]
     chosen = (non_generic if non_generic else rows)[:k]
     return chosen
+
+
+# ---------------------------------------------------------------------------
+# Phase B helpers — pathway phrase resolver loosening (track_layer6c_phrase_resolver_phase_b)
+# ---------------------------------------------------------------------------
+
+
+# Words that lead a clause and never carry standalone pathway meaning.
+# Stripped greedily from the front of an LLM phrase before fuzzy lookup.
+_NORM_LEAD_WORDS = (
+    # determiners / prepositions
+    "the", "a", "an", "of", "in", "on", "at", "via", "for", "to",
+    "through", "during", "under", "after", "into", "from", "with", "by",
+    "about", "without", "along",
+    "de-novo", "de novo", "novo",
+    # generic prefixes / verb fragments commonly found before pathway
+    # nouns in v7-phaseA narratives
+    "is", "are", "was", "were", "may", "might", "can", "could", "should",
+    "would", "will", "do", "does",
+    "reflects", "reflect", "indicates", "indicate", "signals", "signal",
+    "suggests", "suggest", "shows", "show", "provides", "provide",
+    "denotes", "denote", "links", "link", "underlies", "underlie",
+    "marks", "mark", "appears", "appear", "produces", "produce",
+    "alters", "alter", "altered", "alterations",
+    "primary", "direct", "downstream", "upstream", "key", "central",
+    "essential", "important", "secondary", "active",
+    "marker", "product", "substrate", "component", "hub", "node",
+    "intermediate", "part", "step", "cluster", "consequence", "output",
+    "presence", "evidence", "involved", "released", "converted",
+    "metabolised", "metabolized", "essential",
+    # common adjective decorators
+    "elevated", "altered", "changed", "concurrent", "first", "committed",
+    "downstream", "upstream",
+)
+_NORM_LEAD_RE = re.compile(
+    r"^(?:" + "|".join(re.escape(w) for w in _NORM_LEAD_WORDS) + r")\b[\s,]*",
+    re.IGNORECASE,
+)
+# "X step of Y" → keep Y. Match anywhere in the phrase.
+_NORM_STEP_OF_RE = re.compile(
+    r"\b(?:committed\s+|first\s+|second\s+|key\s+|catalytic\s+)?step\s+(?:of|in)\s+(.+)$",
+    re.IGNORECASE,
+)
+# Trailing "X de novo Y" → "X Y" (re-order helps RaMP match generic pathway name)
+_NORM_DENOVO_RE = re.compile(
+    r"\bde[\s-]?novo\s+", re.IGNORECASE,
+)
+# Pathway-shape suffix words used for synonym swaps.
+_NORM_SUFFIX_SWAPS = (
+    (re.compile(r"\bsynthesis\b", re.IGNORECASE), "metabolism"),
+    (re.compile(r"\bsynthesis\b", re.IGNORECASE), "biosynthesis"),
+    (re.compile(r"\bcycle\b", re.IGNORECASE), "metabolism"),
+    (re.compile(r"\bpathway\b", re.IGNORECASE), "metabolism"),
+    (re.compile(r"\bturnover\b", re.IGNORECASE), "metabolism"),
+    (re.compile(r"\bbreakdown\b", re.IGNORECASE), "metabolism"),
+    (re.compile(r"\bdegradation\b", re.IGNORECASE), "metabolism"),
+)
+# Phrases that, after stripping, are too generic / common to trust as a
+# pathway label (ambiguous against many RaMP names).
+_NORM_REJECT = frozenset({
+    "metabolism", "biosynthesis", "synthesis", "pathway", "pathways",
+    "cycle", "cycles", "degradation", "catabolism", "anabolism",
+    "signaling", "signalling", "production", "turnover", "breakdown",
+    "balance", "homeostasis", "flux", "regulation", "activation",
+    "inhibition",
+})
+
+
+def _normalise_phrase(raw: str | None) -> list[str]:
+    """Generate candidate normalised pathway phrases from a noisy LLM output.
+
+    Used by ``verify_biological_sub6`` after the existing ``_first_phrase``
+    pass fails to resolve. The caller tries each candidate in order against
+    ``ground_truth_pathway`` / ``top_pathways`` / RaMP fuzzy lookup; the
+    first one that resolves wins.
+
+    Strategy:
+      1. Strip leading prepositional / verb-frame stop-words greedily.
+      2. If the residual contains an "X step of/in Y" fragment, also try
+         ``Y`` alone (LLM phrasing on Phase A narratives often buries the
+         RaMP-resolvable noun in a subordinate clause).
+      3. Synonym substitutions on suffix words —
+         ``synthesis``/``cycle``/``pathway`` → ``metabolism`` —
+         to bridge between v7-phaseA wording ("purine de-novo synthesis")
+         and RaMP's aggregation level ("Purine metabolism").
+      4. Reject candidates whose stripped form is < 5 chars or in the
+         too-generic set (``metabolism``, ``cycle``, ``synthesis`` alone).
+
+    Returns a deduplicated list of candidate strings, longest-and-earliest-
+    win on iteration. Returns ``[]`` when ``raw`` is empty / nothing
+    survives the filters.
+    """
+    if not raw:
+        return []
+    text = (raw or "").strip()
+    if not text:
+        return []
+
+    candidates: list[str] = []
+
+    def _add(p: str) -> None:
+        p = (p or "").strip(" ,.;:")
+        if not p:
+            return
+        if len(p) < 5:
+            return
+        if p.lower() in _NORM_REJECT:
+            return
+        if any(c.lower() == p.lower() for c in candidates):
+            return
+        candidates.append(p)
+
+    # 1. Always try the original — keeps backward compat (if it already
+    #    resolved we wouldn't be here, but the caller stops at the first
+    #    successful match anyway).
+    _add(text)
+
+    # 2. Greedy leading-strip — keep removing leading stop-words.
+    #    Cap iterations at 8 to be safe against a pathological input.
+    s = text
+    for _ in range(8):
+        new = _NORM_LEAD_RE.sub("", s, count=1)
+        if new == s:
+            break
+        s = new
+    if s != text:
+        _add(s)
+
+    # 3. "step of/in Y" → also try Y.
+    m = _NORM_STEP_OF_RE.search(text)
+    if m:
+        captured = m.group(1).strip()
+        captured = _NORM_DENOVO_RE.sub("", captured).strip(" ,.;:")
+        _add(captured)
+    # Also on the leading-stripped form, in case "step of" survived the
+    # lead-strip.
+    m = _NORM_STEP_OF_RE.search(s)
+    if m:
+        captured = m.group(1).strip()
+        captured = _NORM_DENOVO_RE.sub("", captured).strip(" ,.;:")
+        _add(captured)
+
+    # 4. Drop "de novo" / "de-novo" qualifiers anywhere — RaMP's
+    #    aggregated names don't carry them.
+    no_denovo = _NORM_DENOVO_RE.sub("", s).strip(" ,.;:")
+    if no_denovo != s:
+        _add(no_denovo)
+
+    # 5. Suffix synonym swaps on the most-stripped form.
+    base = candidates[-1] if candidates else s
+    for pat, replacement in _NORM_SUFFIX_SWAPS:
+        if pat.search(base):
+            swapped = pat.sub(replacement, base, count=1)
+            if swapped.lower() != base.lower():
+                _add(swapped)
+
+    # 6. Drop the original from the front if we have a stripped version —
+    #    callers prefer the cleaner candidate (it's more likely to resolve).
+    if len(candidates) >= 2 and candidates[0].lower() == text.lower():
+        head, tail = candidates[0], candidates[1:]
+        # Promote the first non-trivial stripped variant ahead of the raw
+        # input so the caller exhausts cheap fuzzy lookups first.
+        return tail + [head]
+    return candidates
+
+
+# ---------------------------------------------------------------------------
+# Phase B Fix-2: _reverse_fuzz_pathway
+# ---------------------------------------------------------------------------
+
+
+# Pathway sources we trust — drops `pfocr` (paper-title noise from PMC
+# enrichment hits, e.g. "Outline of the sterol biosynthetic pathway in
+# yeast..."). HMDB carries SMPDB-derived names which are mostly real
+# pathways with some disease-name noise — included but filtered downstream
+# by `_REV_FUZZ_NAME_REJECT_RE`.
+_REV_FUZZ_TYPES = ("kegg", "reactome", "wiki", "hmdb")
+
+# Reject RaMP rows whose name looks like a disease / drug-action / paper
+# title. The reverse-fuzz heuristic would otherwise stem-match these
+# spuriously (e.g. "Methylation" -> any text mentioning methylation).
+_REV_FUZZ_NAME_REJECT_RE = re.compile(
+    r"\b(?:"
+    r"deficien(?:cy|cies)|disease|disorder|syndrome|aciduria|"
+    r"alkaptonuria|tyrosinemia|argininemia|citrullinemia|galactosemia|"
+    r"phenylketonuria|hyperprolinemia|aminoaciduria|"
+    r"action\s+pathway|drug\s+pathway|"
+    # paper-title shapes
+    r"outline\s+of|incorporation\s+characteristics|"
+    r"intersection\s+of|study\s+of|relationship\s+between"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# Stems we never count as "this stem appeared in the claim text" because
+# they appear in nearly every metabolic narrative or are too generic.
+_REV_FUZZ_GENERIC_STEMS = frozenset({
+    "metabolism", "metabolic", "pathway", "pathways", "biosynthesis",
+    "synthesis", "degradation", "catabolism", "anabolism", "cycle",
+    "cycles", "signaling", "signalling", "reactions", "reaction",
+    "interconversion", "transport", "uptake", "secretion", "process",
+    "processes", "derivative", "derivatives",
+    # stop-words common in titles (in case the reject regex misses)
+    "disease", "disorder", "syndrome", "deficiency", "action",
+    "outline", "study", "analysis", "intersection", "incorporation",
+    "characteristics", "relationship",
+    # filler
+    "compound", "compounds", "general", "between", "during", "through",
+    "downstream", "upstream", "secondary", "primary",
+    # Token names common in biology that are too generic
+    "human", "humans", "tissue", "tissues", "cellular", "system",
+    "regulation", "factor", "level", "levels",
+    # Process-name pathways in RaMP HMDB that mostly act as ontology
+    # categories rather than discriminative pathway labels.
+    "methylation", "phosphorylation", "glycosylation", "oxidation",
+    "reduction", "hydrolysis", "isomerization", "transamination",
+    "carboxylation", "decarboxylation", "deamination",
+})
+
+
+def _reverse_fuzz_pathway(
+    *,
+    claim_text: str,
+    compound_kegg_id: str,
+    ramp_cursor,
+    top_n: int = 50,
+    min_stem_len: int = 6,
+) -> tuple[str, str] | None:
+    """Compound-side reverse fuzz: the LLM names a pathway by partial stem
+    rather than by RaMP's aggregated name; scan the compound's known
+    pathways for any whose stem appears in the claim text.
+
+    Strategy:
+      1. Pull the compound's pathways from RaMP (``analytehaspathway`` →
+         ``pathway``) restricted to ``_REV_FUZZ_TYPES`` (KEGG / Reactome
+         / Wiki / HMDB; drops PFOCR paper noise).
+      2. Reject pathway names that look like disease / drug-action /
+         paper titles via ``_REV_FUZZ_NAME_REJECT_RE``.
+      3. For each surviving pathway, extract distinct ≥``min_stem_len``-
+         char alphabetic stems, drop generics from
+         ``_REV_FUZZ_GENERIC_STEMS``.
+      4. Word-bounded match each stem against ``claim_text``
+         (case-insensitive). A pathway "matches" when at least one stem
+         hits.
+      5. Score each match: ``(longest matched stem chars, # matched stems)``;
+         return the highest-scoring pathway.
+
+    Returns ``(pathway_name, matched_stem)`` of the best match, or
+    ``None`` when the compound has no eligible pathway after filtering or
+    no stem matches.
+    """
+    if not claim_text or not compound_kegg_id:
+        return None
+    keg = compound_kegg_id.replace("cpd:", "").strip()
+    if not keg:
+        return None
+
+    placeholders = ",".join(["?"] * len(_REV_FUZZ_TYPES))
+    sql = (
+        "SELECT DISTINCT p.pathwayName, s.pathwayCount "
+        "FROM source s "
+        "JOIN analytehaspathway ahp ON s.rampId = ahp.rampId "
+        "JOIN pathway p ON ahp.pathwayRampId = p.pathwayRampId "
+        f"WHERE s.sourceId IN (?, ?) AND p.type IN ({placeholders}) "
+        "ORDER BY s.pathwayCount DESC "
+        "LIMIT ?"
+    )
+    params = (
+        f"kegg:{keg}",
+        f"kegg:{keg.lower()}",
+        *_REV_FUZZ_TYPES,
+        int(top_n),
+    )
+    try:
+        rows = list(ramp_cursor.execute(sql, params))
+    except Exception as exc:  # pragma: no cover - defensive on schema drift
+        logger.debug("biological_sub6 reverse_fuzz: query failed: %s", exc)
+        return None
+
+    seen_names: set[str] = set()
+    best: tuple[int, int, str, str] | None = None  # (longest, hit_count, name, stem)
+
+    for row in rows:
+        name = (row[0] or "").strip()
+        if not name or name.lower() in seen_names:
+            continue
+        seen_names.add(name.lower())
+        if _REV_FUZZ_NAME_REJECT_RE.search(name):
+            continue
+
+        # Extract distinct stems ≥ min_stem_len.
+        stems = []
+        for tok in re.findall(r"[A-Za-z][A-Za-z0-9-]*", name):
+            if len(tok) < min_stem_len:
+                continue
+            if tok.lower() in _REV_FUZZ_GENERIC_STEMS:
+                continue
+            stems.append(tok)
+        if not stems:
+            continue
+
+        # Word-bounded match against claim_text.
+        matched = []
+        for stem in stems:
+            if re.search(r"\b" + re.escape(stem) + r"\b", claim_text, re.IGNORECASE):
+                matched.append(stem)
+        if not matched:
+            continue
+
+        longest = max(len(m) for m in matched)
+        score = (longest, len(matched), name, matched[0])
+        if best is None or score[:2] > best[:2]:
+            best = score
+
+    if best is None:
+        return None
+    _longest, _n, name, stem = best
+    return name, stem

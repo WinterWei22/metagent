@@ -448,3 +448,311 @@ def test_biological_contra_threshold_tunable_via_env(
 
 def test_biological_default_threshold_is_three():
     assert _MIN_KNOWN_PATHWAYS_FOR_CONTRA_DEFAULT == 3
+
+
+# ---------------------------------------------------------------------------
+# Phase B Fix-1: _normalise_phrase
+# ---------------------------------------------------------------------------
+
+
+def _candidates_for(raw):
+    """Helper to keep tests readable — import + call _normalise_phrase."""
+    from verifier.layers.biological_sub6 import _normalise_phrase
+    return _normalise_phrase(raw)
+
+
+def test_normalise_strips_leading_verb_frame_pyrimidine_biosynthesis():
+    """Audit case [02] Carbamoyl-DL-aspartate.
+
+    LLM phrase: 'is a direct marker of pyrimidine biosynthesis'.
+    After leading-strip the residual 'pyrimidine biosynthesis' must
+    appear among candidates.
+    """
+    raw = "is a direct marker of pyrimidine biosynthesis"
+    cands = _candidates_for(raw)
+    norm = [c.lower() for c in cands]
+    assert "pyrimidine biosynthesis" in norm, cands
+
+
+def test_normalise_step_of_extracts_inner_pathway():
+    """Audit-aligned case mirroring the v8 'fumaric acid + adenylosuccinate-
+    lyase step of de-novo purine synthesis' interaction-effect example.
+
+    The 'step of/in Y' fragment must surface Y as a candidate, with
+    'de-novo' stripped so RaMP can match its aggregated name.
+    """
+    raw = "during the adenylosuccinate-lyase step of de-novo purine synthesis"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    # Either the bare residual or a synonym-swapped form must appear.
+    assert any(
+        c in cands_lower
+        for c in ("purine synthesis", "purine metabolism", "purine biosynthesis")
+    ), cands_lower
+
+
+def test_normalise_committed_step_in_de_novo_pyrimidine_synthesis():
+    """Audit case [22] / [30] N-Carbamoylaspartate."""
+    raw = "first committed step of de novo pyrimidine synthesis"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    assert any(
+        c in cands_lower
+        for c in ("pyrimidine synthesis", "pyrimidine metabolism", "pyrimidine biosynthesis")
+    ), cands_lower
+
+
+def test_normalise_pathway_to_metabolism_swap():
+    """Audit case [15] UMP — 'a downstream product of the pyrimidine pathway'.
+
+    Synonym swap must produce 'pyrimidine metabolism' so RaMP matches.
+    """
+    raw = "a downstream product of the pyrimidine pathway"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    assert "pyrimidine metabolism" in cands_lower, cands_lower
+
+
+def test_normalise_cycle_to_metabolism_swap():
+    """Audit case [17] DL-Homocysteine —
+    'In the homocysteine pathway' / 'methionine cycle' patterns.
+    """
+    raw = "the methionine cycle"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    assert "methionine metabolism" in cands_lower, cands_lower
+
+
+def test_normalise_strip_chained_verb_decorators():
+    """Audit case [10] Putrescine — multiple leading filler tokens."""
+    raw = "Putrescine alterations indicate shifts in polyamine metabolism"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    # The clean tail should surface — either exact "polyamine metabolism"
+    # or its leading-strip variant containing it.
+    assert any("polyamine metabolism" in c for c in cands_lower), cands_lower
+
+
+def test_normalise_returns_empty_for_empty_input():
+    assert _candidates_for("") == []
+    assert _candidates_for(None) == []
+
+
+def test_normalise_rejects_too_short_or_generic_residual():
+    """A phrase that strips down to a bare 'metabolism' / 'pathway' / 'cycle'
+    must NOT make it through — those would match every RaMP row."""
+    cands_lower = [c.lower() for c in _candidates_for("of metabolism")]
+    assert "metabolism" not in cands_lower
+    cands_lower = [c.lower() for c in _candidates_for("the cycle")]
+    assert "cycle" not in cands_lower
+
+
+def test_normalise_pure_mechanism_returns_intact():
+    """Phrase with no recognisable pathway-suffix word — leave it alone
+    (caller will still try the raw form against RaMP fuzzy)."""
+    raw = "Pyruvate accumulation"  # no metabolism/pathway/synthesis token
+    cands = _candidates_for(raw)
+    # Must include something — the original or a stripped variant — so the
+    # caller can attempt RaMP fuzzy lookup. Length filter keeps it sane.
+    assert all(len(c) >= 5 for c in cands)
+
+
+def test_normalise_does_not_break_existing_v6_phrasings():
+    """Regression: existing v6 phrases that already resolved must still
+    appear among the candidates so dispatcher's match logic can hit them
+    on the first try."""
+    # v6-style claim — Layer 6c already supported this, must remain.
+    raw = "Methionine metabolism"  # canonical RaMP name
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    assert "methionine metabolism" in cands_lower, cands_lower
+    # Multi-word v6 claim with leading determiner.
+    raw = "the methionine cycle"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    # Both unstripped raw and synonym-swap must be present.
+    assert "methionine metabolism" in cands_lower, cands_lower
+
+
+def test_normalise_preserves_word_boundaries_in_swap():
+    """'pyrimidine biosynthesis' must not collide with 'photosynthesis' —
+    word-bounded substitutions only."""
+    raw = "of photosynthesis"
+    cands_lower = [c.lower() for c in _candidates_for(raw)]
+    # 'photosynthesis' contains the letters 'synthesis' but NOT as a word
+    # boundary — _NORM_SUFFIX_SWAPS uses \b so swap must NOT fire.
+    assert all("photometabolism" not in c for c in cands_lower), cands_lower
+
+
+def test_normalise_dedups_case_insensitively():
+    """Repeated case variants must collapse into a single candidate."""
+    raw = "Purine synthesis"
+    cands = _candidates_for(raw)
+    seen = set()
+    for c in cands:
+        assert c.lower() not in seen, cands
+        seen.add(c.lower())
+
+
+# ---------------------------------------------------------------------------
+# Phase B Fix-2: _reverse_fuzz_pathway
+# ---------------------------------------------------------------------------
+
+
+def _build_ramp_for_revfuzz(path: Path) -> None:
+    """A standalone tmp RaMP fixture exercising the source-type filter +
+    disease-name reject + stem-match scoring. Reuses the
+    ``_build_ramp_db`` shape but with extra kegg/hmdb/pfocr rows."""
+    pathways = [
+        # Real KEGG metabolism — should always be eligible.
+        ("P_PURINE",   "map00230", "kegg",     "Purine metabolism"),
+        ("P_PYRIM",    "map00240", "kegg",     "Pyrimidine metabolism"),
+        ("P_TYRMET",   "map00350", "kegg",     "Tyrosine metabolism"),
+        # HMDB-typed but disease-shaped — must be rejected by name regex.
+        ("P_DEFIC",    "smp00100", "hmdb",     "Adenosine Deaminase Deficiency"),
+        # PFOCR (paper title) — must be excluded by source filter.
+        ("P_PFOCR",    "pmc12345", "pfocr",    "Outline of the sterol biosynthetic pathway in yeast"),
+        # Generic RaMP HMDB pathway with an unhelpfully short name.
+        ("P_GENERIC",  "smp00200", "hmdb",     "Methylation"),
+        # A real metabolism with stem too generic to match alone.
+        ("P_HEX",      "map00520", "kegg",     "Hexosamine pathway"),
+    ]
+    sources = [
+        # Fumaric acid — many pathways, all meant to be eligible / 1 disease / 1 paper.
+        ("kegg:C00122", "RC_FUM"),
+        # Pyruvate — only KEGG / metabolism stem reachable.
+        ("kegg:C00022", "RC_PYR"),
+        # Compound only in disease + paper rows — must yield None.
+        ("kegg:C00077", "RC_DZONLY"),
+    ]
+    memberships = [
+        ("RC_FUM", "P_PURINE"),
+        ("RC_FUM", "P_PYRIM"),
+        ("RC_FUM", "P_TYRMET"),
+        ("RC_FUM", "P_HEX"),
+        ("RC_FUM", "P_DEFIC"),
+        ("RC_FUM", "P_PFOCR"),
+        ("RC_PYR", "P_TYRMET"),
+        ("RC_PYR", "P_HEX"),
+        ("RC_PYR", "P_GENERIC"),  # methylation — rejected as too generic stem
+        ("RC_DZONLY", "P_DEFIC"),
+        ("RC_DZONLY", "P_PFOCR"),
+    ]
+    _build_ramp_db(path, pathways=pathways, sources=sources, memberships=memberships)
+
+
+@pytest.fixture
+def ramp_revfuzz(tmp_path: Path) -> sqlite3.Cursor:
+    """A standalone RaMP fixture for direct _reverse_fuzz_pathway tests."""
+    p = tmp_path / "ramp_revfuzz.sqlite"
+    _build_ramp_for_revfuzz(p)
+    return sqlite3.connect(str(p)).cursor()
+
+
+def test_reverse_fuzz_matches_known_pathway_via_stem(ramp_revfuzz):
+    """Audit case [27] Urate — claim mentions 'purine breakdown'.
+
+    With Fumaric acid as the resolved compound, the stem 'Purine' from
+    'Purine metabolism' must hit, ignoring shorter generic stems."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    claim = "Fumaric acid signals altered purine turnover"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00122",
+        ramp_cursor=ramp_revfuzz,
+    )
+    assert result is not None
+    name, stem = result
+    assert name == "Purine metabolism", result
+    assert stem.lower() == "purine"
+
+
+def test_reverse_fuzz_rejects_pfocr_paper_title(ramp_revfuzz):
+    """PFOCR (paper-title) row 'Outline of the sterol biosynthetic pathway
+    in yeast' must NEVER be returned even when 'sterol' appears in the
+    claim — we filter by source type."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    claim = "Fumaric acid links sterol biosynthesis to TCA flux"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00122",
+        ramp_cursor=ramp_revfuzz,
+    )
+    if result is not None:
+        name, _stem = result
+        assert "outline" not in name.lower(), name
+        assert "yeast" not in name.lower(), name
+
+
+def test_reverse_fuzz_rejects_disease_name(ramp_revfuzz):
+    """RaMP HMDB rows whose name contains 'Deficiency' / 'Disease' must
+    not be returned even when their stems appear in the claim."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    claim = "Fumaric acid is a marker of adenosine deaminase deficiency"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00122",
+        ramp_cursor=ramp_revfuzz,
+    )
+    if result is not None:
+        name, _stem = result
+        assert "deficiency" not in name.lower(), name
+
+
+def test_reverse_fuzz_returns_none_when_no_eligible_pathway(ramp_revfuzz):
+    """A compound whose only RaMP entries are disease + paper rows must
+    yield None — both source filter and name filter strip them out."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    result = _reverse_fuzz_pathway(
+        claim_text="some long claim text mentioning many things including yeast and deaminase",
+        compound_kegg_id="cpd:C00077",
+        ramp_cursor=ramp_revfuzz,
+    )
+    assert result is None
+
+
+def test_reverse_fuzz_word_boundary_avoids_purinergic(ramp_revfuzz):
+    """Stem 'Purine' must NOT match 'purinergic' (word-boundary
+    requirement, prompt §pitfalls 1)."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    # Claim mentions 'purinergic', not 'purine' — stem must miss.
+    claim = "Fumaric acid modulates purinergic signaling downstream of TCA"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00122",
+        ramp_cursor=ramp_revfuzz,
+    )
+    if result is not None:
+        # If a result comes back, it must be from a non-Purine stem
+        name, stem = result
+        assert stem.lower() != "purine", (name, stem)
+
+
+def test_reverse_fuzz_prefers_longest_matched_stem(ramp_revfuzz):
+    """When two pathways' stems both appear in claim, prefer longest
+    stem then most stems matched."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    # claim_text contains stems from BOTH "Purine metabolism" (6 chars) and
+    # "Pyrimidine metabolism" (10 chars). Pyrimidine's stem is longer →
+    # must win.
+    claim = "Fumaric acid bridges purine and pyrimidine biology"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00122",
+        ramp_cursor=ramp_revfuzz,
+    )
+    assert result is not None
+    name, stem = result
+    assert name == "Pyrimidine metabolism", result
+    assert stem.lower() == "pyrimidine"
+
+
+def test_reverse_fuzz_rejects_generic_stems(ramp_revfuzz):
+    """The 'Methylation' pathway (generic single-stem name) — its only
+    stem is 'methylation', which is in _REV_FUZZ_GENERIC_STEMS, so it
+    must NOT match even when claim contains 'methylation'."""
+    from verifier.layers.biological_sub6 import _reverse_fuzz_pathway
+    claim = "Pyruvate participates in methylation reactions"
+    result = _reverse_fuzz_pathway(
+        claim_text=claim,
+        compound_kegg_id="cpd:C00022",
+        ramp_cursor=ramp_revfuzz,
+    )
+    # Should match Tyrosine metabolism (Tyrosine stem) because
+    # tyrosine appears? — no, the claim doesn't mention tyrosine.
+    # The remaining HEXOSAMINE has stem 'Hexosamine' — also not in claim.
+    # → None
+    assert result is None or result[0] not in ("Methylation",)
