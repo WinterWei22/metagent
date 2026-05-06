@@ -706,10 +706,86 @@ def _check_compound_pathway_membership_in_ramp(
                 # caller. Surface n_known so the caller can audit.
                 return None
 
-            # CONTRADICTED — RaMP knows this compound's pathway memberships
-            # exhaustively, and the claimed pathway is not one of them.
+            # ----------------------------------------------------------------
+            # Phase C: stem-overlap borderline filter
+            # (track_layer6c_borderline_filter_phase_c)
+            #
+            # Before issuing CONTRADICTED, check whether the compound has any
+            # KEGG/Reactome/Wiki/HMDB pathway whose name shares a ≥6-char
+            # non-generic stem with the claim text. If so, the compound IS in
+            # a sister pathway under a different aggregation level (e.g. the
+            # LLM said "purine synthesis" / RaMP fuzzy-matched a PFOCR paper
+            # title, but compound is in KEGG "Purine metabolism"). Downgrade
+            # the verdict from CONTRADICTED to UNSUPPORTED.
+            # ----------------------------------------------------------------
+            sister_matches = _compound_has_eligible_sister_pathway(
+                ramp_id=ramp_id,
+                claim_text=text,
+                claim_subject=claim.subject,
+                cursor=cursor,
+            )
             top3 = _top_actual_pathways(cursor, ramp_id, k=3)
             top3_names = [name for _id, name, _kind in top3]
+
+            if sister_matches:
+                sister_pathway_names = [name for name, _stems in sister_matches]
+                downgrade_evidence = (
+                    f"RaMP knows compound {cpd_id} (ramp_id={ramp_id}) is in "
+                    f"{n_known} pathways; the claimed pathway "
+                    f"{(pathway_phrase or pathway_id)!r} is not among them. "
+                    f"However the compound IS in eligible-typed sister pathways "
+                    f"with stem overlap to the claim text — verdict downgraded "
+                    f"from CONTRADICTED to UNSUPPORTED. Sister matches: "
+                    f"{', '.join(sister_pathway_names[:3])}."
+                )
+                ctx_downgrade = EnrichmentContext(
+                    claimed_pathway=pathway_phrase,
+                    claimed_pathway_id=pathway_id,
+                    matched_top_pathways=matched_top,
+                    pathway_match_method="none",
+                    tool_evidence={
+                        "ramp_compound_id": ramp_id,
+                        "kegg_compound_id": cpd_id,
+                        "ramp_pathway_ids_claimed": list(pway_ids),
+                        "membership_check": "no_intersection",
+                        "n_pathways_known": n_known,
+                        "min_known_threshold": min_thresh,
+                        "top_actual_pathways": top3_names,
+                        "phase_c_downgrade": True,
+                        "sister_pathways_matched": sister_pathway_names[:5],
+                        "downgrade_reason": (
+                            "compound has KEGG-typed sister pathway with "
+                            "stem overlap to the claim text"
+                        ),
+                    },
+                )
+                return VerifiedClaim(
+                    claim_id=claim.claim_id,
+                    claim_text=claim.claim_text,
+                    claim_type=ClaimType.BIOLOGICAL,
+                    claim_subtype=(
+                        claim.claim_subtype
+                        if claim.claim_subtype != ClaimSubtype.UNKNOWN
+                        else ClaimSubtype.PATHWAY_MEMBERSHIP
+                    ),
+                    subject=claim.subject,
+                    subject_kind=claim.subject_kind,
+                    candidate_ref=claim.candidate_ref,
+                    verdict=ClaimVerdict.UNSUPPORTED,
+                    evidence=downgrade_evidence,
+                    extracted_fields=claim.extracted_fields,
+                    verifier_layer="biological_sub6",
+                    tool_called="ramp_db",
+                    trace_summary=(
+                        f"contra downgraded — compound {cpd_id} has sister "
+                        f"pathway with stem overlap to claim"
+                    ),
+                    enrichment_context=ctx_downgrade,
+                )
+
+            # CONTRADICTED — RaMP knows this compound's pathway memberships
+            # exhaustively, and the claimed pathway is not one of them; no
+            # eligible-typed sister pathway shares any stem with the claim.
             correction = (
                 "; ".join(top3_names)
                 if top3_names
@@ -736,6 +812,7 @@ def _check_compound_pathway_membership_in_ramp(
                     "n_pathways_known": n_known,
                     "min_known_threshold": min_thresh,
                     "top_actual_pathways": top3_names,
+                    "phase_c_downgrade": False,
                 },
             )
             return VerifiedClaim(
@@ -1325,3 +1402,104 @@ def _reverse_fuzz_pathway(
         return None
     _longest, _n, name, stem = best
     return name, stem
+
+
+# ---------------------------------------------------------------------------
+# Phase C borderline-contra filter (track_layer6c_borderline_filter_phase_c)
+# ---------------------------------------------------------------------------
+
+
+# Subject strings that look like pathway names rather than compound names.
+# When the LLM puts a pathway in the subject slot
+# (subject="Purine metabolism" + claim about PRPP) we must NOT exclude the
+# pathway-shape token from the stem-overlap check, otherwise the genuine
+# Purine stem is killed before it can match.
+_SUBJECT_LOOKS_LIKE_PATHWAY_RE = re.compile(
+    r"\b(?:metabolism|biosynthesis|synthesis|cycle|pathway|degradation|"
+    r"catabolism|anabolism|signaling|signalling|cascade)\b",
+    re.IGNORECASE,
+)
+
+
+def _compound_has_eligible_sister_pathway(
+    *,
+    ramp_id: str,
+    claim_text: str,
+    claim_subject: str | None,
+    cursor: sqlite3.Cursor,
+    top_n: int = 50,
+    min_stem_len: int = 6,
+) -> list[tuple[str, list[str]]]:
+    """Phase C borderline filter: scan the compound's KEGG/Reactome/Wiki/
+    HMDB pathways for any whose name shares a ≥``min_stem_len``-char
+    non-generic stem with ``claim_text``.
+
+    Used by ``_check_compound_pathway_membership_in_ramp`` immediately
+    before issuing CONTRADICTED. When this returns a non-empty list, the
+    caller downgrades the verdict to UNSUPPORTED — the LLM's claim is
+    "near miss" rather than "wrong" because the compound IS in a related
+    pathway under a different aggregation level (RaMP fuzzy on the
+    claimed phrase happened to match a PFOCR paper title or a Reactome
+    sub-pathway that's outside the compound's KEGG-typed list).
+
+    Subject token exclusion (V8): tokens from ``claim_subject`` are
+    excluded from the stem set EXCEPT when ``claim_subject`` itself looks
+    like a pathway name (contains "metabolism", "synthesis", "cycle",
+    etc.). Without this exception, a claim like "In purine synthesis,
+    PRPP is converted to IMP" with subject="Purine metabolism" would
+    have "purine" excluded and miss the real overlap with RaMP's
+    "Purine metabolism".
+
+    Returns a list of ``(pathway_name, [matched_stems])`` tuples — empty
+    list means no overlap (the caller proceeds with CONTRADICTED).
+    """
+    if not ramp_id or not claim_text:
+        return []
+
+    # Reuse Phase B's eligible types + name-reject + generic-stem table.
+    placeholders = ",".join(["?"] * len(_REV_FUZZ_TYPES))
+    sql = (
+        "SELECT DISTINCT p.pathwayName "
+        "FROM analytehaspathway ahp "
+        "JOIN pathway p ON p.pathwayRampId = ahp.pathwayRampId "
+        f"WHERE ahp.rampId = ? AND p.type IN ({placeholders}) "
+        "LIMIT ?"
+    )
+    try:
+        rows = list(cursor.execute(sql, (ramp_id, *_REV_FUZZ_TYPES, int(top_n))))
+    except Exception as exc:  # pragma: no cover — defensive
+        logger.debug(
+            "biological_sub6 phase_c: eligible-pathway query failed for %s: %s",
+            ramp_id, exc,
+        )
+        return []
+
+    # V8 conditional subject exclusion.
+    forbid_stems: set[str] = set()
+    if claim_subject and not _SUBJECT_LOOKS_LIKE_PATHWAY_RE.search(claim_subject):
+        for tok in re.findall(r"[A-Za-z][A-Za-z0-9-]*", claim_subject):
+            if len(tok) >= min_stem_len:
+                forbid_stems.add(tok.lower())
+
+    matches: list[tuple[str, list[str]]] = []
+    seen: set[str] = set()
+    for row in rows:
+        name = (row[0] or "").strip()
+        if not name or name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        if _REV_FUZZ_NAME_REJECT_RE.search(name):
+            continue
+        hits: list[str] = []
+        for stem in re.findall(r"[A-Za-z][A-Za-z0-9-]*", name):
+            if len(stem) < min_stem_len:
+                continue
+            if stem.lower() in _REV_FUZZ_GENERIC_STEMS:
+                continue
+            if stem.lower() in forbid_stems:
+                continue
+            if re.search(r"\b" + re.escape(stem) + r"\b", claim_text, re.IGNORECASE):
+                hits.append(stem)
+        if hits:
+            matches.append((name, hits))
+    return matches

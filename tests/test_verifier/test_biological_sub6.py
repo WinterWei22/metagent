@@ -756,3 +756,287 @@ def test_reverse_fuzz_rejects_generic_stems(ramp_revfuzz):
     # The remaining HEXOSAMINE has stem 'Hexosamine' — also not in claim.
     # → None
     assert result is None or result[0] not in ("Methylation",)
+
+
+# ---------------------------------------------------------------------------
+# Phase C — borderline-contra filter (track_layer6c_borderline_filter_phase_c)
+# ---------------------------------------------------------------------------
+
+
+def _build_phase_c_dbs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+                        ) -> tuple[str, str]:
+    """Self-contained Phase C fixture:
+
+    Compounds:
+      - Pyruvate            (cpd:C00022, ramp RC_PYR) — 5 pathways:
+            "Pyruvate metabolism"               (kegg)
+            "Glycolysis / Gluconeogenesis"      (kegg)
+            "TCA Cycle"                         (kegg)
+            "Citric Acid Cycle"                 (kegg)
+            "Adenosine Deaminase Deficiency"    (hmdb — disease, must reject)
+      - Mannose             (cpd:C00159, ramp RC_MAN) — 4 pathways with NO
+            stem overlap to "tyrosine xenobiotic" claim
+      - Foobarine           (cpd:C99999, ramp RC_FOO) — 1 pathway only
+            (under MIN_KNOWN_PATHWAYS_FOR_CONTRA = 3 threshold)
+
+    All pathway names crafted so the Phase C downgrade can be proven
+    deterministically without a real RaMP load.
+    """
+    ramp_path = tmp_path / "phase_c_ramp.sqlite"
+    kegg_path = tmp_path / "phase_c_kegg.sqlite"
+
+    pathways = [
+        ("P_PYR_MET",  "map00620", "kegg",     "Pyruvate metabolism"),
+        ("P_GLYCO",    "map00010", "kegg",     "Glycolysis / Gluconeogenesis"),
+        ("P_TCA",      "map00020", "kegg",     "TCA Cycle"),
+        ("P_CITRATE",  "map00021", "kegg",     "Citric Acid Cycle"),
+        ("P_ADAD",     "smp00001", "hmdb",     "Adenosine Deaminase Deficiency"),
+        ("P_MEV",      "map00900", "kegg",     "Mevalonate pathway"),
+        ("P_FRU",      "map00051", "kegg",     "Fructose and mannose metabolism"),
+        ("P_GLY",      "map00052", "kegg",     "Galactose metabolism"),
+        ("P_AMINO",    "map00250", "kegg",     "Alanine, aspartate metabolism"),
+        ("P_ALONE",    "map99999", "kegg",     "Solitary niche pathway"),
+    ]
+    sources = [
+        ("kegg:C00022", "RC_PYR"),
+        ("kegg:C00159", "RC_MAN"),
+        ("kegg:C99999", "RC_FOO"),
+    ]
+    memberships = [
+        ("RC_PYR", "P_PYR_MET"),
+        ("RC_PYR", "P_GLYCO"),
+        ("RC_PYR", "P_TCA"),
+        ("RC_PYR", "P_CITRATE"),
+        ("RC_PYR", "P_ADAD"),
+        ("RC_MAN", "P_MEV"),
+        ("RC_MAN", "P_FRU"),
+        ("RC_MAN", "P_GLY"),
+        ("RC_MAN", "P_AMINO"),
+        ("RC_FOO", "P_ALONE"),
+    ]
+    _build_ramp_db(
+        ramp_path,
+        pathways=pathways,
+        sources=sources,
+        memberships=memberships,
+    )
+    aliases = [
+        ("pyruvate",    "cpd:C00022"),
+        ("pyruvic acid","cpd:C00022"),
+        ("mannose",     "cpd:C00159"),
+        ("d-mannose",   "cpd:C00159"),
+        ("foobarine",   "cpd:C99999"),
+    ]
+    _build_kegg_db(kegg_path, aliases)
+
+    monkeypatch.setenv("METAGENT_RAMP_PATH", str(ramp_path))
+    monkeypatch.setenv("METAGENT_KEGG_PATH", str(kegg_path))
+    return str(ramp_path), str(kegg_path)
+
+
+@pytest.fixture
+def phase_c_dbs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+                ) -> tuple[str, str]:
+    return _build_phase_c_dbs(tmp_path, monkeypatch)
+
+
+@pytest.fixture
+def phase_c_task() -> SubsixSourceReport:
+    """Same shape as the existing `task` fixture but task ID + the trivially-
+    unrelated reference pathway differ so existing tests aren't disturbed."""
+    return SubsixSourceReport(
+        task_id="phase_c_task",
+        task_type="compound_only_enrichment",
+        ground_truth_pathway={
+            "pathway_id": "RAMP_P_PHASEC1",
+            "pathway_name": "Some unrelated reference pathway",
+        },
+        ground_truth_signal_compounds=[],
+        ground_truth_noise_compounds=[],
+        ramp_enrichment_result={
+            "top_pathways": [
+                {
+                    "pathway_id": "RAMP_P_PHASEC1",
+                    "pathway_name": "Some unrelated reference pathway",
+                    "fdr": 0.001,
+                },
+            ],
+        },
+    )
+
+
+def _phase_c_cursor(phase_c_dbs) -> sqlite3.Cursor:
+    ramp_path, _ = phase_c_dbs
+    return sqlite3.connect(ramp_path).cursor()
+
+
+def test_phase_c_helper_returns_match_when_stem_overlaps(phase_c_dbs):
+    """Direct unit test: pyruvate × claim mentioning 'glycolysis' must
+    yield a match against the "Glycolysis / Gluconeogenesis" pathway."""
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    matches = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text="Pyruvate flux through glycolysis at hepatic compartment",
+        claim_subject="Pyruvate",
+        cursor=_phase_c_cursor(phase_c_dbs),
+    )
+    pathway_names = [n for n, _ in matches]
+    assert any("Glycolysis" in n for n in pathway_names), matches
+    # 'Pyruvate' stem from "Pyruvate metabolism" must be excluded because
+    # subject "Pyruvate" is compound-shaped (not pathway-shaped) → forbid set
+    # contains 'pyruvate'. So if "Pyruvate metabolism" appears in matches,
+    # it must be via a non-Pyruvate stem (impossible — its only stem is
+    # 'Pyruvate'); therefore "Pyruvate metabolism" must NOT appear.
+    assert "Pyruvate metabolism" not in pathway_names, matches
+
+
+def test_phase_c_helper_returns_empty_when_no_overlap(phase_c_dbs):
+    """Mannose's sister pathways: Mevalonate, Fructose-and-mannose,
+    Galactose, Alanine-aspartate. A claim that mentions none of those
+    stems (and avoids the subject 'mannose' itself) yields []. ."""
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    matches = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_MAN",
+        claim_text="indicates widespread tyrosine xenobiotic catabolism",
+        claim_subject="Mannose",
+        cursor=_phase_c_cursor(phase_c_dbs),
+    )
+    assert matches == [], matches
+
+
+def test_phase_c_helper_rejects_disease_pathway(phase_c_dbs):
+    """Pyruvate has "Adenosine Deaminase Deficiency" (hmdb, disease-shaped)
+    in its eligible-typed list. Even though 'Deaminase' (≥6 char,
+    non-generic) appears in claim_text, the disease regex must reject
+    the row before the stem check."""
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    matches = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text="Pyruvate is wired into adenosine deaminase activity downstream",
+        claim_subject="Pyruvate",
+        cursor=_phase_c_cursor(phase_c_dbs),
+    )
+    matched_names = [n for n, _ in matches]
+    assert all("Deficiency" not in n for n in matched_names), matches
+
+
+def test_phase_c_helper_rejects_generic_stem_alone(phase_c_dbs):
+    """A claim containing only generic stems ('metabolism', 'cycle',
+    'pathway' on their own) must NOT trigger any overlap. Pyruvate's
+    sister pathways have stems like 'Glycolysis' / 'Citric' / 'Pyruvate'
+    — claim that only mentions 'metabolism' / 'cycle' produces []."""
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    matches = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text="indicates altered metabolism cycle pathway production",
+        claim_subject="Pyruvate",
+        cursor=_phase_c_cursor(phase_c_dbs),
+    )
+    assert matches == [], matches
+
+
+def test_phase_c_helper_v8_conditional_subject_exclusion(phase_c_dbs):
+    """V8 conditional rule:
+      - subject="Pyruvate"            → 'pyruvate' EXCLUDED  (subject is compound)
+      - subject="Pyruvate metabolism" → 'pyruvate' KEPT      (subject is pathway-shaped)
+
+    Both call paths target pyruvate compound (RC_PYR) and a claim text
+    that mentions 'pyruvate'. The first call must NOT match
+    "Pyruvate metabolism" via the 'Pyruvate' stem; the second MUST.
+    """
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    cur = _phase_c_cursor(phase_c_dbs)
+    claim = "In pyruvate dynamics PEP is converted to acetyl-CoA"
+
+    excluded = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text=claim,
+        claim_subject="Pyruvate",            # compound-shape — 'pyruvate' excluded
+        cursor=cur,
+    )
+    # Without 'pyruvate' as a stem, no eligible sister pathway has a stem
+    # that matches this claim.
+    assert excluded == [], excluded
+
+    kept = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text=claim,
+        claim_subject="Pyruvate metabolism", # pathway-shape — 'pyruvate' KEPT
+        cursor=cur,
+    )
+    matched_names = [n for n, _ in kept]
+    assert "Pyruvate metabolism" in matched_names, kept
+
+
+def test_phase_c_dispatcher_downgrades_pyruvate_via_glycolysis_stem(
+    phase_c_task, phase_c_dbs,
+):
+    """End-to-end dispatcher: claim phrases a wrong pathway ('mevalonate
+    pathway' — pyruvate isn't in that) but its body mentions
+    'glycolysis' which IS a stem of pyruvate's sister pathway 'Glycolysis
+    / Gluconeogenesis'. Phase C MUST downgrade contra → unsupp with the
+    expected tool_evidence shape."""
+    r = verify_biological_sub6(
+        _claim(
+            "Pyruvate alterations imply mevalonate pathway flux through "
+            "glycolysis interconnections",
+            subject="Pyruvate",
+        ),
+        phase_c_task,
+    )
+    assert r.verdict == ClaimVerdict.UNSUPPORTED, r.verdict
+    ev = r.enrichment_context.tool_evidence or {}
+    assert ev.get("phase_c_downgrade") is True, ev
+    assert any("Glycolysis" in n for n in ev.get("sister_pathways_matched", [])), ev
+    assert "compound has KEGG-typed sister pathway" in (ev.get("downgrade_reason") or ""), ev
+
+
+def test_phase_c_helper_directly_v8_conditional_exclusion(phase_c_dbs):
+    """Direct unit test on _compound_has_eligible_sister_pathway exercising
+    V8 conditional subject exclusion. Use a real RaMP cursor from the
+    Phase C fixture."""
+    from verifier.layers.biological_sub6 import (
+        _compound_has_eligible_sister_pathway,
+    )
+    ramp_path, _ = phase_c_dbs
+    conn = sqlite3.connect(ramp_path)
+    cur = conn.cursor()
+
+    # subject="Pyruvate" (compound-shaped) → 'pyruvate' excluded → must
+    # match via 'Glycolysis' stem instead.
+    matches_compound = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text="Pyruvate links to glycolysis flux",
+        claim_subject="Pyruvate",
+        cursor=cur,
+    )
+    pathway_names = [n for n, _ in matches_compound]
+    assert any("Glycolysis" in n for n in pathway_names), matches_compound
+    # And NOT match "Pyruvate metabolism" via its 'Pyruvate' stem alone
+    # (because 'pyruvate' is in the forbid set):
+    pyruvate_only = [
+        (n, s) for n, s in matches_compound
+        if n == "Pyruvate metabolism" and s == ["Pyruvate"]
+    ]
+    assert not pyruvate_only, pyruvate_only
+
+    # subject="Pyruvate metabolism" (pathway-shaped) → 'pyruvate' kept →
+    # stem match against "Pyruvate metabolism" pathway fires.
+    matches_pathway_subject = _compound_has_eligible_sister_pathway(
+        ramp_id="RC_PYR",
+        claim_text="In pyruvate metabolism, PEP is converted to acetyl-CoA",
+        claim_subject="Pyruvate metabolism",
+        cursor=cur,
+    )
+    pathway_names2 = [n for n, _ in matches_pathway_subject]
+    assert "Pyruvate metabolism" in pathway_names2, matches_pathway_subject
