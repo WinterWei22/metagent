@@ -19,21 +19,67 @@ _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from common import llm_client
+
+NARRATIVE_LLM_ROUTES: dict[str, dict[str, str]] = {
+    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7"},
+    "gpt55": {"provider": "openai", "model": "gpt-5.5"},
+    "opus47": {"provider": "openai", "model": "claude-opus-4-7"},
+}
 
 
-def _resolve_api_key() -> None:
+def _resolve_api_key(provider: str, model: str) -> None:
+    if provider == "openai":
+        os.environ.setdefault("METAGENT_OPENAI_BASE_URL", "https://api.viviai.cc/v1")
+        if os.environ.get("METAGENT_OPENAI_API_KEY"):
+            return
+        key_files = (
+            ("api_key_claude.txt", "api_key_gpt.txt")
+            if model.startswith("claude-")
+            else ("api_key_gpt.txt", "api_key_claude.txt")
+        )
+        for name in key_files:
+            candidate = Path(_REPO_ROOT) / name
+            if candidate.is_file():
+                os.environ["METAGENT_OPENAI_API_KEY"] = candidate.read_text().strip()
+                return
+        return
+
     if os.environ.get("MINIMAX_API_KEY"):
         return
-    candidate = Path(_REPO_ROOT) / "api_key.txt"
-    if candidate.is_file():
-        os.environ["MINIMAX_API_KEY"] = candidate.read_text().strip()
+    for name in ("api_key_minimax.txt", "api_key.txt"):
+        candidate = Path(_REPO_ROOT) / name
+        if candidate.is_file():
+            os.environ["MINIMAX_API_KEY"] = candidate.read_text().strip()
+            return
+
+
+def _resolve_narrative_llm(name: str) -> tuple[str, str]:
+    route = NARRATIVE_LLM_ROUTES[name]
+    provider = route["provider"]
+    model = route["model"]
+    if provider == "openai":
+        os.environ["METAGENT_LLM_PROVIDER"] = "openai"
+        os.environ["METAGENT_OPENAI_MODEL"] = model
+        os.environ.setdefault("METAGENT_OPENAI_BASE_URL", "https://api.viviai.cc/v1")
+    return provider, model
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--sub6a", action="store_true", help="Run Sub-6A (e2e) tasks")
-    p.add_argument("--sub6b", action="store_true", help="Run Sub-6B (compound-only) tasks")
+    p.add_argument(
+        "--sub6a",
+        nargs="?",
+        const=True,
+        default=False,
+        help="Run Sub-6A tasks; optionally pass a JSONL tasks file",
+    )
+    p.add_argument(
+        "--sub6b",
+        nargs="?",
+        const=True,
+        default=False,
+        help="Run Sub-6B tasks; optionally pass a JSONL tasks file",
+    )
     p.add_argument("--both", action="store_true", help="Run both Sub-6A and Sub-6B")
     p.add_argument(
         "--tasks-dir",
@@ -42,11 +88,26 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument(
         "--out-dir",
+        "--output",
+        dest="out_dir",
         default="data/eval/sub6",
         help="Directory for raw narrative+identification JSONL output",
     )
-    p.add_argument("--llm-model", default=llm_client.DEFAULT_MODEL)
-    p.add_argument("--limit", type=int, default=None, help="Per-track task limit")
+    p.add_argument(
+        "--narrative-llm",
+        choices=tuple(NARRATIVE_LLM_ROUTES),
+        default="minimax",
+        help="LLM used to generate narratives",
+    )
+    p.add_argument("--llm-model", default=None, help="Legacy explicit model override")
+    p.add_argument(
+        "--limit",
+        "--max-tasks",
+        dest="limit",
+        type=int,
+        default=None,
+        help="Per-track task limit",
+    )
     p.add_argument("--top-k", type=int, default=20, help="Sub-6A library_search top_k")
     p.add_argument(
         "--id-strategy",
@@ -94,12 +155,15 @@ def main(argv: list[str] | None = None) -> int:
     if not (args.sub6a or args.sub6b or args.both):
         p.error("must pass at least one of --sub6a / --sub6b / --both")
 
+    provider, model = _resolve_narrative_llm(args.narrative_llm)
+    if args.llm_model:
+        model = args.llm_model
+
     if not args.no_llm_key_check:
-        _resolve_api_key()
-        if not os.environ.get("MINIMAX_API_KEY"):
-            sys.stderr.write(
-                "ERROR: MINIMAX_API_KEY not set and api_key.txt not found.\n"
-            )
+        _resolve_api_key(provider, model)
+        key_env = "METAGENT_OPENAI_API_KEY" if provider == "openai" else "MINIMAX_API_KEY"
+        if not os.environ.get(key_env):
+            sys.stderr.write(f"ERROR: {key_env} not set and api key fallback not found.\n")
             return 2
 
     logging.basicConfig(
@@ -111,21 +175,30 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    do_b = args.sub6b or args.both
-    do_a = args.sub6a or args.both
+    do_b = bool(args.sub6b) or args.both
+    do_a = bool(args.sub6a) or args.both
 
     if do_b:
         from evaluation.sub6.run_sub6b import run_sub6b_batch
 
-        sub6b_in = tasks_dir / "sub6b_mammalian_tasks.jsonl"
+        sub6b_in = (
+            Path(args.sub6b)
+            if isinstance(args.sub6b, str)
+            else tasks_dir / "sub6b_mammalian_tasks.jsonl"
+        )
         sub6b_out = out_dir / "sub6b_narratives.jsonl"
-        print(f"=== Sub-6B: {sub6b_in} → {sub6b_out} (limit={args.limit}) ===")
+        print(
+            f"=== Sub-6B: {sub6b_in} → {sub6b_out} "
+            f"(limit={args.limit}, narrative_llm={args.narrative_llm}, model={model}) ==="
+        )
         results = run_sub6b_batch(
             sub6b_in,
             sub6b_out,
-            model=args.llm_model,
+            model=model,
+            provider=provider,
             limit=args.limit,
             caller="sub6b_baseline",
+            llm_retries=1,
         )
         ok = sum(1 for r in results if r.error is None)
         print(f"Sub-6B: processed {len(results)} tasks, ok={ok}, fail={len(results)-ok}")
@@ -134,7 +207,11 @@ def main(argv: list[str] | None = None) -> int:
         from evaluation.sub6.compound_lookup import CompoundLookup
         from evaluation.sub6.run_sub6a import run_sub6a_batch
 
-        sub6a_in = tasks_dir / "sub6a_e2e_tasks.jsonl"
+        sub6a_in = (
+            Path(args.sub6a)
+            if isinstance(args.sub6a, str)
+            else tasks_dir / "sub6a_e2e_tasks.jsonl"
+        )
         # Output filename embeds strategy so runs don't clobber each other.
         # --output-suffix takes precedence over the auto strategy suffix so
         # variants like Phase A can be named explicitly without losing the
@@ -147,7 +224,8 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"=== Sub-6A ({args.id_strategy}): {sub6a_in} → {sub6a_out} "
             f"(limit={args.limit}, top_k={args.top_k}, "
-            f"mass_tolerance_ppm={args.mass_tolerance_ppm}) ==="
+            f"mass_tolerance_ppm={args.mass_tolerance_ppm}, "
+            f"narrative_llm={args.narrative_llm}, model={model}) ==="
         )
         lookup = None
         if args.id_strategy == "perfect_id":
@@ -157,10 +235,12 @@ def main(argv: list[str] | None = None) -> int:
         results = run_sub6a_batch(
             sub6a_in,
             sub6a_out,
-            model=args.llm_model,
+            model=model,
+            provider=provider,
             limit=args.limit,
             top_k=args.top_k,
             caller=f"sub6a_baseline_{args.id_strategy}",
+            llm_retries=1,
             strategy=args.id_strategy,
             lookup=lookup,
             mass_tolerance_ppm=args.mass_tolerance_ppm,

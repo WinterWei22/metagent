@@ -13,8 +13,10 @@ Idempotent: completed task_ids in the output JSONL are skipped.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import logging
+import os
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -36,6 +38,22 @@ logger = logging.getLogger(__name__)
 
 
 ChatFn = Callable[..., str]
+
+
+NARRATIVE_LLM_ROUTES: dict[str, dict[str, str | None]] = {
+    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7"},
+    "gpt55": {"provider": "openai", "model": "gpt-5.5"},
+    "opus47": {"provider": "openai", "model": "claude-opus-4-7"},
+}
+
+
+def resolve_narrative_llm(name: str) -> tuple[str, str]:
+    route = NARRATIVE_LLM_ROUTES[name]
+    return str(route["provider"]), str(route["model"])
+
+
+def _chat_kwargs(provider: str | None) -> dict[str, str]:
+    return {"provider": provider} if provider else {}
 
 
 @dataclass
@@ -94,8 +112,10 @@ def run_sub6a(
     chat_fn: ChatFn | None = None,
     library_search_fn: LibSearchFn | None = None,
     model: str = llm_client.DEFAULT_MODEL,
+    provider: str | None = None,
     temperature: float = 0.0,
     caller: str = "sub6a_baseline",
+    llm_retries: int = 0,
     top_k: int = 20,
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
@@ -145,18 +165,24 @@ def run_sub6a(
     if metabolites:
         messages = build_messages(metabolites)
         chat = chat_fn or llm_client.chat
-        try:
-            narrative = chat(
-                messages,
-                temperature=temperature,
-                model=model,
-                trace_id=task["task_id"],
-                caller=caller,
-            )
-            llm_calls = 1
-        except Exception as exc:
-            err = f"llm: {type(exc).__name__}: {exc}"
-            logger.warning("Sub-6A task %s LLM failed: %s", task["task_id"], err)
+        for attempt in range(llm_retries + 1):
+            try:
+                narrative = chat(
+                    messages,
+                    temperature=temperature,
+                    model=model,
+                    trace_id=task["task_id"],
+                    caller=caller,
+                    **_chat_kwargs(provider),
+                )
+                llm_calls = 1
+                err = None
+                break
+            except Exception as exc:
+                err = f"llm: {type(exc).__name__}: {exc}"
+                logger.warning("Sub-6A task %s LLM failed: %s", task["task_id"], err)
+                if attempt < llm_retries:
+                    time.sleep(1.0)
     else:
         err = "no spectra identified — skipping LLM call"
     elapsed_llm = time.perf_counter() - t_llm
@@ -188,8 +214,10 @@ def run_sub6a_batch(
     chat_fn: ChatFn | None = None,
     library_search_fn: LibSearchFn | None = None,
     model: str = llm_client.DEFAULT_MODEL,
+    provider: str | None = None,
     temperature: float = 0.0,
     caller: str = "sub6a_baseline",
+    llm_retries: int = 0,
     top_k: int = 20,
     limit: int | None = None,
     strategy: IdStrategy = "library_search",
@@ -222,8 +250,10 @@ def run_sub6a_batch(
                 chat_fn=chat_fn,
                 library_search_fn=library_search_fn,
                 model=model,
+                provider=provider,
                 temperature=temperature,
                 caller=caller,
+                llm_retries=llm_retries,
                 top_k=top_k,
                 strategy=strategy,
                 lookup=lookup,
@@ -236,3 +266,85 @@ def run_sub6a_batch(
                 break
     logger.info("Sub-6A runner: processed %d tasks this run", processed)
     return results
+
+
+def _resolve_api_key(provider: str, model: str) -> None:
+    if provider == "openai":
+        os.environ.setdefault("METAGENT_OPENAI_BASE_URL", "https://api.viviai.cc/v1")
+        if os.environ.get("METAGENT_OPENAI_API_KEY"):
+            return
+        key_files = (
+            ("api_key_claude.txt", "api_key_gpt.txt")
+            if model.startswith("claude-")
+            else ("api_key_gpt.txt", "api_key_claude.txt")
+        )
+        for name in key_files:
+            candidate = Path.cwd() / name
+            if candidate.is_file():
+                os.environ["METAGENT_OPENAI_API_KEY"] = candidate.read_text().strip()
+                return
+        return
+    if os.environ.get("MINIMAX_API_KEY"):
+        return
+    for name in ("api_key_minimax.txt", "api_key.txt"):
+        candidate = Path.cwd() / name
+        if candidate.is_file():
+            os.environ["MINIMAX_API_KEY"] = candidate.read_text().strip()
+            return
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("tasks", help="Sub-6A JSONL tasks file")
+    parser.add_argument("output", help="Output JSONL file")
+    parser.add_argument(
+        "--narrative-llm",
+        choices=tuple(NARRATIVE_LLM_ROUTES),
+        default="minimax",
+        help="LLM used to generate narratives",
+    )
+    parser.add_argument("--llm-model", default=None, help="Legacy explicit model override")
+    parser.add_argument("--limit", "--max-tasks", type=int, default=None)
+    parser.add_argument("--top-k", type=int, default=20)
+    parser.add_argument(
+        "--id-strategy",
+        choices=("library_search", "perfect_id"),
+        default="library_search",
+    )
+    parser.add_argument(
+        "--curated",
+        default="data/benchmark/sub6/curated_hmdb_mammalian.jsonl",
+    )
+    parser.add_argument("--mass-tolerance-ppm", type=float, default=None)
+    parser.add_argument("--no-llm-key-check", action="store_true")
+    args = parser.parse_args(argv)
+
+    provider, model = resolve_narrative_llm(args.narrative_llm)
+    if args.llm_model:
+        model = args.llm_model
+    if not args.no_llm_key_check:
+        _resolve_api_key(provider, model)
+
+    lookup = None
+    if args.id_strategy == "perfect_id":
+        lookup = CompoundLookup.from_curated(Path(args.curated))
+    results = run_sub6a_batch(
+        args.tasks,
+        args.output,
+        model=model,
+        provider=provider,
+        limit=args.limit,
+        top_k=args.top_k,
+        caller=f"sub6a_baseline_{args.id_strategy}",
+        llm_retries=1,
+        strategy=args.id_strategy,
+        lookup=lookup,
+        mass_tolerance_ppm=args.mass_tolerance_ppm,
+    )
+    ok = sum(1 for r in results if r.error is None)
+    print(f"Sub-6A: processed {len(results)} tasks, ok={ok}, fail={len(results)-ok}")
+    return 0 if ok == len(results) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

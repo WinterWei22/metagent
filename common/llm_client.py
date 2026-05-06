@@ -84,7 +84,7 @@ _MOCK_RESPONSES: list[str] | None = None
 _MOCK_INDEX = 0
 
 
-def _configure_openai() -> Any:
+def _configure_openai(provider: str = PROVIDER) -> Any:
     """Configure the legacy openai==0.28 client for the active provider.
 
     Provider choice is driven by ``METAGENT_LLM_PROVIDER`` (default
@@ -94,13 +94,15 @@ def _configure_openai() -> Any:
     import openai
     import requests
 
-    if PROVIDER == "openai":
+    if provider == "openai":
         api_key = os.environ.get("METAGENT_OPENAI_API_KEY", "")
         if not api_key:
             raise RuntimeError(
                 "METAGENT_LLM_PROVIDER=openai but METAGENT_OPENAI_API_KEY is unset."
             )
-        base_url = _OPENAI_BASE_URL
+        base_url = (
+            os.environ.get("METAGENT_OPENAI_BASE_URL") or _OPENAI_BASE_URL
+        ).rstrip("/")
     else:
         api_key = os.environ.get("MINIMAX_API_KEY", "")
         if not api_key:
@@ -164,8 +166,9 @@ def chat(
     messages: list[dict],
     *,
     temperature: float = 0.0,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
+    max_tokens: int | None = None,
     model: str = DEFAULT_MODEL,
+    provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
 ) -> str:
@@ -180,6 +183,7 @@ def chat(
         temperature=temperature,
         max_tokens=max_tokens,
         model=model,
+        provider=provider,
         trace_id=trace_id,
         caller=caller,
     )
@@ -190,12 +194,16 @@ def chat_raw(
     messages: list[dict],
     *,
     temperature: float = 0.0,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
+    max_tokens: int | None = None,
     model: str = DEFAULT_MODEL,
+    provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
 ) -> dict:
     """Call MiniMax, return the full response dict (for appending to history)."""
+    active_provider = (provider or PROVIDER).strip().lower()
+    if max_tokens is None:
+        max_tokens = 16_384 if active_provider == "openai" else DEFAULT_MAX_TOKENS
     t0 = time.perf_counter()
     timestamp = (
         _dt.datetime.now(_dt.timezone.utc)
@@ -222,7 +230,7 @@ def chat_raw(
             }
             response_raw = content
         else:
-            openai = _configure_openai()
+            openai = _configure_openai(active_provider)
             # OpenAI deprecated `max_tokens` for reasoning-class models
             # (gpt-5.x / o1 / o3 / o4) in favour of
             # `max_completion_tokens`. Switch the field at the wire level
@@ -232,7 +240,7 @@ def chat_raw(
                 "messages": messages,
                 "temperature": temperature,
             }
-            if PROVIDER == "openai":
+            if active_provider == "openai":
                 create_kwargs["max_completion_tokens"] = max_tokens
             else:
                 create_kwargs["max_tokens"] = max_tokens
