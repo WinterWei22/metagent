@@ -1,0 +1,18 @@
+{
+  "n_tasks": 14,
+  "n_ok": 14,
+  "n_error": 0,
+  "id_strategy": "library_search",
+  "top1_pathway_strict_rate": 0.2857142857142857,
+  "top3_pathway_acceptance_rate": 0.2857142857142857,
+  "driver_precision_mean": 0.2857142857142857,
+  "driver_recall_mean": 0.052976190476190475,
+  "false_noise_rate_mean": 0.14285714285714285,
+  "off_pathway_count_mean": 7.071428571428571,
+  "narrative_chars_mean": 2478.285714285714,
+  "identification_accuracy_mean": 0.72068130282416,
+  "elapsed_id_seconds_total": 111.14897110313177,
+  "elapsed_llm_seconds_total": 876.3806631099433,
+  "elapsed_seconds_total": 987.5301127042621,
+  "elapsed_seconds_mean": 70.53786519316158
+}
