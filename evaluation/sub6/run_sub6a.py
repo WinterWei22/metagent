@@ -120,6 +120,8 @@ def run_sub6a(
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
     mass_tolerance_ppm: float | None = None,
+    libraries: tuple[str, ...] = ("gnps",),
+    skip_narrative: bool = False,
 ) -> Sub6AResult:
     """Process one Sub-6A task end-to-end.
 
@@ -127,6 +129,15 @@ def run_sub6a(
     each spectrum's GT InChIKey as the identification — yields the
     *upper-bound* baseline isolating LLM reasoning from identification
     accuracy. Use ``library_search`` for the real e2e number.
+
+    ``libraries`` (Phase 6.1 ablation): tuple passed through to
+    ``identify_spectrum``. Default ``("gnps",)`` preserves v2 baseline
+    behaviour. Set to ``("gnps", "inhouse")`` to enable MS-CLIP fusion.
+
+    ``skip_narrative`` (Phase 6.1 ablation): when True the LLM narrative
+    block is short-circuited. Identification still runs; narrative
+    string is empty, llm_calls=0, elapsed_llm≈0. Used by ablation runs
+    that only need id_accuracy and don't want to burn LLM budget.
     """
     t_total = time.perf_counter()
     spectra = task.get("differential_spectra") or []
@@ -140,6 +151,7 @@ def run_sub6a(
             sp,
             exclusion_source_ids=exclusion,
             top_k=top_k,
+            libraries=tuple(libraries),
             library_search_fn=library_search_fn,
             strategy=strategy,
             lookup=lookup,
@@ -162,7 +174,10 @@ def run_sub6a(
     err: str | None = None
     narrative = ""
     llm_calls = 0
-    if metabolites:
+    if skip_narrative:
+        # Phase 6.1 ablation path — identification only, no LLM call.
+        err = "skip_narrative=True — narrative omitted"
+    elif metabolites:
         messages = build_messages(metabolites)
         chat = chat_fn or llm_client.chat
         for attempt in range(llm_retries + 1):
@@ -223,6 +238,8 @@ def run_sub6a_batch(
     strategy: IdStrategy = "library_search",
     lookup: CompoundLookup | None = None,
     mass_tolerance_ppm: float | None = None,
+    libraries: tuple[str, ...] = ("gnps",),
+    skip_narrative: bool = False,
 ) -> list[Sub6AResult]:
     """Iterate ``tasks_path`` (JSONL), append ``Sub6AResult`` rows to
     ``output_path``, skipping already-completed task_ids.
@@ -258,6 +275,8 @@ def run_sub6a_batch(
                 strategy=strategy,
                 lookup=lookup,
                 mass_tolerance_ppm=mass_tolerance_ppm,
+                libraries=tuple(libraries),
+                skip_narrative=skip_narrative,
             )
             append_jsonl(output_path, asdict(r))
             results.append(r)

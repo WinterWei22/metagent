@@ -150,16 +150,54 @@ def main(argv: list[str] | None = None) -> int:
             "Used to keep variant outputs from clobbering frozen baselines."
         ),
     )
+    p.add_argument(
+        "--libraries",
+        default=None,
+        help=(
+            "Phase 6.1 ablation: comma-separated retrieval libraries for "
+            "library_search (e.g. 'gnps' or 'gnps,inhouse'). When unset, "
+            "Sub-6A defaults to ('gnps',) — the v2 baseline behaviour. "
+            "Set 'gnps,inhouse' to enable MS-CLIP fusion. Sub-6B is "
+            "unaffected — its own runner does not consume this flag."
+        ),
+    )
+    p.add_argument(
+        "--skip-narrative",
+        action="store_true",
+        help=(
+            "Phase 6.1 ablation: short-circuit the LLM narrative call after "
+            "identification. Output JSONL still records identifications + "
+            "id_acc; narrative is empty, llm_calls=0. Use for retrieval-"
+            "ablation runs that only need id_accuracy and don't want to "
+            "burn LLM API budget."
+        ),
+    )
     args = p.parse_args(argv)
 
     if not (args.sub6a or args.sub6b or args.both):
         p.error("must pass at least one of --sub6a / --sub6b / --both")
 
+    # Parse + validate --libraries (default ("gnps",) preserves v2 baseline).
+    if args.libraries:
+        libraries_tuple = tuple(
+            tok.strip() for tok in args.libraries.split(",") if tok.strip()
+        )
+        if not libraries_tuple:
+            p.error("--libraries was set but parsed to an empty tuple")
+        for lib in libraries_tuple:
+            if lib not in ("gnps", "inhouse"):
+                p.error(f"--libraries: unknown library {lib!r}; allowed: gnps, inhouse")
+    else:
+        libraries_tuple = ("gnps",)
+
     provider, model = _resolve_narrative_llm(args.narrative_llm)
     if args.llm_model:
         model = args.llm_model
 
-    if not args.no_llm_key_check:
+    # When --skip-narrative is set there are zero LLM calls — don't require
+    # a key. (Phase 6.1 ablation runs typically don't have a narrative LLM
+    # key handy on the same machine that owns the GPU.)
+    if not args.no_llm_key_check and not args.skip_narrative:
         _resolve_api_key(provider, model)
         key_env = "METAGENT_OPENAI_API_KEY" if provider == "openai" else "MINIMAX_API_KEY"
         if not os.environ.get(key_env):
@@ -225,6 +263,8 @@ def main(argv: list[str] | None = None) -> int:
             f"=== Sub-6A ({args.id_strategy}): {sub6a_in} → {sub6a_out} "
             f"(limit={args.limit}, top_k={args.top_k}, "
             f"mass_tolerance_ppm={args.mass_tolerance_ppm}, "
+            f"libraries={libraries_tuple}, "
+            f"skip_narrative={args.skip_narrative}, "
             f"narrative_llm={args.narrative_llm}, model={model}) ==="
         )
         lookup = None
@@ -244,6 +284,8 @@ def main(argv: list[str] | None = None) -> int:
             strategy=args.id_strategy,
             lookup=lookup,
             mass_tolerance_ppm=args.mass_tolerance_ppm,
+            libraries=libraries_tuple,
+            skip_narrative=args.skip_narrative,
         )
         ok = sum(1 for r in results if r.error is None)
         print(f"Sub-6A: processed {len(results)} tasks, ok={ok}, fail={len(results)-ok}")

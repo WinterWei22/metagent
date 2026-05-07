@@ -217,3 +217,96 @@ def test_batch_idempotent_resume(tmp_path):
     res2 = run_sub6a_batch(tasks_path, out_path, chat_fn=boom_chat,
                            library_search_fn=boom, model="mock")
     assert res2 == []
+
+
+# ---------------------------------------------------------------------------
+# Phase 6.1 ablation — libraries pass-through + skip_narrative short-circuit
+# ---------------------------------------------------------------------------
+
+
+def test_libraries_kwarg_threaded_into_library_search_request():
+    """run_sub6a's ``libraries=`` kwarg must reach the LibrarySearchRequest
+    so the MS-CLIP ablation can flip retrieval libraries from the CLI."""
+    captured: list[list[str]] = []
+
+    def lib_fn(req):
+        captured.append(list(req.libraries))
+        return _MockResponse(
+            candidates=[
+                _MockCandidate(
+                    smiles="CCO", name="ethanol", score=0.9,
+                    source_id="OTHER",
+                ),
+            ],
+        )
+
+    task = _make_task()
+    chat = _mock_chat_factory()
+
+    # Default — must be ("gnps",) so v2 baseline behaviour is preserved.
+    captured.clear()
+    run_sub6a(task, chat_fn=chat, library_search_fn=lib_fn, model="mock")
+    assert captured, "library_search_fn was never called"
+    assert all(libs == ["gnps"] for libs in captured), captured
+
+    # Override — ("gnps", "inhouse") flows through verbatim.
+    captured.clear()
+    run_sub6a(
+        task,
+        chat_fn=chat,
+        library_search_fn=lib_fn,
+        model="mock",
+        libraries=("gnps", "inhouse"),
+    )
+    assert captured, "library_search_fn was never called"
+    assert all(libs == ["gnps", "inhouse"] for libs in captured), captured
+
+
+def test_skip_narrative_short_circuits_llm_call():
+    """When skip_narrative=True the LLM chat function must NOT be called.
+    Identification still runs and id_acc is populated."""
+    chat_calls: list = []
+
+    def chat(*args, **kwargs):
+        chat_calls.append((args, kwargs))
+        return "should not be called"
+
+    def lib_fn(req):
+        return _MockResponse(
+            candidates=[
+                _MockCandidate(
+                    smiles="CCO", name="ethanol", score=0.9,
+                    source_id="OTHER",
+                ),
+            ],
+        )
+
+    task = _make_task()
+
+    # Default — chat_fn IS called once.
+    chat_calls.clear()
+    res = run_sub6a(task, chat_fn=chat, library_search_fn=lib_fn, model="mock")
+    assert chat_calls, "default run should have called chat"
+    assert res.llm_calls == 1
+
+    # skip_narrative=True — chat_fn must NOT be called.
+    chat_calls.clear()
+    res = run_sub6a(
+        task,
+        chat_fn=chat,
+        library_search_fn=lib_fn,
+        model="mock",
+        skip_narrative=True,
+    )
+    assert chat_calls == [], (
+        f"skip_narrative=True must short-circuit the LLM call; got "
+        f"{len(chat_calls)} calls"
+    )
+    assert res.llm_calls == 0
+    assert res.narrative == ""
+    # Identification still ran — id_acc populated.
+    assert res.n_spectra == 2
+    assert res.identification_accuracy >= 0.0
+    # The error field flags the skip explicitly so log readers know why
+    # narrative is empty.
+    assert "skip_narrative" in (res.error or ""), res.error

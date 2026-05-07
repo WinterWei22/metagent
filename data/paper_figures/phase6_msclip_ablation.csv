@@ -1,0 +1,12 @@
+section,config,bucket,n_tasks,n_spectra,n_correct,id_acc,task_mean_id_acc,delta_id_acc,elapsed_id_s_total,gained,lost,unchanged_correct,unchanged_wrong,net_delta
+overall,gnps_only,,38,459,309,0.6732,0.6737,,224.5,,,,,
+overall,fused,,38,459,307,0.6688,0.6637,,5099.9,,,,,
+bucket,gnps_only,kegg,,331,217,0.6556,,,,,,,,
+bucket,fused,kegg,,331,218,0.6586,,+0.0030,,,,,,
+bucket,gnps_only,reactome,,69,57,0.8261,,,,,,,,
+bucket,fused,reactome,,69,54,0.7826,,-0.0435,,,,,,
+bucket,gnps_only,smpdb,,15,7,0.4667,,,,,,,,
+bucket,fused,smpdb,,15,7,0.4667,,+0.0000,,,,,,
+bucket,gnps_only,wikipathways,,44,28,0.6364,,,,,,,,
+bucket,fused,wikipathways,,44,28,0.6364,,+0.0000,,,,,,
+winloss,fused_vs_gnps_only,,,,,,,,,12,14,295,127,-2
