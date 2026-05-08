@@ -247,10 +247,11 @@ def chat_raw(
     """Call MiniMax / OpenAI-compat, return the full response dict.
 
     ``tools`` and ``tool_choice`` are pass-through OpenAI-style fields.
-    They are only forwarded for ``provider='openai'`` (viviai relay
-    accepts the same shape for both Claude and GPT models). Passing
-    ``tools`` to the MiniMax provider raises immediately — MiniMax has
-    a different protocol that we do not support in this client.
+    Both providers accept this shape: viviai relay handles it transparently
+    for Opus / GPT (verified phase A1), and MiniMax's M2.7 endpoint
+    accepts the same ``tools=[{type, function:{name, description,
+    parameters}}]`` schema and returns ``tool_calls[*].function.
+    {name, arguments}`` (verified phase A2 D0 live probe).
     """
     active_provider = (provider or PROVIDER).strip().lower()
     if max_tokens is None:
@@ -296,11 +297,12 @@ def chat_raw(
             else:
                 create_kwargs["max_tokens"] = max_tokens
             if tools:
-                if active_provider != "openai":
-                    raise RuntimeError(
-                        f"chat_raw(tools=...) only supported for "
-                        f"provider='openai' (got {active_provider!r})"
-                    )
+                # Both providers accept the same OpenAI-style ``tools`` /
+                # ``tool_choice`` shape:
+                #   - openai (viviai) — verified in phase A1 against Opus 4.7.
+                #   - minimax — verified via live probe in phase A2 D0.
+                # No adapter needed; MiniMax's response carries the same
+                # ``tool_calls[*].function.{name, arguments}`` keys.
                 create_kwargs["tools"] = tools
                 if tool_choice is not None:
                     create_kwargs["tool_choice"] = tool_choice
@@ -541,8 +543,15 @@ def chat_with_tools(
         tools=tools,
         tool_choice=tool_choice,
     )
-    msg = response["choices"][0]["message"]
-    return _to_plain(msg)
+    msg = _to_plain(response["choices"][0]["message"])
+    # Strip MiniMax-style ``<think>...</think>`` reasoning blocks from
+    # ``content`` so the ReAct runner sees clean narrative text. The
+    # legacy ``chat()`` path already does this; mirror it here for
+    # tool-calling responses. No-op for OpenAI / Claude content.
+    content = msg.get("content")
+    if isinstance(content, str):
+        msg["content"] = strip_thinking(content)
+    return msg
 
 
 # ---------------------------------------------------------------------------
