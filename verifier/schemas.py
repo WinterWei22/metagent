@@ -33,7 +33,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -79,6 +79,31 @@ class ClaimType(str, Enum):
     """Type 5 — verified by peak existence plus SIRIUS fragmentation-tree
     annotation. Used for fragment / neutral-loss claims at a specific m/z."""
 
+    SET_ENRICHMENT = "set_enrichment"
+    """Type 6a (Sub-6) — claims of the form "these metabolites are enriched
+    in pathway X". Verified by ``verifier/layers/set_enrichment.py`` against
+    ``SubsixSourceReport.ramp_enrichment_result.top_pathways``."""
+
+    DRIVER_METABOLITE = "driver_metabolite"
+    """Type 6b (Sub-6) — claims of the form "compound X drives pathway Y".
+    Verified by ``verifier/layers/driver_metabolite.py`` against
+    ``SubsixSourceReport.ground_truth_signal_compounds`` /
+    ``ground_truth_noise_compounds`` after KEGG↔InChIKey resolution."""
+
+    PATHWAY_RELATIONSHIP = "pathway_relationship"
+    """Type 6d (Sub-6) — claims of the form "pathway A is upstream of B" or
+    "pathways A and B share intermediates". Verified by
+    ``verifier/layers/pathway_relationship.py`` against RaMP's
+    ``analytehaspathway`` table for shared compounds; upstream/downstream
+    claims fall back to ``UNVERIFIABLE_V0`` because RaMP-DB has no
+    pathway-hierarchy table.
+
+    Note: Type 6c "biological significance" claims are routed to the
+    existing ``BIOLOGICAL`` value at classification time (or, for
+    Sub-6 source reports, to the dedicated Sub-6 biological subroute).
+    No separate ClaimType is added for 6c — see Sub-6 verifier session
+    decision Q1(b)."""
+
 
 class ClaimVerdict(str, Enum):
     """The outcome of running a claim through its layer.
@@ -93,6 +118,11 @@ class ClaimVerdict(str, Enum):
     UNSUPPORTED = "unsupported"
     UNVERIFIABLE_V0 = "unverifiable_v0"
     ERROR = "error"
+    NEEDS_HUMAN_REVIEW = "needs_human_review"
+    """Tools-disagree escape hatch. Layer F cross-validation produces this
+    verdict when SIRIUS and CFM-ID assign incompatible interpretations to a
+    peak claim. Downstream code must treat it as a first-class verdict, not
+    as an error or a filtered-out null."""
 
 
 class ClaimSubtype(str, Enum):
@@ -123,6 +153,13 @@ class ClaimSubtype(str, Enum):
     FRAGMENT_ASSIGNMENT = "fragment_assignment"
     NEUTRAL_LOSS = "neutral_loss"
     RING_CLEAVAGE = "ring_cleavage"
+    # Sub-6 enrichment subtypes
+    ENRICHMENT_PATHWAY = "enrichment_pathway"
+    DRIVER_LIST = "driver_list"
+    PATHWAY_UPSTREAM = "pathway_upstream"
+    PATHWAY_DOWNSTREAM = "pathway_downstream"
+    PATHWAY_CROSS_TALK = "pathway_cross_talk"
+    PATHWAY_SHARED_INTERMEDIATES = "pathway_shared_intermediates"
 
 
 class SubjectKind(str, Enum):
@@ -194,6 +231,179 @@ class EvidenceRef(BaseModel):
     path: str | None = None
     value: str | float | int | bool | None = None
     summary: str | None = None
+
+
+class PathwayMatch(BaseModel):
+    """Structured echo of one ``ramp_enrichment_result.top_pathways[i]``.
+
+    Populated by Layer 6a (``set_enrichment``) when a claimed pathway is
+    matched against the enrichment result. Mirrors the keys returned by
+    RaMP-DB's enrichment API so downstream consumers don't need to
+    re-parse the dict.
+    """
+
+    pathway_id: str | None = None
+    pathway_name: str | None = None
+    pathway_source: str | None = None
+    pathway_external_id: str | None = None
+    rank: int | None = Field(
+        None,
+        ge=1,
+        description="1-based position in ramp_enrichment_result.top_pathways.",
+    )
+    fdr: float | None = Field(None, ge=0.0)
+    p_value: float | None = Field(None, ge=0.0)
+    fold_enrichment: float | None = None
+    matched_compounds: list[str] = Field(default_factory=list)
+    total_pathway_compounds: int | None = Field(None, ge=0)
+
+
+class EnrichmentContext(BaseModel):
+    """Structured evidence carrier for Sub-6 enrichment-narrative verifier
+    layers (``SET_ENRICHMENT``, ``DRIVER_METABOLITE``,
+    ``PATHWAY_RELATIONSHIP``).
+
+    All fields are optional; each Sub-6 layer populates the slice that
+    matches its responsibility:
+
+    * Layer 6a (set_enrichment) — ``claimed_pathway`` + ``matched_top_pathways``
+      + ``best_match`` + ``pathway_match_method``.
+    * Layer 6b (driver_metabolite) — ``claimed_drivers`` +
+      ``matched_signal_drivers`` / ``matched_noise_drivers`` /
+      ``unresolved_drivers`` + ``driver_precision`` / ``driver_recall``.
+    * Layer 6d (pathway_relationship) — ``pathway_a`` / ``pathway_b`` +
+      ``relationship_type`` + ``shared_compound_count`` / ``shared_compounds``.
+
+    ``tool_evidence`` mirrors ``VerifiedClaim.tool_evidence``'s role: a
+    free-form sink for layer-specific evidence (e.g. a SQL fingerprint
+    of the RaMP query, a list of unmatched names).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    # ---- Layer 6a: SET_ENRICHMENT ----
+    claimed_pathway: str | None = Field(
+        None,
+        description="Pathway name lifted from the claim text.",
+    )
+    claimed_pathway_id: str | None = Field(
+        None,
+        description="RaMP / KEGG / WikiPathways ID lifted from the claim, when present.",
+    )
+    matched_top_pathways: list[PathwayMatch] = Field(
+        default_factory=list,
+        description="Top-3 (or top-N) entries from ramp_enrichment_result echoed for audit.",
+    )
+    best_match: PathwayMatch | None = Field(
+        None,
+        description="The single top_pathways entry the claim resolves to, when one matches.",
+    )
+    pathway_match_method: Literal["exact", "substring_either", "id", "none"] | None = Field(
+        None,
+        description=(
+            "How the claimed pathway was matched: exact name, substring "
+            "(claim ⊂ canonical or canonical ⊂ claim), pathway ID, or none."
+        ),
+    )
+
+    # ---- Layer 6b: DRIVER_METABOLITE ----
+    claimed_drivers: list[str] = Field(
+        default_factory=list,
+        description="Driver compound names / IDs as they appeared in the claim.",
+    )
+    claimed_drivers_resolved: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Claimed drivers after resolution to InChIKey first-blocks via "
+            "the curated compound pool. Same ordering as ``claimed_drivers`` "
+            "where resolution succeeded; entries that failed to resolve are "
+            "listed in ``unresolved_drivers`` instead."
+        ),
+    )
+    matched_signal_drivers: list[str] = Field(
+        default_factory=list,
+        description="InChIKey first-blocks present in ground_truth_signal_compounds.",
+    )
+    matched_noise_drivers: list[str] = Field(
+        default_factory=list,
+        description=(
+            "InChIKey first-blocks present in ground_truth_noise_compounds. "
+            "Non-empty list ⇒ CONTRADICTED verdict (LLM cited a noise compound)."
+        ),
+    )
+    unresolved_drivers: list[str] = Field(
+        default_factory=list,
+        description="Claimed driver names that did not resolve to any InChIKey.",
+    )
+    off_pool_drivers: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Resolved InChIKey first-blocks that are neither in signal nor "
+            "noise set — i.e. compounds outside this task's pool entirely. "
+            "Non-empty ⇒ UNSUPPORTED (claim referenced something irrelevant)."
+        ),
+    )
+    driver_precision: float | None = Field(
+        None,
+        ge=0.0,
+        le=1.0,
+        description="|matched_signal| / |claimed_drivers_resolved|, when denominator > 0.",
+    )
+    driver_recall: float | None = Field(
+        None,
+        ge=0.0,
+        le=1.0,
+        description="|matched_signal| / |ground_truth_signal_compounds|.",
+    )
+
+    # ---- Layer 6d: PATHWAY_RELATIONSHIP ----
+    pathway_a: str | None = Field(None, description="First pathway in the relationship claim.")
+    pathway_b: str | None = Field(None, description="Second pathway in the relationship claim.")
+    pathway_a_id: str | None = None
+    pathway_b_id: str | None = None
+    relationship_type: Literal[
+        "upstream",
+        "downstream",
+        "cross_talk",
+        "shared_intermediates",
+        "unknown",
+    ] | None = Field(
+        None,
+        description="Parsed relationship asserted by the claim.",
+    )
+    shared_compound_count: int | None = Field(
+        None,
+        ge=0,
+        description="Number of compounds appearing in both pathways per RaMP analytehaspathway.",
+    )
+    shared_compounds: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Up to 20 InChIKey first-blocks (or KEGG IDs when InChIKey is "
+            "unavailable) shared between the two pathways. Truncated for "
+            "log readability — ``shared_compound_count`` carries the full count."
+        ),
+    )
+    hierarchy_data_available: bool | None = Field(
+        None,
+        description=(
+            "True iff RaMP-DB exposes a pathway-hierarchy table that can "
+            "support upstream/downstream verification. Currently always "
+            "False (RaMP v2025-03-06 has no pathwayhaspathway). Surfacing "
+            "this explicitly so consumers can distinguish 'we don't know' "
+            "from 'we checked and there's no relationship'."
+        ),
+    )
+
+    # ---- Generic ----
+    tool_evidence: dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "Layer-specific evidence sink. Examples: "
+            "{'ramp_query': '<sql>', 'ramp_rows': 12} for Layer 6d; "
+            "{'lookup_cache_size': 150, 'unresolved_names': [...]} for Layer 6b."
+        ),
+    )
 
 
 class ClaimProvenance(BaseModel):
@@ -437,6 +647,23 @@ class VerifiedClaim(BaseModel):
     parent_claim_id: str | None = Field(
         None,
         description="Previous-pass parent claim id when a rewritten claim is aligned.",
+    )
+    tool_evidence: dict[str, Any] | None = Field(
+        None,
+        description=(
+            "Per-tool evidence for cross-validated claims. Layer F populates "
+            "this with {'sirius': {...}, 'cfmid': {...}, 'consensus': '<label>'} "
+            "when peak-mechanistic claims are checked by both SIRIUS and "
+            "CFM-ID. None for layers that do not cross-validate."
+        ),
+    )
+    enrichment_context: EnrichmentContext | None = Field(
+        None,
+        description=(
+            "Structured Sub-6 enrichment-narrative evidence. Populated by "
+            "Layer 6a (set_enrichment) / 6b (driver_metabolite) / 6d "
+            "(pathway_relationship). None for non-Sub-6 claims."
+        ),
     )
 
 

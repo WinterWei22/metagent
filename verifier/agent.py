@@ -31,11 +31,12 @@ Caller-side, the typical pattern is::
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 
 from schemas import LiteratureSearchResponse
 from schemas.molecule import MetaboliteInfoResponse
 from schemas.report import IdentificationReport
+from schemas.sub6_report import SubsixSourceReport
 from verifier.candidate_resolution import resolve_candidate_ref
 from verifier.claim_classifier import classify_claims
 from verifier.claim_extractor import (
@@ -62,6 +63,7 @@ from verifier.schemas import (
 
 Fetcher = Callable[[str], MetaboliteInfoResponse]
 LiteratureFetcher = Callable[[str], LiteratureSearchResponse]
+CfmidPredictor = Callable[[Any], Any]
 
 
 def verify(
@@ -71,12 +73,14 @@ def verify(
     trace_id: str,
     fetcher: Fetcher | None = None,
     literature_fetcher: LiteratureFetcher | None = None,
+    cfmid_fn: CfmidPredictor | None = None,
 ) -> VerifiedIdentification:
     """Run the full 4-stage cascade. Always returns; never re-raises.
 
     ``fetcher`` is dependency-injected for Layer B (metabolite_info round-
-    trip); ``literature_fetcher`` for Layer E (Europe PMC). Both default to
-    the real tools, lazy-imported when first needed; tests pass mocks.
+    trip); ``literature_fetcher`` for Layer E (Europe PMC); ``cfmid_fn``
+    for Layer F's CFM-ID cross-check. All default to the real tools,
+    lazy-imported when first needed; tests pass mocks.
     """
     warnings: list[str] = []
     llm_calls = 0
@@ -99,6 +103,7 @@ def verify(
     verified_v1 = _verify_per_claim(
         classified_v1, source_report,
         fetcher=fetcher, literature_fetcher=literature_fetcher,
+        cfmid_fn=cfmid_fn,
     )
     consistency_v1, calls, w = layer_d.detect_consistency_contradictions(
         classified_v1, trace_id=f"{trace_id}.s3_v1"
@@ -149,6 +154,7 @@ def verify(
     verified_v2 = _verify_per_claim(
         classified_v2, source_report,
         fetcher=fetcher, literature_fetcher=literature_fetcher,
+        cfmid_fn=cfmid_fn,
     )
     consistency_v2, calls, w = layer_d.detect_consistency_contradictions(
         classified_v2, trace_id=f"{trace_id}.s3_v2"
@@ -208,8 +214,9 @@ def _verify_per_claim(
     *,
     fetcher: Fetcher | None,
     literature_fetcher: LiteratureFetcher | None = None,
+    cfmid_fn: CfmidPredictor | None = None,
 ) -> list[VerifiedClaim]:
-    """Dispatch each claim to its layer (A/B/C/E). Layer D runs separately."""
+    """Dispatch each claim to its layer (A/B/C/E/F). Layer D runs separately."""
     out: list[VerifiedClaim] = []
     for c in classified:
         candidate_ref = resolve_candidate_ref(c, source_report)
@@ -228,7 +235,11 @@ def _verify_per_claim(
                 )
             )
         elif c.claim_type == ClaimType.PEAK_MECHANISTIC:
-            out.append(layer_f.verify_peak_mechanistic(c, source_report))
+            out.append(
+                layer_f.verify_peak_mechanistic(
+                    c, source_report, cfmid_fn=cfmid_fn,
+                )
+            )
         elif c.claim_type == ClaimType.CONSISTENCY:
             # Stage 2 should not assign CONSISTENCY directly — Layer D
             # creates those entries. If it ever happens (LLM fallback
@@ -256,6 +267,9 @@ def _aggregate_verdict(
     has_unverifiable = any(
         c.verdict == ClaimVerdict.UNVERIFIABLE_V0 for c in claims
     )
+    has_needs_review = any(
+        c.verdict == ClaimVerdict.NEEDS_HUMAN_REVIEW for c in claims
+    )
     if has_contradicted:
         return "contradicted"
     if has_error:
@@ -263,7 +277,12 @@ def _aggregate_verdict(
         # confidently say "verified". Treat as partially_verified rather
         # than failed — the caller still gets the surviving evidence.
         return "partially_verified"
-    if has_unsupported or has_unverifiable:
+    if has_unsupported or has_unverifiable or has_needs_review:
+        # NEEDS_HUMAN_REVIEW from Layer F's cross-validation: the
+        # consensus could not arbitrate between SIRIUS and CFM-ID, so
+        # the claim's status is suspended pending review. Maps to
+        # partially_verified rather than contradicted because the
+        # tools have not jointly contradicted the claim.
         return "partially_verified"
     return "verified"
 
@@ -324,3 +343,149 @@ def _failed(
         llm_call_count=llm_calls,
         generated_at=datetime.now(timezone.utc),
     )
+
+
+# ---------------------------------------------------------------------------
+# Sub-6 entry point
+# ---------------------------------------------------------------------------
+
+
+def verify_sub6(
+    llm_output: str,
+    source_report: SubsixSourceReport,
+    *,
+    trace_id: str,
+    ramp_db_path: str | None = None,
+    ramp_conn=None,
+    driver_lookup: dict[str, str] | None = None,
+) -> VerifiedIdentification:
+    """Stage-cascaded verification for Sub-6 enrichment narratives.
+
+    Mirrors the structure of ``verify()`` but consumes a
+    ``SubsixSourceReport`` and dispatches the four enrichment claim
+    types (SET_ENRICHMENT, DRIVER_METABOLITE, PATHWAY_RELATIONSHIP,
+    BIOLOGICAL) to their dedicated layers.
+
+    Stage 4 (rewriter) is intentionally NOT run for Sub-6 in v0 — the
+    rewriter is tuned for spectrum-centric corrections and lacks templates
+    for enrichment narratives. ``rewritten_output`` is set to
+    ``llm_output`` and ``claims_v2 == claims_v1``.
+
+    Other claim types (GROUNDED / FACTUAL / LITERATURE / PEAK_MECHANISTIC /
+    CONSISTENCY) that the extractor + classifier might still surface from
+    a Sub-6 narrative are routed to a Sub-6 friendly default verdict —
+    ``UNVERIFIABLE_V0`` — because the existing layers consume the
+    spectrum-centric ``IdentificationReport`` and would crash on
+    SubsixSourceReport. Layer D (consistency) is the one exception: it
+    operates on the claim list itself without reading source_report.candidates,
+    so it runs on Sub-6 narratives unmodified.
+    """
+    warnings: list[str] = []
+    llm_calls = 0
+
+    classified, calls, w = _extract_classify(
+        llm_output, trace_id=f"{trace_id}.s1s2"
+    )
+    llm_calls += calls
+    warnings += w
+    if classified is None:
+        return _failed(
+            llm_output=llm_output,
+            trace_id=trace_id,
+            warnings=warnings,
+            llm_calls=llm_calls,
+        )
+
+    verified = _verify_per_claim_sub6(
+        classified,
+        source_report,
+        ramp_db_path=ramp_db_path,
+        ramp_conn=ramp_conn,
+        driver_lookup=driver_lookup,
+    )
+    consistency, calls, w = layer_d.detect_consistency_contradictions(
+        classified, trace_id=f"{trace_id}.s3"
+    )
+    llm_calls += calls
+    warnings += w
+    verified = list(verified) + list(consistency)
+
+    return _final(
+        llm_output=llm_output,
+        rewritten_output=llm_output,
+        claims_v1=verified,
+        claims_v2=verified,
+        warnings=warnings,
+        llm_calls=llm_calls,
+        trace_id=trace_id,
+    )
+
+
+def _verify_per_claim_sub6(
+    classified: list[ClassifiedClaim],
+    source_report: SubsixSourceReport,
+    *,
+    ramp_db_path: str | None,
+    ramp_conn,
+    driver_lookup: dict[str, str] | None,
+) -> list[VerifiedClaim]:
+    """Dispatch each Sub-6 claim to its layer.
+
+    Lazy-imports the four enrichment layers so import-time cost stays low
+    when the verify() spectrum entry point is the only one being used.
+    """
+    from verifier.layers.biological_sub6 import verify_biological_sub6
+    from verifier.layers.driver_metabolite import verify_driver_metabolite
+    from verifier.layers.pathway_relationship import verify_pathway_relationship
+    from verifier.layers.set_enrichment import verify_set_enrichment
+
+    out: list[VerifiedClaim] = []
+    for c in classified:
+        if c.claim_type == ClaimType.SET_ENRICHMENT:
+            out.append(verify_set_enrichment(c, source_report))
+        elif c.claim_type == ClaimType.DRIVER_METABOLITE:
+            out.append(
+                verify_driver_metabolite(
+                    c, source_report, lookup=driver_lookup,
+                )
+            )
+        elif c.claim_type == ClaimType.PATHWAY_RELATIONSHIP:
+            out.append(
+                verify_pathway_relationship(
+                    c, source_report,
+                    db_path=ramp_db_path, conn=ramp_conn,
+                )
+            )
+        elif c.claim_type == ClaimType.BIOLOGICAL:
+            out.append(
+                verify_biological_sub6(
+                    c, source_report,
+                    db_path=ramp_db_path, conn=ramp_conn,
+                )
+            )
+        else:
+            # Spectrum-centric layers cannot consume SubsixSourceReport;
+            # surface as UNVERIFIABLE_V0 with explicit reasoning.
+            out.append(
+                VerifiedClaim(
+                    claim_id=c.claim_id,
+                    claim_text=c.claim_text,
+                    claim_type=c.claim_type,
+                    claim_subtype=c.claim_subtype,
+                    subject=c.subject,
+                    subject_kind=c.subject_kind,
+                    candidate_ref=c.candidate_ref,
+                    verdict=ClaimVerdict.UNVERIFIABLE_V0,
+                    evidence=(
+                        f"Sub-6 verifier does not support claim_type "
+                        f"{c.claim_type.value!r}: existing layer requires "
+                        "IdentificationReport (spectrum-centric), but "
+                        "Sub-6 supplies SubsixSourceReport. Treated as "
+                        "declared limitation."
+                    ),
+                    extracted_fields=c.extracted_fields,
+                    verifier_layer="verify_sub6",
+                    trace_summary=f"sub6 cannot verify {c.claim_type.value}",
+                )
+            )
+    return out
