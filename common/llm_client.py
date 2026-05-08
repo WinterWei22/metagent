@@ -83,6 +83,12 @@ def get_log_path() -> Path:
 _MOCK_RESPONSES: list[str] | None = None
 _MOCK_INDEX = 0
 
+# Separate mock channel for chat_with_tools() — each element is an assistant
+# message dict with optional `tool_calls`. Kept distinct from the string-mode
+# mock so that the legacy `chat()` path stays bit-identical.
+_MOCK_TOOL_MESSAGES: list[dict] | None = None
+_MOCK_TOOL_INDEX = 0
+
 
 def _configure_openai(provider: str = PROVIDER) -> Any:
     """Configure the legacy openai==0.28 client for the active provider.
@@ -157,6 +163,42 @@ def _next_mock() -> str:
     return resp
 
 
+def set_mock_tool_messages(messages: list[dict]) -> None:
+    """Install a deterministic mock for chat_with_tools().
+
+    Each entry is an assistant ``message`` dict, e.g.::
+
+        {"role": "assistant", "content": null,
+         "tool_calls": [{"id": "call_1", "type": "function",
+                          "function": {"name": "...", "arguments": "{...}"}}]}
+
+    Distinct from set_mock() so the legacy chat() path is untouched.
+    """
+    global _MOCK_TOOL_MESSAGES, _MOCK_TOOL_INDEX
+    _MOCK_TOOL_MESSAGES = list(messages)
+    _MOCK_TOOL_INDEX = 0
+
+
+def clear_mock_tool_messages() -> None:
+    global _MOCK_TOOL_MESSAGES, _MOCK_TOOL_INDEX
+    _MOCK_TOOL_MESSAGES = None
+    _MOCK_TOOL_INDEX = 0
+
+
+def _next_tool_mock() -> dict:
+    global _MOCK_TOOL_INDEX
+    if _MOCK_TOOL_MESSAGES is None:
+        raise RuntimeError("No tool-mock installed.")
+    if _MOCK_TOOL_INDEX >= len(_MOCK_TOOL_MESSAGES):
+        raise IndexError(
+            f"chat_with_tools mock exhausted after {_MOCK_TOOL_INDEX} calls. "
+            f"Add more responses via set_mock_tool_messages()."
+        )
+    msg = _MOCK_TOOL_MESSAGES[_MOCK_TOOL_INDEX]
+    _MOCK_TOOL_INDEX += 1
+    return msg
+
+
 # ---------------------------------------------------------------------------
 # Public API: chat
 # ---------------------------------------------------------------------------
@@ -199,8 +241,17 @@ def chat_raw(
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
+    tools: list[dict] | None = None,
+    tool_choice: str | dict | None = None,
 ) -> dict:
-    """Call MiniMax, return the full response dict (for appending to history)."""
+    """Call MiniMax / OpenAI-compat, return the full response dict.
+
+    ``tools`` and ``tool_choice`` are pass-through OpenAI-style fields.
+    They are only forwarded for ``provider='openai'`` (viviai relay
+    accepts the same shape for both Claude and GPT models). Passing
+    ``tools`` to the MiniMax provider raises immediately — MiniMax has
+    a different protocol that we do not support in this client.
+    """
     active_provider = (provider or PROVIDER).strip().lower()
     if max_tokens is None:
         max_tokens = 16_384 if active_provider == "openai" else DEFAULT_MAX_TOKENS
@@ -244,6 +295,15 @@ def chat_raw(
                 create_kwargs["max_completion_tokens"] = max_tokens
             else:
                 create_kwargs["max_tokens"] = max_tokens
+            if tools:
+                if active_provider != "openai":
+                    raise RuntimeError(
+                        f"chat_raw(tools=...) only supported for "
+                        f"provider='openai' (got {active_provider!r})"
+                    )
+                create_kwargs["tools"] = tools
+                if tool_choice is not None:
+                    create_kwargs["tool_choice"] = tool_choice
             response = openai.ChatCompletion.create(  # type: ignore[attr-defined]
                 **create_kwargs,
             )
@@ -394,6 +454,95 @@ def _safe_dict(obj: Any) -> dict:
         return dict(obj)
     except Exception:
         return {}
+
+
+# ---------------------------------------------------------------------------
+# Tool-calling support (Phase A1)
+# ---------------------------------------------------------------------------
+
+
+def _to_plain(obj: Any) -> Any:
+    """Recursively convert OpenAIObject / dict / list to plain Python.
+
+    The legacy openai 0.28 SDK returns ``OpenAIObject`` instances, which
+    behave like dicts but do not JSON-serialise cleanly. The agent_tools
+    dispatcher consumes plain dicts only, so we flatten once at the
+    boundary.
+    """
+    if isinstance(obj, list):
+        return [_to_plain(x) for x in obj]
+    if hasattr(obj, "items"):  # dict / OpenAIObject
+        return {k: _to_plain(v) for k, v in obj.items()}
+    return obj
+
+
+def chat_with_tools(
+    messages: list[dict],
+    *,
+    tools: list[dict],
+    tool_choice: str | dict = "auto",
+    temperature: float = 0.0,
+    max_tokens: int | None = None,
+    model: str = DEFAULT_MODEL,
+    provider: str | None = None,
+    trace_id: str | None = None,
+    caller: str | None = None,
+) -> dict:
+    """Single-turn function-calling chat. Returns the assistant message dict.
+
+    Unlike :func:`chat`, this returns the FULL message including any
+    ``tool_calls`` array (or ``content`` when the LLM produced a text
+    answer). Caller is responsible for the multi-turn ReAct loop.
+
+    Returned shape::
+
+        {"role": "assistant",
+         "content": str | None,
+         "tool_calls": [{"id": str, "type": "function",
+                          "function": {"name": str, "arguments": str}}, ...]}
+
+    Mock support: when ``set_mock_tool_messages([...])`` is installed,
+    the next dict from the mock list is returned verbatim, the network
+    is not touched, and a JSONL log entry is still written.
+    """
+    if _MOCK_TOOL_MESSAGES is not None:
+        msg = _next_tool_mock()
+        # Best-effort log so test traces look like real ones.
+        timestamp = (
+            _dt.datetime.now(_dt.timezone.utc)
+            .isoformat(timespec="milliseconds")
+            .replace("+00:00", "Z")
+        )
+        _try_log(
+            timestamp=timestamp,
+            caller=caller,
+            trace_id=trace_id,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens or DEFAULT_MAX_TOKENS,
+            messages=messages,
+            response_raw=json.dumps(msg, ensure_ascii=False, default=str),
+            response_cleaned=msg.get("content"),
+            response={"choices": [{"message": msg}], "_mock": True},
+            elapsed_ms=0,
+            is_mock=True,
+            error=None,
+        )
+        return _to_plain(msg)
+
+    response = chat_raw(
+        messages,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        model=model,
+        provider=provider,
+        trace_id=trace_id,
+        caller=caller,
+        tools=tools,
+        tool_choice=tool_choice,
+    )
+    msg = response["choices"][0]["message"]
+    return _to_plain(msg)
 
 
 # ---------------------------------------------------------------------------
