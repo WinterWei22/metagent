@@ -665,6 +665,16 @@ class VerifiedClaim(BaseModel):
             "(pathway_relationship). None for non-Sub-6 claims."
         ),
     )
+    feedback_hint: str | None = Field(
+        None,
+        description=(
+            "LLM-facing actionable revision hint, populated post-verification "
+            "by ``verifier.feedback_hints.annotate_claims``. Populated only "
+            "for verdicts the agent can act on (CONTRADICTED / UNSUPPORTED). "
+            "Phase A2 introduction; older verdict files written before "
+            "v9-PhaseC+A2 leave this null."
+        ),
+    )
 
 
 class VerifiedClaimRow(BaseModel):

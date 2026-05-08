@@ -30,6 +30,7 @@ Caller-side, the typical pattern is::
 """
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 from typing import Any, Callable, Literal
 
@@ -42,6 +43,7 @@ from verifier.claim_classifier import classify_claims
 from verifier.claim_extractor import (
     ClaimExtractionError,
     extract_claims,
+    extract_claims_rulebased,
 )
 from verifier.claim_table import build_claim_table
 from verifier.layers import biological as layer_c
@@ -191,13 +193,25 @@ def _extract_classify(
     the LLM call, we return an empty classified list, and llm_calls stays
     at 0. This keeps :class:`VerifiedIdentification.llm_call_count`
     honest rather than over-counting a call that never happened.
+
+    Phase 6.4: when ``METAGENT_VERIFIER_EXTRACTOR=rule-based`` is set in
+    the environment, Stage 1 uses :func:`extract_claims_rulebased` (no LLM
+    call, sentence-level split that preserves compound mechanistic
+    phrases). The rule-based path is paper-finding-tied to Layer F
+    activation; see ``reports/eval/layerf_loop_closed.md`` for context.
     """
     warnings: list[str] = []
     if not text.strip():
         return [], 0, warnings
 
+    extractor_mode = os.environ.get("METAGENT_VERIFIER_EXTRACTOR", "llm").lower()
     try:
-        extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
+        if extractor_mode == "rule-based":
+            extracted = extract_claims_rulebased(text, trace_id=f"{trace_id}.extract")
+            extract_calls = 0
+        else:
+            extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
+            extract_calls = 1
     except ClaimExtractionError as exc:
         warnings.append(f"VERIFICATION_PARSE_FAILED at stage1: {exc}")
         return None, 1, warnings
@@ -205,7 +219,7 @@ def _extract_classify(
     classified, classify_calls = classify_claims(
         extracted, trace_id=f"{trace_id}.classify"
     )
-    return classified, 1 + classify_calls, warnings
+    return classified, extract_calls + classify_calls, warnings
 
 
 def _verify_per_claim(
@@ -302,6 +316,12 @@ def _final(
     llm_calls: int,
     trace_id: str,
 ) -> VerifiedIdentification:
+    # Phase A2 D1: synthesise stable claim_ids and populate feedback_hint
+    # before serialising. The build_claim_table helper still applies its
+    # fallback id-synthesis but it now no-ops since claim_id is set.
+    from verifier.feedback_hints import annotate_claims
+    claims_v1 = annotate_claims(claims_v1, pass_id="v1")
+    claims_v2 = annotate_claims(claims_v2, pass_id="v2")
     table_v1 = build_claim_table(claims_v1, pass_id="v1")
     table_v2 = build_claim_table(claims_v2, pass_id="v2")
     metrics = compute_claim_metrics(claims_v1=claims_v1, claims_v2=claims_v2)
@@ -463,6 +483,14 @@ def _verify_per_claim_sub6(
                     db_path=ramp_db_path, conn=ramp_conn,
                 )
             )
+        elif c.claim_type == ClaimType.PEAK_MECHANISTIC:
+            # Phase 6.3: Layer F dispatch for Sub-6A real-id narratives.
+            # SubsixSourceReport now exposes experimental_spectrum/candidates
+            # adapters (schemas/sub6_report.py) so Layer F can run without
+            # changes. The first differential_spectra row is used as the
+            # spectrum proxy — see Phase 6.3 report §10 for the
+            # per-claim-spectrum-routing future-work caveat.
+            out.append(layer_f.verify_peak_mechanistic(c, source_report))
         else:
             # Spectrum-centric layers cannot consume SubsixSourceReport;
             # surface as UNVERIFIABLE_V0 with explicit reasoning.
