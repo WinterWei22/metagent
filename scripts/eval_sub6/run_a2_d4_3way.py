@@ -384,7 +384,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--task-id", action="append", help="Override default 5 task IDs (repeatable)")
     parser.add_argument("--max-react-turns", type=int, default=5)
     parser.add_argument("--max-feedback-iters", type=int, default=2)
-    parser.add_argument("--total-timeout", type=float, default=600.0)
+    parser.add_argument("--total-timeout", type=float, default=900.0)
     args = parser.parse_args(argv)
 
     logging.basicConfig(

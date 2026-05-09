@@ -102,12 +102,13 @@ def _final_msg(content: str) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _iter(idx, q):
+def _iter(idx, q, *, verifier_failed: bool = False):
     return IterationRecord(
         iter_idx=idx, narrative=f"N{idx}",
         verdict_total={}, quality=q, n_contradicted=0, n_unsupported=0,
         n_supported=0, n_unverifiable_v0=0, n_tool_calls=0, n_turns=0,
         force_finalised=False, feedback_prompt_used=(idx > 0),
+        verifier_failed=verifier_failed,
     )
 
 
@@ -152,6 +153,42 @@ class TestSelectionRule:
             _iter(0, q=10), _iter(1, q=5), _iter(2, q=1),
         ])
         assert idx == 2 and err is None
+
+    # -------- D5 fix: verifier_failed iters excluded --------
+
+    def test_verifier_failed_iter_skipped_in_selection(self):
+        # iter 2 q=0 looks great but verifier failed → empty verdict.
+        # Selection must NOT pick it; iter 0 (q=2) is the only valid result.
+        idx, err = _select_final_iteration([
+            _iter(0, q=2),
+            _iter(2, q=0, verifier_failed=True),
+        ])
+        assert idx == 0 and err is None
+
+    def test_n2_verifier_failed_picks_n1_when_better(self):
+        idx, err = _select_final_iteration([
+            _iter(0, q=10),
+            _iter(1, q=2),
+            _iter(2, q=0, verifier_failed=True),
+        ])
+        # valid = [N0(q=10), N1(q=2)]. last=N1. q(N1)=2 < q(N0)=10. keep N1.
+        assert idx == 1 and err is None
+
+    def test_all_iters_verifier_failed_returns_sentinel(self):
+        idx, err = _select_final_iteration([
+            _iter(0, q=0, verifier_failed=True),
+            _iter(1, q=0, verifier_failed=True),
+        ])
+        assert idx == 0
+        assert err == "all_iters_verifier_failed"
+
+    def test_iter0_failed_iter1_ok_selects_iter1(self):
+        idx, err = _select_final_iteration([
+            _iter(0, q=0, verifier_failed=True),
+            _iter(1, q=2),
+        ])
+        # Only N1 is valid; selection returns it cleanly.
+        assert idx == 1 and err is None
 
 
 # ---------------------------------------------------------------------------

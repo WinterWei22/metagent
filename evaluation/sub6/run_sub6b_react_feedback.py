@@ -90,6 +90,11 @@ class IterationRecord:
     n_turns: int  # ReAct turns DURING this iteration (incl. finalise pass)
     force_finalised: bool
     feedback_prompt_used: bool
+    verifier_failed: bool = False
+    """True iff verifier_fn raised during this iteration. When True the
+    iteration's ``quality`` is meaningless (computed from an empty
+    VerdictReport) and the selection rule treats it as quality=+inf so
+    a verifier-failed iteration cannot be picked as the final answer."""
 
 
 @dataclass
@@ -126,7 +131,13 @@ class Sub6BAgentFeedbackResult:
 
 DEFAULT_MAX_REACT_TURNS = 5
 DEFAULT_MAX_FEEDBACK_ITERS = 2
-DEFAULT_TOTAL_TIMEOUT = 240.0  # generous — verifier round-trips are slower
+DEFAULT_TOTAL_TIMEOUT = 900.0
+"""Total wall-time budget per task across all feedback iterations.
+A2 D5 bumped this from 240→900: D4 saw 2/5 tasks tripping
+total_timeout=600 because a 30-claim verifier round-trip can take
+~3 min on its own and we run 3 verifier passes (one per iteration)
+plus N LLM turns. 900s gives the loop a fighting chance to complete
+all 2 feedback iterations even when MiniMax is slow."""
 
 
 # ---------------------------------------------------------------------------
@@ -215,17 +226,35 @@ def _select_final_iteration(
       - q(N2) > q(N0):   rollback to N0,  error="feedback_made_it_worse"
       - q(N2) > q(N1):   rollback to N1,  error="iter2_degraded"
       - else:            keep N2 (or N1 / N0 if loop stopped earlier)
+
+    Verifier-failed iterations (``verifier_failed=True``) are EXCLUDED from
+    the comparison: their reported quality is computed from an empty
+    VerdictReport and is not a real quality score. D4 surfaced this when
+    nucleotide_seed1 iter 2 had quality=0 due to a MiniMax 600 s read
+    timeout in the verifier — the runner mistook the empty verdict for a
+    perfect narrative and picked it as final. The fixed rule uses the
+    last non-failed iteration as the comparison anchor, and skips the
+    failed one entirely.
+
+    If all iterations are verifier-failed, returns (0, "all_iters_verifier_failed")
+    and the caller should treat this as a hard error.
     """
     if not iterations:
         return 0, None
-    last = iterations[-1]
-    if len(iterations) == 1:
-        return last.iter_idx, None  # no feedback ran; nothing to compare
-    n0 = iterations[0]
+
+    valid = [it for it in iterations if not it.verifier_failed]
+    if not valid:
+        # No iteration had a real verdict. Caller surfaces this as error.
+        return iterations[0].iter_idx, "all_iters_verifier_failed"
+    if len(valid) == 1:
+        return valid[0].iter_idx, None
+
+    last = valid[-1]
+    n0 = valid[0]
     if last.quality > n0.quality:
         return n0.iter_idx, "feedback_made_it_worse"
-    if len(iterations) >= 3:
-        n1 = iterations[1]
+    if len(valid) >= 3:
+        n1 = valid[1]
         if last.quality > n1.quality:
             return n1.iter_idx, "iter2_degraded"
     return last.iter_idx, None
@@ -494,11 +523,13 @@ def run_sub6b_react_feedback(
         return result
 
     # Verifier on N0
+    iter0_verifier_failed = False
     try:
         report_0 = verifier_fn(narrative) if narrative else VerdictReport([], {})
     except Exception as exc:
         err = f"verifier_failed_iter0: {type(exc).__name__}: {exc}"
         report_0 = VerdictReport([], {})
+        iter0_verifier_failed = True
         logger.warning("verifier failed on iter 0 for %s: %s", task_id, err)
 
     q0, n_c0, n_u0, n_s0 = _quality_score(report_0.verdicts_total)
@@ -517,6 +548,7 @@ def run_sub6b_react_feedback(
         n_turns=n_turns,
         force_finalised=force_fin,
         feedback_prompt_used=False,
+        verifier_failed=iter0_verifier_failed,
     )
     iterations.append(iter0)
     if persister is not None:
@@ -583,12 +615,14 @@ def run_sub6b_react_feedback(
             break
 
         # Verifier on N_fb
+        iter_verifier_failed = False
         try:
             report_fb = verifier_fn(narrative_n) if narrative_n else VerdictReport([], {})
         except Exception as exc:
             err = err or f"verifier_failed_iter{fb}: {type(exc).__name__}: {exc}"
             report_fb = VerdictReport([], {})
             termination_reason = "verifier_error_in_feedback_iter"
+            iter_verifier_failed = True
 
         q, n_c, n_u, n_s = _quality_score(report_fb.verdicts_total)
         n_v = int(report_fb.verdicts_total.get("unverifiable_v0", 0))
@@ -606,6 +640,7 @@ def run_sub6b_react_feedback(
             n_turns=n_turns_n,
             force_finalised=force_fin_n,
             feedback_prompt_used=True,
+            verifier_failed=iter_verifier_failed,
         )
         iterations.append(iter_rec)
         feedback_iters_done += 1
@@ -617,6 +652,12 @@ def run_sub6b_react_feedback(
                 n_tool_calls=n_calls_n, n_turns=n_turns_n,
                 force_finalised=force_fin_n, feedback_prompt_used=True,
             )
+
+        # If THIS iter's verifier failed, do NOT use its empty report to
+        # decide actionable / convergence. Bail to selection rule which
+        # treats verifier_failed iters as quality=+inf.
+        if iter_verifier_failed:
+            break
 
         prev_report = report_fb
         prev_narrative = narrative_n
@@ -637,6 +678,8 @@ def run_sub6b_react_feedback(
 
     # ---------- Selection ----------
     final_iter_idx, rollback_reason = _select_final_iteration(iterations)
+    if rollback_reason == "all_iters_verifier_failed":
+        err = err or "all_iters_verifier_failed"
     final_iter = next(it for it in iterations if it.iter_idx == final_iter_idx)
     elapsed = time.perf_counter() - t0
     n_total_tool_calls = sum(it.n_tool_calls for it in iterations)
@@ -745,6 +788,7 @@ def run_sub6b_feedback_from_narrative(
     termination_reason: str | None = None
 
     # Verify the supplied narrative.
+    iter0_verifier_failed = False
     try:
         report_0 = (
             verifier_fn(iter0_narrative)
@@ -754,6 +798,7 @@ def run_sub6b_feedback_from_narrative(
     except Exception as exc:
         err = f"verifier_failed_iter0: {type(exc).__name__}: {exc}"
         report_0 = VerdictReport([], {})
+        iter0_verifier_failed = True
         logger.warning("verifier failed on supplied iter 0 for %s: %s", task_id, err)
 
     q0, n_c0, n_u0, n_s0 = _quality_score(report_0.verdicts_total)
@@ -772,6 +817,7 @@ def run_sub6b_feedback_from_narrative(
         n_turns=iter0_n_turns,
         force_finalised=iter0_force_finalised,
         feedback_prompt_used=False,
+        verifier_failed=iter0_verifier_failed,
     )
     iterations.append(iter0)
     if persister is not None:
@@ -833,12 +879,14 @@ def run_sub6b_feedback_from_narrative(
             termination_reason = "llm_error_in_feedback_iter"
             break
 
+        iter_verifier_failed = False
         try:
             report_fb = verifier_fn(narrative_n) if narrative_n else VerdictReport([], {})
         except Exception as exc:
             err = err or f"verifier_failed_iter{fb}: {type(exc).__name__}: {exc}"
             report_fb = VerdictReport([], {})
             termination_reason = "verifier_error_in_feedback_iter"
+            iter_verifier_failed = True
 
         q, n_c, n_u, n_s = _quality_score(report_fb.verdicts_total)
         n_v = int(report_fb.verdicts_total.get("unverifiable_v0", 0))
@@ -856,6 +904,7 @@ def run_sub6b_feedback_from_narrative(
             n_turns=n_turns_n,
             force_finalised=force_fin_n,
             feedback_prompt_used=True,
+            verifier_failed=iter_verifier_failed,
         )
         iterations.append(iter_rec)
         feedback_iters_done += 1
@@ -867,6 +916,9 @@ def run_sub6b_feedback_from_narrative(
                 n_tool_calls=n_calls_n, n_turns=n_turns_n,
                 force_finalised=force_fin_n, feedback_prompt_used=True,
             )
+
+        if iter_verifier_failed:
+            break
 
         prev_report = report_fb
         prev_narrative = narrative_n
@@ -882,6 +934,8 @@ def run_sub6b_feedback_from_narrative(
             termination_reason = "early_exit_no_revisions"
 
     final_iter_idx, rollback_reason = _select_final_iteration(iterations)
+    if rollback_reason == "all_iters_verifier_failed":
+        err = err or "all_iters_verifier_failed"
     final_iter = next(it for it in iterations if it.iter_idx == final_iter_idx)
     elapsed = time.perf_counter() - t0
     n_total_tool_calls = sum(it.n_tool_calls for it in iterations)
