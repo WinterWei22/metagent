@@ -675,6 +675,252 @@ def run_sub6b_react_feedback(
 
 
 # ---------------------------------------------------------------------------
+# Reuse-narrative entry point (D4 wall-time saver)
+# ---------------------------------------------------------------------------
+
+
+def run_sub6b_feedback_from_narrative(
+    task: dict,
+    iter0_narrative: str,
+    *,
+    verifier_fn: VerifierFn,
+    chat_with_tools_fn: ChatWithToolsFn | None = None,
+    finalise_chat_fn: ChatWithToolsFn | None = None,
+    iter0_n_tool_calls: int = 0,
+    iter0_n_turns: int = 0,
+    iter0_force_finalised: bool = False,
+    model: str = "MiniMax-M2.7",
+    provider: str = "minimax",
+    temperature: float = 0.0,
+    max_react_turns: int = DEFAULT_MAX_REACT_TURNS,
+    max_feedback_iterations: int = DEFAULT_MAX_FEEDBACK_ITERS,
+    total_timeout: float = DEFAULT_TOTAL_TIMEOUT,
+    persister: TaskPersister | None = None,
+    caller: str = "sub6b_agent_a2_reuse",
+) -> Sub6BAgentFeedbackResult:
+    """Run the feedback loop with a pre-computed iteration-0 narrative.
+
+    D4 use case: A2's pilot wants 3 variants (single-call / react-only /
+    react+feedback) on the same task. The feedback variant must reuse
+    the react-only narrative as its iter 0 — re-running ReAct just to
+    re-derive the same N0 wastes ~50 % of wall time and risks LLM-
+    nondeterminism drift between the two variants. This entry point
+    accepts the prior narrative directly and skips iter 0's ReAct loop.
+
+    Iteration-0 telemetry (n_tool_calls / n_turns / force_finalised) is
+    inherited from the caller's prior run via the optional
+    ``iter0_*`` kwargs so the IterationRecord still reflects the work
+    that produced the narrative.
+
+    Synthetic message history seeded into the LLM context for iteration-1+:
+
+        [system prompt] (build_react_messages)
+        [user prompt]   (build_react_messages)
+        [assistant]     content=iter0_narrative, no tool_calls
+
+    The LLM in iter 1 sees the conversation as if it had directly
+    produced ``iter0_narrative`` without tool calls. It then receives
+    the feedback user message and may call tools as in a normal feedback
+    iteration.
+    """
+    chat_with_tools_fn = chat_with_tools_fn or llm_client.chat_with_tools
+    finalise_chat_fn = finalise_chat_fn or llm_client.chat_with_tools
+
+    safe = _strip_ground_truth(task)
+    metabolites = safe["differential_metabolites"]
+    task_id = safe["task_id"]
+
+    reset_call_cache()
+    t0 = time.perf_counter()
+    deadline = t0 + total_timeout
+
+    # Synthetic message history for iteration-1+.
+    messages: list[dict] = build_react_messages(metabolites)
+    messages.append(
+        {"role": "assistant", "content": iter0_narrative, "tool_calls": None}
+    )
+
+    iterations: list[IterationRecord] = []
+    err: str | None = None
+    termination_reason: str | None = None
+
+    # Verify the supplied narrative.
+    try:
+        report_0 = (
+            verifier_fn(iter0_narrative)
+            if iter0_narrative
+            else VerdictReport([], {})
+        )
+    except Exception as exc:
+        err = f"verifier_failed_iter0: {type(exc).__name__}: {exc}"
+        report_0 = VerdictReport([], {})
+        logger.warning("verifier failed on supplied iter 0 for %s: %s", task_id, err)
+
+    q0, n_c0, n_u0, n_s0 = _quality_score(report_0.verdicts_total)
+    n_v0 = int(report_0.verdicts_total.get("unverifiable_v0", 0))
+
+    iter0 = IterationRecord(
+        iter_idx=0,
+        narrative=iter0_narrative,
+        verdict_total=dict(report_0.verdicts_total),
+        quality=q0,
+        n_contradicted=n_c0,
+        n_unsupported=n_u0,
+        n_supported=n_s0,
+        n_unverifiable_v0=n_v0,
+        n_tool_calls=iter0_n_tool_calls,
+        n_turns=iter0_n_turns,
+        force_finalised=iter0_force_finalised,
+        feedback_prompt_used=False,
+    )
+    iterations.append(iter0)
+    if persister is not None:
+        persister.record_iteration(
+            iter_idx=0, narrative=iter0_narrative,
+            verdict_summary=dict(report_0.verdicts_total),
+            n_tool_calls=iter0_n_tool_calls, n_turns=iter0_n_turns,
+            force_finalised=iter0_force_finalised, feedback_prompt_used=False,
+        )
+
+    # Run feedback iterations using the same loop body as the full runner.
+    prev_report = report_0
+    prev_narrative = iter0_narrative
+    feedback_iters_done = 0
+
+    for fb in range(1, max_feedback_iterations + 1):
+        actionable = [
+            c for c in prev_report.claims
+            if c.verdict in (ClaimVerdict.CONTRADICTED, ClaimVerdict.UNSUPPORTED)
+        ]
+        if not actionable:
+            termination_reason = (
+                "early_exit_no_revisions" if fb == 1
+                else "no_actionable_claims_after_iter"
+            )
+            break
+
+        if time.perf_counter() > deadline:
+            err = err or "timeout_in_feedback_loop"
+            termination_reason = "timeout_in_feedback_loop"
+            break
+
+        contradicted = [c for c in actionable if c.verdict == ClaimVerdict.CONTRADICTED]
+        unsupported = [c for c in actionable if c.verdict == ClaimVerdict.UNSUPPORTED]
+        feedback_msg = build_feedback_message(
+            contradicted=contradicted,
+            unsupported=unsupported,
+            original_narrative=prev_narrative,
+        )
+        messages.append({"role": "user", "content": feedback_msg})
+
+        feedback_max_turns = max(2, (max_react_turns + 1) // 2)
+        narrative_n, _tool_log, n_turns_n, n_calls_n, force_fin_n, react_err_n, messages = _react_loop(
+            messages=messages,
+            chat_with_tools_fn=chat_with_tools_fn,
+            finalise_chat_fn=finalise_chat_fn,
+            model=model,
+            provider=provider,
+            temperature=temperature,
+            max_turns=feedback_max_turns,
+            deadline=deadline,
+            trace_id=f"{task_id}.iter{fb}",
+            caller=f"{caller}_iter{fb}",
+            persister=persister,
+            iter_idx=fb,
+        )
+        if react_err_n and react_err_n not in {"timeout_fallback_used", "empty_narrative_after_finalise"}:
+            err = err or react_err_n
+            termination_reason = "llm_error_in_feedback_iter"
+            break
+
+        try:
+            report_fb = verifier_fn(narrative_n) if narrative_n else VerdictReport([], {})
+        except Exception as exc:
+            err = err or f"verifier_failed_iter{fb}: {type(exc).__name__}: {exc}"
+            report_fb = VerdictReport([], {})
+            termination_reason = "verifier_error_in_feedback_iter"
+
+        q, n_c, n_u, n_s = _quality_score(report_fb.verdicts_total)
+        n_v = int(report_fb.verdicts_total.get("unverifiable_v0", 0))
+
+        iter_rec = IterationRecord(
+            iter_idx=fb,
+            narrative=narrative_n,
+            verdict_total=dict(report_fb.verdicts_total),
+            quality=q,
+            n_contradicted=n_c,
+            n_unsupported=n_u,
+            n_supported=n_s,
+            n_unverifiable_v0=n_v,
+            n_tool_calls=n_calls_n,
+            n_turns=n_turns_n,
+            force_finalised=force_fin_n,
+            feedback_prompt_used=True,
+        )
+        iterations.append(iter_rec)
+        feedback_iters_done += 1
+
+        if persister is not None:
+            persister.record_iteration(
+                iter_idx=fb, narrative=narrative_n,
+                verdict_summary=dict(report_fb.verdicts_total),
+                n_tool_calls=n_calls_n, n_turns=n_turns_n,
+                force_finalised=force_fin_n, feedback_prompt_used=True,
+            )
+
+        prev_report = report_fb
+        prev_narrative = narrative_n
+
+        if q == 0:
+            termination_reason = termination_reason or "no_actionable_claims_after_iter"
+            break
+    else:
+        termination_reason = termination_reason or "max_iterations_reached"
+
+    if feedback_iters_done == 0 and termination_reason is None and len(iterations) == 1:
+        if iterations[0].quality == 0:
+            termination_reason = "early_exit_no_revisions"
+
+    final_iter_idx, rollback_reason = _select_final_iteration(iterations)
+    final_iter = next(it for it in iterations if it.iter_idx == final_iter_idx)
+    elapsed = time.perf_counter() - t0
+    n_total_tool_calls = sum(it.n_tool_calls for it in iterations)
+
+    result = Sub6BAgentFeedbackResult(
+        task_id=task_id,
+        iterations=iterations,
+        final_iter_idx=final_iter_idx,
+        final_narrative=final_iter.narrative,
+        final_verdict_total=final_iter.verdict_total,
+        n_feedback_iterations=feedback_iters_done,
+        elapsed_seconds=elapsed,
+        llm_model=model,
+        metabolite_count=len(metabolites),
+        error=err,
+        rollback_reason=rollback_reason,
+        termination_reason=termination_reason,
+    )
+
+    if persister is not None:
+        persister.mark_complete(
+            final_narrative=final_iter.narrative,
+            n_iterations=feedback_iters_done,
+            n_total_tool_calls=n_total_tool_calls,
+            elapsed_seconds=elapsed,
+            error=err,
+            extra={
+                "final_iter_idx": final_iter_idx,
+                "rollback_reason": rollback_reason,
+                "termination_reason": termination_reason,
+                "qualities": [it.quality for it in iterations],
+                "iter0_reused": True,
+            },
+        )
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # CLI shim — minimal, mainly for D5 batch driver
 # ---------------------------------------------------------------------------
 

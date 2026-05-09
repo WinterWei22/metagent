@@ -1,0 +1,229 @@
+[
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "single": {
+      "narr_chars": 2190,
+      "elapsed_s": 33.1,
+      "verdicts": {
+        "unsupported": 3,
+        "unverifiable_v0": 23,
+        "supported": 5,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3078,
+      "n_tool_calls": 11,
+      "n_turns": 4,
+      "elapsed_s": 33.4,
+      "verdicts": {
+        "supported": 14,
+        "unsupported": 9,
+        "contradicted": 5,
+        "unverifiable_v0": 38
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3078,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 748.1,
+      "verdicts": {
+        "contradicted": 8,
+        "supported": 26,
+        "unsupported": 8,
+        "unverifiable_v0": 28
+      },
+      "qualities": [
+        10,
+        11
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+    "single": {
+      "narr_chars": 2029,
+      "elapsed_s": 30.7,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 25,
+        "unsupported": 5,
+        "contradicted": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2404,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 60.0,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 28,
+        "unsupported": 5,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2404,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1104.5,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 34,
+        "unsupported": 6,
+        "contradicted": 3
+      },
+      "qualities": [
+        10,
+        14
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+    "single": {
+      "narr_chars": 1721,
+      "elapsed_s": 39.7,
+      "verdicts": {
+        "supported": 8,
+        "unsupported": 8,
+        "unverifiable_v0": 12
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1980,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 51.8,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 26,
+        "unsupported": 5,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1724,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "verifier_error_in_feedback_iter",
+      "elapsed_s": 1160.0,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 14,
+        "unsupported": 5
+      },
+      "qualities": [
+        7,
+        3,
+        0
+      ],
+      "error": "verifier_failed_iter2: Timeout: Request timed out: HTTPSConnectionPool(host='api.minimaxi.com', port=443): Read timed out. (read timeout=600)"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "single": {
+      "narr_chars": 1876,
+      "elapsed_s": 22.5,
+      "verdicts": {
+        "unsupported": 9,
+        "unverifiable_v0": 25,
+        "contradicted": 1,
+        "supported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2264,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 44.7,
+      "verdicts": {
+        "contradicted": 2,
+        "unsupported": 6,
+        "supported": 6,
+        "unverifiable_v0": 37
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1814,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 601.6,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 23,
+        "unsupported": 1
+      },
+      "qualities": [
+        11,
+        3
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+    "single": {
+      "narr_chars": 3711,
+      "elapsed_s": 53.1,
+      "verdicts": {
+        "unverifiable_v0": 63,
+        "supported": 5,
+        "unsupported": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2931,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 74.1,
+      "verdicts": {
+        "unverifiable_v0": 46,
+        "contradicted": 2,
+        "supported": 7,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1994,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 653.7,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 29,
+        "contradicted": 2
+      },
+      "qualities": [
+        5,
+        10,
+        1
+      ],
+      "error": null
+    }
+  }
+]
