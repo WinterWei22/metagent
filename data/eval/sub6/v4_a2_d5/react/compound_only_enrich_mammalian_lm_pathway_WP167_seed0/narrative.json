@@ -1,0 +1,12 @@
+{
+  "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+  "narrative": "",
+  "elapsed_seconds": 0.33408819139003754,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 7,
+  "n_turns": 1,
+  "n_tool_calls": 0,
+  "force_finalised": false,
+  "tool_calls_log": [],
+  "error": "APIError: 当前服务集群负载较高，请稍后重试，感谢您的耐心等待。 (2064) {\"type\":\"error\",\"error\":{\"type\":\"overloaded_error\",\"message\":\"当前服务集群负载较高，请稍后重试，感谢您的耐心等待。 (2064)\",\"http_code\":\"529\"},\"request_id\":\"064dfbe88d560776c7a49784a40a5901\"}\n 529 {'type': 'error', 'error': {'type': 'overloaded_error', 'message': '当前服务集群负载较高，请稍后重试，感谢您的耐心等待。 (2064)', 'http_code': '529'}, 'request_id': '064dfbe88d560776c7a49784a40a5901'} {'Date': 'Sat, 09 May 2026 05:40:57 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '217', 'Connection': 'keep-alive', 'Trace-Id': '064dfbe88d560776c7a49784a40a5901', 'X-Session-Id': '301b45753f979ef1e34bb0cecef4b60e', 'X-Mm-Request-Id': '2037393260237820736_1778305256dbjk1o', 'Minimax-Request-Id': '69ac9a2499f87a2cf49251d835e3cef5', 'alb_receive_time': '1778305256.89', 'alb_request_id': '8a30a2f8de8a637b1e6c43ac56d80baa6c47ff8e'}"
+}

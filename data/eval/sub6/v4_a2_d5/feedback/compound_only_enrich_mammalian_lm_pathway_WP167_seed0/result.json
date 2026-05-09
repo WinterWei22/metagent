@@ -1,0 +1,30 @@
+{
+  "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+  "iterations": [
+    {
+      "iter_idx": 0,
+      "narrative": "",
+      "verdict_total": {},
+      "quality": 0,
+      "n_contradicted": 0,
+      "n_unsupported": 0,
+      "n_supported": 0,
+      "n_unverifiable_v0": 0,
+      "n_tool_calls": 0,
+      "n_turns": 1,
+      "force_finalised": false,
+      "feedback_prompt_used": false,
+      "verifier_failed": false
+    }
+  ],
+  "final_iter_idx": 0,
+  "final_narrative": "",
+  "final_verdict_total": {},
+  "n_feedback_iterations": 0,
+  "elapsed_seconds": 0.00024932995438575745,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 7,
+  "error": null,
+  "rollback_reason": null,
+  "termination_reason": "early_exit_no_revisions"
+}

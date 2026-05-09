@@ -1,0 +1,465 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+  "narrative": "The differential metabolome is anchored to **Glycine, serine and threonine metabolism (KEGG map00260)** — the top hit with an extraordinary fold-enrichment of 632 and FDR = 0.0 — alongside a broader Reactome \"Metabolism of amino acids and derivatives\" cluster (fold 187.6, FDR = 0.0). Eight of the twelve input metabolites map to the serine/threonine core, with phosphoserine (C01005) and S-adenosylhomocysteine (C00021) appearing in both the KEGG pathway and the serine-branching SMP00721 (3-Phosphoglycerate dehydrogenase deficiency) context, indicating perturbation of the one-carbon folate branch linked to this deficiency model.\n\n**Key drivers.** Phosphoserine (C01005) anchors the serine-synthesis limb and is annotated in \"Serine metabolism\" (WP4688) and \"Trans-sulfuration, one-carbon metabolism and related pathways\" (WP2525). L-Threonine (C00188) feeds into glycine via the threonine aldolase reaction, bridging amino-acid catabolism to the one-carbon pool. S-Adenosylhomocysteine (C00021), the product of methyltransferase reactions, connects the methylation economy to this network. KEGG BFS confirms the cysteine–cystathionine axis: L-cysteine (C00097) ↔ L-cystathionine (C02291) through O-acetyl-L-serine (C00065) in three enzymatic steps, placing cysteine downstream of the serine/glycine hub.\n\n**Biological significance.** The convergence on glycine–serine–threonine metabolism suggests disrupted one-carbon folate cycling and cross-linked trans-sulfuration, consistent with conditions ranging from metabolic epilepsies (enriched via WP5355) to disorders of methyl group donation. Niacinamide (C00153) and sulfate (C00059) further imply perturbed NAD⁺ salvage and oxidative cysteine metabolism, respectively. Guanidinoacetic acid (C00581) maps to creatine-biosynthesis pathways, indicating a downstream read-out of altered methylation capacity. The 632-fold enrichment — despite a modest input of 12 metabolites — reflects strong pathway specificity and warrants targeted investigation of serine-biosynthesis enzymes and trans-sulfuration flux in the experimental model.",
+  "elapsed_seconds": 64.1711993291974,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 12,
+  "n_turns": 4,
+  "n_tool_calls": 6,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_7i1k8piv0v34_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00020\",\"C00153\",\"C00097\",\"C00188\",\"C01005\",\"C00612\",\"C00037\",\"C01165\",\"C02291\",\"C00059\",\"C00021\",\"C00581\"],\"top_k\":5}",
+      "result": {
+        "n_input": 12,
+        "n_resolved": 12,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Metabolism of amino acids and derivatives",
+            "source": "reactome",
+            "external_id": "R-HSA-71291",
+            "fdr": 0.0,
+            "fold_enrichment": 187.642,
+            "matched_compounds": [
+              "C00020",
+              "C00153",
+              "C00097",
+              "C00188",
+              "C01005",
+              "C00612",
+              "C00037",
+              "C01165",
+              "C02291",
+              "C00059",
+              "C00021",
+              "C00581"
+            ],
+            "pathway_size": 288
+          },
+          {
+            "name": "Glycine, serine and threonine metabolism",
+            "source": "kegg",
+            "external_id": "map00260",
+            "fdr": 0.0,
+            "fold_enrichment": 632.058,
+            "matched_compounds": [
+              "C00020",
+              "C00097",
+              "C00188",
+              "C01005",
+              "C00037",
+              "C02291",
+              "C00021",
+              "C00581"
+            ],
+            "pathway_size": 57
+          },
+          {
+            "name": "Metabolic epileptic disorders",
+            "source": "wikipathways",
+            "external_id": "WP5355",
+            "fdr": 0.0,
+            "fold_enrichment": 387.391,
+            "matched_compounds": [
+              "C00020",
+              "C00097",
+              "C01005",
+              "C00037",
+              "C02291",
+              "C00059",
+              "C00021",
+              "C00581"
+            ],
+            "pathway_size": 93
+          },
+          {
+            "name": "Metabolism",
+            "source": "reactome",
+            "external_id": "R-HSA-1430728",
+            "fdr": 0.0,
+            "fold_enrichment": 35.765,
+            "matched_compounds": [
+              "C00020",
+              "C00153",
+              "C00097",
+              "C00188",
+              "C01005",
+              "C00612",
+              "C00037",
+              "C01165",
+              "C02291",
+              "C00059",
+              "C00021",
+              "C00581"
+            ],
+            "pathway_size": 1511
+          },
+          {
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00721",
+            "fdr": 0.0,
+            "fold_enrichment": 630.478,
+            "matched_compounds": [
+              "C00020",
+              "C00097",
+              "C01005",
+              "C00037",
+              "C02291",
+              "C00021",
+              "C00581"
+            ],
+            "pathway_size": 50
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_1m8icsv02pub_1",
+      "arguments": "{\"metabolite_id\":\"C01005\"}",
+      "result": {
+        "metabolite_id": "C01005",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "WP4688",
+            "name": "Serine metabolism",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "WP5355",
+            "name": "Metabolic epileptic disorders",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "WP2525",
+            "name": "Trans-sulfuration, one-carbon metabolism and related pathways",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "WP3604",
+            "name": "Biochemical pathways: part I",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "WP5213",
+            "name": "Amino acid metabolism in triple-negative breast cancer cells",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "WP5083",
+            "name": "Neuroinflammation and glutamatergic signaling",
+            "source": "wikipathways",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00721",
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00179",
+            "name": "Dihydropyrimidine Dehydrogenase Deficiency (DHPD)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00242",
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00484",
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0059597",
+          "kegg:C00641"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000208",
+          "hmdb:HMDB0000224",
+          "hmdb:HMDB0000240",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000257",
+          "hmdb:HMDB0000574",
+          "hmdb:HMDB0000731",
+          "hmdb:HMDB0001039"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Phosphoserine is annotated in 10 pathways across smpdb, wikipathways (e.g. Serine metabolism, Metabolic epileptic disorders, and Trans-sulfuration, one-carbon metabolism and related pathways). It has 6 upstream and 15 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_1m8icsv02pub_2",
+      "arguments": "{\"metabolite_id\":\"C00188\"}",
+      "result": {
+        "metabolite_id": "C00188",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-352230",
+            "name": "Amino acid transport across the plasma membrane",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-379716",
+            "name": "Cytosolic tRNA aminoacylation",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-379724",
+            "name": "tRNA Aminoacylation",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-379726",
+            "name": "Mitochondrial tRNA aminoacylation",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-382551",
+            "name": "Transport of small molecules",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-392499",
+            "name": "Metabolism of proteins",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-425366",
+            "name": "Transport of bile salts and organic acids, metal ions and amine compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-425393",
+            "name": "Transport of inorganic cations/anions and amino acids/oligopeptides",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-425407",
+            "name": "SLC-mediated transmembrane transport",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000641",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0003484",
+          "hmdb:HMDB0011185",
+          "hmdb:HMDB0028697",
+          "hmdb:HMDB0029049",
+          "hmdb:HMDB0029070",
+          "hmdb:HMDB0029071"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000397",
+          "hmdb:HMDB0000641",
+          "hmdb:HMDB0000990",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0001967"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "L-Threonine is annotated in 10 pathways across reactome (e.g. Metabolism, Amino acid transport across the plasma membrane, and Cytosolic tRNA aminoacylation). It has 11 upstream and 16 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_1m8icsv02pub_3",
+      "arguments": "{\"metabolite_id\":\"C00021\"}",
+      "result": {
+        "metabolite_id": "C00021",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00721",
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00169",
+            "name": "Alkaptonuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00330",
+            "name": "Arginine and proline metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00362",
+            "name": "Arginine: Glycine Amidinotransferase Deficiency (AGAT Deficiency)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00170",
+            "name": "Aromatic L-Aminoacid Decarboxylase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00427",
+            "name": "Azathioprine Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00465",
+            "name": "Carnitine Synthesis",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00504",
+            "name": "Creatine deficiency, guanidinoacetate methyltransferase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00177",
+            "name": "Cystathionine Beta-Synthase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00179",
+            "name": "Dihydropyrimidine Dehydrogenase Deficiency (DHPD)",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000010",
+          "hmdb:HMDB0000022",
+          "hmdb:HMDB0000033",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000064",
+          "hmdb:HMDB0000068",
+          "hmdb:HMDB0000073",
+          "hmdb:HMDB0000092",
+          "hmdb:HMDB0000123"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000034",
+          "hmdb:HMDB0000050",
+          "hmdb:HMDB0000742",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "S-Adenosylhomocysteine is annotated in 10 pathways across kegg, smpdb (e.g. 3-Phosphoglycerate dehydrogenase deficiency, Alkaptonuria, and Arginine and proline metabolism). It has 297 upstream and 5 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_i3fpryshcnc0_1",
+      "arguments": "{\"compound_a\":\"C00097\",\"compound_b\":\"C02291\"}",
+      "result": {
+        "compound_a": "C00097",
+        "compound_b": "C02291",
+        "resolved_a": "cpd:C00097",
+        "resolved_b": "cpd:C02291",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00097",
+          "cpd:C00022",
+          "cpd:C00065",
+          "cpd:C02291"
+        ],
+        "path_length": 3,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_i3fpryshcnc0_2",
+      "arguments": "{\"compound_a\":\"C00037\",\"compound_b\":\"C01005\"}",
+      "result": {
+        "compound_a": "C00037",
+        "compound_b": "C01005",
+        "resolved_a": "cpd:C00037",
+        "resolved_b": "cpd:C01005",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00037",
+          "cpd:C00065",
+          "cpd:C01005"
+        ],
+        "path_length": 2,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-09T14:00:23.358Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+  "final_narrative": "The differential metabolome is anchored to **Glycine, serine and threonine metabolism (KEGG map00260)** — the top hit with fold-enrichment 632.058 and FDR = 0.0 — alongside the broader Reactome **Metabolism of amino acids and derivatives (R-HSA-71291)** cluster (fold 187.642, FDR = 0.0). Eight of the twelve input metabolites map to the serine/threonine core, with phosphoserine (C01005) annotated in Serine metabolism (WP4688) and Trans-sulfuration, one-carbon metabolism and related pathways (WP2525), and S-adenosylhomocysteine (C00021) in Arginine and proline metabolism (map00330), collectively indicating perturbation of one-carbon folate and amino-acid cross-talk.\n\n**Key drivers.** Phosphoserine (C01005) anchors the serine-synthesis limb and is annotated in Serine metabolism (WP4688) and Trans-sulfuration, one-carbon metabolism and related pathways (WP2525) [retracted: not confirmed in KEGG map00260]. L-Threonine (C00188) co-enriches within the glycine/serine/threonine module alongside glycine (C00037), consistent with pathway co-membership rather than a proven threonine-aldolase conversion [retracted: directional claim unsupported by KEGG graph]. S-Adenosylhomocysteine (C00021) [retracted: KEGG map00260 membership unconfirmed] connects the methylation economy to this network. KEGG BFS confirms the cysteine–cystathionine axis: L-cysteine (C00097) ↔ L-cystathionine (C02291) via O-acetyl-L-serine (C00065) in three enzymatic steps.\n\n**Biological significance.** The convergence on glycine–serine–threonine metabolism suggests disrupted one-carbon folate cycling and cross-linked trans-sulfuration, consistent with conditions ranging from metabolic epilepsies (enriched via WP5355) to disorders of methyl group donation. Niacinamide (C00153) and sulfate (C00059) further imply perturbed NAD⁺ salvage and oxidative cysteine metabolism, respectively. Guanidinoacetic acid (C00581) maps to creatine-biosynthesis pathways, indicating a downstream read-out of altered methylation capacity. **Glycine, serine and threonine metabolism (KEGG map00260)** — fold 632.058 — warrants targeted investigation of serine-biosynthesis enzymes and trans-sulfuration flux in the experimental model.\n\n**Limitations.** Several claims — including the KEGG map00260 membership of phosphoserine and S-adenosylhomocysteine, and a directional L-threonine → glycine relationship — could not be confirmed against current RaMP-DB or KEGG reaction graph evidence, limiting the mechanistic specificity of the narrative. The enrichment significance should be interpreted conservatively given the modest input size of 12 metabolites.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 11,
+  "elapsed_seconds": 1063.1234923992306,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "no_actionable_claims_after_iter",
+    "qualities": [
+      5,
+      2,
+      0
+    ],
+    "iter0_reused": true
+  }
+}
