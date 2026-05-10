@@ -83,6 +83,105 @@ def get_log_path() -> Path:
 _MOCK_RESPONSES: list[str] | None = None
 _MOCK_INDEX = 0
 
+
+# ---------------------------------------------------------------------------
+# Retry-with-backoff (phase A3 D0b)
+# ---------------------------------------------------------------------------
+
+# A2 audit § 5 debt #5: 3 / 60 verifier calls hit MiniMax 600s read timeout
+# or HTTP 529 ("当前服务集群负载较高 ... 2064"). v4 full pilot would be
+# ~28 failed calls without retry. Retry with jittered backoff resolves the
+# transient failures cheaply.
+#
+# Default retries=3 with backoff approximately 10 s / 30 s / 60 s plus
+# jitter; total max wait ~2 min per call, well inside any per-task
+# total_timeout budget.
+
+DEFAULT_MAX_RETRIES = int(os.environ.get("METAGENT_LLM_MAX_RETRIES", "3"))
+
+
+def _default_retry_backoff() -> list[float]:
+    import random
+    return [
+        random.uniform(8.0, 12.0),    # ~10 s ± 2
+        random.uniform(25.0, 35.0),   # ~30 s ± 5
+        random.uniform(50.0, 70.0),   # ~60 s ± 10
+    ]
+
+
+# Substring patterns matched against ``str(exc)`` for retry classification.
+# MiniMax overloaded error: returns 200 OK with body code 2064 + http_code 529.
+_RETRYABLE_ERROR_PATTERNS = (
+    "529", "2064", "503", "502", "500",
+    "overloaded_error",
+    "请稍后重试",
+    "服务集群负载",
+)
+
+
+def _is_retryable_exception(exc: BaseException) -> bool:
+    """Classify whether an LLM-call exception should be retried.
+
+    Retried:
+      - openai.error.Timeout (read / connect timeout)
+      - openai.error.APIConnectionError (proxy disconnect, DNS failure)
+      - openai.error.ServiceUnavailableError (some 5xx paths)
+      - openai.error.APIError when its message contains 5xx / 529 / 2064 /
+        MiniMax-specific overload phrases
+
+    Not retried (fast-fail surfacing the bug):
+      - openai.error.AuthenticationError (bad API key)
+      - openai.error.InvalidRequestError (malformed request — retry won't help)
+      - openai.error.RateLimitError (429 — caller should slow down, not retry)
+      - generic Exception types we don't recognise
+    """
+    name = type(exc).__name__
+    if name in {"Timeout", "APIConnectionError", "ServiceUnavailableError"}:
+        return True
+    if name == "APIError":
+        msg = str(exc)
+        return any(p in msg for p in _RETRYABLE_ERROR_PATTERNS)
+    return False
+
+
+def _create_with_retry(
+    openai_module: Any,
+    create_kwargs: dict,
+    *,
+    max_retries: int,
+    backoff: list[float],
+    caller: str | None,
+    trace_id: str | None,
+) -> dict:
+    """Wrap ``openai.ChatCompletion.create`` in a retry loop.
+
+    On a retryable exception (see :func:`_is_retryable_exception`), sleeps
+    ``backoff[attempt]`` seconds (jittered) and retries up to
+    ``max_retries`` times. The first non-retryable exception, or the
+    final exhausted attempt, raises through. A retry occurrence is
+    logged via ``logger.warning`` so audits can spot which calls were
+    re-driven without full traceback noise.
+    """
+    attempt = 0
+    while True:
+        try:
+            return openai_module.ChatCompletion.create(  # type: ignore[attr-defined]
+                **create_kwargs,
+            )
+        except Exception as exc:
+            if not _is_retryable_exception(exc):
+                raise
+            if attempt >= max_retries:
+                raise
+            wait = backoff[min(attempt, len(backoff) - 1)] if backoff else 1.0
+            logger.warning(
+                "chat retry attempt %d/%d after %s: %s — sleeping %.1fs (caller=%s, trace=%s)",
+                attempt + 1, max_retries, type(exc).__name__,
+                str(exc)[:120], wait, caller, trace_id,
+            )
+            time.sleep(wait)
+            attempt += 1
+
 # Separate mock channel for chat_with_tools() — each element is an assistant
 # message dict with optional `tool_calls`. Kept distinct from the string-mode
 # mock so that the legacy `chat()` path stays bit-identical.
@@ -213,12 +312,20 @@ def chat(
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
+    max_retries: int | None = None,
+    retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
 ) -> str:
     """Call MiniMax, return the assistant's content with <think> blocks stripped.
 
     `trace_id` and `caller` are optional metadata threaded into the JSONL log
     so that downstream evaluation can join an LLM call with its originating
     identification / component. Neither affects the model request itself.
+
+    Retry behaviour: phase A3 D0b enables retry-with-jittered-backoff for
+    transient 5xx / 529 / Timeout / APIConnectionError. Default
+    ``max_retries=DEFAULT_MAX_RETRIES`` (=3 unless ``METAGENT_LLM_MAX_RETRIES``
+    overrides). Callers that need fail-fast (e.g. unit tests) can pass
+    ``max_retries=0``.
     """
     raw = chat_raw(
         messages,
@@ -228,6 +335,8 @@ def chat(
         provider=provider,
         trace_id=trace_id,
         caller=caller,
+        max_retries=max_retries,
+        retry_backoff_seconds=retry_backoff_seconds,
     )
     return strip_thinking(raw["choices"][0]["message"]["content"])
 
@@ -243,6 +352,8 @@ def chat_raw(
     caller: str | None = None,
     tools: list[dict] | None = None,
     tool_choice: str | dict | None = None,
+    max_retries: int | None = None,
+    retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
 ) -> dict:
     """Call MiniMax / OpenAI-compat, return the full response dict.
 
@@ -252,10 +363,20 @@ def chat_raw(
     accepts the same ``tools=[{type, function:{name, description,
     parameters}}]`` schema and returns ``tool_calls[*].function.
     {name, arguments}`` (verified phase A2 D0 live probe).
+
+    Retry (phase A3 D0b): on transient errors (Timeout, APIConnectionError,
+    HTTP 5xx / 529 / MiniMax overload code 2064) the call is retried up to
+    ``max_retries`` times with jittered backoff. Mock channel skips retry
+    so unit tests that inject mock failures fail-fast and remain
+    deterministic.
     """
     active_provider = (provider or PROVIDER).strip().lower()
     if max_tokens is None:
         max_tokens = 16_384 if active_provider == "openai" else DEFAULT_MAX_TOKENS
+    if max_retries is None:
+        max_retries = DEFAULT_MAX_RETRIES
+    if retry_backoff_seconds is None:
+        retry_backoff_seconds = _default_retry_backoff()
     t0 = time.perf_counter()
     timestamp = (
         _dt.datetime.now(_dt.timezone.utc)
@@ -306,8 +427,13 @@ def chat_raw(
                 create_kwargs["tools"] = tools
                 if tool_choice is not None:
                     create_kwargs["tool_choice"] = tool_choice
-            response = openai.ChatCompletion.create(  # type: ignore[attr-defined]
-                **create_kwargs,
+            response = _create_with_retry(
+                openai,
+                create_kwargs,
+                max_retries=max_retries,
+                backoff=list(retry_backoff_seconds),
+                caller=caller,
+                trace_id=trace_id,
             )
             try:
                 response_raw = response["choices"][0]["message"]["content"]
@@ -489,6 +615,8 @@ def chat_with_tools(
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
+    max_retries: int | None = None,
+    retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
 ) -> dict:
     """Single-turn function-calling chat. Returns the assistant message dict.
 
@@ -542,6 +670,8 @@ def chat_with_tools(
         caller=caller,
         tools=tools,
         tool_choice=tool_choice,
+        max_retries=max_retries,
+        retry_backoff_seconds=retry_backoff_seconds,
     )
     msg = _to_plain(response["choices"][0]["message"])
     # Strip MiniMax-style ``<think>...</think>`` reasoning blocks from

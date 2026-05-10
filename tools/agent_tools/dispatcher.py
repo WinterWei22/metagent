@@ -1,5 +1,12 @@
 """Route an LLM tool_call to the matching wrapper.
 
+Phase A3 D0a: the per-call dedup cache is **thread-local**. When the
+parallel runner runs K tasks concurrently in a thread pool, each
+worker thread gets its own ``_CALL_CACHE`` instance — task A's tool
+calls do not pollute task B's cache. The single-threaded behaviour is
+unchanged: ``reset_call_cache()`` clears the calling thread's cache,
+which is what the legacy A1 / A2 runners expect.
+
 Accepts either an OpenAI-style tool_call dict::
 
     {"id": "call_xyz", "type": "function",
@@ -56,15 +63,30 @@ assert set(WRAPPERS) == set(SCHEMA_REGISTRY), (
 
 
 # ---------------------------------------------------------------------------
-# In-process call cache (per session — reset between Sub-6 tasks)
+# In-process call cache (per session, per thread — reset between tasks)
 # ---------------------------------------------------------------------------
 
-_CALL_CACHE: dict[str, dict[str, Any]] = {}
+import threading as _threading
+
+_CACHE_TLS = _threading.local()
+
+
+def _get_call_cache() -> dict[str, dict[str, Any]]:
+    cache = getattr(_CACHE_TLS, "call_cache", None)
+    if cache is None:
+        cache = {}
+        _CACHE_TLS.call_cache = cache
+    return cache
 
 
 def reset_call_cache() -> None:
-    """Clear the dedup cache. Call this between tasks in a batch run."""
-    _CALL_CACHE.clear()
+    """Clear the calling thread's dedup cache. Call this between tasks in a
+    batch run.
+
+    Each worker thread in the parallel runner has its own cache, so a
+    reset in thread A does not affect thread B.
+    """
+    _CACHE_TLS.call_cache = {}
 
 
 def _cache_key(name: str, args: dict[str, Any]) -> str:
@@ -190,10 +212,11 @@ def dispatch(tool_call: dict[str, Any]) -> dict[str, Any]:
             "cached": False,
         }
 
-    # Dedup against canonical (post-validation) args.
+    # Dedup against canonical (post-validation) args. Per-thread cache.
+    cache = _get_call_cache()
     key = _cache_key(name, validated)
-    if key in _CALL_CACHE:
-        cached = dict(_CALL_CACHE[key])
+    if key in cache:
+        cached = dict(cache[key])
         cached["_cached"] = True
         cached["_note"] = (
             "you already called this tool with these exact arguments earlier "
@@ -217,7 +240,7 @@ def dispatch(tool_call: dict[str, Any]) -> dict[str, Any]:
             "fallback_suggested": "retry once or move on",
         }
 
-    _CALL_CACHE[key] = result
+    cache[key] = result
     return {
         "name": name,
         "tool_call_id": call_id,

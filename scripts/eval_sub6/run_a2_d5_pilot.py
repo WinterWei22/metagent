@@ -33,6 +33,10 @@ if _REPO_ROOT not in sys.path:
 from evaluation.sub6.io_utils import iter_jsonl
 from evaluation.sub6.run_sub6b import _resolve_api_key
 from scripts.eval_sub6.grade_with_verifier import _build_driver_lookup
+from evaluation.sub6.parallel_runner import (
+    make_progress_logger,
+    run_tasks_parallel,
+)
 from scripts.eval_sub6.run_a2_d4_3way import _process_one_task, _persist_json
 
 logger = logging.getLogger(__name__)
@@ -146,6 +150,11 @@ def main(argv: list[str] | None = None) -> int:
         "--task-id", action="append",
         help="Override pilot selection (repeatable; useful for debugging)",
     )
+    parser.add_argument(
+        "--workers", type=int, default=1,
+        help="Parallel task pool size (D0a). 1 = sequential; "
+             "5 = recommended for MiniMax pilots; >10 risks rate-limit.",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -181,27 +190,35 @@ def main(argv: list[str] | None = None) -> int:
     hash_pairs: list[dict] = []
 
     t_pilot = time.perf_counter()
-    for idx, tid in enumerate(task_ids, 1):
-        task = all_tasks[tid]
-        print(f"\n=== [{idx}/{len(task_ids)}] {tid} ===")
-        try:
-            row = _process_one_task(
-                task,
-                out_root=out_root,
-                ramp_db_path=args.ramp_db,
-                driver_lookup=driver_lookup,
-                max_react_turns=args.max_react_turns,
-                max_feedback_iters=args.max_feedback_iters,
-                total_timeout=args.total_timeout,
-            )
-            summary_rows.append(row["summary"])
-            hash_pairs.append(row["hash_pair"])
-        except Exception as exc:
-            logger.exception("task %s crashed at top level", tid)
-            summary_rows.append({"task_id": tid, "fatal": f"{type(exc).__name__}: {exc}"})
+
+    def task_processor(task: dict) -> dict:
+        return _process_one_task(
+            task,
+            out_root=out_root,
+            ramp_db_path=args.ramp_db,
+            driver_lookup=driver_lookup,
+            max_react_turns=args.max_react_turns,
+            max_feedback_iters=args.max_feedback_iters,
+            total_timeout=args.total_timeout,
+        )
+
+    task_records = [all_tasks[tid] for tid in task_ids]
+    progress_cb = make_progress_logger(total=len(task_records), prefix="task")
+    outcomes = run_tasks_parallel(
+        task_records, task_processor,
+        max_workers=args.workers,
+        on_progress=progress_cb,
+    )
+
+    for o, tid in zip(outcomes, task_ids, strict=True):
+        if o.error is None and o.result is not None:
+            summary_rows.append(o.result["summary"])
+            hash_pairs.append(o.result["hash_pair"])
+        else:
+            summary_rows.append({"task_id": tid, "fatal": o.error or "no result"})
             hash_pairs.append({
                 "task_id": tid, "react_sha256": None, "feedback_iter0_sha256": None,
-                "match": False, "error": f"{type(exc).__name__}: {exc}",
+                "match": False, "error": o.error,
             })
 
     pilot_elapsed = time.perf_counter() - t_pilot

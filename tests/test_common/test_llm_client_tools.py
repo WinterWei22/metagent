@@ -231,3 +231,200 @@ class TestMiniMaxResponseRoundTrip:
         assert envelope["name"] == "query_ramp_enrichment"
         assert envelope["tool_call_id"] == "call_function_gh7iom8q4o0a_1"
         assert "top_pathways" in envelope["result"]
+
+
+# ---------------------------------------------------------------------------
+# Phase A3 D0b — retry-with-backoff
+# ---------------------------------------------------------------------------
+
+
+class TestRetryClassification:
+    """Pure unit tests on _is_retryable_exception."""
+
+    def test_timeout_is_retryable(self):
+        # openai.error.Timeout has a subclass relationship that's hard to
+        # mock without importing the real openai. Build a mock with the
+        # right ``type(exc).__name__``.
+        class Timeout(Exception):
+            pass
+        assert llm_client._is_retryable_exception(Timeout("read timeout"))
+
+    def test_apiconnectionerror_is_retryable(self):
+        class APIConnectionError(Exception):
+            pass
+        assert llm_client._is_retryable_exception(APIConnectionError("proxy down"))
+
+    def test_apierror_with_2064_is_retryable(self):
+        class APIError(Exception):
+            pass
+        # Realistic A2 message body
+        msg = '当前服务集群负载较高，请稍后重试，感谢您的耐心等待。 (2064) {"http_code":"529"}'
+        assert llm_client._is_retryable_exception(APIError(msg))
+
+    def test_apierror_with_503_is_retryable(self):
+        class APIError(Exception):
+            pass
+        assert llm_client._is_retryable_exception(APIError("upstream returned 503"))
+
+    def test_apierror_unrelated_message_not_retryable(self):
+        class APIError(Exception):
+            pass
+        assert not llm_client._is_retryable_exception(APIError("malformed request: bad arg"))
+
+    def test_authentication_error_not_retryable(self):
+        class AuthenticationError(Exception):
+            pass
+        assert not llm_client._is_retryable_exception(AuthenticationError("bad api key"))
+
+    def test_invalidrequest_not_retryable(self):
+        class InvalidRequestError(Exception):
+            pass
+        assert not llm_client._is_retryable_exception(InvalidRequestError("validation failed"))
+
+    def test_ratelimit_not_retryable(self):
+        # 429 — caller should slow down, not retry.
+        class RateLimitError(Exception):
+            pass
+        assert not llm_client._is_retryable_exception(RateLimitError("429 too many requests"))
+
+
+class TestCreateWithRetry:
+    """End-to-end retry control flow with mocked openai module."""
+
+    def _patch_sleep(self, monkeypatch):
+        """Patch time.sleep inside llm_client to no-op so tests run fast."""
+        monkeypatch.setattr(llm_client.time, "sleep", lambda s: None)
+
+    def test_retries_on_transient_then_succeeds(self, monkeypatch):
+        """503 once → retry → 200 OK on attempt 2."""
+        self._patch_sleep(monkeypatch)
+        attempts = {"n": 0}
+
+        class APIError(Exception):
+            pass
+
+        def flaky_create(**kwargs):
+            attempts["n"] += 1
+            if attempts["n"] == 1:
+                raise APIError("upstream 503 service unavailable")
+            return {
+                "choices": [{"message": {"role": "assistant", "content": "ok"}}],
+                "model": kwargs.get("model"),
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            }
+
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {"MINIMAX_API_KEY": "test"}):
+            cfg.return_value.ChatCompletion.create = flaky_create
+            out = llm_client.chat(
+                [{"role": "user", "content": "hi"}],
+                provider="minimax", model="MiniMax-M2.7",
+                max_retries=3,
+                retry_backoff_seconds=[0.0, 0.0, 0.0],
+            )
+        assert out == "ok"
+        assert attempts["n"] == 2
+
+    def test_retries_exhausted_raises_original(self, monkeypatch):
+        """All 4 attempts (1 + 3 retries) get 503 — final raise propagates."""
+        self._patch_sleep(monkeypatch)
+        attempts = {"n": 0}
+
+        class APIError(Exception):
+            pass
+
+        def always_fail(**kwargs):
+            attempts["n"] += 1
+            raise APIError("upstream 503 service unavailable")
+
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {"MINIMAX_API_KEY": "test"}), \
+             pytest.raises(APIError):
+            cfg.return_value.ChatCompletion.create = always_fail
+            llm_client.chat(
+                [{"role": "user", "content": "hi"}],
+                provider="minimax", model="MiniMax-M2.7",
+                max_retries=3,
+                retry_backoff_seconds=[0.0, 0.0, 0.0],
+            )
+        assert attempts["n"] == 4  # 1 initial + 3 retries
+
+    def test_non_retryable_fails_fast(self, monkeypatch):
+        """Authentication errors are NOT retried."""
+        self._patch_sleep(monkeypatch)
+        attempts = {"n": 0}
+
+        class AuthenticationError(Exception):
+            pass
+
+        def auth_fail(**kwargs):
+            attempts["n"] += 1
+            raise AuthenticationError("invalid api key")
+
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {"MINIMAX_API_KEY": "test"}), \
+             pytest.raises(AuthenticationError):
+            cfg.return_value.ChatCompletion.create = auth_fail
+            llm_client.chat(
+                [{"role": "user", "content": "hi"}],
+                provider="minimax", model="MiniMax-M2.7",
+                max_retries=3,
+                retry_backoff_seconds=[0.0, 0.0, 0.0],
+            )
+        # 1 attempt only, no retries.
+        assert attempts["n"] == 1
+
+    def test_max_retries_zero_disables_retry(self, monkeypatch):
+        """max_retries=0 = fail-fast on first transient (test parity)."""
+        self._patch_sleep(monkeypatch)
+        attempts = {"n": 0}
+
+        class APIError(Exception):
+            pass
+
+        def flaky_create(**kwargs):
+            attempts["n"] += 1
+            raise APIError("upstream 503 service unavailable")
+
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {"MINIMAX_API_KEY": "test"}), \
+             pytest.raises(APIError):
+            cfg.return_value.ChatCompletion.create = flaky_create
+            llm_client.chat(
+                [{"role": "user", "content": "hi"}],
+                provider="minimax", model="MiniMax-M2.7",
+                max_retries=0,
+            )
+        assert attempts["n"] == 1
+
+    def test_chat_with_tools_inherits_retry(self, monkeypatch):
+        """The tool-calling path (chat_with_tools) also retries."""
+        self._patch_sleep(monkeypatch)
+        attempts = {"n": 0}
+
+        class APIError(Exception):
+            pass
+
+        def flaky_create(**kwargs):
+            attempts["n"] += 1
+            if attempts["n"] < 2:
+                raise APIError("overloaded_error 2064 cluster busy")
+            return {
+                "choices": [{"message": {"role": "assistant", "content": "narr",
+                                          "tool_calls": None}}],
+                "model": kwargs.get("model"),
+                "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            }
+
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {"MINIMAX_API_KEY": "test"}):
+            cfg.return_value.ChatCompletion.create = flaky_create
+            msg = llm_client.chat_with_tools(
+                [{"role": "user", "content": "hi"}],
+                tools=TOOL_DEFINITIONS_OPENAI,
+                provider="minimax", model="MiniMax-M2.7",
+                max_retries=3,
+                retry_backoff_seconds=[0.0, 0.0, 0.0],
+            )
+        assert msg["content"] == "narr"
+        assert attempts["n"] == 2

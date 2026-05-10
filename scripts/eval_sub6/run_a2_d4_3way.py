@@ -48,6 +48,10 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 from evaluation.sub6.io_utils import iter_jsonl
+from evaluation.sub6.parallel_runner import (
+    make_progress_logger,
+    run_tasks_parallel,
+)
 from evaluation.sub6.persist import TaskPersister
 from evaluation.sub6.run_sub6b import run_sub6b, _resolve_api_key
 from evaluation.sub6.run_sub6b_react import run_sub6b_react
@@ -385,6 +389,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-react-turns", type=int, default=5)
     parser.add_argument("--max-feedback-iters", type=int, default=2)
     parser.add_argument("--total-timeout", type=float, default=900.0)
+    parser.add_argument(
+        "--workers", type=int, default=1,
+        help="Parallel task pool size (D0a). 1 = sequential (legacy); "
+             "5 = recommended for MiniMax pilots; >10 risks rate-limit.",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -409,27 +418,34 @@ def main(argv: list[str] | None = None) -> int:
     summary_rows: list[dict] = []
     hash_pairs: list[dict] = []
 
-    for tid in task_ids:
-        task = tasks_by_id[tid]
-        print(f"\n=== {tid} ===")
-        try:
-            row = _process_one_task(
-                task,
-                out_root=out_root,
-                ramp_db_path=args.ramp_db,
-                driver_lookup=driver_lookup,
-                max_react_turns=args.max_react_turns,
-                max_feedback_iters=args.max_feedback_iters,
-                total_timeout=args.total_timeout,
-            )
-            summary_rows.append(row["summary"])
-            hash_pairs.append(row["hash_pair"])
-        except Exception as exc:
-            logger.exception("task %s crashed at top level", tid)
-            summary_rows.append({"task_id": tid, "fatal": f"{type(exc).__name__}: {exc}"})
+    def task_processor(task: dict) -> dict:
+        return _process_one_task(
+            task,
+            out_root=out_root,
+            ramp_db_path=args.ramp_db,
+            driver_lookup=driver_lookup,
+            max_react_turns=args.max_react_turns,
+            max_feedback_iters=args.max_feedback_iters,
+            total_timeout=args.total_timeout,
+        )
+
+    task_records = [tasks_by_id[tid] for tid in task_ids]
+    progress_cb = make_progress_logger(total=len(task_records), prefix="task")
+    outcomes = run_tasks_parallel(
+        task_records, task_processor,
+        max_workers=args.workers,
+        on_progress=progress_cb,
+    )
+
+    for o, tid in zip(outcomes, task_ids, strict=True):
+        if o.error is None and o.result is not None:
+            summary_rows.append(o.result["summary"])
+            hash_pairs.append(o.result["hash_pair"])
+        else:
+            summary_rows.append({"task_id": tid, "fatal": o.error or "no result"})
             hash_pairs.append({
                 "task_id": tid, "react_sha256": None, "feedback_iter0_sha256": None,
-                "match": False, "error": f"{type(exc).__name__}: {exc}",
+                "match": False, "error": o.error,
             })
 
     _persist_json(out_root / "summary.json", summary_rows)

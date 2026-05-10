@@ -1,0 +1,483 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+  "narrative": "The enriched pathways reveal two strongly supported metabolic disruptions. **Galactose Metabolism** (KEGG map00052; SMP00043) and the related disorder pathway **Galactosemia** (SMP00182) emerge as the top candidates, each with FDR = 0.0 and fold enrichment > 950. Six input compounds map to this pathway: D-Glucose (C00221), Galactinol (C01235), Galactitol (C01697), myo-Inositol (C00137), Sucrose (C00089), and Glycerol (C00116). A secondary candidate, the **Glycerophospholipid biosynthetic pathway** (WP2533; FDR 7.9 × 10⁻⁵), is also supported, involving myo-Inositol (C00137), Ethanolamine (C00189), and Glycerol (C00116).\n\nPathway membership was confirmed for the principal drivers: Galactitol (C01697) and Galactinol (C01235) both belong to Galactose Metabolism and Galactosemia; Ethanolamine (C00189) is annotated in Phosphatidylcholine Biosynthesis (consistent with the glycerophospholipid finding). A directed path through the KEGG reaction graph confirmed that D-Glucose → Galactose → UDP-galactose → Galactitol (5 hops) connects the primary carbon source to the accumulating endpoint, consistent with classic galactosemia physiology where galactose reduction to galactitol via aldose reductase drives tissue toxicity.\n\nThe remaining metabolites contextualize additional disruption. Dopamine (C03758) maps to neuroactive pathways (Neurotransmitter release cycle, Neuronal System), and Squalene (C00751) associates with sterol/cholesterol biosynthetic disorders, suggesting broader metabolic stress beyond carbohydrate metabolism. The convergence of myo-Inositol, Ethanolamine, and Glycerol on phospholipid biosynthesis hints at membrane lipid remodeling in response to the primary galactose overload.\n\nIn summary, this metabolite signature most strongly implicates a disorder of galactose utilization—potentially galactosemia—with D-Glucose serving as the upstream precursor and Galactitol as the downstream toxic accumulation product. Secondary perturbation of glycerophospholipid metabolism and neurochemical tone may reflect downstream consequences of the primary defect.",
+  "elapsed_seconds": 50.89627565816045,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 11,
+  "n_turns": 5,
+  "n_tool_calls": 8,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_ks6v523hnm11_1",
+      "arguments": "{\"compound_kegg_ids\": [\"C03758\", \"C05302\", \"C01697\", \"C00137\", \"C00189\", \"C01235\", \"C00221\", \"C05768\", \"C00089\", \"C00116\", \"C00751\"], \"top_k\": 5}",
+      "result": {
+        "n_input": 11,
+        "n_resolved": 11,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Galactosemia",
+            "source": "smpdb",
+            "external_id": "SMP00182",
+            "fdr": 0.0,
+            "fold_enrichment": 982.564,
+            "matched_compounds": [
+              "C01697",
+              "C00137",
+              "C01235",
+              "C00221",
+              "C00089",
+              "C00116"
+            ],
+            "pathway_size": 30
+          },
+          {
+            "name": "Galactose Metabolism",
+            "source": "smpdb",
+            "external_id": "SMP00043",
+            "fdr": 0.0,
+            "fold_enrichment": 950.868,
+            "matched_compounds": [
+              "C01697",
+              "C00137",
+              "C01235",
+              "C00221",
+              "C00089",
+              "C00116"
+            ],
+            "pathway_size": 31
+          },
+          {
+            "name": "Galactose Metabolism",
+            "source": "kegg",
+            "external_id": "map00052",
+            "fdr": 0.0,
+            "fold_enrichment": 950.868,
+            "matched_compounds": [
+              "C01697",
+              "C00137",
+              "C01235",
+              "C00221",
+              "C00089",
+              "C00116"
+            ],
+            "pathway_size": 31
+          },
+          {
+            "name": "Biochemical pathways: part I",
+            "source": "wikipathways",
+            "external_id": "WP3604",
+            "fdr": 0.0,
+            "fold_enrichment": 84.34,
+            "matched_compounds": [
+              "C03758",
+              "C00137",
+              "C00189",
+              "C00221",
+              "C05768",
+              "C00089",
+              "C00116",
+              "C00751"
+            ],
+            "pathway_size": 466
+          },
+          {
+            "name": "Glycerophospholipid biosynthetic pathway",
+            "source": "wikipathways",
+            "external_id": "WP2533",
+            "fdr": 7.9e-05,
+            "fold_enrichment": 258.569,
+            "matched_compounds": [
+              "C00137",
+              "C00189",
+              "C00116"
+            ],
+            "pathway_size": 57
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_64tecdsgbgr3_1",
+      "arguments": "{\"metabolite_id\": \"C01235\"}",
+      "result": {
+        "metabolite_id": "C01235",
+        "n_pathways": 4,
+        "pathways": [
+          {
+            "id": "SMP00043",
+            "name": "Galactose Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00052",
+            "name": "Galactose Metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00182",
+            "name": "Galactosemia",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "WP5280",
+            "name": "Glucocorticoid biosynthesis",
+            "source": "wikipathways",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000211",
+          "hmdb:HMDB0000295",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000211",
+          "hmdb:HMDB0000258",
+          "hmdb:HMDB0003213",
+          "hmdb:HMDB0003553"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "beta-Cortol is annotated in 4 pathways across kegg, smpdb, wikipathways (e.g. Galactose Metabolism, Galactose Metabolism, and Galactosemia). It has 3 upstream and 4 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_64tecdsgbgr3_2",
+      "arguments": "{\"metabolite_id\": \"C01697\"}",
+      "result": {
+        "metabolite_id": "C01697",
+        "n_pathways": 4,
+        "pathways": [
+          {
+            "id": "SMP00043",
+            "name": "Galactose Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00052",
+            "name": "Galactose Metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00182",
+            "name": "Galactosemia",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "WP5173",
+            "name": "Disorders of galactose metabolism",
+            "source": "wikipathways",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [],
+        "downstream_neighbours": [
+          "hmdb:HMDB0003418",
+          "hmdb:HMDB0033704",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Galactitol is annotated in 4 pathways across kegg, smpdb, wikipathways (e.g. Galactose Metabolism, Galactose Metabolism, and Galactosemia). It has 0 upstream and 3 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_64tecdsgbgr3_3",
+      "arguments": "{\"metabolite_id\": \"C00189\"}",
+      "result": {
+        "metabolite_id": "C00189",
+        "n_pathways": 1,
+        "pathways": [
+          {
+            "id": "SMP14212",
+            "name": "Phosphatidylcholine Biosynthesis",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000097",
+          "hmdb:HMDB0000114",
+          "hmdb:HMDB0000126",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000207",
+          "hmdb:HMDB0000220",
+          "hmdb:HMDB0000224",
+          "hmdb:HMDB0000638",
+          "hmdb:HMDB0000673",
+          "hmdb:HMDB0000806"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000224",
+          "hmdb:HMDB0000990",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0003344",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Ethanolamine is annotated in 1 pathway across smpdb (e.g. Phosphatidylcholine Biosynthesis). It has 39 upstream and 8 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_ixwejqcdxwxg_1",
+      "arguments": "{\"compound_a\": \"C00221\", \"compound_b\": \"C01697\"}",
+      "result": {
+        "compound_a": "C00221",
+        "compound_b": "C01697",
+        "resolved_a": "cpd:C00221",
+        "resolved_b": "cpd:C01697",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00221",
+          "cpd:C00267",
+          "cpd:C00794",
+          "cpd:C05399",
+          "cpd:C00124",
+          "cpd:C01697"
+        ],
+        "path_length": 5,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_ixwejqcdxwxg_2",
+      "arguments": "{\"compound_a\": \"C00116\", \"compound_b\": \"C00189\"}",
+      "result": {
+        "compound_a": "C00116",
+        "compound_b": "C00189",
+        "resolved_a": "cpd:C00116",
+        "resolved_b": "cpd:C00189",
+        "is_reachable": false,
+        "direction": "reverse",
+        "shortest_path": null,
+        "path_length": null,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 4,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_i3a59klgwgrc_1",
+      "arguments": "{\"metabolite_id\": \"C03758\"}",
+      "result": {
+        "metabolite_id": "C03758",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-112310",
+            "name": "Neurotransmitter release cycle",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-112311",
+            "name": "Neurotransmitter clearance",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-112315",
+            "name": "Transmission across Chemical Synapses",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-112316",
+            "name": "Neuronal System",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156580",
+            "name": "Phase II - Conjugation of compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156584",
+            "name": "Cytosolic sulfonation of small molecules",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-162582",
+            "name": "Signal Transduction",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1643685",
+            "name": "Disease",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-181430",
+            "name": "Norepinephrine Neurotransmitter Release Cycle",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000056",
+          "hmdb:HMDB0000181",
+          "hmdb:HMDB0000306",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0001967",
+          "hmdb:HMDB0059597",
+          "hmdb:HMDB0304482"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000022",
+          "hmdb:HMDB0000056",
+          "hmdb:HMDB0000061",
+          "hmdb:HMDB0000216",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0000990",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001134",
+          "hmdb:HMDB0001377"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Dopamine is annotated in 10 pathways across reactome (e.g. Neurotransmitter release cycle, Neurotransmitter clearance, and Transmission across Chemical Synapses). It has 8 upstream and 22 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 4,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_i3a59klgwgrc_2",
+      "arguments": "{\"metabolite_id\": \"C00751\"}",
+      "result": {
+        "metabolite_id": "C00751",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00095",
+            "name": "Alendronate Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00131",
+            "name": "Atorvastatin Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00111",
+            "name": "Cerivastatin Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00387",
+            "name": "CHILD Syndrome",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00508",
+            "name": "Cholesteryl ester storage disease",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00388",
+            "name": "Chondrodysplasia Punctata II, X Linked Dominant (CDPX2)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00386",
+            "name": "Desmosterolosis",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00119",
+            "name": "Fluvastatin Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00509",
+            "name": "Hyper-IgD syndrome",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00209",
+            "name": "Hypercholesterolemia",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000961",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0006836",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001188",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0059597",
+          "kegg:C06309",
+          "kegg:C06310"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Squalene is annotated in 10 pathways across smpdb (e.g. Alendronate Action Pathway, Atorvastatin Action Pathway, and Cerivastatin Action Pathway). It has 5 upstream and 7 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}
