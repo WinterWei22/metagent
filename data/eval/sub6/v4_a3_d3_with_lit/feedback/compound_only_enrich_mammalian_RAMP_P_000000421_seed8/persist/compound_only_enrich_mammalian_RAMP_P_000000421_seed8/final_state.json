@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T12:39:00.534Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+  "final_narrative": "## Pathway Analysis and Biological Interpretation\n\nThe RaMP enrichment analysis identified **Androgen and Estrogen Metabolism** (KEGG map00150, FDR = 0.0, fold enrichment = 1091.7) as the dominant affected pathway, with six steroid hormones driving this signal: Dehydroepiandrosterone, Androstenedione, Testosterone, Dihydrotestosterone, Estrone, and Estradiol. This pathway also appeared as the top hit across multiple databases — SMPDB's \"Androgen and Estrogen Metabolism\" and Reactome's \"Metabolism of steroid hormones\" — confirming the robustness of the finding.\n\n**Key driver compounds.** Dehydroepiandrosterone (DHEA, C01227) occupies a pivotal upstream position, serving as the principal precursor for both androgens and estrogens. KEGG path analysis confirmed direct one-step connectivity from DHEA to Androstenedione (C00280), which in turn converts to Testosterone (C00535) — the major circulating androgen in males. Dihydrotestosterone (C03917), the most potent androgen receptor agonist, is also present in Androgen and Estrogen Metabolism (alongside other pathways including RHO GTPase Effectors and Metabolism of lipids) [retracted: \"via a single enzymatic step\" — pathway membership confirmed, but the specific step connectivity was not verified by KEGG path analysis]. In the estrogen arm, bidirectional one-step paths connect Estrone (C00468) and Estradiol (C00951), reflecting the active interconversion catalyzed by 17β-hydroxysteroid dehydrogenases.\n\n**Biological significance.** Systematic elevation or coordinated modulation of these six steroids suggests disruption of the gonadal steroid axis — potentially reflecting altered steroidogenic enzyme activity (e.g., CYP17A1, aromatase, or 5α-reductase) or hypothalamic-pituitary-gonadal feedback dysregulation. Such a pattern is consistent with endocrine disorders, xenobiotic exposure, or pathological states affecting hormone biosynthesis. The simultaneous perturbation of both androgen and estrogen branches, rather than a single branch, points to a upstream defect at the DHEA branch point.\n\n**Non-steroidal compounds.** Caffeine (C07481), sucrose (C00089), inosine 2',3'-cyclic phosphate (C05768), N-hydroxy-4-aminobiphenyl (C20319), and 4-hydroxy-L-glutamic acid (C05947) were not among the significantly enriched hits from the RaMP analysis. Their association with the treatment may reflect indirect or tissue-specific effects rather than core steroid metabolism reprogramming.\n\n**Limitations.** Connectivity claims between specific steroids (e.g., the number of enzymatic steps to DHT) were not fully verified by KEGG reaction-graph traversal, and several non-steroidal metabolites lacked positive pathway membership evidence in the top enriched results, limiting interpretability of their role in this dataset.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 7,
+  "elapsed_seconds": 1189.765427267179,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 1,
+    "rollback_reason": "iter2_degraded",
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      4,
+      2,
+      4
+    ],
+    "iter0_reused": true
+  }
+}

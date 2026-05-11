@@ -1,0 +1,19 @@
+{
+  "ts": "2026-05-11T15:26:10.501Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+  "final_narrative": "The metabolomics dataset reveals a pronounced perturbation of tryptophan metabolism (KEGG map00380), which emerged as the top candidate pathway with an FDR of 0.0 and a remarkable fold-enrichment of 667.2. Six of the nine input metabolites map directly to this pathway: L-tryptophan (C00078), tryptamine (C00398), serotonin (C00780), melatonin (C01598), quinolinic acid (C03722), and 3-hydroxyanthranilic acid (C00632). A secondary hit in the NAD+ biosynthetic pathway (via 3-hydroxyanthranilic acid and quinolinic acid) suggests the kynurenine branch is also engaged.\n\nL-Tryptophan is the committed entry point for the entire pathway and was confirmed as a member of KEGG map00380. Within two enzymatic steps, L-tryptophan is converted to serotonin via the intermediate 5-hydroxytryptophan (C00078 → C00643 → C00780); this upstream relationship was verified by KEGG BFS (bidirectional reachability, path length 2). Serotonin is in turn a precursor of melatonin, with the shortest directed path running serotonin → N-acetylserotonin (C00978) → melatonin (C01598) (forward direction, 2 hops), establishing a sequential upstream-to-downstream chain across the indoleamine arm of the pathway.\n\n3-Hydroxyanthranilic acid, confirmed in both the Tryptophan metabolism (WP465) and NAD+ biosynthetic pathways, sits at the intersection of the kynurenine branch and the tryptophan–kynurenine–NAD+ axis. Quinolinic acid, also mapped to the same arm, is a known neurotoxic intermediate and a direct quininate/precursor for de novo NAD+ biosynthesis.\n\n**Biological significance.** Dysregulation of this suite is consistent with inflammation-driven tryptophan catabolism: indoleamine 2,3-dioxygenase (IDO1) activation shunts tryptophan toward the kynurenine arm, elevating quinolinic acid and 3-hydroxyanthranilic acid while depleting serotonin and melatonin. Elevated quinolinic acid is a hallmark of neuroinflammation and excitotoxicity, while reduced melatonin signals disrupted circadian and neuroprotective signaling. The concurrent perturbation of both the serotonin/melatonin axis and the kynurenine/NAD+ branch points to a broad, treatment-induced shift in immune–neuronal metabolism with potential implications for mood, cognition, and oxidative stress.",
+  "n_iterations": 1,
+  "n_total_tool_calls": 8,
+  "elapsed_seconds": 1131.808566564694,
+  "error": "timeout_in_feedback_loop",
+  "extra": {
+    "final_iter_idx": 0,
+    "rollback_reason": "feedback_made_it_worse",
+    "termination_reason": "timeout_in_feedback_loop",
+    "qualities": [
+      3,
+      7
+    ],
+    "iter0_reused": true
+  }
+}

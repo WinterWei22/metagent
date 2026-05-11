@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T12:26:18.014Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000053042_seed9",
+  "final_narrative": "The metabolomics profiling uncovered a robust perturbation in **Steroid Biosynthesis (WikiPathways WP496)**, reaching FDR 0.0 with a fold-enrichment of 2,251.7×, driven by five steroid metabolites: dehydroepiandrosterone (DHEA, C01227), androstenedione (C00280), testosterone (C00535), dihydrotestosterone (DHT, C03917), and estrone (C00468). Two additional pathways were also enriched at FDR 0.0: the **Androgen receptor network in prostate cancer (WP2263)** and **Male steroid hormones in cardiomyocyte energy metabolism (WP5320)**, with matched compounds identical to those in Steroid Biosynthesis.\n\nUsing the KEGG reaction graph, the confirmed upstream relationships form the canonical androgen biosynthesis flow: DHEA ↔ androstenedione (1-hop, bidirectional) → testosterone (2-hop) → DHT (1-hop mediated by 5α-reductase). Thus the biosynthetic trajectory is **DHEA → androstenedione → testosterone → DHT**, consistent with established steroidogenesis.\n\nThe steroid driver set is highly coherent; all five compounds are documented members of the steroid biosynthesis pathway and co-occurrence plausibility is maximal, indicating they arise from the same biosynthetic process rather than independent perturbations. The non-steroidal compounds (coumarin, spironolactone, doxycycline, pyrocatechol, 3-hydroxy-L-proline) were not among the matched compounds in the top three enriched pathways.\n\n**Limitations:** Directional path relationships are derived from KEGG graph traversal and may not reflect tissue-specific enzyme expression or flux directionality in vivo. The non-steroidal compounds' biological relevance remains uncharacterized by the current enrichment analysis.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 8,
+  "elapsed_seconds": 689.2549694795161,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      5,
+      2,
+      2
+    ],
+    "iter0_reused": true
+  }
+}

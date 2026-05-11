@@ -1,0 +1,19 @@
+{
+  "ts": "2026-05-11T09:55:56.208Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+  "final_narrative": "**Revised Narrative**\n\nThe most strongly enriched pathway in this dataset is **Tyrosine metabolism (KEGG map00350)**, with a false-discovery rate of essentially zero and a fold-enrichment of 671× — six of the seven metabolites map to this route. The driver compound is **L-Tyrosine (KEGG C00082)**, which sits at the pathway entry point. Tracing the KEGG reaction graph confirms that L-Tyrosine feeds forward into two downstream arms: (1) through L-DOPA and dopamine to **Norepinephrine (KEGG C00547)**, and (2) via 4-hydroxyphenylpyruvate to **Homogentisic acid (KEGG C00544)**. The catechol **Pyrocatechol (KEGG C15571)** also appears in the input list and belongs to this pathway as a shared aromatic substrate, though it is not directly reachable from Tyrosine within the four-hop search window.\n\nThe co-enrichment of **Homocysteine (KEGG C00155)** and **Ornithine (KEGG C00077)** expands the biological picture. Homocysteine participates in cysteine/methionine metabolism and intersects with neurotransmitter clearance pathways, consistent with the observed catecholamine perturbation. Ornithine, mapped to polyamine metabolism and amino-acid transport, shows high co-occurrence plausibility (0.86) with the other dysregulated metabolites, suggesting a broader disruption of amino-acid homeostasis. **Tetrahydrobiopterin (KEGG C00272)** is also present and belongs to distinct pteridine and folate metabolism pathways.\n\nBiologically, coordinated dysregulation of these nodes points toward altered monoamine biosynthesis and increased aromatic acid flux, possibly reflecting oxidative stress or altered neurotransmitter turnover. The convergent enrichment across Tyrosine metabolism and its associated disease modules implies that the treatment may recapitulate aspects of these conditions at the metabolomic level. Further validation at the transcriptomic or enzymatic level would clarify whether the primary lesion lies in tyrosine hydroxylase, aromatic amino-acid decarboxylase, or downstream catecholamine processing.\n\n**Limitations:** The enrichment analysis is limited to mapped KEGG compounds; aromatic acid flux and oxidative-stress interpretations are inferential and were not directly quantified in this dataset. Directionality between ornithine, homocysteine, and the tyrosine-derived catecholamines is inferred from KEGG topology and does not confirm enzymatic flux in the treated system.",
+  "n_iterations": 1,
+  "n_total_tool_calls": 7,
+  "elapsed_seconds": 400.43354930728674,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 1,
+    "rollback_reason": null,
+    "termination_reason": "no_actionable_claims_after_iter",
+    "qualities": [
+      1,
+      0
+    ],
+    "iter0_reused": true
+  }
+}

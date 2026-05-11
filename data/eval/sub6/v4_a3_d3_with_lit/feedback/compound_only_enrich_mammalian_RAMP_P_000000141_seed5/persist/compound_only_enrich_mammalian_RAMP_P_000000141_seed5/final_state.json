@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T15:43:17.487Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+  "final_narrative": "**Narrative**\n\nThe most strongly enriched pathway in this dataset is **Tryptophan metabolism (KEGG map00380)** — FDR 0.0, fold enrichment ~600× — with matched compounds including L-Tryptophan (C00078), 3-Hydroxyanthranilic acid (C00632), Serotonin (C00780), and Melatonin (C01598) [retracted: Tryptamine and Indoleacetaldehyde annotation could not be confirmed in RaMP/KEGG]. Tryptophan metabolism is the primary affected system based on the enrichment evidence.\n\n**Key drivers.** L-Tryptophan (C00078) is the pathway entry point and clear upstream driver. KEGG graph traversal confirms it is 2 hops upstream of Serotonin (C00780) and 4 hops upstream of Melatonin (C01598), establishing a verified directional cascade. The coordinated elevation of L-Tryptophan, Serotonin, and Melatonin together is therefore consistent with increased flux through the indoleamine biosynthetic route rather than a block at a single step.\n\n**Biological significance.** Dysregulation of the tryptophan–serotonin–melatonin axis has broad physiological relevance. Serotonin modulates mood, cognition, and gastrointestinal motility; Melatonin governs circadian rhythm and antioxidant response; 3-Hydroxyanthranilic acid sits at the intersection of tryptophan metabolism and the kynurenine pathway, linking this signature to immune activation and oxidative stress.\n\n*Verified upstream relationships: L-Tryptophan (C00078) → Serotonin (C00780) → Melatonin (C01598).*\n\n**Limitations** — Specific pathway annotations for Tryptamine and Indoleacetaldehyde could not be verified in pathway databases, and the biological consequences of the treatment condition on neuroendocrine signaling were not supported by database or literature evidence.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 7,
+  "elapsed_seconds": 1088.6537571251392,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      6,
+      7,
+      3
+    ],
+    "iter0_reused": true
+  }
+}

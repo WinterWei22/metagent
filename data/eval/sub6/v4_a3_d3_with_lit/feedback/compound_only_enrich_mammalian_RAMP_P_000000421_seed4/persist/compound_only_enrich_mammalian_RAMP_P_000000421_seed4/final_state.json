@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T12:42:22.099Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+  "final_narrative": "The enrichment analysis clearly identifies the **Androgen and Estrogen Metabolism** pathway (KEGG map00150) as the top candidate, achieving an FDR of 0.0 and a fold-enrichment of 1200.911. Six of the ten input metabolites — testosterone (C00535), androstenedione (C00280), estradiol (C00951), estrone (C00468), dihydrotestosterone (C03917), and dehydroepiandrosterone (C01227) — map to this pathway, representing a near-complete sampling of the canonical androgen–estrogen interconversion network.\n\n**Key drivers and verified relationships.** KEGG graph traversal confirms that androstenedione (C00280) and testosterone (C00535) are immediate neighbours in the reaction graph (1 hop), reflecting the 17β-hydroxysteroid dehydrogenase–catalysed interconversion that is a central node in androgen metabolism. Testosterone is further linked to estradiol (C00535 → C00951) via a three-step path through intermediates, consistent with aromatase-mediated conversion. The co-enrichment of DHEA (C01227), androstenedione, testosterone, and estradiol is captured within the top-ranked pathway entry.\n\n**Biological significance.** Dysregulation of this axis is consistent with conditions involving altered sex hormone balance, such as polycystic ovary syndrome, androgen-secreting tumours, or therapeutic modulation of steroidogenesis. The simultaneous elevation or depletion of these six steroids points to an upstream perturbation — likely at the level of cytochrome P450 enzymes or 17,20-lyase — that cascades into downstream androgen and estrogen pools.\n\n**Limitations:** Four input metabolites did not appear in the top-enriched pathway results returned by RaMP; their involvement in the treatment effect cannot be confirmed from the available database evidence.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 5,
+  "elapsed_seconds": 933.8763861265033,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      3,
+      5,
+      2
+    ],
+    "iter0_reused": true
+  }
+}

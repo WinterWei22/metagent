@@ -301,6 +301,78 @@ class TestLiteratureHintsA3:
         assert generate_feedback_hint(c) is None
 
 
+class TestLiteratureSteerToggle:
+    """Phase A3 D3 — METAGENT_FEEDBACK_LITERATURE_STEER env-var toggle.
+
+    Default: enabled (steer toward search_literature).
+    Set to "0": fall back to A2-style retract/rephrase hint.
+    """
+
+    def test_default_enabled_suggests_literature(self, monkeypatch):
+        monkeypatch.delenv("METAGENT_FEEDBACK_LITERATURE_STEER", raising=False)
+        c = VerifiedClaim(
+            claim_id="v1:c000",
+            claim_text="Hypoxia drives HIF-1α stabilisation",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            subject="HIF-1α hypoxia stabilisation",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" in hint
+
+    def test_explicit_off_falls_back_to_a2_hint(self, monkeypatch):
+        monkeypatch.setenv("METAGENT_FEEDBACK_LITERATURE_STEER", "0")
+        c = VerifiedClaim(
+            claim_id="v1:c000",
+            claim_text="Hypoxia drives HIF-1α stabilisation",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            extracted_fields=ClaimExtractedFields(pathway_name="HIF signalling"),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" not in hint
+        # A2-era hint mentions the pathway name and "drop"
+        assert "HIF signalling" in hint
+        assert "drop" in hint.lower()
+
+    def test_explicit_on_matches_default(self, monkeypatch):
+        monkeypatch.setenv("METAGENT_FEEDBACK_LITERATURE_STEER", "1")
+        c = VerifiedClaim(
+            claim_id="v1:c000",
+            claim_text="Hypoxia drives HIF-1α stabilisation",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            subject="HIF signalling",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" in hint
+
+    def test_off_does_not_affect_non_biological(self, monkeypatch):
+        # Pathway-relationship hints already do not call search_literature
+        # so the toggle should have no observable effect on this branch.
+        monkeypatch.setenv("METAGENT_FEEDBACK_LITERATURE_STEER", "0")
+        c = VerifiedClaim(
+            claim_id="v1:c000",
+            claim_text="X is upstream of Y",
+            claim_type=ClaimType.PATHWAY_RELATIONSHIP,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="no KEGG path",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        # PR branch still mentions KEGG / co-membership
+        assert "kegg" in hint.lower() or "co-membership" in hint.lower()
+
+
 class TestBackwardCompat:
     def test_v3_verdict_record_still_parses(self):
         # A trimmed v3-PhaseC claim record with the fields that existed

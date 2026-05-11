@@ -28,6 +28,7 @@ the originals are untouched.
 """
 from __future__ import annotations
 
+import os
 from typing import Iterable
 
 from verifier.schemas import (
@@ -204,23 +205,42 @@ def _hint_for_unsupported(claim: VerifiedClaim) -> str:
         # disease, a tissue-specific role, a recent enzymology insight.
         # Steer the agent toward search_literature instead of an
         # unconditional retract, but keep retract as the fallback.
-        subject = (claim.subject or "").strip()
-        pathway = _pathway_phrase(claim)
-        focus = subject or pathway or _extract_search_query(claim)
-        if focus:
+        #
+        # Env-var toggle (phase A3 D3): METAGENT_FEEDBACK_LITERATURE_STEER
+        # defaults to "1" (enabled). Set to "0" to fall back to the
+        # pre-A3 retract-or-rephrase hint without literature steer — used
+        # to run the "feedback (no literature)" baseline variant for
+        # paper § 1 comparisons.
+        if os.environ.get("METAGENT_FEEDBACK_LITERATURE_STEER", "1") != "0":
+            subject = (claim.subject or "").strip()
+            pathway = _pathway_phrase(claim)
+            focus = subject or pathway or _extract_search_query(claim)
+            if focus:
+                return (
+                    f"Biological claim referencing '{focus}' has no positive "
+                    "evidence in the pathway databases (RaMP / KEGG / HMDB). "
+                    "This is often a literature-supported claim. Call "
+                    f"search_literature(\"{focus}\") to find supporting papers "
+                    "and cite them inline (PMID); otherwise drop the claim "
+                    "if speculative."
+                )
             return (
-                f"Biological claim referencing '{focus}' has no positive "
-                "evidence in the pathway databases (RaMP / KEGG / HMDB). "
-                "This is often a literature-supported claim. Call "
-                f"search_literature(\"{focus}\") to find supporting papers "
-                "and cite them inline (PMID); otherwise drop the claim "
-                "if speculative."
+                "Biological claim lacks positive evidence in the pathway "
+                "databases. Try search_literature for a tight query that "
+                "matches the claim, cite resulting PMIDs inline; if nothing "
+                "supports it, drop the claim."
+            )
+        # Literature steer disabled: fall back to A2-style retract/rephrase.
+        pathway = _pathway_phrase(claim)
+        if pathway:
+            return (
+                f"Biological claim referencing '{pathway}' has no positive "
+                "evidence. Rephrase using a verified pathway name from your "
+                "tool calls, or drop the reference."
             )
         return (
-            "Biological claim lacks positive evidence in the pathway "
-            "databases. Try search_literature for a tight query that "
-            "matches the claim, cite resulting PMIDs inline; if nothing "
-            "supports it, drop the claim."
+            "Biological claim lacks positive evidence. Either rephrase using "
+            "vocabulary from your tool outputs, or drop the claim."
         )
 
     return (

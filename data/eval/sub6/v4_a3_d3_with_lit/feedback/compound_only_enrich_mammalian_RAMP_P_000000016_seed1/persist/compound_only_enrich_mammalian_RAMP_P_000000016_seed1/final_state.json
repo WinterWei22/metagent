@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T12:27:54.151Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+  "final_narrative": "The enriched metabolite set strongly implicates **Glycine, serine and threonine metabolism (KEGG map00260)** as the primary affected pathway (FDR = 0.0, fold enrichment = 568.9). Six input metabolites are matched to this pathway: ornithine (C00077), 2-ketobutyric acid (C00109), lipoic acid (C16241), S-adenosylhomocysteine (C00021), L-cysteine (C00097), and L-methionine (C00073).\n\nThe biological story centers on interconnected amino-acid metabolism. **L-Methionine** is upstream of **S-Adenosylhomocysteine (SAH)** in the methionine cycle (KEGG shortest path: methionine → S-adenosylmethionine → SAH; 2 hops), placing SAH elevation downstream of increased methionine flux. **L-Cysteine** participates in transsulfuration, linking to the ornithine/proline axis through bidirectional connections to 1-Pyrroline-5-carboxylate. **Lipoic acid** (C16241) is a cofactor forpyruvate dehydrogenase and 2-oxoglutarate dehydrogenase. **2-Ketobutyric acid** (C00109) links serine/threonine catabolism to the citric acid cycle.\n\nThe simultaneous perturbation of ornithine, cysteine, methionine, and SAH is consistent with altered flux through **Glycine, serine and threonine metabolism** [retracted: Cysteine and methionine metabolism claim not supported by query_ramp_enrichment].\n\n**Limitations:** The query_ramp_enrichment output returned only one top pathway; claims about additional pathways or their disease-state associations cannot be made from this result alone.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 9,
+  "elapsed_seconds": 673.385076219216,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      4,
+      7,
+      3
+    ],
+    "iter0_reused": true
+  }
+}

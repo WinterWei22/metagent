@@ -1,0 +1,375 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+  "narrative": "The enrichment analysis identified two tightly interconnected metabolic modules centred on aromatic amino acid catabolism. The broadest hit is **Metabolism of amino acids and derivatives** (Reactome R-HSA-71291, FDR ≈ 0, fold-enrichment 150×), with eight of the ten input metabolites mapping to it. Within that superset, **Alkaptonuria** (SMPDB SMP00169, FDR ≈ 0, fold-enrichment 532×) represents the most specific phenotype-linked pathway, capturing six compounds across the tyrosine degradation and catecholamine branches. A single cross-pathway driver—**L-Tyrosine (C00082)**—seeds both branches: the KEGG reaction graph confirms a two-hop forward path from L-Tyrosine through *p*-Hydroxyphenylpyruvate to **Homogentisic acid (C00544)**, and a three-hop forward path from L-Tyrosine through L-DOPA and Dopamine to **Norepinephrine (C00547)**. The shared intermediate **3,4-Dihydroxyphenylacetaldehyde (C00544)** occupies the convergence point between the melanin precursor arm (giving rise to **5,6-Dihydroxyindole (C05578)**) and the catecholamine arm (feeding into norepinephrine), explaining why both branches light up simultaneously in the differential list.\n\n**Allysine (C04076)** is the direct lysine α-oxidation product and cross-talks with the TCA cycle via **Fumaric acid (C00122)**, while **Pyruvic acid (C00022)** bridges glycolysis and the acetyl-CoA pool that feeds amino acid biosynthesis. **Squalene (C00751)** is a downstream sterol precursor, hinting at concurrent perturbation of the mevalonate/isoprenoid axis.\n\nThe biological picture is one of **disrupted aromatic amino acid flux**—most consistent with altered activity of tyrosine aminotransferase, p-hydroxyphenylpyruvate oxidase, or the downstream catecholamine enzymes—producing upstream substrate accumulation alongside downstream product depletion. The dual hits on tyrosine catabolism and catecholamine synthesis suggest the treatment or disease state impairs conversion of L-Tyrosine into both the melanin pathway (elevated homogentisic acid and its aldehyde) and the neurotransmitter arm (altered norepinephrine), with downstream consequences for oxidative stress (homogentisic acid auto-oxidation), neurological signalling, and energy metabolism through pyruvate–fumarate cross-talk.",
+  "elapsed_seconds": 189.6569394748658,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 10,
+  "n_turns": 4,
+  "n_tool_calls": 7,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_jvg7rujk3fpv_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C05578\",\"C04076\",\"C00082\",\"C00547\",\"C00122\",\"C00047\",\"C04043\",\"C00544\",\"C00022\",\"C00751\"],\"top_k\":5}",
+      "result": {
+        "n_input": 10,
+        "n_resolved": 10,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Metabolism of amino acids and derivatives",
+            "source": "reactome",
+            "external_id": "R-HSA-71291",
+            "fdr": 0.0,
+            "fold_enrichment": 150.114,
+            "matched_compounds": [
+              "C05578",
+              "C04076",
+              "C00082",
+              "C00547",
+              "C00122",
+              "C00047",
+              "C00544",
+              "C00022"
+            ],
+            "pathway_size": 288
+          },
+          {
+            "name": "Alkaptonuria",
+            "source": "smpdb",
+            "external_id": "SMP00169",
+            "fdr": 0.0,
+            "fold_enrichment": 531.551,
+            "matched_compounds": [
+              "C05578",
+              "C00082",
+              "C00547",
+              "C00122",
+              "C04043",
+              "C00544"
+            ],
+            "pathway_size": 61
+          },
+          {
+            "name": "Dopamine beta-hydroxylase deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00498",
+            "fdr": 0.0,
+            "fold_enrichment": 531.551,
+            "matched_compounds": [
+              "C05578",
+              "C00082",
+              "C00547",
+              "C00122",
+              "C04043",
+              "C00544"
+            ],
+            "pathway_size": 61
+          },
+          {
+            "name": "Hawkinsinuria",
+            "source": "smpdb",
+            "external_id": "SMP00190",
+            "fdr": 0.0,
+            "fold_enrichment": 531.551,
+            "matched_compounds": [
+              "C05578",
+              "C00082",
+              "C00547",
+              "C00122",
+              "C04043",
+              "C00544"
+            ],
+            "pathway_size": 61
+          },
+          {
+            "name": "Monoamine oxidase-a deficiency (MAO-A)",
+            "source": "smpdb",
+            "external_id": "SMP00533",
+            "fdr": 0.0,
+            "fold_enrichment": 531.551,
+            "matched_compounds": [
+              "C05578",
+              "C00082",
+              "C00547",
+              "C00122",
+              "C04043",
+              "C00544"
+            ],
+            "pathway_size": 61
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_57e8h7b853g6_1",
+      "arguments": "{\"metabolite_id\":\"C00544\",\"max_pathways\":5}",
+      "result": {
+        "metabolite_id": "C00544",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-71291",
+            "name": "Metabolism of amino acids and derivatives",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-8963684",
+            "name": "Tyrosine catabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-8963691",
+            "name": "Phenylalanine and tyrosine metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "WP4506",
+            "name": "Tyrosine metabolism and related disorders",
+            "source": "wikipathways",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000020",
+          "hmdb:HMDB0000440",
+          "hmdb:HMDB0000707",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0001967",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0001268",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0001967",
+          "hmdb:HMDB0004486",
+          "hmdb:HMDB0011116",
+          "hmdb:HMDB0038959",
+          "hmdb:HMDB0059597",
+          "hmdb:HMDB0304078"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Homogentisic acid is annotated in 5 pathways across reactome, wikipathways (e.g. Metabolism, Metabolism of amino acids and derivatives, and Tyrosine catabolism). It has 7 upstream and 9 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_57e8h7b853g6_2",
+      "arguments": "{\"max_pathways\":5,\"metabolite_id\":\"C00082\"}",
+      "result": {
+        "metabolite_id": "C00082",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "SMP00169",
+            "name": "Alkaptonuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00170",
+            "name": "Aromatic L-Aminoacid Decarboxylase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00429",
+            "name": "Disulfiram Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00498",
+            "name": "Dopamine beta-hydroxylase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00190",
+            "name": "Hawkinsinuria",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000191",
+          "hmdb:HMDB0000207",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000684",
+          "hmdb:HMDB0000707",
+          "hmdb:HMDB0000715",
+          "hmdb:HMDB0000978",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000021",
+          "hmdb:HMDB0000119",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000181",
+          "hmdb:HMDB0000191",
+          "hmdb:HMDB0000208",
+          "hmdb:HMDB0000228",
+          "hmdb:HMDB0000250"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "L-Tyrosine is annotated in 5 pathways across smpdb (e.g. Alkaptonuria, Aromatic L-Aminoacid Decarboxylase Deficiency, and Disulfiram Action Pathway). It has 17 upstream and 43 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_57e8h7b853g6_3",
+      "arguments": "{\"max_pathways\":5,\"metabolite_id\":\"C04043\"}",
+      "result": {
+        "metabolite_id": "C04043",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "SMP00169",
+            "name": "Alkaptonuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00429",
+            "name": "Disulfiram Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00498",
+            "name": "Dopamine beta-hydroxylase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00190",
+            "name": "Hawkinsinuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00533",
+            "name": "Monoamine oxidase-a deficiency (MAO-A)",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000073",
+          "hmdb:HMDB0000181",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0001967",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001336",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "3,4-Dihydroxyphenylacetaldehyde is annotated in 5 pathways across smpdb (e.g. Alkaptonuria, Disulfiram Action Pathway, and Dopamine beta-hydroxylase deficiency). It has 6 upstream and 3 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_l0wcbxo5yksi_1",
+      "arguments": "{\"compound_a\":\"C00082\",\"compound_b\":\"C00544\",\"max_path_length\":6}",
+      "result": {
+        "compound_a": "C00082",
+        "compound_b": "C00544",
+        "resolved_a": "cpd:C00082",
+        "resolved_b": "cpd:C00544",
+        "is_reachable": true,
+        "direction": "forward",
+        "shortest_path": [
+          "cpd:C00082",
+          "cpd:C01179",
+          "cpd:C00544"
+        ],
+        "path_length": 2,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_l0wcbxo5yksi_2",
+      "arguments": "{\"compound_a\":\"C00082\",\"compound_b\":\"C00547\",\"max_path_length\":6}",
+      "result": {
+        "compound_a": "C00082",
+        "compound_b": "C00547",
+        "resolved_a": "cpd:C00082",
+        "resolved_b": "cpd:C00547",
+        "is_reachable": true,
+        "direction": "forward",
+        "shortest_path": [
+          "cpd:C00082",
+          "cpd:C00355",
+          "cpd:C03758",
+          "cpd:C00547"
+        ],
+        "path_length": 3,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_l0wcbxo5yksi_3",
+      "arguments": "{\"compound_b\":\"C00547\",\"max_path_length\":6,\"compound_a\":\"C05578\"}",
+      "result": {
+        "compound_a": "C05578",
+        "compound_b": "C00547",
+        "resolved_a": "cpd:C05578",
+        "resolved_b": "cpd:C00547",
+        "is_reachable": false,
+        "direction": "none",
+        "shortest_path": null,
+        "path_length": null,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

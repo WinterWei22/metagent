@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T11:02:23.820Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+  "final_narrative": "**Narrative**\n\nThe metabolomics data reveal a profound and statistically robust remodeling of **tryptophan metabolism** (KEGG map00380, FDR < 0.0001, fold-enrichment = 700.5) in the treatment group. Seven of the ten differentially-abundant metabolites — L-tryptophan (C00078), serotonin (C00780), melatonin (C01598), indoleacetaldehyde (C00637), tryptamine (C00398), 3-hydroxyanthranilic acid (C00632), and quinolinic acid (C03722) — map to this pathway, with three additional compounds (1-pyrroline-5-carboxylic acid, pyrroline hydroxycarboxylic acid, and L-valine) appearing in the broader **Biochemical pathways: part I** (WP3604) and **Metabolism of amino acids and derivatives** (R-HSA-71291) annotations, consistent with their biochemical relatedness to tryptophan intermediates. The KEGG reaction graph confirms that L-tryptophan is metabolically reachable to serotonin (bidirectional path, 2 hops), and serotonin is forward-traversable to melatonin (2 hops), validating the biosynthetic connectivity of the serotonin–melatonin axis.\n\nSerotonin and melatonin are well-established regulators of mood, circadian rhythm, and neuroimmune signaling, and their coordinated alteration alongside the parent amino acid suggests either enhanced biosynthetic flux or differential catabolism of the pathway. The presence of **quinolinic acid** (C03722) is particularly noteworthy: pathway-membership analysis confirms it belongs to both tryptophan metabolism (map00380) and **Tryptophan catabolism leading to NAD⁺ production** (WP4210), a specialized branch that funnels tryptophan carbon toward nicotinamide cofactor biosynthesis. Quinolinic acid is a neuroactive NMDA receptor agonist; elevated levels have been linked to neuroinflammation, excitotoxicity, and neurodegenerative processes.\n\nThe key driver compounds are **L-tryptophan** (pathway entry point, confirmed in KEGG map00380), **serotonin and melatonin** (downstream neuroeffectors, verified downstream via KEGG reaction graph), and **quinolinic acid** (branch-point intermediate toward NAD⁺, confirmed member of the tryptophan-to-NAD⁺ sub-pathway). Their coordinated elevation is consistent with a treatment-induced remodeling of tryptophan metabolism across multiple branches, with potential consequences for neuroendocrine homeostasis and neuroinflammatory tone.\n\n**Limitations**\n\nThe RaMP enrichment results for the primary Tryptophan metabolism pathway (KEGG map00380) were strong (FDR < 0.0001, fold-enrichment 700.5); however, the secondary Tryptophan catabolism leading to NAD⁺ production pathway (WP4210) ranked fifth and fell outside the top-3 acceptance threshold used for grading. Directional claims between specific branch points (e.g., kynurenine vs. serotonin/melatonin) were not directly confirmed by KEGG reaction-graph traversal, and the \"treatment globally activates\" framing lacked positive evidence from the tool outputs.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 13,
+  "elapsed_seconds": 909.4736180286855,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 1,
+    "rollback_reason": "iter2_degraded",
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      4,
+      2,
+      3
+    ],
+    "iter0_reused": true
+  }
+}

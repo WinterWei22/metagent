@@ -1,0 +1,355 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+  "narrative": "The enrichment analysis identifies **Glycine, serine and threonine metabolism (KEGG map00260)** as the top pathway (FDR = 0, fold-enrichment = 583.4), sharing eight matched input metabolites with the also top-ranked **Methionine Metabolism (KEGG map00270, FDR = 0, fold-enrichment = 489.1)**. Both findings are driven by the same core set: **homocysteine (C00155)**, **S-adenosylmethionine (C00019)**, **L-methionine (C00073)**, **choline (C00114)**, **L-glutamic acid (C00025)**, and **adenosine (C00212)** — each confirmed as a pathway member with a co-occurrence plausibility of 1.0 across the observed set.\n\n**Affected pathways and key drivers.** The methionine cycle is the primary axis. L-methionine (C00073) is the canonical entry point; it is enzymatically converted to S-adenosylmethionine (C00019, the universal methyl donor), which donates a methyl group to generate S-adenosylhomocysteine and ultimately **homocysteine (C00155)**. Homocysteine can then either be re-methylated back to methionine (requiring folate and vitamin B12) or condensed with serine via cystathionine β-synthase to enter cysteine/glutathione biosynthesis — a branch connecting to cysteic acid (C00506) and the broader sulfur amino acid network. Choline (C00114) contributes methyl groups through its oxidation to betaine, feeding into homocysteine re-methylation. Adenosine (C00212) is generated as a byproduct of SAM synthesis (MAT reaction) and is co-enriched here. L-threonine (C00188) feeds into glycine/serine/threonine metabolism through its degradation to glycine, intersecting with one-carbon metabolism at the folate cycle level. Dihydrouracil (C00429) reflects de novo pyrimidine synthesis flux, consistent with high demand for nucleotide precursors in the context of methylated SAM cycling.\n\n**Upstream/downstream relationships.** Within the methionine cycle, L-methionine (C00073) is a direct precursor of **S-adenosylmethionine (C00019)** (MAT reaction), which in turn is the direct precursor of **homocysteine (C00155)** via methylation transfer. Choline oxidation provides an upstream methyl source that can replenish homocysteine back toward methionine. This creates a coordinated metabolic loop where perturbations to any single node — e.g., altered dietary methionine, choline deficiency, or impaired folate metabolism — propagate across the entire network, consistent with the multi-compound co-abundance observed.\n\n**Biological significance.** Coordinated elevation of methionine, SAM, and homocysteine alongside choline and threonine suggests a treatment-induced stimulation of one-carbon and methylation metabolism. SAM is the sole methyl donor for dozens of methyltransferases (phosphatidylethanolamine N-methyltransferase, DNA methyltransferases, histone methyltransferases), so its perturbation has wide-ranging epigenetic and functional consequences. Elevated homocysteine is a recognized marker of cardiovascular and neurological risk when it accumulates, but here its co-abundance with re-methylation substrates (choline, methionine) suggests the cycle is actively turning rather than stagnating. The presence of lipoic acid (C16241), a cofactor in the re-methylation step, further supports intact — possibly induced — homocysteine re-methylation. The inclusion of **8(S)-HPETE (C14823)** and **15-HETE (C04742)** indicates concurrent oxidative/lipid mediator shifts, possibly reflecting downstream effects of altered methylation on eicosanoid biosynthesis or as independent injury signals.\n\nIn summary, the treatment group exhibits a clear signature of **activated methionine-cycle and interconnected amino-acid metabolism**, centered on SAM-dependent methylation and one-carbon folate cycling, with secondary lipid-oxidant stress signals. This is consistent with a biological state of enhanced methyl-group demand — such as rapid cell proliferation, epigenetic reprogramming, or liver detoxification induction.",
+  "elapsed_seconds": 93.44394262321293,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 13,
+  "n_turns": 3,
+  "n_tool_calls": 4,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_gh40hpvwpfwj_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00155\",\"C00019\",\"C00073\",\"C00114\",\"C00025\",\"C12673\",\"C14823\",\"C00506\",\"C04742\",\"C00212\",\"C00429\",\"C16241\",\"C00188\"],\"top_k\":10}",
+      "result": {
+        "n_input": 13,
+        "n_resolved": 13,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Glycine, serine and threonine metabolism",
+            "source": "kegg",
+            "external_id": "map00260",
+            "fdr": 0.0,
+            "fold_enrichment": 583.439,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00212",
+              "C16241",
+              "C00188"
+            ],
+            "pathway_size": 57
+          },
+          {
+            "name": "Biochemical pathways: part I",
+            "source": "wikipathways",
+            "external_id": "WP3604",
+            "fdr": 0.0,
+            "fold_enrichment": 80.285,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00506",
+              "C00212",
+              "C00429",
+              "C00188"
+            ],
+            "pathway_size": 466
+          },
+          {
+            "name": "Methionine de novo and salvage pathway",
+            "source": "wikipathways",
+            "external_id": "WP3580",
+            "fdr": 0.0,
+            "fold_enrichment": 509.02,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00212"
+            ],
+            "pathway_size": 49
+          },
+          {
+            "name": "Metabolism of amino acids and derivatives",
+            "source": "reactome",
+            "external_id": "R-HSA-71291",
+            "fdr": 0.0,
+            "fold_enrichment": 115.472,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00506",
+              "C00212",
+              "C00188"
+            ],
+            "pathway_size": 288
+          },
+          {
+            "name": "Methionine Metabolism",
+            "source": "kegg",
+            "external_id": "map00270",
+            "fdr": 0.0,
+            "fold_enrichment": 489.059,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00212"
+            ],
+            "pathway_size": 51
+          },
+          {
+            "name": "Metabolism",
+            "source": "reactome",
+            "external_id": "R-HSA-1430728",
+            "fdr": 0.0,
+            "fold_enrichment": 27.512,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00025",
+              "C00506",
+              "C04742",
+              "C00212",
+              "C00429",
+              "C00188"
+            ],
+            "pathway_size": 1511
+          },
+          {
+            "name": "Cystathionine Beta-Synthase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00177",
+            "fdr": 0.0,
+            "fold_enrichment": 561.757,
+            "matched_compounds": [
+              "C00155",
+              "C00019",
+              "C00073",
+              "C00114",
+              "C00212"
+            ],
+            "pathway_size": 37
+          }
+        ],
+        "_truncated": "dropped 1 trailing items to fit 2048-byte budget",
+        "_more": "more pathways available; rerun with a smaller top_k to see compact summaries, or call query_pathway_membership on a specific pathway you care about"
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_fqdf4j5fdnu2_1",
+      "arguments": "{\"metabolite_id\":\"C00155\",\"co_observed_ids\":[\"C00155\",\"C00019\",\"C00073\",\"C00114\",\"C00025\",\"C00212\",\"C16241\",\"C00188\"],\"max_pathways\":5}",
+      "result": {
+        "metabolite_id": "C00155",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "R-HSA-112311",
+            "name": "Neurotransmitter clearance",
+            "source": "reactome",
+            "hit_count": 4
+          },
+          {
+            "id": "R-HSA-112315",
+            "name": "Transmission across Chemical Synapses",
+            "source": "reactome",
+            "hit_count": 5
+          },
+          {
+            "id": "R-HSA-112316",
+            "name": "Neuronal System",
+            "source": "reactome",
+            "hit_count": 5
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 8
+          },
+          {
+            "id": "R-HSA-156580",
+            "name": "Phase II - Conjugation of compounds",
+            "source": "reactome",
+            "hit_count": 6
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000050",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000195",
+          "hmdb:HMDB0000254",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0003276",
+          "hmdb:HMDB0003609",
+          "hmdb:HMDB0012249"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000092",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000696",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001396"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "L-Homocysteine is annotated in 5 pathways across reactome (e.g. Neurotransmitter clearance, Transmission across Chemical Synapses, and Neuronal System). It has 13 upstream and 15 downstream immediate neighbours in the reaction network. Of 8 co-observed metabolites, 8 share a pathway with L-Homocysteine (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_fqdf4j5fdnu2_2",
+      "arguments": "{\"co_observed_ids\":[\"C00155\",\"C00019\",\"C00073\",\"C00114\",\"C00025\",\"C00212\",\"C16241\",\"C00188\"],\"max_pathways\":5,\"metabolite_id\":\"C00019\"}",
+      "result": {
+        "metabolite_id": "C00019",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "R-HSA-112311",
+            "name": "Neurotransmitter clearance",
+            "source": "reactome",
+            "hit_count": 4
+          },
+          {
+            "id": "R-HSA-112315",
+            "name": "Transmission across Chemical Synapses",
+            "source": "reactome",
+            "hit_count": 5
+          },
+          {
+            "id": "R-HSA-112316",
+            "name": "Neuronal System",
+            "source": "reactome",
+            "hit_count": 5
+          },
+          {
+            "id": "R-HSA-1266738",
+            "name": "Developmental Biology",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1428517",
+            "name": "Aerobic respiration and respiratory electron transport",
+            "source": "reactome",
+            "hit_count": 3
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000696",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000010",
+          "hmdb:HMDB0000022",
+          "hmdb:HMDB0000033",
+          "hmdb:HMDB0000034",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000064",
+          "hmdb:HMDB0000068",
+          "hmdb:HMDB0000073",
+          "hmdb:HMDB0000082"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "SAM is annotated in 5 pathways across reactome (e.g. Neurotransmitter clearance, Transmission across Chemical Synapses, and Neuronal System). It has 5 upstream and 324 downstream immediate neighbours in the reaction network. Of 8 co-observed metabolites, 8 share a pathway with SAM (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_fqdf4j5fdnu2_3",
+      "arguments": "{\"co_observed_ids\":[\"C00155\",\"C00019\",\"C00073\",\"C00114\",\"C00025\",\"C00212\",\"C16241\",\"C00188\"],\"max_pathways\":5,\"metabolite_id\":\"C00188\"}",
+      "result": {
+        "metabolite_id": "C00188",
+        "n_pathways": 5,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 8
+          },
+          {
+            "id": "R-HSA-352230",
+            "name": "Amino acid transport across the plasma membrane",
+            "source": "reactome",
+            "hit_count": 4
+          },
+          {
+            "id": "R-HSA-379716",
+            "name": "Cytosolic tRNA aminoacylation",
+            "source": "reactome",
+            "hit_count": 4
+          },
+          {
+            "id": "R-HSA-379724",
+            "name": "tRNA Aminoacylation",
+            "source": "reactome",
+            "hit_count": 4
+          },
+          {
+            "id": "R-HSA-379726",
+            "name": "Mitochondrial tRNA aminoacylation",
+            "source": "reactome",
+            "hit_count": 4
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000641",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0003484",
+          "hmdb:HMDB0011185",
+          "hmdb:HMDB0028697",
+          "hmdb:HMDB0029049",
+          "hmdb:HMDB0029070",
+          "hmdb:HMDB0029071"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000397",
+          "hmdb:HMDB0000641",
+          "hmdb:HMDB0000990",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0001967"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "L-Threonine is annotated in 5 pathways across reactome (e.g. Metabolism, Amino acid transport across the plasma membrane, and Cytosolic tRNA aminoacylation). It has 11 upstream and 16 downstream immediate neighbours in the reaction network. Of 8 co-observed metabolites, 8 share a pathway with L-Threonine (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

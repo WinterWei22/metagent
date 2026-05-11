@@ -1,0 +1,455 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed6",
+  "narrative": "The enrichment analysis reveals a dominant metabolic signal centred on **Glycine, serine and threonine metabolism (KEGG map00260)** — the top-ranking pathway with FDR=0.0 and an extraordinary fold-enrichment of 758.47, matching 8 of the 10 input compounds (glycine, serine, threonine, cysteine, choline, adenosine, SAM, and L-2-amino-3-oxobutanoate). A closely related KEGG ontology, **Cysteine and methionine metabolism**, is implicated by the co-enrichment of L-cysteine (C00097) and S-adenosylmethionine (C00019), both of which feed directly into sulfur amino acid interconversion.\n\n**Key driver compounds and their verified relationships:**\n\n- **L-Serine (C00065)** and **L-Cysteine (C00097)** are directly connected in the KEGG reaction graph (1 hop, bidirectional), confirming their tight metabolic coupling in the serine→cysteine branch of sulfur amino acid metabolism.\n- **S-Adenosylmethionine (C00019)** and **Glycine (C00037)** are linked bidirectionally via a two-step path (SAM → C00213 → glycine), consistent with SAM-dependent methyltransfer generating glycine as a demethylated product.\n- **Choline (C00114)** participates as a one-carbon donor upstream of the methionine cycle, linking to the glycine–serine hub.\n- **Adenosine (C00212)** is a structural component of SAM and also interfaces with purine metabolism feeding the methyl cycle.\n- **L-Threonine (C00188)** is a direct entry point into the glycine–serine–threonine axis.\n\n**Biological significance:** The convergence of glycine, serine, threonine, and the methionine–cysteine cycle onto a single carbon-pool strongly suggests the treatment perturbation affects one-carbon metabolism — a network that governs methylation capacity (SAM), antioxidant biosynthesis (cysteine → glutathione), and nucleotide synthesis. Dysregulation here has been linked to liver dysfunction, cancer progression, and neurological disorders, positioning this signature as a potentially high-impact metabolic re-wiring event worthy of targeted follow-up.",
+  "elapsed_seconds": 133.38642879202962,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 10,
+  "n_turns": 4,
+  "n_tool_calls": 6,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_ie8w1hvc5qz1_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00037\",\"C00114\",\"C04043\",\"C00212\",\"C00065\",\"C00089\",\"C03508\",\"C00097\",\"C00188\",\"C00019\"],\"top_k\":5}",
+      "result": {
+        "n_input": 10,
+        "n_resolved": 10,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Glycine, serine and threonine metabolism",
+            "source": "kegg",
+            "external_id": "map00260",
+            "fdr": 0.0,
+            "fold_enrichment": 758.47,
+            "matched_compounds": [
+              "C00037",
+              "C00114",
+              "C00212",
+              "C00065",
+              "C03508",
+              "C00097",
+              "C00188",
+              "C00019"
+            ],
+            "pathway_size": 57
+          },
+          {
+            "name": "Biochemical pathways: part I",
+            "source": "wikipathways",
+            "external_id": "WP3604",
+            "fdr": 0.0,
+            "fold_enrichment": 104.371,
+            "matched_compounds": [
+              "C00037",
+              "C00114",
+              "C00212",
+              "C00065",
+              "C00089",
+              "C03508",
+              "C00097",
+              "C00188",
+              "C00019"
+            ],
+            "pathway_size": 466
+          },
+          {
+            "name": "Cystathionine Beta-Synthase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00177",
+            "fdr": 0.0,
+            "fold_enrichment": 876.341,
+            "matched_compounds": [
+              "C00037",
+              "C00114",
+              "C00212",
+              "C00065",
+              "C00097",
+              "C00019"
+            ],
+            "pathway_size": 37
+          },
+          {
+            "name": "Glycine N-methyltransferase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00222",
+            "fdr": 0.0,
+            "fold_enrichment": 876.341,
+            "matched_compounds": [
+              "C00037",
+              "C00114",
+              "C00212",
+              "C00065",
+              "C00097",
+              "C00019"
+            ],
+            "pathway_size": 37
+          },
+          {
+            "name": "Homocystinuria-megaloblastic anemia due to defect in cobalamin metabolism, cblG complementation type",
+            "source": "smpdb",
+            "external_id": "SMP00570",
+            "fdr": 0.0,
+            "fold_enrichment": 876.341,
+            "matched_compounds": [
+              "C00037",
+              "C00114",
+              "C00212",
+              "C00065",
+              "C00097",
+              "C00019"
+            ],
+            "pathway_size": 37
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_tbswli0kode0_1",
+      "arguments": "{\"metabolite_id\":\"C00065\"}",
+      "result": {
+        "metabolite_id": "C00065",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483101",
+            "name": "Synthesis of PS",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483206",
+            "name": "Glycerophospholipid biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483257",
+            "name": "Phospholipid metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1614558",
+            "name": "Degradation of cysteine and homocysteine",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1614603",
+            "name": "Cysteine formation from homocysteine",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1614635",
+            "name": "Sulfur amino acid metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1643685",
+            "name": "Disease",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1660661",
+            "name": "Sphingolipid de novo biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-196757",
+            "name": "Metabolism of folate and pterines",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000126",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000167",
+          "hmdb:HMDB0000168",
+          "hmdb:HMDB0000207",
+          "hmdb:HMDB0000224",
+          "hmdb:HMDB0000272",
+          "hmdb:HMDB0000641"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000095",
+          "hmdb:HMDB0000097",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000119",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000149",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000251"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "L-Serine is annotated in 10 pathways across reactome (e.g. Metabolism, Synthesis of PS, and Glycerophospholipid biosynthesis). It has 20 upstream and 43 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_tbswli0kode0_2",
+      "arguments": "{\"metabolite_id\":\"C00019\"}",
+      "result": {
+        "metabolite_id": "C00019",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-112311",
+            "name": "Neurotransmitter clearance",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-112315",
+            "name": "Transmission across Chemical Synapses",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-112316",
+            "name": "Neuronal System",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1266738",
+            "name": "Developmental Biology",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1428517",
+            "name": "Aerobic respiration and respiratory electron transport",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1474165",
+            "name": "Reproduction",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483191",
+            "name": "Synthesis of PC",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483206",
+            "name": "Glycerophospholipid biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1483257",
+            "name": "Phospholipid metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000696",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000010",
+          "hmdb:HMDB0000022",
+          "hmdb:HMDB0000033",
+          "hmdb:HMDB0000034",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000064",
+          "hmdb:HMDB0000068",
+          "hmdb:HMDB0000073",
+          "hmdb:HMDB0000082"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "SAM is annotated in 10 pathways across reactome (e.g. Neurotransmitter clearance, Transmission across Chemical Synapses, and Neuronal System). It has 5 upstream and 324 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_tbswli0kode0_3",
+      "arguments": "{\"metabolite_id\":\"C00097\"}",
+      "result": {
+        "metabolite_id": "C00097",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00136",
+            "name": "2-Hydroxyglutric Aciduria (D And L Form)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00721",
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00243",
+            "name": "4-Hydroxybutyric Aciduria/Succinic Semialdehyde Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00500",
+            "name": "5-oxoprolinase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00143",
+            "name": "5-Oxoprolinuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00133",
+            "name": "Amiloride Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00090",
+            "name": "Bendroflumethiazide Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00499",
+            "name": "Beta-mercaptolactate-cysteine disulfiduria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00583",
+            "name": "Blue diaper syndrome",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00088",
+            "name": "Bumetanide Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000078",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000192",
+          "hmdb:HMDB0000254",
+          "hmdb:HMDB0000272"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000082",
+          "hmdb:HMDB0000095",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000134",
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000168"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "L-Cysteine is annotated in 10 pathways across smpdb (e.g. 2-Hydroxyglutric Aciduria (D And L Form), 3-Phosphoglycerate dehydrogenase deficiency, and 4-Hydroxybutyric Aciduria/Succinic Semialdehyde Dehydrogenase Deficiency). It has 26 upstream and 49 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_ecuzg2u9trsj_1",
+      "arguments": "{\"compound_a\":\"C00019\",\"compound_b\":\"C00037\",\"max_path_length\":6}",
+      "result": {
+        "compound_a": "C00019",
+        "compound_b": "C00037",
+        "resolved_a": "cpd:C00019",
+        "resolved_b": "cpd:C00037",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00019",
+          "cpd:C00213",
+          "cpd:C00037"
+        ],
+        "path_length": 2,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_ecuzg2u9trsj_2",
+      "arguments": "{\"compound_a\":\"C00065\",\"compound_b\":\"C00097\",\"max_path_length\":6}",
+      "result": {
+        "compound_a": "C00065",
+        "compound_b": "C00097",
+        "resolved_a": "cpd:C00065",
+        "resolved_b": "cpd:C00097",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00065",
+          "cpd:C00097"
+        ],
+        "path_length": 1,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

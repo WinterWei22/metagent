@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T15:27:45.096Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+  "final_narrative": "## Tryptophan Metabolism Is the Dominantly Affected Pathway\n\nThe RaMP enrichment analysis identifies **Tryptophan metabolism (KEGG map00380)** as the top candidate pathway with a fold-enrichment of 700.5 (FDR = 0.0). Seven of the ten input metabolites map to this pathway: **L-Tryptophan (C00078)**, **Melatonin (C01598)**, **Quinolinic acid (C03722)**, **Indoleacetaldehyde (C00637)**, **Serotonin (C00780)**, **3-Hydroxyanthranilic acid (C00632)**, and **Tryptamine (C00398)**. Secondary highly-enriched pathways include the kynurenine-branch pathway \"Tryptophan catabolism leading to NAD+ production (WP4210)\" and the broader Reactome term \"Metabolism of amine-derived hormones (R-HSA-209776)\", confirming that the treatment perturbation centers on tryptophan utilization.\n\n### Key Driver Compounds\n\n**L-Tryptophan (C00078)** is the unambiguous upstream precursor entry point. The KEGG reaction graph confirms a two-hop route from L-Tryptophan → indole-3-acetaldehyde (C00643) → **Serotonin (C00780)**, establishing a verified upstream–downstream relationship. **Serotonin (C00780)** and **Melatonin (C01598)** are annotated within the **Metabolism of amine-derived hormones (R-HSA-209776)** Reactome pathway. **3-Hydroxyanthranilic acid (C00632)** anchors the kynurenine/NAD⁺ branch, also annotated in the **Tryptophan catabolism leading to NAD+ production (WP4210)**. **Quinolinic acid (C03722)** is a member of the tryptophan metabolism pathway where it occupies the kynurenine sub-branch and is also annotated in the NAD⁺ biosynthetic pathway (WP3645); its elevation in the input list is consistent with activation of this branch under the treatment condition. **Indoleacetaldehyde (C00637)** and **Tryptamine (C00398)** bridge the amino-acid and biogenic-amine branches, expanding the affected覆盖面.\n\n### Biological Significance\n\nThe co-enrichment of both the serotonin/melatonin arm and the kynurenine/quinolinic acid arm suggests the treatment shifts tryptophan flux between two competing fates: the amine-hormone output (serotonin → melatonin, **Metabolism of amine-derived hormones**) and the immune/catabolic output leading to NAD⁺ (kynurenine → quinolinic acid, **Tryptophan catabolism leading to NAD+ production**). Elevated quinolinic acid is an NMDA-receptor agonist with excitotoxic potential and is implicated in neurodegeneration and neuroinflammation. Altered melatonin levels may affect circadian rhythm and oxidative-stress protection. Prior literature (PMID 42028912) documents that tryptophan-kynurenine metabolic reprogramming is a recognized biological phenomenon in multiple disease contexts, lending mechanistic support to the observed pattern. **L-Valine (C00183)** and **1-Pyrroline-5-carboxylic acid (C03912)** did not appear in the top-enriched tryptophan-related pathways and are more plausibly co-enriched through broader amino-acid metabolism annotation.\n\n### Limitations\n\nThe RaMP enrichment returned tryptophan metabolism and its related branches with strong statistical support, but the enrichment analysis does not itself resolve directionality of flux or confirm which enzymatic step is the primary treatment target. In addition, some biological characterizations (e.g., excitotoxicity, circadian effects) are extrapolated from the known functions of individual metabolites and would require targeted experimental validation.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 8,
+  "elapsed_seconds": 988.8260735254735,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 1,
+    "rollback_reason": "iter2_degraded",
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      4,
+      1,
+      3
+    ],
+    "iter0_reused": true
+  }
+}

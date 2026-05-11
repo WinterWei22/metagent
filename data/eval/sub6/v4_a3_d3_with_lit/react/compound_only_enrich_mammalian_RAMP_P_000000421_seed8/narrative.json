@@ -1,0 +1,393 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+  "narrative": "## Pathway Analysis and Biological Interpretation\n\nThe RaMP enrichment analysis identified **Androgen and Estrogen Metabolism** (KEGG map00150, FDR = 0.0, fold enrichment = 1091.7) as the dominant affected pathway, with six steroid hormones driving this signal: Dehydroepiandrosterone, Androstenedione, Testosterone, Dihydrotestosterone, Estrone, and Estradiol. This pathway also appeared as the top hit across multiple databases — SMPDB's \"Androgen and Estrogen Metabolism\" and Reactome's \"Metabolism of steroid hormones\" — confirming the robustness of the finding.\n\n**Key driver compounds.** Dehydroepiandrosterone (DHEA, C01227) occupies a pivotal upstream position, serving as the principal precursor for both androgens and estrogens. KEGG path analysis confirmed direct one-step connectivity from DHEA to Androstenedione (C00280), which in turn converts to Testosterone (C00535) — the major circulating androgen in males. The pathway extends further to Dihydrotestosterone (C03917), the most potent androgen receptor agonist, via a single enzymatic step. In the estrogen arm, bidirectional one-step paths connect Estrone (C00468) and Estradiol (C00951), reflecting the active interconversion catalyzed by 17β-hydroxysteroid dehydrogenases.\n\n**Biological significance.** Systematic elevation or coordinated modulation of these six steroids suggests disruption of the gonadal steroid axis — potentially reflecting altered steroidogenic enzyme activity (e.g., CYP17A1, aromatase, or 5α-reductase) or hypothalamic-pituitary-gonadal feedback dysregulation. Such a pattern is consistent with endocrine disorders, xenobiotic exposure, or pathological states affecting hormone biosynthesis. The simultaneous perturbation of both androgen and estrogen branches, rather than a single branch, points to a upstream defect at the DHEA branch point.\n\n**Non-steroidal compounds.** Caffeine (C07481), sucrose (C00089), inosine 2',3'-cyclic phosphate (C05768), N-hydroxy-4-aminobiphenyl (C20319), and 4-hydroxy-L-glutamic acid (C05947) did not achieve pathway significance in this analysis. Their association may reflect indirect or tissue-specific effects rather than core steroid metabolism reprogramming.",
+  "elapsed_seconds": 65.82858071289957,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 11,
+  "n_turns": 4,
+  "n_tool_calls": 7,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_xqo9fbeasb9o_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C07481\",\"C01227\",\"C05768\",\"C00951\",\"C00535\",\"C00468\",\"C20319\",\"C05947\",\"C00089\",\"C00280\",\"C03917\"],\"top_k\":5}",
+      "result": {
+        "n_input": 11,
+        "n_resolved": 11,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00356",
+            "fdr": 0.0,
+            "fold_enrichment": 1091.737,
+            "matched_compounds": [
+              "C01227",
+              "C00951",
+              "C00535",
+              "C00468",
+              "C00280",
+              "C03917"
+            ],
+            "pathway_size": 27
+          },
+          {
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "smpdb",
+            "external_id": "SMP00068",
+            "fdr": 0.0,
+            "fold_enrichment": 1091.737,
+            "matched_compounds": [
+              "C01227",
+              "C00951",
+              "C00535",
+              "C00468",
+              "C00280",
+              "C03917"
+            ],
+            "pathway_size": 27
+          },
+          {
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "kegg",
+            "external_id": "map00150",
+            "fdr": 0.0,
+            "fold_enrichment": 1091.737,
+            "matched_compounds": [
+              "C01227",
+              "C00951",
+              "C00535",
+              "C00468",
+              "C00280",
+              "C03917"
+            ],
+            "pathway_size": 27
+          },
+          {
+            "name": "Aromatase deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00565",
+            "fdr": 0.0,
+            "fold_enrichment": 1091.737,
+            "matched_compounds": [
+              "C01227",
+              "C00951",
+              "C00535",
+              "C00468",
+              "C00280",
+              "C03917"
+            ],
+            "pathway_size": 27
+          },
+          {
+            "name": "Metabolism of steroid hormones",
+            "source": "reactome",
+            "external_id": "R-HSA-196071",
+            "fdr": 0.0,
+            "fold_enrichment": 755.818,
+            "matched_compounds": [
+              "C01227",
+              "C00951",
+              "C00535",
+              "C00468",
+              "C00280",
+              "C03917"
+            ],
+            "pathway_size": 39
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_g5isdimogzue_1",
+      "arguments": "{\"metabolite_id\":\"C00535\"}",
+      "result": {
+        "metabolite_id": "C00535",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00356",
+            "name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00068",
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00150",
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP30406",
+            "name": "Androstenedione Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00565",
+            "name": "Aromatase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-162582",
+            "name": "Signal Transduction",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-193048",
+            "name": "Androgen biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-193144",
+            "name": "Estrogen biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-194315",
+            "name": "Signaling by Rho GTPases",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0002961",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000053",
+          "hmdb:HMDB0000142",
+          "hmdb:HMDB0000151",
+          "hmdb:HMDB0000295",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0003193",
+          "hmdb:HMDB0006259",
+          "hmdb:HMDB0059597",
+          "hmdb:HMDB0060089"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Testosterone is annotated in 10 pathways across kegg, reactome, smpdb (e.g. 17-Beta Hydroxysteroid Dehydrogenase III Deficiency, Androgen and Estrogen Metabolism, and Androgen and Estrogen Metabolism). It has 2 upstream and 13 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_g5isdimogzue_2",
+      "arguments": "{\"metabolite_id\":\"C00280\"}",
+      "result": {
+        "metabolite_id": "C00280",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00356",
+            "name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00068",
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00150",
+            "name": "Androgen and Estrogen Metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP30406",
+            "name": "Androstenedione Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00565",
+            "name": "Aromatase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-162582",
+            "name": "Signal Transduction",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1643685",
+            "name": "Disease",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-193048",
+            "name": "Androgen biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-193144",
+            "name": "Estrogen biosynthesis",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000234",
+          "hmdb:HMDB0000374",
+          "hmdb:HMDB0000899",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0059597",
+          "hmdb:HMDB0062415"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000142",
+          "hmdb:HMDB0000145",
+          "hmdb:HMDB0000899",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0003422",
+          "hmdb:HMDB0003769",
+          "hmdb:HMDB0003955",
+          "hmdb:HMDB0006774",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Androstenedione is annotated in 10 pathways across kegg, reactome, smpdb (e.g. 17-Beta Hydroxysteroid Dehydrogenase III Deficiency, Androgen and Estrogen Metabolism, and Androgen and Estrogen Metabolism). It has 8 upstream and 11 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_g5isdimogzue_3",
+      "arguments": "{\"compound_a\":\"C01227\",\"compound_b\":\"C00280\"}",
+      "result": {
+        "compound_a": "C01227",
+        "compound_b": "C00280",
+        "resolved_a": "cpd:C01227",
+        "resolved_b": "cpd:C00280",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C01227",
+          "cpd:C00280"
+        ],
+        "path_length": 1,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_hkfkrhtvr39q_1",
+      "arguments": "{\"compound_a\":\"C00280\",\"compound_b\":\"C00535\"}",
+      "result": {
+        "compound_a": "C00280",
+        "compound_b": "C00535",
+        "resolved_a": "cpd:C00280",
+        "resolved_b": "cpd:C00535",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00280",
+          "cpd:C00535"
+        ],
+        "path_length": 1,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_hkfkrhtvr39q_2",
+      "arguments": "{\"compound_a\":\"C00535\",\"compound_b\":\"C03917\"}",
+      "result": {
+        "compound_a": "C00535",
+        "compound_b": "C03917",
+        "resolved_a": "cpd:C00535",
+        "resolved_b": "cpd:C03917",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00535",
+          "cpd:C03917"
+        ],
+        "path_length": 1,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_hkfkrhtvr39q_3",
+      "arguments": "{\"compound_a\":\"C00468\",\"compound_b\":\"C00951\"}",
+      "result": {
+        "compound_a": "C00468",
+        "compound_b": "C00951",
+        "resolved_a": "cpd:C00468",
+        "resolved_b": "cpd:C00951",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00468",
+          "cpd:C00951"
+        ],
+        "path_length": 1,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

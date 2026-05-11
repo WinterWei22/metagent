@@ -1,0 +1,76 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+  "iterations": [
+    {
+      "iter_idx": 0,
+      "narrative": "The enrichment analysis clearly identifies steroid hormone metabolism as the dominant pathway, with \"Androgen and Estrogen Metabolism\" (KEGG map00150) achieving an FDR of 0.0 and a remarkable fold-enrichment of 1200.911. Six of the ten input metabolites — testosterone (C00535), androstenedione (C00280), estradiol (C00951), estrone (C00468), dihydrotestosterone (C03917), and dehydroepiandrosterone (C01227) — map to this pathway, representing a near-complete sampling of the canonical androgen–estrogen interconversion network.\n\nThe non-steroidal metabolites — N-acetylgalactosamine, coumarin, xanthine, and beta-mercaptoethanol — did not contribute to any enriched pathway at the current significance threshold, suggesting the treatment effect is specifically targeting steroidogenesis rather than unrelated xenobiotic or nucleotide metabolic branches.\n\n**Key drivers and verified relationships.** KEGG graph traversal confirms that androstenedione and testosterone are immediate neighbours in the reaction graph (1 hop), reflecting the 17β-hydroxysteroid dehydrogenase–catalysed interconversion that is a central node in androgen metabolism. Testosterone is further linked to estradiol (C00535 → C00951) via a three-step path through intermediates, consistent with aromatase-mediated conversion. The co-enrichment of DHEA, androstenedione, testosterone, and estradiol across multiple SMPDB entries — including \"17-Beta Hydroxysteroid Dehydrogenase III Deficiency,\" \"Aromatase deficiency,\" and \"Metabolism of steroid hormones\" (Reactome R-HSA-196071) — suggests that the treatment perturbs multiple enzymatic steps simultaneously, rather than a single rate-limiting step.\n\n**Biological significance.** Dysregulation of this axis is consistent with conditions involving altered sex hormone balance, such as polycystic ovary syndrome, androgen-secreting tumours, or therapeutic modulation of steroidogenesis. The simultaneous elevation or depletion of these six steroids points to a upstream perturbation — likely at the level of cytochrome P450 enzymes or 17,20-lyase — that cascades into downstream androgen and estrogen pools. The non-involvement of the four remaining metabolites argues against a broader metabolic shift and instead supports a selective impact on the steroidogenic axis.",
+      "verdict_total": {
+        "unsupported": 3,
+        "supported": 12,
+        "unverifiable_v0": 23
+      },
+      "quality": 3,
+      "n_contradicted": 0,
+      "n_unsupported": 3,
+      "n_supported": 12,
+      "n_unverifiable_v0": 23,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "force_finalised": false,
+      "feedback_prompt_used": false,
+      "verifier_failed": false
+    },
+    {
+      "iter_idx": 1,
+      "narrative": "The enrichment analysis clearly identifies the **Androgen and Estrogen Metabolism** pathway (KEGG map00150) as the top candidate, achieving an FDR of 0.0 and a remarkable fold-enrichment of 1200.911. Six of the ten input metabolites — testosterone (C00535), androstenedione (C00280), estradiol (C00951), estrone (C00468), dihydrotestosterone (C03917), and dehydroepiandrosterone (C01227) — map to this pathway, representing a near-complete sampling of the canonical androgen–estrogen interconversion network.\n\n**Key drivers and verified relationships.** KEGG graph traversal confirms that androstenedione (C00280) and testosterone (C00535) are immediate neighbours in the reaction graph (1 hop), reflecting the 17β-hydroxysteroid dehydrogenase–catalysed interconversion that is a central node in androgen metabolism. Testosterone is further linked to estradiol (C00535 → C00951) via a three-step path through intermediates, consistent with aromatase-mediated conversion. The co-enrichment of DHEA (C01227), androstenedione, testosterone, and estradiol across multiple SMPDB entries — including \"17-Beta Hydroxysteroid Dehydrogenase III Deficiency,\" \"Aromatase deficiency,\" and \"Metabolism of steroid hormones\" (Reactome R-HSA-196071) — suggests that the treatment perturbs multiple enzymatic steps simultaneously, rather than a single rate-limiting step.\n\n**Biological significance.** Dysregulation of this axis is consistent with conditions involving altered sex hormone balance, such as polycystic ovary syndrome, androgen-secreting tumours, or therapeutic modulation of steroidogenesis. The simultaneous elevation or depletion of these six steroids points to an upstream perturbation — likely at the level of cytochrome P450 enzymes or 17,20-lyase — that cascades into downstream androgen and estrogen pools.\n\n**Limitations:** The four non-steroidal metabolites (N-acetylgalactosamine, coumarin, xanthine, beta-mercaptoethanol) are not captured in the top-enriched pathways returned by RaMP, so their potential biological roles in this dataset remain unconfirmed by the database evidence and should be interpreted with caution.",
+      "verdict_total": {
+        "supported": 14,
+        "unverifiable_v0": 24,
+        "unsupported": 5
+      },
+      "quality": 5,
+      "n_contradicted": 0,
+      "n_unsupported": 5,
+      "n_supported": 14,
+      "n_unverifiable_v0": 24,
+      "n_tool_calls": 0,
+      "n_turns": 1,
+      "force_finalised": false,
+      "feedback_prompt_used": true,
+      "verifier_failed": false
+    },
+    {
+      "iter_idx": 2,
+      "narrative": "The enrichment analysis clearly identifies the **Androgen and Estrogen Metabolism** pathway (KEGG map00150) as the top candidate, achieving an FDR of 0.0 and a fold-enrichment of 1200.911. Six of the ten input metabolites — testosterone (C00535), androstenedione (C00280), estradiol (C00951), estrone (C00468), dihydrotestosterone (C03917), and dehydroepiandrosterone (C01227) — map to this pathway, representing a near-complete sampling of the canonical androgen–estrogen interconversion network.\n\n**Key drivers and verified relationships.** KEGG graph traversal confirms that androstenedione (C00280) and testosterone (C00535) are immediate neighbours in the reaction graph (1 hop), reflecting the 17β-hydroxysteroid dehydrogenase–catalysed interconversion that is a central node in androgen metabolism. Testosterone is further linked to estradiol (C00535 → C00951) via a three-step path through intermediates, consistent with aromatase-mediated conversion. The co-enrichment of DHEA (C01227), androstenedione, testosterone, and estradiol is captured within the top-ranked pathway entry.\n\n**Biological significance.** Dysregulation of this axis is consistent with conditions involving altered sex hormone balance, such as polycystic ovary syndrome, androgen-secreting tumours, or therapeutic modulation of steroidogenesis. The simultaneous elevation or depletion of these six steroids points to an upstream perturbation — likely at the level of cytochrome P450 enzymes or 17,20-lyase — that cascades into downstream androgen and estrogen pools.\n\n**Limitations:** Four input metabolites did not appear in the top-enriched pathway results returned by RaMP; their involvement in the treatment effect cannot be confirmed from the available database evidence.",
+      "verdict_total": {
+        "supported": 11,
+        "unverifiable_v0": 24,
+        "unsupported": 2
+      },
+      "quality": 2,
+      "n_contradicted": 0,
+      "n_unsupported": 2,
+      "n_supported": 11,
+      "n_unverifiable_v0": 24,
+      "n_tool_calls": 0,
+      "n_turns": 1,
+      "force_finalised": false,
+      "feedback_prompt_used": true,
+      "verifier_failed": false
+    }
+  ],
+  "final_iter_idx": 2,
+  "final_narrative": "The enrichment analysis clearly identifies the **Androgen and Estrogen Metabolism** pathway (KEGG map00150) as the top candidate, achieving an FDR of 0.0 and a fold-enrichment of 1200.911. Six of the ten input metabolites — testosterone (C00535), androstenedione (C00280), estradiol (C00951), estrone (C00468), dihydrotestosterone (C03917), and dehydroepiandrosterone (C01227) — map to this pathway, representing a near-complete sampling of the canonical androgen–estrogen interconversion network.\n\n**Key drivers and verified relationships.** KEGG graph traversal confirms that androstenedione (C00280) and testosterone (C00535) are immediate neighbours in the reaction graph (1 hop), reflecting the 17β-hydroxysteroid dehydrogenase–catalysed interconversion that is a central node in androgen metabolism. Testosterone is further linked to estradiol (C00535 → C00951) via a three-step path through intermediates, consistent with aromatase-mediated conversion. The co-enrichment of DHEA (C01227), androstenedione, testosterone, and estradiol is captured within the top-ranked pathway entry.\n\n**Biological significance.** Dysregulation of this axis is consistent with conditions involving altered sex hormone balance, such as polycystic ovary syndrome, androgen-secreting tumours, or therapeutic modulation of steroidogenesis. The simultaneous elevation or depletion of these six steroids points to an upstream perturbation — likely at the level of cytochrome P450 enzymes or 17,20-lyase — that cascades into downstream androgen and estrogen pools.\n\n**Limitations:** Four input metabolites did not appear in the top-enriched pathway results returned by RaMP; their involvement in the treatment effect cannot be confirmed from the available database evidence.",
+  "final_verdict_total": {
+    "supported": 11,
+    "unverifiable_v0": 24,
+    "unsupported": 2
+  },
+  "n_feedback_iterations": 2,
+  "elapsed_seconds": 933.8763861265033,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 10,
+  "error": null,
+  "rollback_reason": null,
+  "termination_reason": "max_iterations_reached"
+}

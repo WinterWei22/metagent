@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T12:42:26.703Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+  "final_narrative": "---\n\n## Biological Interpretation: Steroid Hormone Metabolism Disruption\n\n**Affected Pathways.** The dominant signal is a near-perfect enrichment for **Androgen and Estrogen Metabolism** (KEGG map00150; SMPDB SMP00068; FDR = 0.0, fold-enrichment ≈ 1001). Five of the ten input metabolites — **dehydroepiandrosterone (DHEA, C01227)**, **androstenedione (C00280)**, **testosterone (C00535)**, **dihydrotestosterone (DHT, C03917)**, and **estradiol (C00951)** — map directly to this pathway, making it the unambiguous top hit.\n\n**Key Driver Compounds.** DHEA emerges as the most upstream driver in the steroidogenic cascade. The KEGG reaction graph confirms a direct, reversible enzymatic step from DHEA → Androstenedione (1 reaction hop), and a second direct step from Androstenedione → Testosterone (1 reaction hop). Together, DHEA, androstenedione, testosterone, and DHT form a coherent androgen biosynthetic module. The additional presence of estradiol anchors this to the androgen-to-estrogen aromatization branch, implicating altered flux across the entire steroidogenic axis.\n\n**Biological Significance.** The coordinated differential abundance of five steroids within the Androgen and Estrogen Metabolism pathway indicates altered flux through this pathway. DHEA and its downstream androgens are well-documented drivers of prostate and breast cancer cell proliferation. Estradiol dysregulation adds a parallel estrogenic dimension.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 6,
+  "elapsed_seconds": 1731.6692308820784,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "no_actionable_claims_after_iter",
+    "qualities": [
+      4,
+      5,
+      0
+    ],
+    "iter0_reused": true
+  }
+}

@@ -1,0 +1,2850 @@
+[
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+    "single": {
+      "narr_chars": 2061,
+      "elapsed_s": 32.5,
+      "verdicts": {
+        "unsupported": 9,
+        "supported": 15,
+        "unverifiable_v0": 17
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2584,
+      "n_tool_calls": 8,
+      "n_turns": 4,
+      "elapsed_s": 43.8,
+      "verdicts": {
+        "supported": 19,
+        "unverifiable_v0": 33,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2401,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 887.9,
+      "verdicts": {
+        "supported": 21,
+        "unsupported": 2,
+        "unverifiable_v0": 36,
+        "contradicted": 1
+      },
+      "qualities": [
+        2,
+        8,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+    "single": {
+      "narr_chars": 2091,
+      "elapsed_s": 32.1,
+      "verdicts": {
+        "unsupported": 5,
+        "unverifiable_v0": 35,
+        "contradicted": 1,
+        "supported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2176,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 164.6,
+      "verdicts": {
+        "unsupported": 5,
+        "supported": 5,
+        "unverifiable_v0": 35,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2081,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1104.7,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 25,
+        "unsupported": 3
+      },
+      "qualities": [
+        6,
+        6,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+    "single": {
+      "narr_chars": 1961,
+      "elapsed_s": 31.6,
+      "verdicts": {
+        "unverifiable_v0": 24,
+        "unsupported": 3,
+        "supported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2077,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 73.2,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 19,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1436,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 1731.7,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 16
+      },
+      "qualities": [
+        4,
+        5,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+    "single": {
+      "narr_chars": 1909,
+      "elapsed_s": 30.1,
+      "verdicts": {
+        "contradicted": 1,
+        "supported": 8,
+        "unsupported": 7,
+        "unverifiable_v0": 18
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2420,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 38.1,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 23,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2420,
+      "n_iterations": 0,
+      "final_iter_idx": 0,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1298.5,
+      "verdicts": {
+        "supported": 15,
+        "unverifiable_v0": 25,
+        "unsupported": 5
+      },
+      "qualities": [
+        8
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+    "single": {
+      "narr_chars": 3740,
+      "elapsed_s": 69.5,
+      "verdicts": {
+        "unsupported": 11,
+        "unverifiable_v0": 66,
+        "contradicted": 7,
+        "supported": 11
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2292,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 59.9,
+      "verdicts": {
+        "unsupported": 3,
+        "supported": 12,
+        "unverifiable_v0": 27,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1756,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 933.9,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 20,
+        "unsupported": 2
+      },
+      "qualities": [
+        3,
+        5,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed5",
+    "single": {
+      "narr_chars": 1848,
+      "elapsed_s": 41.2,
+      "verdicts": {
+        "contradicted": 1,
+        "unsupported": 11,
+        "supported": 9,
+        "unverifiable_v0": 16
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3206,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 99.6,
+      "verdicts": {
+        "supported": 23,
+        "unverifiable_v0": 30,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 4113,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 1366.4,
+      "verdicts": {
+        "supported": 31,
+        "unverifiable_v0": 62,
+        "contradicted": 1
+      },
+      "qualities": [
+        2,
+        4,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed6",
+    "single": {
+      "narr_chars": 2812,
+      "elapsed_s": 50.5,
+      "verdicts": {
+        "supported": 4,
+        "unsupported": 9,
+        "unverifiable_v0": 39
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2662,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 74.1,
+      "verdicts": {
+        "unverifiable_v0": 42,
+        "contradicted": 1,
+        "supported": 13,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2662,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1004.5,
+      "verdicts": {
+        "unverifiable_v0": 34,
+        "contradicted": 1,
+        "supported": 12,
+        "unsupported": 3
+      },
+      "qualities": [
+        4,
+        7,
+        5
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+    "single": {
+      "narr_chars": 1837,
+      "elapsed_s": 36.2,
+      "verdicts": {
+        "unsupported": 5,
+        "unverifiable_v0": 32,
+        "supported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2195,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 65.8,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 32,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2790,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1189.8,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 42,
+        "unsupported": 1,
+        "contradicted": 1
+      },
+      "qualities": [
+        4,
+        2,
+        4
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053042_seed9",
+    "single": {
+      "narr_chars": 1968,
+      "elapsed_s": 33.1,
+      "verdicts": {
+        "unsupported": 7,
+        "supported": 5,
+        "unverifiable_v0": 24,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2065,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 71.2,
+      "verdicts": {
+        "supported": 11,
+        "unsupported": 7,
+        "unverifiable_v0": 34,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1676,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 689.3,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 21,
+        "unsupported": 4
+      },
+      "qualities": [
+        5,
+        2,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "single": {
+      "narr_chars": 2215,
+      "elapsed_s": 41.3,
+      "verdicts": {
+        "contradicted": 2,
+        "unsupported": 16,
+        "unverifiable_v0": 10,
+        "supported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2421,
+      "n_tool_calls": 9,
+      "n_turns": 5,
+      "elapsed_s": 70.0,
+      "verdicts": {
+        "supported": 20,
+        "unverifiable_v0": 33,
+        "unsupported": 6,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1461,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 673.4,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 14,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "qualities": [
+        4,
+        7,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+    "single": {
+      "narr_chars": 2457,
+      "elapsed_s": 30.3,
+      "verdicts": {
+        "unverifiable_v0": 36,
+        "supported": 14,
+        "unsupported": 8,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2131,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 95.1,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 23,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2194,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 382.6,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 18,
+        "contradicted": 1
+      },
+      "qualities": [
+        3,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+    "single": {
+      "narr_chars": 2101,
+      "elapsed_s": 29.2,
+      "verdicts": {
+        "supported": 20,
+        "unsupported": 4,
+        "unverifiable_v0": 24
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2202,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 68.2,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 28,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2552,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 1056.4,
+      "verdicts": {
+        "supported": 27,
+        "unverifiable_v0": 20,
+        "unsupported": 1
+      },
+      "qualities": [
+        4,
+        2,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed6",
+    "single": {
+      "narr_chars": 1905,
+      "elapsed_s": 32.2,
+      "verdicts": {
+        "unsupported": 9,
+        "unverifiable_v0": 13,
+        "supported": 7,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2297,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 58.1,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 33,
+        "contradicted": 1,
+        "unsupported": 8
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1706,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 645.5,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 12,
+        "contradicted": 1
+      },
+      "qualities": [
+        12,
+        7,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+    "single": {
+      "narr_chars": 2135,
+      "elapsed_s": 50.9,
+      "verdicts": {
+        "supported": 7,
+        "unsupported": 4,
+        "unverifiable_v0": 24
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3925,
+      "n_tool_calls": 4,
+      "n_turns": 3,
+      "elapsed_s": 93.4,
+      "verdicts": {
+        "supported": 15,
+        "unsupported": 8,
+        "unverifiable_v0": 56,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3760,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1053.1,
+      "verdicts": {
+        "supported": 26,
+        "unverifiable_v0": 40,
+        "unsupported": 6,
+        "contradicted": 1
+      },
+      "qualities": [
+        11,
+        13,
+        8
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed9",
+    "single": {
+      "narr_chars": 3170,
+      "elapsed_s": 33.7,
+      "verdicts": {
+        "unverifiable_v0": 44,
+        "unsupported": 17,
+        "supported": 9
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2063,
+      "n_tool_calls": 7,
+      "n_turns": 5,
+      "elapsed_s": 129.6,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 22,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2063,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1130.4,
+      "verdicts": {
+        "supported": 29,
+        "unverifiable_v0": 19,
+        "unsupported": 4
+      },
+      "qualities": [
+        2,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+    "single": {
+      "narr_chars": 1876,
+      "elapsed_s": 58.9,
+      "verdicts": {
+        "contradicted": 6,
+        "unsupported": 6,
+        "unverifiable_v0": 22,
+        "supported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2786,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 114.5,
+      "verdicts": {
+        "unverifiable_v0": 43,
+        "unsupported": 10,
+        "supported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2453,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1234.1,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 35,
+        "unsupported": 3,
+        "contradicted": 2
+      },
+      "qualities": [
+        14,
+        10,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+    "single": {
+      "narr_chars": 2169,
+      "elapsed_s": 33.1,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 15,
+        "unsupported": 12,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2453,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 43.3,
+      "verdicts": {
+        "unverifiable_v0": 27,
+        "supported": 11,
+        "unsupported": 8
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1915,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 925.2,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 29,
+        "unsupported": 4,
+        "contradicted": 1
+      },
+      "qualities": [
+        9,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed1",
+    "single": {
+      "narr_chars": 2410,
+      "elapsed_s": 30.6,
+      "verdicts": {
+        "unverifiable_v0": 27,
+        "unsupported": 3,
+        "supported": 8,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2452,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 37.1,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 22,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2530,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 575.0,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 29,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "qualities": [
+        6,
+        1,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed2",
+    "single": {
+      "narr_chars": 2124,
+      "elapsed_s": 32.8,
+      "verdicts": {
+        "contradicted": 5,
+        "supported": 4,
+        "unverifiable_v0": 19,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1943,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 79.4,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 38,
+        "contradicted": 3,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1870,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 883.0,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 24
+      },
+      "qualities": [
+        2,
+        4,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+    "single": {
+      "narr_chars": 4232,
+      "elapsed_s": 89.2,
+      "verdicts": {
+        "unsupported": 9,
+        "supported": 13,
+        "unverifiable_v0": 31,
+        "contradicted": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1796,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 91.5,
+      "verdicts": {
+        "supported": 19,
+        "unverifiable_v0": 27,
+        "unsupported": 1,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2112,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 579.3,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 29
+      },
+      "qualities": [
+        3,
+        1,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed4",
+    "single": {
+      "narr_chars": 2091,
+      "elapsed_s": 28.3,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 21,
+        "unsupported": 8
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1871,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 86.2,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 29,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1668,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1507.0,
+      "verdicts": {
+        "unverifiable_v0": 18,
+        "supported": 9,
+        "contradicted": 1,
+        "unsupported": 1
+      },
+      "qualities": [
+        5,
+        6,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+    "single": {
+      "narr_chars": 3609,
+      "elapsed_s": 80.2,
+      "verdicts": {
+        "unverifiable_v0": 35,
+        "unsupported": 10,
+        "contradicted": 3,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2344,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 81.4,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 25,
+        "contradicted": 1,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2479,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 684.0,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 28,
+        "unsupported": 1
+      },
+      "qualities": [
+        3,
+        3,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+    "single": {
+      "narr_chars": 3186,
+      "elapsed_s": 76.8,
+      "verdicts": {
+        "unsupported": 17,
+        "unverifiable_v0": 41,
+        "supported": 2,
+        "contradicted": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3398,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 101.2,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 40,
+        "unsupported": 9,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2934,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 715.1,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 20,
+        "unsupported": 1,
+        "contradicted": 1
+      },
+      "qualities": [
+        8,
+        3,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+    "single": {
+      "narr_chars": 2035,
+      "elapsed_s": 46.1,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 15,
+        "unsupported": 12
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2418,
+      "n_tool_calls": 4,
+      "n_turns": 4,
+      "elapsed_s": 34.2,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 37,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2418,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1024.9,
+      "verdicts": {
+        "unverifiable_v0": 39,
+        "supported": 22,
+        "contradicted": 2
+      },
+      "qualities": [
+        1,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+    "single": {
+      "narr_chars": 1951,
+      "elapsed_s": 32.8,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 18,
+        "unsupported": 9,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2010,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 28.2,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 33,
+        "unsupported": 6
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2292,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 983.3,
+      "verdicts": {
+        "unverifiable_v0": 18,
+        "supported": 3,
+        "unsupported": 4
+      },
+      "qualities": [
+        7,
+        14,
+        7
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+    "single": {
+      "narr_chars": 2055,
+      "elapsed_s": 24.6,
+      "verdicts": {
+        "contradicted": 3,
+        "supported": 2,
+        "unverifiable_v0": 13,
+        "unsupported": 6
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2227,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 105.7,
+      "verdicts": {
+        "contradicted": 3,
+        "supported": 20,
+        "unverifiable_v0": 20,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2011,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 959.4,
+      "verdicts": {
+        "unverifiable_v0": 23,
+        "supported": 14,
+        "unsupported": 4
+      },
+      "qualities": [
+        4,
+        3
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+    "single": {
+      "narr_chars": 2346,
+      "elapsed_s": 27.6,
+      "verdicts": {
+        "supported": 4,
+        "unsupported": 14,
+        "unverifiable_v0": 17
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2324,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 79.0,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 34,
+        "contradicted": 1,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2834,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 904.4,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 31,
+        "unsupported": 5,
+        "contradicted": 2
+      },
+      "qualities": [
+        5,
+        1,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+    "single": {
+      "narr_chars": 2348,
+      "elapsed_s": 31.9,
+      "verdicts": {
+        "unsupported": 16,
+        "contradicted": 2,
+        "supported": 16,
+        "unverifiable_v0": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2944,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 41.2,
+      "verdicts": {
+        "supported": 15,
+        "unverifiable_v0": 22,
+        "contradicted": 3,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2309,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1097.4,
+      "verdicts": {
+        "unverifiable_v0": 18,
+        "supported": 8,
+        "unsupported": 3,
+        "contradicted": 2
+      },
+      "qualities": [
+        6,
+        5
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+    "single": {
+      "narr_chars": 2077,
+      "elapsed_s": 42.1,
+      "verdicts": {
+        "supported": 12,
+        "unsupported": 10,
+        "unverifiable_v0": 11,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2058,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 124.3,
+      "verdicts": {
+        "supported": 23,
+        "unverifiable_v0": 27,
+        "unsupported": 14
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1238,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 978.4,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 4,
+        "unsupported": 4
+      },
+      "qualities": [
+        5,
+        6,
+        4
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+    "single": {
+      "narr_chars": 1990,
+      "elapsed_s": 28.8,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 16,
+        "unsupported": 4,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2587,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 117.2,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 44,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2587,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1388.5,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 35,
+        "unsupported": 2
+      },
+      "qualities": [
+        2,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed1",
+    "single": {
+      "narr_chars": 1852,
+      "elapsed_s": 36.1,
+      "verdicts": {
+        "unverifiable_v0": 24,
+        "unsupported": 2,
+        "contradicted": 1,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2640,
+      "n_tool_calls": 7,
+      "n_turns": 5,
+      "elapsed_s": 77.0,
+      "verdicts": {
+        "supported": 1,
+        "unsupported": 8,
+        "contradicted": 1,
+        "unverifiable_v0": 45
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2640,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 915.5,
+      "verdicts": {
+        "supported": 4,
+        "contradicted": 1,
+        "unverifiable_v0": 47,
+        "unsupported": 8
+      },
+      "qualities": [
+        6,
+        9
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+    "single": {
+      "narr_chars": 2067,
+      "elapsed_s": 23.7,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 17,
+        "unsupported": 2,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3546,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 93.3,
+      "verdicts": {
+        "supported": 16,
+        "contradicted": 6,
+        "unverifiable_v0": 45,
+        "unsupported": 6
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2877,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1261.7,
+      "verdicts": {
+        "supported": 24,
+        "unverifiable_v0": 34,
+        "unsupported": 5
+      },
+      "qualities": [
+        10,
+        3
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+    "single": {
+      "narr_chars": 1902,
+      "elapsed_s": 28.7,
+      "verdicts": {
+        "supported": 6,
+        "contradicted": 2,
+        "unverifiable_v0": 28,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2915,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 54.0,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 50,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2915,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1613.8,
+      "verdicts": {
+        "supported": 17,
+        "unverifiable_v0": 44
+      },
+      "qualities": [
+        1,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed4",
+    "single": {
+      "narr_chars": 2130,
+      "elapsed_s": 24.6,
+      "verdicts": {
+        "supported": 3,
+        "contradicted": 2,
+        "unverifiable_v0": 30,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3161,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 108.8,
+      "verdicts": {
+        "contradicted": 2,
+        "unsupported": 4,
+        "unverifiable_v0": 32,
+        "supported": 10
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3244,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1352.8,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 40,
+        "unsupported": 1,
+        "contradicted": 1
+      },
+      "qualities": [
+        3,
+        2
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+    "single": {
+      "narr_chars": 2393,
+      "elapsed_s": 35.2,
+      "verdicts": {
+        "unverifiable_v0": 25,
+        "contradicted": 4,
+        "supported": 4,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3138,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 50.5,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 37,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3402,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 673.5,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 29
+      },
+      "qualities": [
+        7,
+        3,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+    "single": {
+      "narr_chars": 2132,
+      "elapsed_s": 37.3,
+      "verdicts": {
+        "unverifiable_v0": 29,
+        "supported": 7,
+        "contradicted": 2,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3997,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 85.0,
+      "verdicts": {
+        "unsupported": 6,
+        "supported": 11,
+        "unverifiable_v0": 59,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3997,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1041.5,
+      "verdicts": {
+        "unsupported": 10,
+        "supported": 8,
+        "unverifiable_v0": 54,
+        "contradicted": 2
+      },
+      "qualities": [
+        5,
+        2,
+        6
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed7",
+    "single": {
+      "narr_chars": 2432,
+      "elapsed_s": 26.2,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 26,
+        "contradicted": 2,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 4587,
+      "n_tool_calls": 4,
+      "n_turns": 3,
+      "elapsed_s": 50.7,
+      "verdicts": {
+        "supported": 35,
+        "unverifiable_v0": 41,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 4587,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 994.2,
+      "verdicts": {
+        "supported": 22,
+        "unverifiable_v0": 50,
+        "unsupported": 8,
+        "contradicted": 1
+      },
+      "qualities": [
+        4,
+        9,
+        8
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed8",
+    "single": {
+      "narr_chars": 2405,
+      "elapsed_s": 81.0,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 27,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2367,
+      "n_tool_calls": 4,
+      "n_turns": 3,
+      "elapsed_s": 35.6,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 37,
+        "unsupported": 9
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2145,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 704.1,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 17
+      },
+      "qualities": [
+        6,
+        14,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+    "single": {
+      "narr_chars": 1979,
+      "elapsed_s": 25.8,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 21,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2711,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 72.4,
+      "verdicts": {
+        "unverifiable_v0": 32,
+        "supported": 9,
+        "unsupported": 3,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2280,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 540.8,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 28
+      },
+      "qualities": [
+        3,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+    "single": {
+      "narr_chars": 2253,
+      "elapsed_s": 43.8,
+      "verdicts": {
+        "contradicted": 1,
+        "supported": 7,
+        "unsupported": 13,
+        "unverifiable_v0": 12
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2749,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 65.7,
+      "verdicts": {
+        "supported": 14,
+        "unverifiable_v0": 29,
+        "unsupported": 1,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2162,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1508.6,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 16,
+        "unsupported": 2
+      },
+      "qualities": [
+        6,
+        3,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+    "single": {
+      "narr_chars": 1823,
+      "elapsed_s": 27.7,
+      "verdicts": {
+        "unverifiable_v0": 16,
+        "unsupported": 8,
+        "supported": 9,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2575,
+      "n_tool_calls": 4,
+      "n_turns": 5,
+      "elapsed_s": 84.7,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 14,
+        "unsupported": 3,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2728,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1001.6,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 12,
+        "contradicted": 1
+      },
+      "qualities": [
+        10,
+        2,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+    "single": {
+      "narr_chars": 1613,
+      "elapsed_s": 141.3,
+      "verdicts": {
+        "contradicted": 2,
+        "unverifiable_v0": 28,
+        "supported": 4,
+        "unsupported": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2024,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 75.1,
+      "verdicts": {
+        "supported": 17,
+        "unverifiable_v0": 20,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2207,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 719.6,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 27,
+        "unsupported": 1,
+        "contradicted": 1
+      },
+      "qualities": [
+        2,
+        1,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+    "single": {
+      "narr_chars": 2162,
+      "elapsed_s": 29.5,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 15,
+        "contradicted": 3,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2798,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 99.3,
+      "verdicts": {
+        "unverifiable_v0": 38,
+        "supported": 6,
+        "unsupported": 5,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1945,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1191.5,
+      "verdicts": {
+        "unverifiable_v0": 21,
+        "supported": 12,
+        "unsupported": 1
+      },
+      "qualities": [
+        7,
+        6,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+    "single": {
+      "narr_chars": 4608,
+      "elapsed_s": 120.6,
+      "verdicts": {
+        "unverifiable_v0": 61,
+        "supported": 14,
+        "unsupported": 9,
+        "contradicted": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2925,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 111.2,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 29,
+        "unsupported": 8,
+        "contradicted": 7
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2090,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 884.5,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 23,
+        "unsupported": 3
+      },
+      "qualities": [
+        10,
+        2,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+    "single": {
+      "narr_chars": 1951,
+      "elapsed_s": 49.2,
+      "verdicts": {
+        "unsupported": 9,
+        "supported": 4,
+        "contradicted": 2,
+        "unverifiable_v0": 27
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3223,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 79.7,
+      "verdicts": {
+        "unsupported": 10,
+        "supported": 7,
+        "unverifiable_v0": 40,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3223,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 988.2,
+      "verdicts": {
+        "unsupported": 7,
+        "supported": 7,
+        "unverifiable_v0": 41
+      },
+      "qualities": [
+        8,
+        10
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+    "single": {
+      "narr_chars": 1943,
+      "elapsed_s": 59.8,
+      "verdicts": {
+        "contradicted": 4,
+        "unverifiable_v0": 25,
+        "supported": 7,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2314,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 72.4,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 28,
+        "unsupported": 3,
+        "contradicted": 7
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2267,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 708.9,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 30,
+        "contradicted": 4,
+        "unsupported": 1
+      },
+      "qualities": [
+        9,
+        2,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+    "single": {
+      "narr_chars": 1718,
+      "elapsed_s": 29.7,
+      "verdicts": {
+        "unsupported": 6,
+        "unverifiable_v0": 15,
+        "supported": 2,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2570,
+      "n_tool_calls": 8,
+      "n_turns": 4,
+      "elapsed_s": 46.6,
+      "verdicts": {
+        "unsupported": 6,
+        "supported": 5,
+        "unverifiable_v0": 35
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2857,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 890.1,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 36
+      },
+      "qualities": [
+        8,
+        2,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed3",
+    "single": {
+      "narr_chars": 1999,
+      "elapsed_s": 48.9,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 25,
+        "contradicted": 1,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2145,
+      "n_tool_calls": 7,
+      "n_turns": 3,
+      "elapsed_s": 53.5,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 28,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2682,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 637.3,
+      "verdicts": {
+        "unverifiable_v0": 40,
+        "supported": 6,
+        "contradicted": 1
+      },
+      "qualities": [
+        2,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "single": {
+      "narr_chars": 2299,
+      "elapsed_s": 23.8,
+      "verdicts": {
+        "unverifiable_v0": 38,
+        "unsupported": 10,
+        "supported": 5,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1890,
+      "n_tool_calls": 8,
+      "n_turns": 4,
+      "elapsed_s": 53.6,
+      "verdicts": {
+        "unverifiable_v0": 18,
+        "supported": 6,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1890,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1041.4,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 28,
+        "unsupported": 2,
+        "contradicted": 4
+      },
+      "qualities": [
+        2,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+    "single": {
+      "narr_chars": 1972,
+      "elapsed_s": 28.6,
+      "verdicts": {
+        "unsupported": 12,
+        "unverifiable_v0": 21,
+        "contradicted": 1,
+        "supported": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2329,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 42.9,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 37,
+        "unsupported": 11
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2594,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 885.8,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 35,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "qualities": [
+        7,
+        5,
+        4
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+    "single": {
+      "narr_chars": 1863,
+      "elapsed_s": 54.9,
+      "verdicts": {
+        "unsupported": 5,
+        "unverifiable_v0": 21,
+        "supported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2424,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 86.1,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 29,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2543,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1067.2,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 27,
+        "unsupported": 4,
+        "contradicted": 2
+      },
+      "qualities": [
+        9,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed7",
+    "single": {
+      "narr_chars": 2185,
+      "elapsed_s": 23.8,
+      "verdicts": {
+        "contradicted": 3,
+        "unsupported": 9,
+        "unverifiable_v0": 20,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2493,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 71.4,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 37,
+        "unsupported": 4,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2857,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1218.5,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 17,
+        "unsupported": 4
+      },
+      "qualities": [
+        7,
+        6
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+    "single": {
+      "narr_chars": 2191,
+      "elapsed_s": 46.2,
+      "verdicts": {
+        "unsupported": 10,
+        "contradicted": 4,
+        "supported": 10,
+        "unverifiable_v0": 15
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2336,
+      "n_tool_calls": 13,
+      "n_turns": 5,
+      "elapsed_s": 137.5,
+      "verdicts": {
+        "unsupported": 11,
+        "supported": 5,
+        "contradicted": 2,
+        "unverifiable_v0": 23
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2028,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 421.1,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 33,
+        "unsupported": 1
+      },
+      "qualities": [
+        12,
+        1,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+    "single": {
+      "narr_chars": 1778,
+      "elapsed_s": 26.0,
+      "verdicts": {
+        "contradicted": 2,
+        "unsupported": 4,
+        "unverifiable_v0": 29,
+        "supported": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2900,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 132.8,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 40,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2223,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 807.4,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 34,
+        "contradicted": 2
+      },
+      "qualities": [
+        2,
+        3,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+    "single": {
+      "narr_chars": 1871,
+      "elapsed_s": 39.5,
+      "verdicts": {
+        "supported": 8,
+        "contradicted": 4,
+        "unverifiable_v0": 18,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3033,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 70.5,
+      "verdicts": {
+        "supported": 15,
+        "unverifiable_v0": 33,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3364,
+      "n_iterations": 2,
+      "final_iter_idx": 1,
+      "rollback_reason": "iter2_degraded",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 988.8,
+      "verdicts": {
+        "supported": 25,
+        "unverifiable_v0": 31,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "qualities": [
+        4,
+        1,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+    "single": {
+      "narr_chars": 3369,
+      "elapsed_s": 87.2,
+      "verdicts": {
+        "unverifiable_v0": 50,
+        "unsupported": 12,
+        "supported": 9,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2248,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 94.8,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 29,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2248,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1131.8,
+      "verdicts": {
+        "supported": 13,
+        "unsupported": 3,
+        "contradicted": 2,
+        "unverifiable_v0": 23
+      },
+      "qualities": [
+        3,
+        7
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed2",
+    "single": {
+      "narr_chars": 1833,
+      "elapsed_s": 17.5,
+      "verdicts": {
+        "supported": 14,
+        "unverifiable_v0": 22,
+        "contradicted": 5,
+        "unsupported": 10
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2233,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 72.4,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 14,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2233,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 801.3,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 22,
+        "unsupported": 5
+      },
+      "qualities": [
+        6,
+        3,
+        7
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed3",
+    "single": {
+      "narr_chars": 2481,
+      "elapsed_s": 23.5,
+      "verdicts": {
+        "unsupported": 10,
+        "supported": 9,
+        "unverifiable_v0": 4,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2571,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 35.6,
+      "verdicts": {
+        "supported": 10,
+        "unsupported": 3,
+        "unverifiable_v0": 25
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2258,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1281.6,
+      "verdicts": {
+        "supported": 12,
+        "unverifiable_v0": 23,
+        "unsupported": 1
+      },
+      "qualities": [
+        4,
+        3,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed4",
+    "single": {
+      "narr_chars": 2177,
+      "elapsed_s": 23.9,
+      "verdicts": {
+        "supported": 6,
+        "unverifiable_v0": 8,
+        "unsupported": 6
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2080,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 40.1,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 30,
+        "unsupported": 4,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2062,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 538.8,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 39,
+        "unsupported": 1
+      },
+      "qualities": [
+        5,
+        6,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+    "single": {
+      "narr_chars": 2040,
+      "elapsed_s": 39.0,
+      "verdicts": {
+        "supported": 12,
+        "unsupported": 8,
+        "unverifiable_v0": 13,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2209,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 100.6,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 21,
+        "unsupported": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1714,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1088.7,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 20,
+        "contradicted": 2,
+        "unsupported": 2
+      },
+      "qualities": [
+        6,
+        7,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed6",
+    "single": {
+      "narr_chars": 3178,
+      "elapsed_s": 84.8,
+      "verdicts": {
+        "unverifiable_v0": 33,
+        "supported": 14,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2742,
+      "n_tool_calls": 12,
+      "n_turns": 5,
+      "elapsed_s": 55.5,
+      "verdicts": {
+        "supported": 25,
+        "unverifiable_v0": 22,
+        "unsupported": 8,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2468,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1194.8,
+      "verdicts": {
+        "supported": 27,
+        "unverifiable_v0": 17,
+        "unsupported": 4
+      },
+      "qualities": [
+        13,
+        5
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed7",
+    "single": {
+      "narr_chars": 3003,
+      "elapsed_s": 50.5,
+      "verdicts": {
+        "contradicted": 1,
+        "unsupported": 4,
+        "unverifiable_v0": 39,
+        "supported": 4
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2854,
+      "n_tool_calls": 10,
+      "n_turns": 5,
+      "elapsed_s": 47.1,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 39,
+        "unsupported": 4,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2306,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 791.9,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 27,
+        "contradicted": 2
+      },
+      "qualities": [
+        6,
+        3,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+    "single": {
+      "narr_chars": 2833,
+      "elapsed_s": 96.4,
+      "verdicts": {
+        "contradicted": 5,
+        "supported": 2,
+        "unsupported": 6,
+        "unverifiable_v0": 24
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 1942,
+      "n_tool_calls": 7,
+      "n_turns": 5,
+      "elapsed_s": 78.9,
+      "verdicts": {
+        "supported": 19,
+        "unverifiable_v0": 20,
+        "unsupported": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1942,
+      "n_iterations": 0,
+      "final_iter_idx": 0,
+      "rollback_reason": null,
+      "termination_reason": "early_exit_no_revisions",
+      "elapsed_s": 104.4,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 16,
+        "contradicted": 1
+      },
+      "qualities": [
+        0
+      ],
+      "error": null
+    }
+  }
+]

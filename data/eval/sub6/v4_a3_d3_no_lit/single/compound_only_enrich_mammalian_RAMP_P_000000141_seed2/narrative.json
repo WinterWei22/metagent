@@ -1,0 +1,9 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed2",
+  "narrative": "## Pathway Analysis\n\n### 1. Most Affected Pathway\nThe dominant pathway is **tryptophan metabolism**, specifically the **indole/serotonin-melatonin branch**. Multiple metabolites form an interconnected network:\n\n- L-Tryptophan → Tryptamine → Indoleacetaldehyde\n- L-Tryptophan → Serotonin → Melatonin\n- L-Tryptophan → Kynurenine pathway → 3-Hydroxyanthranilic acid\n\nSecondary pathway involvement includes **oxidative stress/lipid peroxidation** (acrolein) and altered **RNA/nucleotide processing** (cytidine 2',3'-cyclic phosphate).\n\n### 2. Key Pathway Drivers\nThe most likely drivers are:\n- **L-Tryptophan** (central substrate being diverted)\n- **Serotonin** (major branching point)\n- **3-Hydroxyanthranilic acid** (kynurenine pathway marker)\n\n### 3. Biological Significance\nDoxycycline inhibits mitochondrial 60S ribosomal subunits, which may reduce mitochondrial protein synthesis and electron transport chain function. This could:\n- Alter tryptophan catabolism patterns\n- Increase oxidative stress (acrolein elevation)\n- Disrupt NAD+ biosynthesis from the kynurenine pathway\n- Affect sleep/circadian regulation (melatonin changes)\n\n### 4. Upstream/Downstream Relationships\nThe pathway follows a clear hierarchy:\n- **Upstream**: L-Tryptophan availability\n- **Branch points**: Serotonin vs. kynurenine pathway diversion\n- **Downstream**: Serotonin → Melatonin; 3-HAA → downstream neuroactive metabolites\n\nThe co-occurrence of doxycycline, milrinone (PDE3 inhibitor), and altered nucleotide metabolites suggests multi-target effects on cellular energetics and signaling.",
+  "elapsed_seconds": 31.57971203327179,
+  "llm_model": "MiniMax-M2.7",
+  "llm_calls": 1,
+  "metabolite_count": 10,
+  "error": null
+}

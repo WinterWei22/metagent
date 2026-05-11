@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T08:09:35.249Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+  "final_narrative": "**Revised Narrative**\n\nThe RaMP enrichment analysis identified **17-Beta Hydroxysteroid Dehydrogenase III Deficiency** (SMP00356) as the top-ranked pathway (FDR = 0.0, fold enrichment = 1091.7), with the same six matched compounds also appearing in the closely related **Androgen and Estrogen Metabolism** pathway (KEGG map00150; SMP00068) and **Metabolism of steroid hormones** (Reactome R-HSA-196071). These three entries share identical matched compounds — dehydroepiandrosterone (C01227), androstenedione (C00280), testosterone (C00535), dihydrotestosterone (C03917), estrone (C00468), and estradiol (C00951) — reflecting a common steroid-hormone core.\n\nMembership verification confirmed that testosterone (C00535), androstenedione (C00280), and dihydrotestosterone (C03917) map to the KEGG and SMPDB Androgen and Estrogen Metabolism pathways, as well as to Reactome steroid-hormone biosynthesis modules. The KEGG reaction graph confirms a direct, reversible relationship between androstenedione and testosterone (path length = 1 hop). The KEGG reaction graph also confirms a direct, reversible relationship between estrone and estradiol (path length = 1 hop, bidirectional), forming a biosynthetic gradient from the C19 androgen precursors (DHEA → androstenedione ↔ testosterone ↔ DHT) to the C18 aromatized estrogens (estrone ↔ estradiol).\n\nThe primary biological story is a marked perturbation of the **Androgen and Estrogen Metabolism** pathway (map00150/SMP00068), driven collectively by six sex-steroid intermediates. The remaining input compounds (caffeine, inosine 2',3'-cyclic phosphate, N-hydroxy-4-aminobiphenyl, 4-hydroxy-L-glutamic acid, and sucrose) were not part of the enriched pathways identified by RaMP and were not considered drivers in this analysis.\n\n**Limitations:** Non-steroidal compounds were not part of the top enriched pathways, so their individual relevance could not be established from this dataset. Directional enzyme-activity inferences require independent validation.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 8,
+  "elapsed_seconds": 875.4709402304143,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      5,
+      8,
+      4
+    ],
+    "iter0_reused": true
+  }
+}

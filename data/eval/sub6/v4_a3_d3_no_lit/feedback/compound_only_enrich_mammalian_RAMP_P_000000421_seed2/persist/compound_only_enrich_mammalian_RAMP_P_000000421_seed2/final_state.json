@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T08:12:31.626Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+  "final_narrative": "**Steroid Metabolism Disruption — RaMP-Enriched Pathways and Matched Drivers**\n\nThe RaMP enrichment analysis identifies **17-Beta Hydroxysteroid Dehydrogenase III Deficiency** (SMP00356, FDR = 0.0, fold-enrichment ≈ 1,001) as the top-ranked pathway. [retracted: the claim that three top pathways were identified is not supported by the authoritative top-1 output.]\n\nThe matched compounds for 17-Beta Hydroxysteroid Dehydrogenase III Deficiency are **C01227 (DHEA)**, **C00280 (androstenedione)**, **C00535 (testosterone)**, **C03917 (dihydrotestosterone)**, and **C00951 (estradiol)**. [retracted: \"molecular formula C00951\" — this identifier is a KEGG database ID, not a chemical formula.]\n\n**Verified directional relationships:** The KEGG reaction graph confirms that DHEA (C01227) and androstenedione (C00280) are separated by a single bidirectional step (shortest path length = 1), and that androstenedione (C00280) and testosterone (C00535) are likewise directly interconvertible in one bidirectional step. These two confirmed edges anchor the upstream-to-downstream ordering of the matched steroids.\n\n**Biological interpretation:** The matched set for 17-Beta Hydroxysteroid Dehydrogenase III Deficiency implicates perturbations at the terminal interconversion steps of sex steroid biosynthesis, where 17β-HSD enzymes regulate the final conversion of androstenedione to testosterone and of estradiol to its conjugated forms.\n\n**Non-enriched metabolites:** Quinolinic acid (C03722) is annotated to KEGG Tryptophan Metabolism (map00380) and Nicotinate and Nicotinamide Metabolism (map00760); dobutamine (C06967) is annotated to Dobutamine Action Pathway (SMP00662), Signal Transduction (R-HSA-162582), and Signaling by GPCR (R-HSA-372790). Thromboxane (C02198), dehydroascorbic acid (C05422), and 4-hydroxy-2-oxoglutaric acid (C01127) did not appear in the top-ranked enrichment output.\n\n**Limitations:** The top-ranked pathway is a disease state (17-Beta Hydroxysteroid Dehydrogenase III Deficiency), which limits direct inference about normal physiological steroid flux. Thromboxane, dehydroascorbic acid, and 4-hydroxy-2-oxoglutaric acid are uncharacterised by the current enrichment output and require independent validation.",
+  "n_iterations": 2,
+  "n_total_tool_calls": 12,
+  "elapsed_seconds": 702.7007128279656,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      15,
+      10,
+      1
+    ],
+    "iter0_reused": true
+  }
+}
