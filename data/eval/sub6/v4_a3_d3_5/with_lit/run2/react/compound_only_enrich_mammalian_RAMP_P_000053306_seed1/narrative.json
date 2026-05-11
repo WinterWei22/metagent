@@ -1,0 +1,417 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+  "narrative": "**Narrative: Pyrimidine Metabolism Disruption with Secondary Methionine Perturbation**\n\nThe enrichment analysis reveals a striking perturbation of **Pyrimidine metabolism (KEGG map00240)** — the top-ranked pathway with FDR = 0.0 and a fold-enrichment of ~693. Six metabolites converge on this pathway: deoxyuridine (C00526), CDP (C00112), UMP (C00105), dihydrouracil (C00429), ureidopropionic acid (C02642), and deoxyribose 1-phosphate (C00672). Three of these — dihydrouracil, ureidopropionic acid, and deoxyuridine — are catabolic intermediates, pointing to activation of the pyrimidine degradation branch. The presence of both CDP and UMP indicates simultaneous disruption of the *de novo* biosynthesis arm, suggesting bidirectional stress across pyrimidine synthesis and breakdown.\n\nKey driver metabolites include **dihydrouracil** and **ureidopropionic acid**, whose direct upstream–downstream relationship is confirmed via KEGG reaction graph (path length = 1, forward direction: C00429 → C02642). These two species occupy consecutive steps in the dihydropyrimidinase–ureidopropionase cascade that converts dihydrouracil to β-ureidopropionic acid and ultimately to β-alanine. **Deoxyuridine** lies further upstream and is connected to UMP via a three-reaction path (C00526 → C00106 → C00299 → C00105), bridging salvage and biosynthesis. The detection of **deoxyribose 1-phosphate** suggests parallel activation of nucleotide salvage, consistent with increased nucleoside turnover.\n\nA secondary, less dominant signal appears in **Cysteine and methionine metabolism (KEGG hsa00270)**, driven by methionine sulfoxide (C02989). Methionine sulfoxide is a known product of oxidative damage to methionine residues, and its accumulation may reflect treatment-induced oxidative stress or a secondary effect of altered sulfur amino acid flux.\n\n**Biological significance**: Combined depletion of UMP/CDP alongside accumulation of catabolic intermediates implies either enhanced pyrimidine catabolism (e.g., during DNA repair or cell proliferation) or impaired recycling back to nucleotides. In the context of a treatment effect, this pattern is consistent with drug-induced perturbation of nucleotide metabolism — for instance, spironolactone (C07310), though not itself a pyrimidine, can modulate steroid-regulated pathways that cross-talk to nucleotide biosynthesis. The methionine sulfoxide signal reinforces a broader picture of oxidative and metabolic stress beyond the pyrimidine axis.",
+  "elapsed_seconds": 62.94454234279692,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 9,
+  "n_turns": 4,
+  "n_tool_calls": 6,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_5p3tv77jt7vy_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00526\",\"C00112\",\"C07310\",\"C00105\",\"C00429\",\"C02642\",\"C00672\",\"C03912\",\"C02989\"],\"top_k\":5}",
+      "result": {
+        "n_input": 9,
+        "n_resolved": 9,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Pyrimidine metabolism",
+            "source": "wikipathways",
+            "external_id": "WP4022",
+            "fdr": 0.0,
+            "fold_enrichment": 878.715,
+            "matched_compounds": [
+              "C00526",
+              "C00112",
+              "C00105",
+              "C00429",
+              "C02642",
+              "C00672"
+            ],
+            "pathway_size": 41
+          },
+          {
+            "name": "Beta Ureidopropionase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00172",
+            "fdr": 0.0,
+            "fold_enrichment": 692.833,
+            "matched_compounds": [
+              "C00526",
+              "C00112",
+              "C00105",
+              "C00429",
+              "C02642",
+              "C00672"
+            ],
+            "pathway_size": 52
+          },
+          {
+            "name": "Dihydropyrimidinase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00178",
+            "fdr": 0.0,
+            "fold_enrichment": 692.833,
+            "matched_compounds": [
+              "C00526",
+              "C00112",
+              "C00105",
+              "C00429",
+              "C02642",
+              "C00672"
+            ],
+            "pathway_size": 52
+          },
+          {
+            "name": "MNGIE (Mitochondrial Neurogastrointestinal Encephalopathy)",
+            "source": "smpdb",
+            "external_id": "SMP00202",
+            "fdr": 0.0,
+            "fold_enrichment": 692.833,
+            "matched_compounds": [
+              "C00526",
+              "C00112",
+              "C00105",
+              "C00429",
+              "C02642",
+              "C00672"
+            ],
+            "pathway_size": 52
+          },
+          {
+            "name": "Pyrimidine metabolism",
+            "source": "kegg",
+            "external_id": "map00240",
+            "fdr": 0.0,
+            "fold_enrichment": 692.833,
+            "matched_compounds": [
+              "C00526",
+              "C00112",
+              "C00105",
+              "C00429",
+              "C02642",
+              "C00672"
+            ],
+            "pathway_size": 52
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_akzri24l7u3b_1",
+      "arguments": "{\"metabolite_id\":\"C00526\"}",
+      "result": {
+        "metabolite_id": "C00526",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00172",
+            "name": "Beta Ureidopropionase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00178",
+            "name": "Dihydropyrimidinase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00202",
+            "name": "MNGIE (Mitochondrial Neurogastrointestinal Encephalopathy)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00240",
+            "name": "Pyrimidine metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00219",
+            "name": "UMP Synthase Deficiency (Orotic Aciduria)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-15869",
+            "name": "Metabolism of nucleotides",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-73614",
+            "name": "Pyrimidine salvage",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-73621",
+            "name": "Pyrimidine catabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-8956319",
+            "name": "Nucleotide catabolism",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000014",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001409",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000208",
+          "hmdb:HMDB0000254",
+          "hmdb:HMDB0000296",
+          "hmdb:HMDB0000300",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0001409",
+          "hmdb:HMDB0001967",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Deoxyuridine is annotated in 10 pathways across kegg, reactome, smpdb (e.g. Beta Ureidopropionase Deficiency, Dihydropyrimidinase Deficiency, and MNGIE (Mitochondrial Neurogastrointestinal Encephalopathy)). It has 4 upstream and 9 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_akzri24l7u3b_2",
+      "arguments": "{\"metabolite_id\":\"C00429\"}",
+      "result": {
+        "metabolite_id": "C00429",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00172",
+            "name": "Beta Ureidopropionase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00410",
+            "name": "beta-Alanine metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00493",
+            "name": "Carnosinuria, carnosinemia",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00178",
+            "name": "Dihydropyrimidinase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00351",
+            "name": "GABA-Transaminase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00202",
+            "name": "MNGIE (Mitochondrial Neurogastrointestinal Encephalopathy)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00240",
+            "name": "Pyrimidine metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00219",
+            "name": "UMP Synthase Deficiency (Orotic Aciduria)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00492",
+            "name": "Ureidopropionase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-110329",
+            "name": "Cleavage of the damaged pyrimidine",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000280"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000026",
+          "hmdb:HMDB0000300",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001377",
+          "hmdb:HMDB0059597"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Dihydrouracil is annotated in 10 pathways across kegg, reactome, smpdb (e.g. Beta Ureidopropionase Deficiency, beta-Alanine metabolism, and Carnosinuria, carnosinemia). It has 2 upstream and 5 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_akzri24l7u3b_3",
+      "arguments": "{\"compound_a\":\"C00429\",\"compound_b\":\"C02642\",\"max_path_length\":4}",
+      "result": {
+        "compound_a": "C00429",
+        "compound_b": "C02642",
+        "resolved_a": "cpd:C00429",
+        "resolved_b": "cpd:C02642",
+        "is_reachable": true,
+        "direction": "forward",
+        "shortest_path": [
+          "cpd:C00429",
+          "cpd:C02642"
+        ],
+        "path_length": 1,
+        "max_path_length": 4,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_vpbqof73owmo_1",
+      "arguments": "{\"max_path_length\":5,\"compound_a\":\"C00526\",\"compound_b\":\"C00105\"}",
+      "result": {
+        "compound_a": "C00526",
+        "compound_b": "C00105",
+        "resolved_a": "cpd:C00526",
+        "resolved_b": "cpd:C00105",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00526",
+          "cpd:C00106",
+          "cpd:C00299",
+          "cpd:C00105"
+        ],
+        "path_length": 3,
+        "max_path_length": 5,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_vpbqof73owmo_2",
+      "arguments": "{\"metabolite_id\":\"C02989\"}",
+      "result": {
+        "metabolite_id": "C02989",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00177",
+            "name": "Cystathionine Beta-Synthase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00222",
+            "name": "Glycine N-methyltransferase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00570",
+            "name": "Homocystinuria-megaloblastic anemia due to defect in cobalamin metabolism, cblG complementation type",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00341",
+            "name": "Hypermethioninemia",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00221",
+            "name": "Methionine Adenosyltransferase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00033",
+            "name": "Methionine Metabolism",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "map00270",
+            "name": "Methionine Metabolism",
+            "source": "kegg",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00340",
+            "name": "Methylenetetrahydrofolate Reductase Deficiency (MTHFRD)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00214",
+            "name": "S-Adenosylhomocysteine (SAH) Hydrolase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-392499",
+            "name": "Metabolism of proteins",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000696",
+          "hmdb:HMDB0001039"
+        ],
+        "downstream_neighbours": [],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Methionine sulfoxide is annotated in 10 pathways across kegg, reactome, smpdb (e.g. Cystathionine Beta-Synthase Deficiency, Glycine N-methyltransferase Deficiency, and Homocystinuria-megaloblastic anemia due to defect in cobalamin metabolism, cblG complementation type). It has 2 upstream and 0 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}

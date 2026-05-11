@@ -1,0 +1,187 @@
+{
+  "n_overlap_variants": 12,
+  "n_within_noise_pm1": 0,
+  "n_outliers_gt1": 12,
+  "all_within_noise": false,
+  "per_row": [
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "variant": "single",
+      "n_claims_d5": 35,
+      "n_claims_d4": 37,
+      "deltas": {
+        "unsupported": -1,
+        "contradicted": 0,
+        "supported": 1,
+        "unverifiable_v0": -2
+      },
+      "max_abs_delta": 2,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "variant": "react",
+      "n_claims_d5": 49,
+      "n_claims_d4": 51,
+      "deltas": {
+        "unsupported": 1,
+        "contradicted": 3,
+        "supported": -2,
+        "unverifiable_v0": -4
+      },
+      "max_abs_delta": 4,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "variant": "feedback",
+      "n_claims_d5": 30,
+      "n_claims_d4": 29,
+      "deltas": {
+        "supported": 2,
+        "unsupported": -1,
+        "unverifiable_v0": 0
+      },
+      "max_abs_delta": 2,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "variant": "single",
+      "n_claims_d5": 72,
+      "n_claims_d4": 33,
+      "deltas": {
+        "unsupported": 9,
+        "contradicted": 1,
+        "supported": 9,
+        "unverifiable_v0": 20
+      },
+      "max_abs_delta": 20,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "variant": "react",
+      "n_claims_d5": 52,
+      "n_claims_d4": 66,
+      "deltas": {
+        "unsupported": -8,
+        "contradicted": -2,
+        "supported": -3,
+        "unverifiable_v0": -1
+      },
+      "max_abs_delta": 8,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "variant": "feedback",
+      "n_claims_d5": 56,
+      "n_claims_d4": 70,
+      "deltas": {
+        "contradicted": -8,
+        "supported": -12,
+        "unsupported": -2,
+        "unverifiable_v0": 8
+      },
+      "max_abs_delta": 12,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "variant": "single",
+      "n_claims_d5": 30,
+      "n_claims_d4": 28,
+      "deltas": {
+        "contradicted": 1,
+        "supported": -2,
+        "unsupported": 0,
+        "unverifiable_v0": 3
+      },
+      "max_abs_delta": 3,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "variant": "react",
+      "n_claims_d5": 41,
+      "n_claims_d4": 45,
+      "deltas": {
+        "unsupported": -1,
+        "contradicted": 0,
+        "supported": -2,
+        "unverifiable_v0": -1
+      },
+      "max_abs_delta": 2,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "variant": "feedback",
+      "n_claims_d5": 33,
+      "n_claims_d4": 32,
+      "deltas": {
+        "contradicted": 1,
+        "supported": 0,
+        "unsupported": -4,
+        "unverifiable_v0": 4
+      },
+      "max_abs_delta": 4,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "variant": "single",
+      "n_claims_d5": 21,
+      "n_claims_d4": 41,
+      "deltas": {
+        "contradicted": -5,
+        "supported": -2,
+        "unsupported": -1,
+        "unverifiable_v0": -12
+      },
+      "max_abs_delta": 12,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "variant": "react",
+      "n_claims_d5": 46,
+      "n_claims_d4": 44,
+      "deltas": {
+        "unsupported": 3,
+        "contradicted": 3,
+        "supported": 6,
+        "unverifiable_v0": -10
+      },
+      "max_abs_delta": 10,
+      "within_noise": false,
+      "status": "ok"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "variant": "feedback",
+      "n_claims_d5": 23,
+      "n_claims_d4": 53,
+      "deltas": {
+        "contradicted": -3,
+        "supported": -3,
+        "unsupported": -4,
+        "unverifiable_v0": -20
+      },
+      "max_abs_delta": 20,
+      "within_noise": false,
+      "status": "ok"
+    }
+  ]
+}

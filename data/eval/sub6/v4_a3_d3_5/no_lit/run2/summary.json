@@ -1,0 +1,460 @@
+[
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+    "single": {
+      "narr_chars": 2348,
+      "elapsed_s": 32.7,
+      "verdicts": {
+        "unsupported": 7,
+        "unverifiable_v0": 23,
+        "supported": 2,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2684,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 66.1,
+      "verdicts": {
+        "unsupported": 7,
+        "supported": 5,
+        "contradicted": 5,
+        "unverifiable_v0": 28
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2449,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 570.6,
+      "verdicts": {
+        "unsupported": 9,
+        "unverifiable_v0": 37,
+        "supported": 8
+      },
+      "qualities": [
+        14,
+        6,
+        5
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+    "single": {
+      "narr_chars": 3349,
+      "elapsed_s": 94.1,
+      "verdicts": {
+        "supported": 3,
+        "unsupported": 6,
+        "unverifiable_v0": 46,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2278,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 40.5,
+      "verdicts": {
+        "contradicted": 5,
+        "unsupported": 13,
+        "supported": 8,
+        "unverifiable_v0": 26
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 993,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 783.5,
+      "verdicts": {
+        "supported": 3,
+        "unverifiable_v0": 8,
+        "contradicted": 1,
+        "unsupported": 1
+      },
+      "qualities": [
+        10,
+        8,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "single": {
+      "narr_chars": 2476,
+      "elapsed_s": 15.4,
+      "verdicts": {
+        "contradicted": 2,
+        "unverifiable_v0": 52,
+        "supported": 2,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2456,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 86.9,
+      "verdicts": {
+        "supported": 14,
+        "unverifiable_v0": 37,
+        "contradicted": 1,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2727,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 1012.3,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 45,
+        "unsupported": 2
+      },
+      "qualities": [
+        2,
+        5,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+    "single": {
+      "narr_chars": 1681,
+      "elapsed_s": 37.0,
+      "verdicts": {
+        "unverifiable_v0": 32,
+        "unsupported": 7,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2743,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 73.8,
+      "verdicts": {
+        "supported": 14,
+        "unverifiable_v0": 37,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2695,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 709.8,
+      "verdicts": {
+        "supported": 10,
+        "unverifiable_v0": 31,
+        "unsupported": 3,
+        "contradicted": 1
+      },
+      "qualities": [
+        5,
+        5,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+    "single": {
+      "narr_chars": 1728,
+      "elapsed_s": 38.4,
+      "verdicts": {
+        "contradicted": 6,
+        "unverifiable_v0": 18,
+        "supported": 5,
+        "unsupported": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2646,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 119.1,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 35,
+        "unsupported": 8,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1799,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1528.9,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 17,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "qualities": [
+        8,
+        4,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "single": {
+      "narr_chars": 2711,
+      "elapsed_s": 66.7,
+      "verdicts": {
+        "unsupported": 9,
+        "supported": 7,
+        "unverifiable_v0": 27,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2745,
+      "n_tool_calls": 9,
+      "n_turns": 4,
+      "elapsed_s": 56.0,
+      "verdicts": {
+        "supported": 17,
+        "unsupported": 3,
+        "unverifiable_v0": 27,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2745,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1031.5,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 23,
+        "unsupported": 3,
+        "contradicted": 3
+      },
+      "qualities": [
+        5,
+        8
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+    "single": {
+      "narr_chars": 3695,
+      "elapsed_s": 33.4,
+      "verdicts": {
+        "unverifiable_v0": 92,
+        "unsupported": 9,
+        "contradicted": 3,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2230,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 66.9,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 29
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2230,
+      "n_iterations": 0,
+      "final_iter_idx": 0,
+      "rollback_reason": null,
+      "termination_reason": "early_exit_no_revisions",
+      "elapsed_s": 238.1,
+      "verdicts": {
+        "supported": 13,
+        "unverifiable_v0": 29,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "qualities": [
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+    "single": {
+      "narr_chars": 1797,
+      "elapsed_s": 30.8,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 10,
+        "unsupported": 8,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2089,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 61.9,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 24,
+        "unsupported": 2,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1890,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1447.5,
+      "verdicts": {
+        "supported": 16,
+        "unsupported": 1,
+        "unverifiable_v0": 23
+      },
+      "qualities": [
+        4,
+        6,
+        3
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+    "single": {
+      "narr_chars": 2054,
+      "elapsed_s": 15.2,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 25,
+        "contradicted": 3,
+        "unsupported": 7
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2221,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 67.4,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 19,
+        "unsupported": 8,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2101,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 495.2,
+      "verdicts": {
+        "supported": 20,
+        "unverifiable_v0": 19,
+        "contradicted": 1,
+        "unsupported": 1
+      },
+      "qualities": [
+        7,
+        2,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+    "single": {
+      "narr_chars": 2120,
+      "elapsed_s": 57.1,
+      "verdicts": {
+        "contradicted": 2,
+        "unsupported": 14,
+        "supported": 12,
+        "unverifiable_v0": 13
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2451,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 86.8,
+      "verdicts": {
+        "supported": 16,
+        "unverifiable_v0": 38,
+        "unsupported": 13
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2583,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 990.2,
+      "verdicts": {
+        "supported": 22,
+        "unverifiable_v0": 39
+      },
+      "qualities": [
+        8,
+        4,
+        0
+      ],
+      "error": null
+    }
+  }
+]

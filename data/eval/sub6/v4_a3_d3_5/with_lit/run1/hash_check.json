@@ -1,0 +1,67 @@
+{
+  "all_match": true,
+  "n_match": 10,
+  "n_total": 10,
+  "per_task": [
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+      "react_sha256": "a1ca70313a0adacd873f244ebb4d83655ba8ff1443534616102e1001a8ef108b",
+      "feedback_iter0_sha256": "a1ca70313a0adacd873f244ebb4d83655ba8ff1443534616102e1001a8ef108b",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "react_sha256": "42f2a3a81ce882c5db12fedafcdc09ae17170f2a6078244d892a735689dceba8",
+      "feedback_iter0_sha256": "42f2a3a81ce882c5db12fedafcdc09ae17170f2a6078244d892a735689dceba8",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "react_sha256": "26e1fc200b0e863477185cb98b523c5e04a1f661c3238cee90d566fae0c69459",
+      "feedback_iter0_sha256": "26e1fc200b0e863477185cb98b523c5e04a1f661c3238cee90d566fae0c69459",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "react_sha256": "5bb560d5b5da9e93d5f18ff404e3b9929b98f224a4a41a7c913859b2890a98ab",
+      "feedback_iter0_sha256": "5bb560d5b5da9e93d5f18ff404e3b9929b98f224a4a41a7c913859b2890a98ab",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "react_sha256": "809e678082448fcb6fd96afea84527be13fbfaeafdb22870bf9786fd67c970d0",
+      "feedback_iter0_sha256": "809e678082448fcb6fd96afea84527be13fbfaeafdb22870bf9786fd67c970d0",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "react_sha256": "cb3a4b0c150abd63227f4734bfdc4d47aad963fc42089ee5de67de7255021c2b",
+      "feedback_iter0_sha256": "cb3a4b0c150abd63227f4734bfdc4d47aad963fc42089ee5de67de7255021c2b",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "react_sha256": "906fdd08ffb47b6dc30758c87440ebd8feb34a36728c063659f5ff9eb4b47af7",
+      "feedback_iter0_sha256": "906fdd08ffb47b6dc30758c87440ebd8feb34a36728c063659f5ff9eb4b47af7",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "react_sha256": "876b6c32af8379f0f47492e5787fd322b79cc32fc39a31a9c353a53b359ecdbb",
+      "feedback_iter0_sha256": "876b6c32af8379f0f47492e5787fd322b79cc32fc39a31a9c353a53b359ecdbb",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+      "react_sha256": "343e926af11b72b0ce4ee513ac58b7aca70fd0ed43462fb343e6004fac672f9e",
+      "feedback_iter0_sha256": "343e926af11b72b0ce4ee513ac58b7aca70fd0ed43462fb343e6004fac672f9e",
+      "match": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "react_sha256": "ac516d063736d03fa8ce979370207b9b43135e8242be1dacc4e3ec5344e48dbd",
+      "feedback_iter0_sha256": "ac516d063736d03fa8ce979370207b9b43135e8242be1dacc4e3ec5344e48dbd",
+      "match": true
+    }
+  ]
+}

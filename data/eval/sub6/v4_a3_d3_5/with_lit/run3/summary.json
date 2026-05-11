@@ -1,0 +1,451 @@
+[
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+    "single": {
+      "narr_chars": 2282,
+      "elapsed_s": 17.1,
+      "verdicts": {
+        "contradicted": 6,
+        "unsupported": 8,
+        "unverifiable_v0": 20,
+        "supported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2569,
+      "n_tool_calls": 6,
+      "n_turns": 5,
+      "elapsed_s": 43.6,
+      "verdicts": {
+        "unsupported": 6,
+        "unverifiable_v0": 33,
+        "supported": 2,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2166,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 498.6,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 30
+      },
+      "qualities": [
+        10,
+        6,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+    "single": {
+      "narr_chars": 2916,
+      "elapsed_s": 114.6,
+      "verdicts": {
+        "unsupported": 4,
+        "supported": 3,
+        "unverifiable_v0": 54,
+        "contradicted": 6
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2199,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 28.8,
+      "verdicts": {
+        "supported": 4,
+        "unsupported": 11,
+        "contradicted": 4,
+        "unverifiable_v0": 47
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2261,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 998.9,
+      "verdicts": {
+        "unverifiable_v0": 23,
+        "supported": 8,
+        "unsupported": 5
+      },
+      "qualities": [
+        13,
+        7
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "single": {
+      "narr_chars": 2244,
+      "elapsed_s": 9.7,
+      "verdicts": {
+        "unsupported": 10,
+        "unverifiable_v0": 38,
+        "supported": 6,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2401,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 76.5,
+      "verdicts": {
+        "supported": 5,
+        "unverifiable_v0": 49,
+        "contradicted": 1,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 0,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 918.1,
+      "verdicts": {},
+      "qualities": [
+        8,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+    "single": {
+      "narr_chars": 2020,
+      "elapsed_s": 16.5,
+      "verdicts": {
+        "unsupported": 11,
+        "supported": 3,
+        "unverifiable_v0": 25
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2110,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 59.9,
+      "verdicts": {
+        "unverifiable_v0": 39,
+        "supported": 6,
+        "unsupported": 4,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2343,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 440.2,
+      "verdicts": {
+        "supported": 19,
+        "unverifiable_v0": 18,
+        "unsupported": 2,
+        "contradicted": 1
+      },
+      "qualities": [
+        2,
+        5,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+    "single": {
+      "narr_chars": 2293,
+      "elapsed_s": 20.7,
+      "verdicts": {
+        "unsupported": 7,
+        "unverifiable_v0": 28,
+        "supported": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2350,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 61.8,
+      "verdicts": {
+        "unverifiable_v0": 34,
+        "supported": 14,
+        "unsupported": 6,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 1979,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 566.9,
+      "verdicts": {
+        "unverifiable_v0": 20,
+        "supported": 10,
+        "unsupported": 1
+      },
+      "qualities": [
+        4,
+        2,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "single": {
+      "narr_chars": 4512,
+      "elapsed_s": 70.5,
+      "verdicts": {
+        "supported": 28,
+        "contradicted": 4,
+        "unverifiable_v0": 59,
+        "unsupported": 14
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2785,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 31.9,
+      "verdicts": {
+        "supported": 7,
+        "unverifiable_v0": 18,
+        "unsupported": 5
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2837,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 648.5,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 22,
+        "unsupported": 5,
+        "contradicted": 1
+      },
+      "qualities": [
+        9,
+        6,
+        5
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+    "single": {
+      "narr_chars": 2432,
+      "elapsed_s": 42.9,
+      "verdicts": {
+        "unverifiable_v0": 47,
+        "unsupported": 10,
+        "supported": 7,
+        "contradicted": 1
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2993,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 70.4,
+      "verdicts": {
+        "supported": 20,
+        "unverifiable_v0": 40,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2993,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 856.4,
+      "verdicts": {
+        "supported": 11,
+        "unverifiable_v0": 21,
+        "contradicted": 1
+      },
+      "qualities": [
+        1,
+        2,
+        6
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+    "single": {
+      "narr_chars": 2107,
+      "elapsed_s": 21.4,
+      "verdicts": {
+        "supported": 12,
+        "unsupported": 3,
+        "unverifiable_v0": 18
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2351,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 62.1,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 36,
+        "unsupported": 1,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2327,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 936.5,
+      "verdicts": {
+        "unverifiable_v0": 33,
+        "supported": 22,
+        "contradicted": 2
+      },
+      "qualities": [
+        4,
+        5,
+        1
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+    "single": {
+      "narr_chars": 2308,
+      "elapsed_s": 11.2,
+      "verdicts": {
+        "supported": 9,
+        "unverifiable_v0": 11,
+        "contradicted": 2,
+        "unsupported": 8
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2051,
+      "n_tool_calls": 5,
+      "n_turns": 4,
+      "elapsed_s": 48.4,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 22
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2051,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 858.9,
+      "verdicts": {
+        "supported": 15,
+        "unverifiable_v0": 20,
+        "unsupported": 2
+      },
+      "qualities": [
+        1,
+        4,
+        4
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+    "single": {
+      "narr_chars": 2104,
+      "elapsed_s": 39.4,
+      "verdicts": {
+        "supported": 15,
+        "unsupported": 10,
+        "unverifiable_v0": 15,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2135,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 69.2,
+      "verdicts": {
+        "supported": 21,
+        "unverifiable_v0": 30,
+        "unsupported": 9,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2187,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 942.6,
+      "verdicts": {
+        "unverifiable_v0": 40,
+        "supported": 17,
+        "unsupported": 1,
+        "contradicted": 4
+      },
+      "qualities": [
+        7,
+        8,
+        4
+      ],
+      "error": null
+    }
+  }
+]

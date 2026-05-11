@@ -1,0 +1,485 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+  "narrative": "**Metabolomics Findings Narrative**\n\nThe differential abundance analysis identified eleven metabolites significantly altered between treatment and control groups. The most strongly enriched pathway, with a false-discovery rate (FDR) of 0.0 and a fold-enrichment of 603, is **Glycine, serine and threonine metabolism** (KEGG map00260), which encompassed seven of the eleven compounds. A secondary enriched network, supported by matching metabolites including phosphoserine, adenosine monophosphate, and S-adenosylmethionine, connects one-carbon and sulfur amino-acid metabolism with folate cycling.\n\nKey driver compounds within the primary pathway include **phosphocholine** (KEGG C00114), **phosphoserine** (KEGG C01005), and **S-adenosylmethionine** (SAM, KEGG C00019). All three are confirmed members of the glycine–serine–threonine axis and co-occur with the other measured metabolites with a pathway-sharing plausibility of 1.0.\n\nDirectional connectivity analysis verified the following relationships: phosphocholine sits upstream of SAM via a four-step KEGG route passing through phosphorylethanolamine and methionine intermediates, placing the choline-derived methyl donor downstream of membrane phospholipid metabolism. Phosphoserine is linked to sarcosine through a three-step path, indicating that one-carbon metabolism draws from serine-derived glycine pools.\n\nThe biological significance of these changes points to **disrupted one-carbon and methyl-group cycling**, which is essential for nucleotide synthesis, phospholipid biosynthesis, and epigenetic regulation. Elevated phosphocholine alongside altered SAM suggests perturbed phosphatidylcholine biosynthesis and transmethylation capacity. Concomitant shifts in cystathionine and lipoic acid indicate possible transsulfuration pathway activation, which may reflect altered redox homeostasis or oxidative-stress response in the treated system. The convergence of serine, choline, and methionine metabolism onto shared one-carbon pools provides a coherent mechanistic explanation for the observed differential abundances.",
+  "elapsed_seconds": 72.56368248350918,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 11,
+  "n_turns": 4,
+  "n_tool_calls": 6,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_og59qzwechy8_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00114\",\"C01005\",\"C00187\",\"C00213\",\"C00020\",\"C00588\",\"C00019\",\"C16241\",\"C02291\",\"C05552\",\"C00105\"],\"top_k\":10}",
+      "result": {
+        "n_input": 11,
+        "n_resolved": 11,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Glycine, serine and threonine metabolism",
+            "source": "kegg",
+            "external_id": "map00260",
+            "fdr": 0.0,
+            "fold_enrichment": 603.329,
+            "matched_compounds": [
+              "C00114",
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 57
+          },
+          {
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00721",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          },
+          {
+            "name": "Dihydropyrimidine Dehydrogenase Deficiency (DHPD)",
+            "source": "smpdb",
+            "external_id": "SMP00179",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          },
+          {
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00242",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          },
+          {
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "external_id": "SMP00484",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          },
+          {
+            "name": "Hyperglycinemia, non-ketotic",
+            "source": "smpdb",
+            "external_id": "SMP00485",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          },
+          {
+            "name": "Non Ketotic Hyperglycinemia",
+            "source": "smpdb",
+            "external_id": "SMP00223",
+            "fdr": 0.0,
+            "fold_enrichment": 589.538,
+            "matched_compounds": [
+              "C01005",
+              "C00213",
+              "C00020",
+              "C00019",
+              "C16241",
+              "C02291"
+            ],
+            "pathway_size": 50
+          }
+        ],
+        "_truncated": "dropped 1 trailing items to fit 2048-byte budget",
+        "_more": "more pathways available; rerun with a smaller top_k to see compact summaries, or call query_pathway_membership on a specific pathway you care about"
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_m2e9m8i2m63s_1",
+      "arguments": "{\"co_observed_ids\":[\"C00114\",\"C01005\",\"C00213\",\"C00020\",\"C00019\",\"C16241\",\"C02291\"],\"metabolite_id\":\"C01005\"}",
+      "result": {
+        "metabolite_id": "C01005",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "WP4688",
+            "name": "Serine metabolism",
+            "source": "wikipathways",
+            "hit_count": 2
+          },
+          {
+            "id": "WP5355",
+            "name": "Metabolic epileptic disorders",
+            "source": "wikipathways",
+            "hit_count": 6
+          },
+          {
+            "id": "WP2525",
+            "name": "Trans-sulfuration, one-carbon metabolism and related pathways",
+            "source": "wikipathways",
+            "hit_count": 6
+          },
+          {
+            "id": "WP3604",
+            "name": "Biochemical pathways: part I",
+            "source": "wikipathways",
+            "hit_count": 6
+          },
+          {
+            "id": "WP5213",
+            "name": "Amino acid metabolism in triple-negative breast cancer cells",
+            "source": "wikipathways",
+            "hit_count": 2
+          },
+          {
+            "id": "WP5083",
+            "name": "Neuroinflammation and glutamatergic signaling",
+            "source": "wikipathways",
+            "hit_count": 2
+          },
+          {
+            "id": "SMP00721",
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "hit_count": 7
+          },
+          {
+            "id": "SMP00179",
+            "name": "Dihydropyrimidine Dehydrogenase Deficiency (DHPD)",
+            "source": "smpdb",
+            "hit_count": 7
+          },
+          {
+            "id": "SMP00242",
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 7
+          },
+          {
+            "id": "SMP00484",
+            "name": "Dimethylglycine Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 7
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341",
+          "hmdb:HMDB0059597",
+          "kegg:C00641"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000208",
+          "hmdb:HMDB0000224",
+          "hmdb:HMDB0000240",
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000257",
+          "hmdb:HMDB0000574",
+          "hmdb:HMDB0000731",
+          "hmdb:HMDB0001039"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "Phosphoserine is annotated in 10 pathways across smpdb, wikipathways (e.g. Serine metabolism, Metabolic epileptic disorders, and Trans-sulfuration, one-carbon metabolism and related pathways). It has 6 upstream and 15 downstream immediate neighbours in the reaction network. Of 7 co-observed metabolites, 7 share a pathway with Phosphoserine (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_m2e9m8i2m63s_2",
+      "arguments": "{\"co_observed_ids\":[\"C00114\",\"C01005\",\"C00213\",\"C00020\",\"C00019\",\"C16241\",\"C02291\"],\"metabolite_id\":\"C00114\"}",
+      "result": {
+        "metabolite_id": "C00114",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00177",
+            "name": "Cystathionine Beta-Synthase Deficiency",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP00222",
+            "name": "Glycine N-methyltransferase Deficiency",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "map00260",
+            "name": "Glycine, serine and threonine metabolism",
+            "source": "kegg",
+            "hit_count": 8
+          },
+          {
+            "id": "SMP00570",
+            "name": "Homocystinuria-megaloblastic anemia due to defect in cobalamin metabolism, cblG complementation type",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP00341",
+            "name": "Hypermethioninemia",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP00221",
+            "name": "Methionine Adenosyltransferase Deficiency",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP00033",
+            "name": "Methionine Metabolism",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "map00270",
+            "name": "Methionine Metabolism",
+            "source": "kegg",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP00340",
+            "name": "Methylenetetrahydrofolate Reductase Deficiency (MTHFRD)",
+            "source": "smpdb",
+            "hit_count": 6
+          },
+          {
+            "id": "SMP14212",
+            "name": "Phosphatidylcholine Biosynthesis",
+            "source": "smpdb",
+            "hit_count": 3
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000086",
+          "hmdb:HMDB0000108",
+          "hmdb:HMDB0000126",
+          "hmdb:HMDB0000187",
+          "hmdb:HMDB0000277",
+          "hmdb:HMDB0000564",
+          "hmdb:HMDB0000895",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001341"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000061",
+          "hmdb:HMDB0000095",
+          "hmdb:HMDB0000122",
+          "hmdb:HMDB0000149",
+          "hmdb:HMDB0000895",
+          "hmdb:HMDB0000906",
+          "hmdb:HMDB0000990",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0001134"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "Choline is annotated in 10 pathways across kegg, smpdb (e.g. Cystathionine Beta-Synthase Deficiency, Glycine N-methyltransferase Deficiency, and Glycine, serine and threonine metabolism). It has 39 upstream and 20 downstream immediate neighbours in the reaction network. Of 7 co-observed metabolites, 7 share a pathway with Choline (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_m2e9m8i2m63s_3",
+      "arguments": "{\"co_observed_ids\":[\"C00114\",\"C01005\",\"C00213\",\"C00020\",\"C00019\",\"C16241\",\"C02291\"],\"metabolite_id\":\"C00019\"}",
+      "result": {
+        "metabolite_id": "C00019",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-112311",
+            "name": "Neurotransmitter clearance",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-112315",
+            "name": "Transmission across Chemical Synapses",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-112316",
+            "name": "Neuronal System",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1266738",
+            "name": "Developmental Biology",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1428517",
+            "name": "Aerobic respiration and respiratory electron transport",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 7
+          },
+          {
+            "id": "R-HSA-1474165",
+            "name": "Reproduction",
+            "source": "reactome",
+            "hit_count": 2
+          },
+          {
+            "id": "R-HSA-1483191",
+            "name": "Synthesis of PC",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1483206",
+            "name": "Glycerophospholipid biosynthesis",
+            "source": "reactome",
+            "hit_count": 3
+          },
+          {
+            "id": "R-HSA-1483257",
+            "name": "Phospholipid metabolism",
+            "source": "reactome",
+            "hit_count": 3
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000250",
+          "hmdb:HMDB0000696",
+          "hmdb:HMDB0000939",
+          "hmdb:HMDB0001039",
+          "hmdb:HMDB0059597"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000010",
+          "hmdb:HMDB0000022",
+          "hmdb:HMDB0000033",
+          "hmdb:HMDB0000034",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000043",
+          "hmdb:HMDB0000064",
+          "hmdb:HMDB0000068",
+          "hmdb:HMDB0000073",
+          "hmdb:HMDB0000082"
+        ],
+        "cooccurrence_score": 1.0,
+        "plausibility_summary": "SAM is annotated in 10 pathways across reactome (e.g. Neurotransmitter clearance, Transmission across Chemical Synapses, and Neuronal System). It has 5 upstream and 324 downstream immediate neighbours in the reaction network. Of 7 co-observed metabolites, 7 share a pathway with SAM (plausibility 1.00/1.00)."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_rjqsbgdm4th9_1",
+      "arguments": "{\"compound_a\":\"C00114\",\"compound_b\":\"C00019\"}",
+      "result": {
+        "compound_a": "C00114",
+        "compound_b": "C00019",
+        "resolved_a": "cpd:C00114",
+        "resolved_b": "cpd:C00019",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C00114",
+          "cpd:C00576",
+          "cpd:C00719",
+          "cpd:C00073",
+          "cpd:C00019"
+        ],
+        "path_length": 4,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_rjqsbgdm4th9_2",
+      "arguments": "{\"compound_a\":\"C01005\",\"compound_b\":\"C00213\"}",
+      "result": {
+        "compound_a": "C01005",
+        "compound_b": "C00213",
+        "resolved_a": "cpd:C01005",
+        "resolved_b": "cpd:C00213",
+        "is_reachable": true,
+        "direction": "bidirectional",
+        "shortest_path": [
+          "cpd:C01005",
+          "cpd:C00065",
+          "cpd:C00037",
+          "cpd:C00213"
+        ],
+        "path_length": 3,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}
