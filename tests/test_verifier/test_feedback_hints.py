@@ -218,6 +218,89 @@ class TestAnnotatePass:
 # ---------------------------------------------------------------------------
 
 
+class TestLiteratureHintsA3:
+    """Phase A3 D1b: unsupported biological_claim hints should steer the
+    agent toward search_literature, not blanket retract.
+    """
+
+    def test_unsupported_biological_with_subject_suggests_literature(self):
+        c = VerifiedClaim(
+            claim_id="v1:c000",
+            claim_text="Methionine restriction extends mouse lifespan",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            subject="methionine restriction lifespan",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" in hint
+        # The hint embeds the focus phrase (subject) inside the suggested call.
+        assert "methionine restriction lifespan" in hint
+        # Drop fallback still available
+        assert "drop" in hint.lower()
+
+    def test_unsupported_biological_with_pathway_fallback(self):
+        c = VerifiedClaim(
+            claim_id="v1:c001",
+            claim_text="Aromatase activity links androgens and estrogens",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            extracted_fields=ClaimExtractedFields(pathway_name="aromatase pathway"),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" in hint
+        assert "aromatase pathway" in hint
+
+    def test_unsupported_biological_with_no_fields_uses_text(self):
+        # Neither subject nor pathway_name; falls back to first 6 words.
+        c = VerifiedClaim(
+            claim_id="v1:c002",
+            claim_text="Mitochondrial superoxide drives cellular senescence in adipocytes",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="not in RaMP",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" in hint
+        # First 6 words of the claim text become the focus.
+        assert "Mitochondrial superoxide drives cellular senescence in" in hint
+
+    def test_unsupported_non_biological_does_not_suggest_literature(self):
+        # Only BIOLOGICAL gets the literature steer; pathway_relationship
+        # stays with the KEGG-graph guidance.
+        c = VerifiedClaim(
+            claim_id="v1:c003",
+            claim_text="Pyruvate is upstream of acetyl-CoA",
+            claim_type=ClaimType.PATHWAY_RELATIONSHIP,
+            verdict=ClaimVerdict.UNSUPPORTED,
+            evidence="no KEGG path",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        hint = generate_feedback_hint(c)
+        assert hint
+        assert "search_literature" not in hint
+        # Stays with the KEGG-specific advice.
+        assert "kegg" in hint.lower() or "co-membership" in hint.lower()
+
+    def test_supported_biological_no_hint(self):
+        # Sanity: SUPPORTED still emits no hint regardless of type.
+        c = VerifiedClaim(
+            claim_id="v1:c004",
+            claim_text="Glucose is in glycolysis",
+            claim_type=ClaimType.BIOLOGICAL,
+            verdict=ClaimVerdict.SUPPORTED,
+            evidence="RaMP confirms",
+            extracted_fields=ClaimExtractedFields(),
+        )
+        assert generate_feedback_hint(c) is None
+
+
 class TestBackwardCompat:
     def test_v3_verdict_record_still_parses(self):
         # A trimmed v3-PhaseC claim record with the fields that existed

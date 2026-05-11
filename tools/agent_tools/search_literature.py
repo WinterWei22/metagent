@@ -20,8 +20,13 @@ from tools.literature.errors import LiteratureBackendError, RateLimitError
 logger = logging.getLogger(__name__)
 
 # Abstracts can be 1-2 KB on their own; cap each one before truncation logic
-# kicks in.
-_ABSTRACT_CAP = 320
+# kicks in. Phase A3 D1a bumped 320 → 500: the original 320-char cap was
+# tuned for A1 when literature was wired-but-unused; A3 actively invites the
+# agent to use literature in feedback revisions, and 320 chars was too
+# terse to convey enough biological context for a useful citation. With 5
+# results × 500 chars ≈ 2.5 KB, still fits the 2 KB envelope after
+# truncation drops down to top-3 results when needed.
+_ABSTRACT_CAP = 500
 
 
 def search_literature(payload: dict[str, Any]) -> dict[str, Any]:

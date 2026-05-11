@@ -198,22 +198,52 @@ def _hint_for_unsupported(claim: VerifiedClaim) -> str:
         )
 
     if ctype == ClaimType.BIOLOGICAL:
+        # Phase A3 D1b: biological_claim claims that are unsupported in
+        # the structured DB layers (RaMP, KEGG, HMDB) are often genuinely
+        # literature-supported — e.g. mechanistic statements about a
+        # disease, a tissue-specific role, a recent enzymology insight.
+        # Steer the agent toward search_literature instead of an
+        # unconditional retract, but keep retract as the fallback.
+        subject = (claim.subject or "").strip()
         pathway = _pathway_phrase(claim)
-        if pathway:
+        focus = subject or pathway or _extract_search_query(claim)
+        if focus:
             return (
-                f"Biological claim referencing '{pathway}' has no positive "
-                "evidence. Rephrase using a verified pathway name from your "
-                "tool calls, or drop the reference."
+                f"Biological claim referencing '{focus}' has no positive "
+                "evidence in the pathway databases (RaMP / KEGG / HMDB). "
+                "This is often a literature-supported claim. Call "
+                f"search_literature(\"{focus}\") to find supporting papers "
+                "and cite them inline (PMID); otherwise drop the claim "
+                "if speculative."
             )
         return (
-            "Biological claim lacks positive evidence. Either rephrase using "
-            "vocabulary from your tool outputs, or drop the claim."
+            "Biological claim lacks positive evidence in the pathway "
+            "databases. Try search_literature for a tight query that "
+            "matches the claim, cite resulting PMIDs inline; if nothing "
+            "supports it, drop the claim."
         )
 
     return (
         "Claim has no positive evidence in your tool calls. Rephrase using "
         "verified vocabulary, or drop."
     )
+
+
+def _extract_search_query(claim: VerifiedClaim) -> str:
+    """Build a plausible Europe PMC query from a claim's text.
+
+    Heuristics — keep it minimal so the agent has freedom to refine:
+      * If the extracted_fields carry a pathway_name, use it.
+      * Else fall back to the first 6 words of the claim text.
+    """
+    pathway = (claim.extracted_fields.pathway_name or "").strip()
+    if pathway:
+        return pathway
+    text = (claim.claim_text or "").strip()
+    if not text:
+        return ""
+    words = text.split()
+    return " ".join(words[:6])
 
 
 def generate_feedback_hint(claim: VerifiedClaim) -> str | None:

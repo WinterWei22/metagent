@@ -496,7 +496,8 @@ class TestWrapperProjections:
         rec = out["records"][0]
         assert rec["pmid"] == "12345678"
         # Abstract excerpt is capped.
-        assert len(rec["abstract_excerpt"]) <= 320
+        # A3 D1a bumped abstract cap 320 → 500. Test updated to match.
+        assert len(rec["abstract_excerpt"]) <= 500
         assert rec["abstract_excerpt"].endswith("...")
         # No 'authors' field in slim projection (saves bytes; LLM rarely uses it)
         assert "authors" not in rec
