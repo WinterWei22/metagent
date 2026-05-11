@@ -1,0 +1,228 @@
+[
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "single": {
+      "narr_chars": 1988,
+      "elapsed_s": 35.9,
+      "verdicts": {
+        "contradicted": 4,
+        "supported": 6,
+        "unverifiable_v0": 15,
+        "unsupported": 3
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3533,
+      "n_tool_calls": 6,
+      "n_turns": 4,
+      "elapsed_s": 58.6,
+      "verdicts": {
+        "unsupported": 11,
+        "supported": 12,
+        "unverifiable_v0": 36,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2770,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1046.0,
+      "verdicts": {
+        "supported": 18,
+        "unverifiable_v0": 41,
+        "unsupported": 2,
+        "contradicted": 9
+      },
+      "qualities": [
+        13,
+        3,
+        2
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+    "single": {
+      "narr_chars": 1866,
+      "elapsed_s": 36.8,
+      "verdicts": {
+        "unverifiable_v0": 23,
+        "supported": 7,
+        "unsupported": 7,
+        "contradicted": 5
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3137,
+      "n_tool_calls": 7,
+      "n_turns": 4,
+      "elapsed_s": 59.4,
+      "verdicts": {
+        "supported": 19,
+        "unsupported": 7,
+        "unverifiable_v0": 52
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3137,
+      "n_iterations": 2,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1116.6,
+      "verdicts": {
+        "supported": 24,
+        "unverifiable_v0": 37,
+        "unsupported": 6
+      },
+      "qualities": [
+        4,
+        3,
+        5
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+    "single": {
+      "narr_chars": 2046,
+      "elapsed_s": 24.1,
+      "verdicts": {
+        "supported": 4,
+        "unverifiable_v0": 18,
+        "unsupported": 5,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2176,
+      "n_tool_calls": 5,
+      "n_turns": 5,
+      "elapsed_s": 83.1,
+      "verdicts": {
+        "supported": 19,
+        "unverifiable_v0": 30,
+        "unsupported": 4,
+        "contradicted": 2
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2216,
+      "n_iterations": 1,
+      "final_iter_idx": 1,
+      "rollback_reason": null,
+      "termination_reason": "no_actionable_claims_after_iter",
+      "elapsed_s": 523.0,
+      "verdicts": {
+        "unverifiable_v0": 19,
+        "supported": 20,
+        "contradicted": 1
+      },
+      "qualities": [
+        4,
+        0
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "single": {
+      "narr_chars": 2991,
+      "elapsed_s": 44.0,
+      "verdicts": {
+        "unverifiable_v0": 45,
+        "unsupported": 2
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 2349,
+      "n_tool_calls": 8,
+      "n_turns": 5,
+      "elapsed_s": 67.9,
+      "verdicts": {
+        "unverifiable_v0": 40,
+        "supported": 8,
+        "unsupported": 4,
+        "contradicted": 3
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 2210,
+      "n_iterations": 2,
+      "final_iter_idx": 2,
+      "rollback_reason": null,
+      "termination_reason": "max_iterations_reached",
+      "elapsed_s": 1143.4,
+      "verdicts": {
+        "unverifiable_v0": 31,
+        "supported": 12,
+        "unsupported": 2
+      },
+      "qualities": [
+        7,
+        6,
+        4
+      ],
+      "error": null
+    }
+  },
+  {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+    "single": {
+      "narr_chars": 2555,
+      "elapsed_s": 37.5,
+      "verdicts": {
+        "supported": 8,
+        "unverifiable_v0": 28,
+        "unsupported": 2,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "react": {
+      "narr_chars": 3428,
+      "n_tool_calls": 9,
+      "n_turns": 5,
+      "elapsed_s": 91.3,
+      "verdicts": {
+        "unverifiable_v0": 45,
+        "unsupported": 4,
+        "supported": 8,
+        "contradicted": 4
+      },
+      "error": null
+    },
+    "feedback": {
+      "narr_chars": 3428,
+      "n_iterations": 1,
+      "final_iter_idx": 0,
+      "rollback_reason": "feedback_made_it_worse",
+      "termination_reason": "timeout_in_feedback_loop",
+      "elapsed_s": 1215.1,
+      "verdicts": {
+        "unverifiable_v0": 48,
+        "unsupported": 6,
+        "supported": 10
+      },
+      "qualities": [
+        6,
+        10
+      ],
+      "error": "timeout_in_feedback_loop"
+    }
+  }
+]

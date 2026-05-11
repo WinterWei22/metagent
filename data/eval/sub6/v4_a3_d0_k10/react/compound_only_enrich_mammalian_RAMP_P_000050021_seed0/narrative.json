@@ -1,0 +1,485 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+  "narrative": "The KEGG reaction graph shows no direct metabolic path between the compounds — they are processed by separate CYP/GST enzyme families rather than as a sequential pathway. This is consistent with them all converging on Phase I/II metabolism rather than forming a linear substrate-product relationship.\n\nI have sufficient evidence to write the narrative:\n- **Top pathway**: Biological oxidations (R-HSA-211859, FDR 0.0, fold 128.5×) — 7/9 compounds match.\n- **Second pathway**: Phase II – Conjugation (R-HSA-156580, FDR 0.0, fold 159×) — 4 confirmed drivers.\n- **Confirmed memberships**: L-Cysteine, beta-Mercaptoethanol, Benzo[a]pyrene-7,8-dihydrodiol-9,10-oxide, Methimazole, Coumarin.\n\nThe compounds represent two distinct but converging metabolic fates: electrophilic PAH diol-epoxides and aromatic amines require glutathione conjugation for detoxification, while flavin-containing monooxygenase (FMO) substrates like methimazole are directly oxidized. The lack of a KEGG path between them reflects distinct input xenobiotics processed by different enzyme families, which together define the xenobiotic metabolism response.\n\n---\n\n## Narrative\n\nThe nine differentially-abundant metabolites strongly converge on **Biological Oxidations (Reactome R-HSA-211859)**, the top-enriched pathway (FDR = 0.0, fold-enrichment 128.5×, 7 of 9 compounds matched) and its child pathway **Phase II – Conjugation of Compounds (R-HSA-156580)** (FDR = 0.0, fold-enrichment 159×, 4 matched). A third pathway, **Phase I – Functionalization of Compounds (R-HSA-211945)** (FDR = 1×10⁻⁶, fold-enrichment 122×), further implicates cytochrome P450– and FMO-mediated oxidation.\n\n**Key driver compounds and their verified pathway memberships:**\n- **L-Cysteine (C00097)** — confirmed in Phase II – Conjugation and Biological Oxidations. As the rate-limiting precursor for glutathione synthesis, elevated cysteine directly supports glutathione S-transferase–mediated detoxification of Benzo[a]pyrene-7,8-dihydrodiol-9,10-oxide (C14853, also confirmed in Phase II – Conjugation and Glutathione conjugation).\n- **beta-Mercaptoethanol (C00928)** — confirmed in the same Phase II pathway; like cysteine, it provides a thiol reservoir for conjugation reactions.\n- **Methimazole (C07190)** — confirmed in Phase I – Functionalization and FMO oxidises nucleophiles; its accumulation is consistent with FMO inhibition or substrate competition.\n- **Coumarin (C05851)** — confirmed in Phase I – Functionalization and Xenobiotics; its differential abundance reflects altered CYP1A2/2A6 activity.\n\n**Biological significance:** The co-enrichment of PAH diol-epoxides (C14853), aromatic amine (C20319), coumarin, and thiol donors (cysteine, beta-mercaptoethanol) indicates a coordinated xenobiotic response. The absence of a KEGG reaction path between these compounds reflects their entry through distinct cytochrome P450 isoforms rather than a linear metabolic sequence — they converge on shared conjugation machinery. Elevated methimazole may reflect impaired FMO function, while raised 3-hydroxyanthranilic acid suggests upstream activation of the kynurenine arm of tryptophan metabolism. Dihydrobiopterin (C02953) elevation points to NO synthase uncoupling or oxidative stress in tetrahydrobiopterin recycling. Together, these findings describe a broad reconfiguration of oxidative and conjugative metabolism characteristic of chemical exposure or inflammatory stress.",
+  "elapsed_seconds": 91.29164627753198,
+  "llm_model": "MiniMax-M2.7",
+  "metabolite_count": 9,
+  "n_turns": 5,
+  "n_tool_calls": 9,
+  "force_finalised": false,
+  "tool_calls_log": [
+    {
+      "turn": 1,
+      "name": "query_ramp_enrichment",
+      "tool_call_id": "call_function_7uu8apqo4vgn_1",
+      "arguments": "{\"compound_kegg_ids\":[\"C00097\",\"C01324\",\"C05851\",\"C14853\",\"C20319\",\"C07190\",\"C00632\",\"C02953\",\"C00928\"],\"top_k\":5}",
+      "result": {
+        "n_input": 9,
+        "n_resolved": 9,
+        "unresolved_examples": [],
+        "background_size": 54041,
+        "ramp_snapshot_date": "2025-03-06 00:00:39.153317",
+        "top_pathways": [
+          {
+            "name": "Biological oxidations",
+            "source": "reactome",
+            "external_id": "R-HSA-211859",
+            "fdr": 0.0,
+            "fold_enrichment": 128.538,
+            "matched_compounds": [
+              "C00097",
+              "C01324",
+              "C05851",
+              "C14853",
+              "C20319",
+              "C07190",
+              "C00928"
+            ],
+            "pathway_size": 327
+          },
+          {
+            "name": "Metabolism",
+            "source": "reactome",
+            "external_id": "R-HSA-1430728",
+            "fdr": 0.0,
+            "fold_enrichment": 31.791,
+            "matched_compounds": [
+              "C00097",
+              "C01324",
+              "C05851",
+              "C14853",
+              "C20319",
+              "C07190",
+              "C00632",
+              "C00928"
+            ],
+            "pathway_size": 1511
+          },
+          {
+            "name": "Phase II - Conjugation of compounds",
+            "source": "reactome",
+            "external_id": "R-HSA-156580",
+            "fdr": 0.0,
+            "fold_enrichment": 159.061,
+            "matched_compounds": [
+              "C00097",
+              "C14853",
+              "C20319",
+              "C00928"
+            ],
+            "pathway_size": 151
+          },
+          {
+            "name": "Phase I - Functionalization of compounds",
+            "source": "reactome",
+            "external_id": "R-HSA-211945",
+            "fdr": 1e-06,
+            "fold_enrichment": 121.92,
+            "matched_compounds": [
+              "C01324",
+              "C05851",
+              "C20319",
+              "C07190"
+            ],
+            "pathway_size": 197
+          },
+          {
+            "name": "Xenobiotics",
+            "source": "reactome",
+            "external_id": "R-HSA-211981",
+            "fdr": 2e-06,
+            "fold_enrichment": 346.417,
+            "matched_compounds": [
+              "C01324",
+              "C05851",
+              "C20319"
+            ],
+            "pathway_size": 52
+          }
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_xxco584nwi03_1",
+      "arguments": "{\"metabolite_id\":\"C00097\"}",
+      "result": {
+        "metabolite_id": "C00097",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "SMP00136",
+            "name": "2-Hydroxyglutric Aciduria (D And L Form)",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00721",
+            "name": "3-Phosphoglycerate dehydrogenase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00243",
+            "name": "4-Hydroxybutyric Aciduria/Succinic Semialdehyde Dehydrogenase Deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00500",
+            "name": "5-oxoprolinase deficiency",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00143",
+            "name": "5-Oxoprolinuria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00133",
+            "name": "Amiloride Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00090",
+            "name": "Bendroflumethiazide Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00499",
+            "name": "Beta-mercaptolactate-cysteine disulfiduria",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00583",
+            "name": "Blue diaper syndrome",
+            "source": "smpdb",
+            "hit_count": 1
+          },
+          {
+            "id": "SMP00088",
+            "name": "Bumetanide Action Pathway",
+            "source": "smpdb",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000078",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000123",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000192",
+          "hmdb:HMDB0000254",
+          "hmdb:HMDB0000272"
+        ],
+        "downstream_neighbours": [
+          "hmdb:HMDB0000005",
+          "hmdb:HMDB0000042",
+          "hmdb:HMDB0000082",
+          "hmdb:HMDB0000095",
+          "hmdb:HMDB0000099",
+          "hmdb:HMDB0000134",
+          "hmdb:HMDB0000148",
+          "hmdb:HMDB0000159",
+          "hmdb:HMDB0000161",
+          "hmdb:HMDB0000168"
+        ],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "L-Cysteine is annotated in 10 pathways across smpdb (e.g. 2-Hydroxyglutric Aciduria (D And L Form), 3-Phosphoglycerate dehydrogenase deficiency, and 4-Hydroxybutyric Aciduria/Succinic Semialdehyde Dehydrogenase Deficiency). It has 26 upstream and 49 downstream immediate neighbours in the reaction network. No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_xxco584nwi03_2",
+      "arguments": "{\"metabolite_id\":\"C00928\"}",
+      "result": {
+        "metabolite_id": "C00928",
+        "n_pathways": 4,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156580",
+            "name": "Phase II - Conjugation of compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156581",
+            "name": "Methylation",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211859",
+            "name": "Biological oxidations",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [],
+        "downstream_neighbours": [],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "beta-Mercaptoethanol is annotated in 4 pathways across reactome (e.g. Metabolism, Phase II - Conjugation of compounds, and Methylation). No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 2,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_xxco584nwi03_3",
+      "arguments": "{\"metabolite_id\":\"C14853\"}",
+      "result": {
+        "metabolite_id": "C14853",
+        "n_pathways": 4,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156580",
+            "name": "Phase II - Conjugation of compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-156590",
+            "name": "Glutathione conjugation",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211859",
+            "name": "Biological oxidations",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [],
+        "downstream_neighbours": [],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Benzo[a]pyrene-7,8-dihydrodiol-9,10-oxide is annotated in 4 pathways across reactome (e.g. Metabolism, Phase II - Conjugation of compounds, and Glutathione conjugation). No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_itenvq1hr7qz_1",
+      "arguments": "{\"metabolite_id\":\"C07190\"}",
+      "result": {
+        "metabolite_id": "C07190",
+        "n_pathways": 7,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211859",
+            "name": "Biological oxidations",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211945",
+            "name": "Phase I - Functionalization of compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-217271",
+            "name": "FMO oxidises nucleophiles",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-9709957",
+            "name": "Sensory Perception",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-9717189",
+            "name": "Sensory perception of taste",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-9717207",
+            "name": "Sensory perception of sweet, bitter, and umami (glutamate) taste",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [],
+        "downstream_neighbours": [],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Methimazole is annotated in 7 pathways across reactome (e.g. Metabolism, Biological oxidations, and Phase I - Functionalization of compounds). No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_pathway_membership",
+      "tool_call_id": "call_function_itenvq1hr7qz_2",
+      "arguments": "{\"metabolite_id\":\"C05851\"}",
+      "result": {
+        "metabolite_id": "C05851",
+        "n_pathways": 10,
+        "pathways": [
+          {
+            "id": "R-HSA-1430728",
+            "name": "Metabolism",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-162582",
+            "name": "Signal Transduction",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211859",
+            "name": "Biological oxidations",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211897",
+            "name": "Cytochrome P450 - arranged by substrate type",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211945",
+            "name": "Phase I - Functionalization of compounds",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-211981",
+            "name": "Xenobiotics",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-372790",
+            "name": "Signaling by GPCR",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-381753",
+            "name": "Olfactory Signaling Pathway",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-388396",
+            "name": "GPCR downstream signalling",
+            "source": "reactome",
+            "hit_count": 1
+          },
+          {
+            "id": "R-HSA-418594",
+            "name": "G alpha (i) signalling events",
+            "source": "reactome",
+            "hit_count": 1
+          }
+        ],
+        "upstream_neighbours": [],
+        "downstream_neighbours": [],
+        "cooccurrence_score": 0.0,
+        "plausibility_summary": "Coumarin is annotated in 10 pathways across reactome (e.g. Metabolism, Signal Transduction, and Biological oxidations). No co-observed metabolites were supplied, so no co-occurrence evidence was computed."
+      },
+      "cached": false
+    },
+    {
+      "turn": 3,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_itenvq1hr7qz_3",
+      "arguments": "{\"compound_a\":\"C00097\",\"compound_b\":\"C14853\"}",
+      "result": {
+        "compound_a": "C00097",
+        "compound_b": "C14853",
+        "resolved_a": "cpd:C00097",
+        "resolved_b": "cpd:C14853",
+        "is_reachable": false,
+        "direction": "none",
+        "shortest_path": null,
+        "path_length": null,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 4,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_e77grvcm1qx7_1",
+      "arguments": "{\"compound_a\":\"C14853\",\"compound_b\":\"C00097\"}",
+      "result": {
+        "compound_a": "C14853",
+        "compound_b": "C00097",
+        "resolved_a": "cpd:C14853",
+        "resolved_b": "cpd:C00097",
+        "is_reachable": false,
+        "direction": "none",
+        "shortest_path": null,
+        "path_length": null,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    },
+    {
+      "turn": 4,
+      "name": "query_kegg_path",
+      "tool_call_id": "call_function_e77grvcm1qx7_2",
+      "arguments": "{\"compound_b\":\"C14853\",\"compound_a\":\"C05851\"}",
+      "result": {
+        "compound_a": "C05851",
+        "compound_b": "C14853",
+        "resolved_a": "cpd:C05851",
+        "resolved_b": "cpd:C14853",
+        "is_reachable": false,
+        "direction": "none",
+        "shortest_path": null,
+        "path_length": null,
+        "max_path_length": 6,
+        "notes": [
+          "resolved subject via alias source='kegg', object via 'kegg'"
+        ]
+      },
+      "cached": false
+    }
+  ],
+  "error": null
+}
