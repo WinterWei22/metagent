@@ -1055,9 +1055,16 @@ def _phrase_to_kegg_id(cursor: sqlite3.Cursor, phrase: str) -> str | None:
     whose source is 'kegg'; return its KEGG external_id normalised to
     ``hsa<NNNNN>``. Returns None when nothing KEGG-source matches.
     """
+    # Phase A3 D4a: column names corrected. RaMP `pathway` table has
+    # ``sourceId`` (not ``pathwaySourceId``) and ``type`` (not
+    # ``pathwaySource``). The pre-A3 spelling silently raised
+    # sqlite3.OperationalError "no such column: pathwaySourceId", which
+    # the surrounding try/except (line 1048) caught and reported as a
+    # warning then returned (None, None), forcing every KEGG-pathway
+    # pair claim to UNVERIFIABLE_V0. Post-fix the BFS actually runs.
     cursor.execute(
-        "SELECT pathwaySourceId FROM pathway "
-        "WHERE pathwaySource = 'kegg' "
+        "SELECT sourceId FROM pathway "
+        "WHERE type = 'kegg' "
         "  AND (pathwayName LIKE ? OR ? LIKE '%' || pathwayName || '%') "
         "LIMIT 1",
         (f"%{phrase}%", phrase),

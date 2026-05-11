@@ -1,0 +1,117 @@
+{
+  "single": {
+    "n_tasks_compared": 5,
+    "total_claims_pre": 214,
+    "total_claims_post": 242,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 12.149532710280374,
+        "post_pct": 11.15702479338843,
+        "delta_pt": -0.9925079168919435
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 14.953271028037383,
+        "post_pct": 20.24793388429752,
+        "delta_pt": 5.294662856260137
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 3.7383177570093458,
+        "post_pct": 4.545454545454546,
+        "delta_pt": 0.8071367884452001
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 69.1588785046729,
+        "post_pct": 64.0495867768595,
+        "delta_pt": -5.1092917278134
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unverifiable_v0": 1
+    },
+    "post_pathway_relationship": {
+      "unverifiable_v0": 1
+    }
+  },
+  "react": {
+    "n_tasks_compared": 5,
+    "total_claims_pre": 266,
+    "total_claims_post": 243,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 18.42105263157895,
+        "post_pct": 29.218106995884774,
+        "delta_pt": 10.797054364305826
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 11.278195488721805,
+        "post_pct": 10.699588477366255,
+        "delta_pt": -0.5786070113555493
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 4.511278195488722,
+        "post_pct": 4.526748971193416,
+        "delta_pt": 0.015470775704693907
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 65.78947368421052,
+        "post_pct": 55.55555555555556,
+        "delta_pt": -10.233918128654963
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unverifiable_v0": 1,
+      "supported": 2
+    },
+    "post_pathway_relationship": {
+      "unverifiable_v0": 1,
+      "supported": 2
+    }
+  },
+  "feedback": {
+    "n_tasks_compared": 5,
+    "total_claims_pre": 227,
+    "total_claims_post": 218,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 29.07488986784141,
+        "post_pct": 23.394495412844037,
+        "delta_pt": -5.680394454997373
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 8.810572687224669,
+        "post_pct": 11.46788990825688,
+        "delta_pt": 2.657317221032212
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 5.726872246696035,
+        "post_pct": 3.669724770642202,
+        "delta_pt": -2.0571474760538333
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 56.38766519823788,
+        "post_pct": 61.46788990825688,
+        "delta_pt": 5.080224710018996
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unverifiable_v0": 5,
+      "supported": 1
+    },
+    "post_pathway_relationship": {
+      "unverifiable_v0": 3,
+      "supported": 1
+    }
+  }
+}
