@@ -1,0 +1,122 @@
+{
+  "single": {
+    "n_tasks_compared": 20,
+    "total_claims_pre": 704,
+    "total_claims_post": 688,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 15.056818181818182,
+        "post_pct": 13.081395348837209,
+        "delta_pt": -1.975422832980973
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 18.892045454545453,
+        "post_pct": 19.186046511627907,
+        "delta_pt": 0.29400105708245405
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 5.965909090909091,
+        "post_pct": 5.232558139534884,
+        "delta_pt": -0.7333509513742067
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 60.08522727272727,
+        "post_pct": 62.5,
+        "delta_pt": 2.4147727272727266
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unsupported": 3,
+      "unverifiable_v0": 17,
+      "supported": 11,
+      "contradicted": 2
+    },
+    "post_pathway_relationship": {
+      "unsupported": 5,
+      "unverifiable_v0": 21,
+      "supported": 5
+    }
+  },
+  "react": {
+    "n_tasks_compared": 20,
+    "total_claims_pre": 996,
+    "total_claims_post": 1029,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 22.991967871485944,
+        "post_pct": 25.94752186588921,
+        "delta_pt": 2.9555539944032674
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 7.831325301204819,
+        "post_pct": 7.482993197278912,
+        "delta_pt": -0.3483321039259071
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 2.710843373493976,
+        "post_pct": 1.9436345966958213,
+        "delta_pt": -0.7672087767981546
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 66.46586345381526,
+        "post_pct": 64.62585034013605,
+        "delta_pt": -1.8400131136792055
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unverifiable_v0": 13,
+      "supported": 12
+    },
+    "post_pathway_relationship": {
+      "unverifiable_v0": 23,
+      "supported": 8
+    }
+  },
+  "feedback": {
+    "n_tasks_compared": 20,
+    "total_claims_pre": 869,
+    "total_claims_post": 844,
+    "rows": [
+      {
+        "metric": "supported",
+        "pre_pct": 27.272727272727273,
+        "post_pct": 29.265402843601894,
+        "delta_pt": 1.9926755708746207
+      },
+      {
+        "metric": "unsupported",
+        "pre_pct": 5.7537399309551205,
+        "post_pct": 6.990521327014218,
+        "delta_pt": 1.2367813960590972
+      },
+      {
+        "metric": "contradicted",
+        "pre_pct": 2.0713463751438437,
+        "post_pct": 2.014218009478673,
+        "delta_pt": -0.057128365665170655
+      },
+      {
+        "metric": "unverifiable_v0",
+        "pre_pct": 64.90218642117377,
+        "post_pct": 61.72985781990521,
+        "delta_pt": -3.1723286012685534
+      }
+    ],
+    "pre_pathway_relationship": {
+      "unverifiable_v0": 12,
+      "supported": 4
+    },
+    "post_pathway_relationship": {
+      "unverifiable_v0": 14,
+      "supported": 4
+    }
+  }
+}

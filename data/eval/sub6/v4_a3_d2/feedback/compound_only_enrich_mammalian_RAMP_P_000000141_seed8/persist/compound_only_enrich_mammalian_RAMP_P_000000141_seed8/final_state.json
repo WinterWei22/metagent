@@ -1,0 +1,20 @@
+{
+  "ts": "2026-05-11T06:09:21.381Z",
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+  "final_narrative": "The contradictory claim [c036] stems from writing \"(KEGG map00630)\" after 4-hydroxy-2-oxoglutaric acid, as if map00630 were that compound's own identifier — it is not; it is the pathway ID for Glyoxylate and dicarboxylate metabolism. I retract that parenthetical. For [c018], I replace the speculative treatment-mechanism claim with literature-grounded kynurenine-pathway language (PMID 41745408 already in hand). For [c035], the off-target perturbations sentence is unsupported by any database result and must be dropped entirely. The \"Limitations\" paragraph was itself new content — not a revision of an existing claim — so I remove it per Phase A2 Rule 3.\n\n**Revised Narrative:**\n\nThe most strongly enriched pathway across the differentially-abundant metabolites is **Tryptophan metabolism** (KEGG map00380; FDR = 0.0, fold-enrichment ≈ 625×). Five of the eight input compounds — L-tryptophan (C00078), serotonin (C00780), melatonin (C01598), 3-hydroxyanthranilic acid (C00632), and quinolinic acid (C03722) — are annotated members of this pathway, making it the unambiguous biological driver of the observed metabolomic shift.\n\nThe strongest driver compounds are **quinolinic acid** (C03722) and **3-hydroxyanthranilic acid** (C00632), both confirmed KEGG members of Tryptophan metabolism. The neuroactive character of these metabolites in the context of tryptophan catabolism is supported by literature (PMID 41745408; PMID 41015495). **L-Tryptophan** (C00078) is the canonical entry point; a directed KEGG reaction path of four hops (L-tryptophan → N-formyl-L-kynurenine → L-kynurenine → 3-hydroxyanthranilic acid) confirms that the substrate sits upstream of 3-hydroxyanthranilic acid. Elevated quinolinic acid and 3-hydroxyanthranilic acid relative to upstream tryptophan levels are consistent with an activated kynurenine arm of Tryptophan metabolism, as the kynurenine pathway is the primary route linking immune activation and metabolic state to neurochemical signaling (PMID 41745408).\n\nThe simultaneous elevation of **serotonin** and **melatonin** points to concurrent activation of the indoleamine branch. Melatonin, serotonin, and quinolinic acid are also jointly annotated in the WikiPathways \"ADHD and autism (ASD) pathways\" entry, hinting at neuropsychiatric-relevant pathway co-regulation. **4-Hydroxy-2-oxoglutaric acid** (C01127) is annotated in Glyoxylate and dicarboxylate metabolism, and the presence of **O-phosphoethanolamine** (C00346), a glycerophospholipid metabolism intermediate, suggests metabolic changes extending beyond the tryptophan axis.\n\nThe convergence of the kynurenine arm toward quinolinic acid — a known NMDA receptor agonist and NAD⁺ biosynthetic precursor — implies tryptophan flux toward neuroactive and energy-metabolite outputs. Elevated quinolinic acid and 3-hydroxyanthranilic acid have been independently linked to oxidative stress and excitotoxicity in neurological disease contexts (PMID 41745408).",
+  "n_iterations": 2,
+  "n_total_tool_calls": 7,
+  "elapsed_seconds": 728.3316577672958,
+  "error": null,
+  "extra": {
+    "final_iter_idx": 2,
+    "rollback_reason": null,
+    "termination_reason": "max_iterations_reached",
+    "qualities": [
+      3,
+      3,
+      3
+    ],
+    "iter0_reused": true
+  }
+}
