@@ -1,5 +1,19 @@
 .env
 api_key.txt
+api_key_*.txt
 logs/*.jsonl
 __pycache__/
 *.pyc
+
+# Phase 6.x — operational/state directories that should never enter the repo
+.claude/
+.codex
+.codex/
+.vscode/
+.idea/
+
+# Phase 6.x — large derived data + on-disk caches
+data/cache/
+
+# Phase 6.x — runtime lockfiles
+*.lock
