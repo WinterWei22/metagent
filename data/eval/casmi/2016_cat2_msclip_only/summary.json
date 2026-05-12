@@ -1,0 +1,17 @@
+{
+  "casmi_dataset": "2016_cat2",
+  "casmi_root": "/data/weiwentao/llm_agent_metabolomics/CASMI/casmi_2016/category2",
+  "out_dir": "data/eval/casmi/2016_cat2_msclip_only",
+  "primary_retriever": "msclip",
+  "reranker_mode": "none",
+  "rerank_with": [],
+  "rerank_top_k": 5,
+  "max_candidates_per_spec": null,
+  "n_specs": 208,
+  "n_with_pred": 208,
+  "n_correct": 60,
+  "n_no_pubchem_pool": 0,
+  "n_conditional_skipped": 0,
+  "id_acc": 0.2885,
+  "elapsed_seconds": 2844.7
+}
