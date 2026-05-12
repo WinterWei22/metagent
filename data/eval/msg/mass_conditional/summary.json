@@ -1,0 +1,16 @@
+{
+  "benchmark": "msg",
+  "msg_candidates": "mass",
+  "msclip_checkpoint": "/home/weiwentao/workspace/reconstruct/ms-pred/results/v4_msg_retrain_20260511_200835/version_0/best.ckpt",
+  "n_sample": 500,
+  "sample_seed": 42,
+  "reranker_mode": "conditional",
+  "rerank_with": [],
+  "rerank_top_k": 5,
+  "n_specs": 500,
+  "n_with_pred": 500,
+  "n_correct": 240,
+  "n_no_pool": 0,
+  "id_acc": 0.48,
+  "elapsed_seconds": 6022.5
+}

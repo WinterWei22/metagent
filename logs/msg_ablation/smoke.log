@@ -1,0 +1,20 @@
+2026-05-12 09:12:15,577 [INFO] METAGENT_MSCLIP_CKPT = /home/weiwentao/workspace/reconstruct/ms-pred/results/v4_msg_retrain_20260511_200835/version_0/best.ckpt
+2026-05-12 09:12:15,578 [INFO] candidate pool = formula (/home/weiwentao/workspace/ms-pred/data/spec_datasets/msg/retrieval/MassSpecGym_retrieval_candidates_formula.json)
+2026-05-12 09:12:15,578 [INFO] reranker = none
+2026-05-12 09:12:15,872 [INFO] MSG: 17556 total test spectra
+2026-05-12 09:12:15,872 [INFO] MSG: sampled 500 spectra (seed=42)
+2026-05-12 09:12:17,789 [INFO] MSG: loaded 500 spectra (of 500 sampled)
+2026-05-12 09:12:17,790 [INFO] running 2 MSG spectra
+2026-05-12 09:12:17,790 [INFO] loading MSG candidates from /home/weiwentao/workspace/ms-pred/data/spec_datasets/msg/retrieval/MassSpecGym_retrieval_candidates_formula.json
+2026-05-12 09:12:28,578 [INFO] loaded 32010 compound entries
+2026-05-12 09:12:28,762 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-12 09:12:28,762 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-12 09:12:28,762 [INFO] ms-clip: launching predict_smi (n_candidates=84)
+2026-05-12 09:12:40,735 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-12 09:12:40,735 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-12 09:12:40,736 [INFO] ms-clip: launching predict_smi (n_candidates=256)
+2026-05-12 09:12:52,459 [WARNING] ms-clip dropped SMILES O=C(NCCCNc1n[n+]([O-])c2ccccc2[n+]1[O-])c1cccc2cc3ccccc3nc12; emitting sentinel -1.0
+2026-05-12 09:12:52,478 [INFO] spec 2/2  MassSpecGymID0028442  pool=256  pred=HTQMVQVXFRQIKW  correct=True  t=11.9s
+2026-05-12 09:12:52,478 [INFO] ============================================================
+2026-05-12 09:12:52,478 [INFO] MSG  pool=formula  reranker=none
+2026-05-12 09:12:52,478 [INFO]   n=2  correct=1  id_acc=0.5000  elapsed=23.9s

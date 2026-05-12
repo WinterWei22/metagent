@@ -1,0 +1,7 @@
+pool,reranker,n,n_correct,top1_acc,top5_acc,mrr,mrr_delta_vs_msclip_only,elapsed_s
+formula,msclip_only,500,277,0.5540,0.7060,0.6212,+0.0000,5996.5
+formula,conditional,500,277,0.5540,0.7060,0.6212,+0.0000,5961.3
+formula,llm_reranker,500,274,0.5480,0.7060,0.6165,-0.0047,42267.1
+mass,msclip_only,500,240,0.4800,0.6400,0.5504,+0.0000,6073.3
+mass,conditional,500,240,0.4800,0.6400,0.5504,+0.0000,6022.5
+mass,llm_reranker,500,249,0.4980,0.6400,0.5639,+0.0135,42020.9
