@@ -1,0 +1,3 @@
+benchmark,n_specs,msclip_only_acc_pct,conditional_acc_pct,delta_pp,p_vs_msclip_only,skip_pct,leakage,candidate_space
+sub6a_realid_v2,448,56.7,66.96,10.27,<1e-6,35.3,RIKEN→GNPS reingest (in-distribution lookup),GNPS reference spectra
+casmi_2022,170,13.53,13.53,0.0,1.0,0.0,"none (PubChem candidate pool, no GNPS reference overlap)",PubChem (formula-restricted slice)

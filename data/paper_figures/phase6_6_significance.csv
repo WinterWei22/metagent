@@ -1,0 +1,2 @@
+comparison,benchmark,n_paired,delta_spec,delta_pp,ci95_lo_pp,ci95_hi_pp,mcnemar_b,mcnemar_c,p_value
+conditional vs msclip_only,casmi_2022,170,0,0.0,-4.61,4.61,8,8,1.0

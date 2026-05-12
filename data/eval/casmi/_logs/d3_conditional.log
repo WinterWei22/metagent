@@ -1,0 +1,1589 @@
+/home/weiwentao/.local/lib/python3.13/site-packages/pydantic/_internal/_fields.py:161: UserWarning: Field "model_version" has conflict with protected namespace "model_".
+
+You may be able to resolve this warning by setting `model_config['protected_namespaces'] = ()`.
+  warnings.warn(
+2026-05-10 23:00:38,889 [INFO] loading CASMI 2022 specs from /data/weiwentao/llm_agent_metabolomics/CASMI/casmi_2022/preprocessed/casmi2022
+2026-05-10 23:00:39,079 [INFO] loaded 170 specs
+2026-05-10 23:00:39,079 [INFO] loading PubChem retrieval index
+2026-05-10 23:00:39,213 [INFO] PubChem retrieval loaded: 152 formulas, 402421 names
+2026-05-10 23:00:39,317 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:00:39,317 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:00:39,317 [INFO] ms-clip: launching predict_smi (n_candidates=692)
+2026-05-10 23:01:22,297 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:01:22,297 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:01:22,297 [INFO] ms-clip: launching predict_smi (n_candidates=665)
+2026-05-10 23:01:52,563 [WARNING] CFM-ID failed for spectrum=casmi2022_491 cand=C=C(C)C(C)=C(C(=C)C)C(C(C(=C)C)=C(C)C)C1CC=C(C(=C)O)C=C1OC.CC: CFM-ID produced zero peaks for SMILES='C=C(C)C(C)=C(C(=C)C)C(C(C(=C)C)=C(C)C)C1CC=C(C(=C)O)C=C1OC.CC'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-10 23:01:52,690 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:01:52,690 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:01:52,690 [INFO] ms-clip: launching predict_smi (n_candidates=9282)
+2026-05-10 23:02:27,985 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:02:27,985 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:02:27,985 [INFO] ms-clip: launching predict_smi (n_candidates=3602)
+2026-05-10 23:02:59,991 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:02:59,991 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:02:59,991 [INFO] ms-clip: launching predict_smi (n_candidates=4837)
+2026-05-10 23:03:33,166 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:03:33,166 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:03:33,166 [INFO] ms-clip: launching predict_smi (n_candidates=2258)
+2026-05-10 23:04:04,135 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:04:04,135 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:04:04,135 [INFO] ms-clip: launching predict_smi (n_candidates=1504)
+2026-05-10 23:04:35,253 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:04:35,253 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:04:35,253 [INFO] ms-clip: launching predict_smi (n_candidates=1000)
+2026-05-10 23:05:04,703 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:05:04,703 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:05:04,703 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-10 23:05:36,141 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:05:36,141 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:05:36,141 [INFO] ms-clip: launching predict_smi (n_candidates=3984)
+2026-05-10 23:06:07,342 [INFO] spec 10/170  casmi2022_219  pool=3984  pred=ZUNJWEGRDSXKIO  correct=False  t=31.32s
+2026-05-10 23:06:07,487 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:06:07,487 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:06:07,488 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-10 23:06:43,561 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:06:43,561 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:06:43,562 [INFO] ms-clip: launching predict_smi (n_candidates=213)
+2026-05-10 23:07:14,503 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:07:14,504 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:07:14,504 [INFO] ms-clip: launching predict_smi (n_candidates=628)
+2026-05-10 23:07:43,859 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:07:43,859 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:07:43,859 [INFO] ms-clip: launching predict_smi (n_candidates=706)
+2026-05-10 23:08:14,966 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:08:14,966 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:08:14,966 [INFO] ms-clip: launching predict_smi (n_candidates=911)
+2026-05-10 23:08:45,741 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:08:45,741 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:08:45,741 [INFO] ms-clip: launching predict_smi (n_candidates=1281)
+2026-05-10 23:09:15,887 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:09:15,887 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:09:15,887 [INFO] ms-clip: launching predict_smi (n_candidates=2301)
+2026-05-10 23:09:45,244 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:09:45,244 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:09:45,244 [INFO] ms-clip: launching predict_smi (n_candidates=5721)
+2026-05-10 23:10:17,627 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:10:17,627 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:10:17,627 [INFO] ms-clip: launching predict_smi (n_candidates=1026)
+2026-05-10 23:10:47,395 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:10:47,395 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:10:47,395 [INFO] ms-clip: launching predict_smi (n_candidates=2875)
+2026-05-10 23:11:38,514 [INFO] spec 20/170  casmi2022_55  pool=2875  pred=KDEMLLUCAGVRCX  correct=False  t=51.23s
+2026-05-10 23:11:38,627 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:11:38,627 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:11:38,627 [INFO] ms-clip: launching predict_smi (n_candidates=1618)
+2026-05-10 23:13:06,804 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:13:06,804 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:13:06,804 [INFO] ms-clip: launching predict_smi (n_candidates=99)
+2026-05-10 23:14:37,302 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CCC7(C)C(O)CC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CCC7(C)C(O)CC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-10 23:15:37,368 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CC(O)C7(C)CCC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CC(O)C7(C)CCC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-10 23:16:37,411 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(C)C(O)C(O)C7(C)CCC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-10 23:17:37,474 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(C)C(O)C7(C)CCC56C)C4CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(C)C(O)C7(C)CCC56C)C4CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-10 23:18:37,538 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(O)C(O)C7(C)CCC56C)C4(C)C)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(O)C(O)C7(C)CCC56C)C4(C)C)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-10 23:18:37,647 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:18:37,647 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:18:37,647 [INFO] ms-clip: launching predict_smi (n_candidates=33)
+2026-05-10 23:22:17,763 [WARNING] CFM-ID failed for spectrum=casmi2022_92 cand=CCCCC(C)CC(C)C(=O)N(C)C(Cc1ccc(OC)cc1)C(=O)NC(C(=O)N(C)C(C(=O)N1CC(O)CC1C(=O)N1C(=O)C=CC1C)C(C)C)C(C)OC(C)=O: CFM-ID did not respond within 60s for SMILES='CCCCC(C)CC(C)C(=O)N(C)C(Cc1ccc(OC)cc1)C(=O)NC(C(=O)N(C)C(C(=O)N1CC(O)CC1C(=O)N1C(=O)C=CC1C)C(C)C)C(C)OC(C)=O'.
+2026-05-10 23:22:18,066 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:22:18,066 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:22:18,067 [INFO] ms-clip: launching predict_smi (n_candidates=4491)
+2026-05-10 23:23:52,640 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:23:52,640 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:23:52,640 [INFO] ms-clip: launching predict_smi (n_candidates=1152)
+2026-05-10 23:25:05,445 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:25:05,446 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:25:05,446 [INFO] ms-clip: launching predict_smi (n_candidates=591)
+2026-05-10 23:26:16,553 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:26:16,553 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:26:16,553 [INFO] ms-clip: launching predict_smi (n_candidates=216)
+2026-05-10 23:30:26,403 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:30:26,403 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:30:26,403 [INFO] ms-clip: launching predict_smi (n_candidates=258)
+2026-05-10 23:32:56,097 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:32:56,097 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:32:56,097 [INFO] ms-clip: launching predict_smi (n_candidates=2374)
+2026-05-10 23:33:57,787 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:33:57,787 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:33:57,787 [INFO] ms-clip: launching predict_smi (n_candidates=1381)
+2026-05-10 23:35:43,846 [WARNING] CFM-ID failed for spectrum=casmi2022_329 cand=C.c1cc2c(cc1C1OCC3C(c4ccc5c(c4)OCO5)OCC13)OCO2: CFM-ID produced zero peaks for SMILES='C.c1cc2c(cc1C1OCC3C(c4ccc5c(c4)OCO5)OCC13)OCO2'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-10 23:36:04,050 [INFO] spec 30/170  casmi2022_329  pool=1381  pred=SBTRZXNWSAPVDI  correct=False  t=126.37s
+2026-05-10 23:36:04,159 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:36:04,159 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:36:04,159 [INFO] ms-clip: launching predict_smi (n_candidates=1546)
+2026-05-10 23:37:48,786 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:37:48,787 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:37:48,787 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-10 23:39:19,753 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-10 23:40:19,820 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=COc1cc(C=CC(=O)OCC2OC(c3c(OC4OCC(O)(CO)C4O)c(C4OC(CO)C(O)C(O)C4O)c(O)c4c(=O)cc(-c5ccc(O)cc5)oc34)C(O)C(O)C2O)ccc1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C=CC(=O)OCC2OC(c3c(OC4OCC(O)(CO)C4O)c(C4OC(CO)C(O)C(O)C4O)c(O)c4c(=O)cc(-c5ccc(O)cc5)oc34)C(O)C(O)C2O)ccc1O'.
+2026-05-10 23:41:19,887 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O'.
+2026-05-10 23:42:19,953 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O'.
+2026-05-10 23:43:20,020 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(OC5OC(COC(=O)C=Cc6ccc(O)c(O)c6)C(O)C(O)C5O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(OC5OC(COC(=O)C=Cc6ccc(O)c(O)c6)C(O)C(O)C5O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O'.
+2026-05-10 23:43:20,138 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:43:20,138 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:43:20,138 [INFO] ms-clip: launching predict_smi (n_candidates=9282)
+2026-05-10 23:44:45,799 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:44:45,800 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:44:45,800 [INFO] ms-clip: launching predict_smi (n_candidates=4153)
+2026-05-10 23:46:09,486 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:46:09,486 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:46:09,486 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-10 23:46:50,486 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:46:50,486 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:46:50,486 [INFO] ms-clip: launching predict_smi (n_candidates=3132)
+2026-05-10 23:47:54,843 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:47:54,843 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:47:54,843 [INFO] ms-clip: launching predict_smi (n_candidates=32712)
+2026-05-10 23:49:25,164 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:49:25,164 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:49:25,164 [INFO] ms-clip: launching predict_smi (n_candidates=10251)
+2026-05-10 23:50:34,293 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:50:34,294 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:50:34,294 [INFO] ms-clip: launching predict_smi (n_candidates=49)
+2026-05-10 23:52:06,199 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CCCC(=O)OCC(OC(=O)CCC)C(OC(=O)CCC)C(Cn1c2nc(=O)[nH]c(=O)c-2nc2cc(C)c(C)cc21)OC(=O)CCC: CFM-ID did not respond within 60s for SMILES='CCCC(=O)OCC(OC(=O)CCC)C(OC(=O)CCC)C(Cn1c2nc(=O)[nH]c(=O)c-2nc2cc(C)c(C)cc21)OC(=O)CCC'.
+2026-05-10 23:53:06,207 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CCCCCCCCn1c(=O)nc2n(CC(OC(C)=O)C(OC(C)=O)C(COC(C)=O)OC(C)=O)c3cc(C)c(C)cc3nc-2c1=O: CFM-ID did not respond within 60s for SMILES='CCCCCCCCn1c(=O)nc2n(CC(OC(C)=O)C(OC(C)=O)C(COC(C)=O)OC(C)=O)c3cc(C)c(C)cc3nc-2c1=O'.
+2026-05-10 23:53:06,774 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CC(C)(C)OC(=O)NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1.NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1: CFM-ID produced zero peaks for SMILES='CC(C)(C)OC(=O)NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1.NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-10 23:55:04,381 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=C=CCOC(=O)CNC(=O)C(=O)C(CCC)NC(=O)C1CCCN1C(=O)C(NC(=O)Oc1ccc(C(=O)OC)cc1)C1CCCCC1: CFM-ID did not respond within 60s for SMILES='C=CCOC(=O)CNC(=O)C(=O)C(CCC)NC(=O)C1CCCN1C(=O)C(NC(=O)Oc1ccc(C(=O)OC)cc1)C1CCCCC1'.
+2026-05-10 23:55:04,513 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:55:04,513 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:55:04,513 [INFO] ms-clip: launching predict_smi (n_candidates=5339)
+2026-05-10 23:56:07,006 [INFO] spec 40/170  casmi2022_457  pool=5339  pred=YYAJJKZSQWOLIP  correct=True  t=62.62s
+2026-05-10 23:56:07,279 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:56:07,280 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:56:07,280 [INFO] ms-clip: launching predict_smi (n_candidates=4283)
+2026-05-10 23:58:11,069 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-10 23:58:11,069 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-10 23:58:11,069 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-10 23:59:41,049 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 00:00:41,113 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 00:01:41,167 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1'.
+2026-05-11 00:02:41,234 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(COC(=O)C=Cc6ccc(O)cc6)C(O)C(O)C5O)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(COC(=O)C=Cc6ccc(O)cc6)C(O)C(O)C5O)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 00:03:41,300 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 00:03:41,432 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:03:41,433 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:03:41,433 [INFO] ms-clip: launching predict_smi (n_candidates=4491)
+2026-05-11 00:05:03,519 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:05:03,519 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:05:03,519 [INFO] ms-clip: launching predict_smi (n_candidates=5199)
+2026-05-11 00:05:47,722 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:05:47,722 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:05:47,723 [INFO] ms-clip: launching predict_smi (n_candidates=264)
+2026-05-11 00:08:28,912 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:08:28,912 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:08:28,913 [INFO] ms-clip: launching predict_smi (n_candidates=117)
+2026-05-11 00:10:16,496 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:10:16,496 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:10:16,496 [INFO] ms-clip: launching predict_smi (n_candidates=278)
+2026-05-11 00:14:22,483 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:14:22,483 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:14:22,483 [INFO] ms-clip: launching predict_smi (n_candidates=2123)
+2026-05-11 00:16:01,817 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:16:01,817 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:16:01,817 [INFO] ms-clip: launching predict_smi (n_candidates=65)
+2026-05-11 00:20:29,714 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:20:29,715 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:20:29,715 [INFO] ms-clip: launching predict_smi (n_candidates=37)
+2026-05-11 00:20:59,779 [WARNING] CFM-ID failed for spectrum=casmi2022_130 cand=O=[N+]([O-])Nc1ccccc1.P: CFM-ID produced zero peaks for SMILES='O=[N+]([O-])Nc1ccccc1.P'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 00:21:09,572 [INFO] spec 50/170  casmi2022_130  pool=37  pred=AKQNRYKOISSYCP  correct=False  t=39.96s
+2026-05-11 00:21:09,692 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:21:09,692 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:21:09,692 [INFO] ms-clip: launching predict_smi (n_candidates=3469)
+2026-05-11 00:22:04,500 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:22:04,500 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:22:04,500 [INFO] ms-clip: launching predict_smi (n_candidates=61)
+2026-05-11 00:26:13,412 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:26:13,412 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:26:13,412 [INFO] ms-clip: launching predict_smi (n_candidates=51)
+2026-05-11 00:28:41,175 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:28:41,175 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:28:41,175 [INFO] ms-clip: launching predict_smi (n_candidates=161)
+2026-05-11 00:32:06,108 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:32:06,108 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:32:06,108 [INFO] ms-clip: launching predict_smi (n_candidates=764)
+2026-05-11 00:32:43,286 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:32:43,286 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:32:43,286 [INFO] ms-clip: launching predict_smi (n_candidates=784)
+2026-05-11 00:34:05,282 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:34:05,282 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:34:05,283 [INFO] ms-clip: launching predict_smi (n_candidates=2072)
+2026-05-11 00:35:52,651 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:35:52,652 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:35:52,652 [INFO] ms-clip: launching predict_smi (n_candidates=1150)
+2026-05-11 00:36:47,418 [WARNING] CFM-ID failed for spectrum=casmi2022_478 cand=CC.CC=CC=CC=CC1=CC2=CC(=O)C(C)(OC(=O)CC(C)O)C(=O)C2=C(C)O1: CFM-ID produced zero peaks for SMILES='CC.CC=CC=CC=CC1=CC2=CC(=O)C(C)(OC(=O)CC(C)O)C(=O)C2=C(C)O1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 00:37:33,599 [WARNING] CFM-ID failed for spectrum=casmi2022_478 cand=CC.COC(=O)CC(C)C1=CC=C2C3(C)CCC4=C(COC4=O)C3CC3OC23C1=O: CFM-ID produced zero peaks for SMILES='CC.COC(=O)CC(C)C1=CC=C2C3(C)CCC4=C(COC4=O)C3CC3OC23C1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 00:37:33,729 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:37:33,729 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:37:33,729 [INFO] ms-clip: launching predict_smi (n_candidates=5965)
+2026-05-11 00:38:37,186 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:38:37,186 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:38:37,186 [INFO] ms-clip: launching predict_smi (n_candidates=349)
+2026-05-11 00:40:09,291 [INFO] spec 60/170  casmi2022_367  pool=349  pred=OOKKJUJJHAYTGD  correct=False  t=92.21s
+2026-05-11 00:40:09,389 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:40:09,390 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:40:09,390 [INFO] ms-clip: launching predict_smi (n_candidates=83)
+2026-05-11 00:42:25,619 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:42:25,619 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:42:25,619 [INFO] ms-clip: launching predict_smi (n_candidates=4690)
+2026-05-11 00:42:40,677 [WARNING] ms-clip dropped SMILES [CH]N1CCC(=O)C(C)(C)C1; emitting sentinel -1.0
+2026-05-11 00:43:18,530 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:43:18,531 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:43:18,531 [INFO] ms-clip: launching predict_smi (n_candidates=4314)
+2026-05-11 00:44:18,098 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:44:18,098 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:44:18,098 [INFO] ms-clip: launching predict_smi (n_candidates=2019)
+2026-05-11 00:45:24,563 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:45:24,563 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:45:24,563 [INFO] ms-clip: launching predict_smi (n_candidates=385)
+2026-05-11 00:47:18,727 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:47:18,727 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:47:18,727 [INFO] ms-clip: launching predict_smi (n_candidates=29)
+2026-05-11 00:50:29,402 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(O)C(OC(Cc2ccccc2)C(=O)O)C1OC(=O)c1ccccc1)C(=O)OC: CFM-ID did not respond within 60s for SMILES='COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(O)C(OC(Cc2ccccc2)C(=O)O)C1OC(=O)c1ccccc1)C(=O)OC'.
+2026-05-11 00:51:29,467 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(OC(=O)c2ccccc2)C(OC(Cc2ccccc2)C(=O)O)C1O)C(=O)OC: CFM-ID did not respond within 60s for SMILES='COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(OC(=O)c2ccccc2)C(OC(Cc2ccccc2)C(=O)O)C1O)C(=O)OC'.
+2026-05-11 00:52:29,509 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=CC(=O)CCC1OC(Oc2ccc(C=O)cc2)C(OC(C)=O)C(OC(C)=O)C1OC1OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 00:53:29,538 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=CC(=O)OCC1OC(OCC2OC(C(=O)Cc3ccccc3)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID did not respond within 60s for SMILES='CC(=O)OCC1OC(OCC2OC(C(=O)Cc3ccccc3)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O'.
+2026-05-11 00:54:29,601 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C1OC(OC2C(OC3C(C(=O)OC)OC(O)C(O)C3O)OC(C)C(OC(=O)c3ccccc3)C2O)C(OCc2ccccc2)C(O)C1O: CFM-ID did not respond within 60s for SMILES='COC(=O)C1OC(OC2C(OC3C(C(=O)OC)OC(O)C(O)C3O)OC(C)C(OC(=O)c3ccccc3)C2O)C(OCc2ccccc2)C(O)C1O'.
+2026-05-11 00:54:29,705 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:54:29,705 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:54:29,705 [INFO] ms-clip: launching predict_smi (n_candidates=410)
+2026-05-11 00:56:09,107 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:56:09,107 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:56:09,107 [INFO] ms-clip: launching predict_smi (n_candidates=3188)
+2026-05-11 00:58:24,292 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:58:24,292 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:58:24,292 [INFO] ms-clip: launching predict_smi (n_candidates=3735)
+2026-05-11 00:59:20,984 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 00:59:20,985 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 00:59:20,985 [INFO] ms-clip: launching predict_smi (n_candidates=500)
+2026-05-11 01:03:02,618 [INFO] spec 70/170  casmi2022_306  pool=500  pred=NXAZWYWJZDFISF  correct=False  t=221.74s
+2026-05-11 01:03:02,715 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:03:02,715 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:03:02,715 [INFO] ms-clip: launching predict_smi (n_candidates=76)
+2026-05-11 01:04:33,587 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1cc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)ccc1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)ccc1O'.
+2026-05-11 01:05:33,619 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)cc1O'.
+2026-05-11 01:06:33,668 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(O)ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O2)cc1O'.
+2026-05-11 01:07:33,696 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O)O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O)O2)cc1O'.
+2026-05-11 01:08:33,757 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(C)C(OC5OC(CO)C(O)C(O)C5O)C(O)C4O)cc3O2)cc1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 01:08:33,870 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:08:33,870 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:08:33,870 [INFO] ms-clip: launching predict_smi (n_candidates=764)
+2026-05-11 01:08:45,004 [WARNING] ms-clip dropped SMILES CN1[C]CCCC1; emitting sentinel -1.0
+2026-05-11 01:08:45,004 [WARNING] ms-clip dropped SMILES [CH]N1CCCC1C; emitting sentinel -1.0
+2026-05-11 01:08:45,005 [WARNING] ms-clip dropped SMILES [CH-]=[N+](C=C)CCC; emitting sentinel -1.0
+2026-05-11 01:08:45,005 [WARNING] ms-clip dropped SMILES [CH]N1CCCCC1; emitting sentinel -1.0
+2026-05-11 01:08:45,005 [WARNING] ms-clip dropped SMILES C=C(C)[N+](C)=[C-]C; emitting sentinel -1.0
+2026-05-11 01:09:09,631 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:09:09,632 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:09:09,632 [INFO] ms-clip: launching predict_smi (n_candidates=3602)
+2026-05-11 01:09:57,742 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:09:57,743 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:09:57,743 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-11 01:11:26,502 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)c(O)c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)c(O)c2)C(O)C(O)C1O'.
+2026-05-11 01:12:26,566 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1'.
+2026-05-11 01:13:26,633 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)c(O)c4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)c(O)c4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O'.
+2026-05-11 01:14:26,700 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(OC5OC(C)C(O)C(O)C5O)c(O)c4)oc4cc(O)cc(O)c4c3=O)C(OC(=O)C=Cc3ccc(O)cc3)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(OC5OC(C)C(O)C(O)C5O)c(O)c4)oc4cc(O)cc(O)c4c3=O)C(OC(=O)C=Cc3ccc(O)cc3)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 01:15:26,767 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O'.
+2026-05-11 01:15:26,870 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:15:26,870 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:15:26,870 [INFO] ms-clip: launching predict_smi (n_candidates=146)
+2026-05-11 01:18:40,513 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:18:40,513 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:18:40,513 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-11 01:18:59,552 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:19:17,523 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:19:17,523 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:19:17,523 [INFO] ms-clip: launching predict_smi (n_candidates=671)
+2026-05-11 01:19:32,505 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:20:34,033 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:20:34,034 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:20:34,034 [INFO] ms-clip: launching predict_smi (n_candidates=3678)
+2026-05-11 01:20:50,992 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:21:37,863 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:21:37,863 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:21:37,863 [INFO] ms-clip: launching predict_smi (n_candidates=5806)
+2026-05-11 01:21:57,205 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:22:13,747 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:22:13,747 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:22:13,747 [INFO] ms-clip: launching predict_smi (n_candidates=525)
+2026-05-11 01:22:28,261 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:23:52,826 [INFO] spec 80/170  casmi2022_356  pool=525  pred=JLQGTJFUSGCZFE  correct=False  t=99.16s
+2026-05-11 01:23:52,942 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:23:52,942 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:23:52,942 [INFO] ms-clip: launching predict_smi (n_candidates=4306)
+2026-05-11 01:24:10,652 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:24:56,232 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:24:56,232 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:24:56,232 [INFO] ms-clip: launching predict_smi (n_candidates=28)
+2026-05-11 01:25:11,159 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:26:11,179 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CC(CCSc1ccc(N(C)C)cc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CC(CCSc1ccc(N(C)C)cc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 01:27:11,242 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CCCN(CSc1cccc(N(C)C)c1)c1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CCCN(CSc1cccc(N(C)C)c1)c1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 01:28:11,308 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CCC(CSc1cccc(N(C)C)c1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CCC(CSc1cccc(N(C)C)c1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 01:29:11,375 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4cccc(Cl)c4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4cccc(Cl)c4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 01:30:11,441 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 01:30:11,539 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:30:11,540 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:30:11,540 [INFO] ms-clip: launching predict_smi (n_candidates=41)
+2026-05-11 01:30:25,416 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:34:23,303 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:34:23,303 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:34:23,303 [INFO] ms-clip: launching predict_smi (n_candidates=1070)
+2026-05-11 01:34:37,948 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--password-env=<password>
+                    --user-env=<username>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:35:02,576 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:35:02,576 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:35:02,576 [INFO] ms-clip: launching predict_smi (n_candidates=2875)
+2026-05-11 01:35:19,156 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:35:55,716 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:35:55,716 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:35:55,716 [INFO] ms-clip: launching predict_smi (n_candidates=214)
+2026-05-11 01:36:10,035 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:38:16,300 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:38:16,300 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:38:16,300 [INFO] ms-clip: launching predict_smi (n_candidates=831)
+2026-05-11 01:38:31,264 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:40:29,056 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:40:29,056 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:40:29,056 [INFO] ms-clip: launching predict_smi (n_candidates=1389)
+2026-05-11 01:40:44,708 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:41:59,058 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:41:59,058 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:41:59,058 [INFO] ms-clip: launching predict_smi (n_candidates=1568)
+2026-05-11 01:42:14,588 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:42:56,111 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:42:56,111 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:42:56,111 [INFO] ms-clip: launching predict_smi (n_candidates=976)
+2026-05-11 01:43:10,937 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:44:53,932 [INFO] spec 90/170  casmi2022_479  pool=976  pred=DHASCSFRRKFSNQ  correct=False  t=117.93s
+2026-05-11 01:44:54,041 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:44:54,041 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:44:54,041 [INFO] ms-clip: launching predict_smi (n_candidates=2645)
+2026-05-11 01:45:07,030 [WARNING] ms-clip dropped SMILES COc1ccccc1-n1nc([S-])n[n+]1-c1ccccc1OC; emitting sentinel -1.0
+2026-05-11 01:45:10,437 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:45:42,624 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:45:42,624 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:45:42,624 [INFO] ms-clip: launching predict_smi (n_candidates=561)
+2026-05-11 01:45:57,586 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:48:45,103 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:48:45,104 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:48:45,104 [INFO] ms-clip: launching predict_smi (n_candidates=728)
+2026-05-11 01:48:56,561 [WARNING] ms-clip dropped SMILES Cc1cc(C)c(CN2[C]N(C(c3ccccc3)c3ccccc3)CC2)c(C)c1; emitting sentinel -1.0
+2026-05-11 01:48:56,561 [WARNING] ms-clip dropped SMILES Cc1ccccc1[N+]1=[C-]N(c2c(C)cccc2Cc2ccccc2)C(C)C1C; emitting sentinel -1.0
+2026-05-11 01:48:59,829 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:50:51,334 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:50:51,334 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:50:51,334 [INFO] ms-clip: launching predict_smi (n_candidates=25)
+2026-05-11 01:51:05,476 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:54:17,468 [WARNING] CFM-ID failed for spectrum=casmi2022_366 cand=CCC1NC(=O)C(NC(=O)CN2CCc3ccccc3C2)CCCCNC(=O)C2CCCN2C(=O)C(Cc2ccccc2)NC(=O)C(C(C)O)NC1=O.O=CO: CFM-ID produced zero peaks for SMILES='CCC1NC(=O)C(NC(=O)CN2CCc3ccccc3C2)CCCCNC(=O)C2CCCN2C(=O)C(Cc2ccccc2)NC(=O)C(C(C)O)NC1=O.O=CO'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 01:54:17,584 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:54:17,584 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:54:17,584 [INFO] ms-clip: launching predict_smi (n_candidates=1913)
+2026-05-11 01:54:29,605 [WARNING] ms-clip dropped SMILES Cc1cccc2c1N(C)[C]O2; emitting sentinel -1.0
+2026-05-11 01:54:32,990 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:54:47,431 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:54:47,432 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:54:47,432 [INFO] ms-clip: launching predict_smi (n_candidates=9508)
+2026-05-11 01:55:09,952 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:56:03,747 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 01:56:03,747 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 01:56:03,747 [INFO] ms-clip: launching predict_smi (n_candidates=97)
+2026-05-11 01:56:18,763 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 01:58:12,880 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=CC(=O)OC7)C(OC(C)=O)CC56O)C4(C)CC3OC12O: CFM-ID did not respond within 60s for SMILES='COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=CC(=O)OC7)C(OC(C)=O)CC56O)C4(C)CC3OC12O'.
+2026-05-11 01:59:12,944 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=COC(=O)C7)C(OC(C)=O)CC56O)C4(C)CC3OC12O: CFM-ID did not respond within 60s for SMILES='COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=COC(=O)C7)C(OC(C)=O)CC56O)C4(C)CC3OC12O'.
+2026-05-11 02:01:08,682 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=CCC1(c2ccc(C3OC(CO)C(O)C(O)C3O)c(C)c2)CC1(C)c1ccc(C2OC(CO)C(O)C(O)C2O)c(C)c1: CFM-ID did not respond within 60s for SMILES='CCC1(c2ccc(C3OC(CO)C(O)C(O)C3O)c(C)c2)CC1(C)c1ccc(C2OC(CO)C(O)C(O)C2O)c(C)c1'.
+2026-05-11 02:01:08,807 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:01:08,807 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:01:08,808 [INFO] ms-clip: launching predict_smi (n_candidates=4727)
+2026-05-11 02:01:24,163 [WARNING] ms-clip dropped SMILES COc1ccc(-n2[c-][n+](-c3ccc(C)cc3)c(C)c2C)cc1; emitting sentinel -1.0
+2026-05-11 02:01:24,164 [WARNING] ms-clip dropped SMILES Cc1c(C)[n+](OCc2ccccc2)[c-]n1Cc1ccccc1; emitting sentinel -1.0
+2026-05-11 02:01:24,166 [WARNING] ms-clip dropped SMILES [CH][N+](C)(C)C(=O)[N+]1([CH])c2ccccc2CCc2ccccc21; emitting sentinel -1.0
+2026-05-11 02:01:27,511 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:02:04,483 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:02:04,483 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:02:04,483 [INFO] ms-clip: launching predict_smi (n_candidates=2409)
+2026-05-11 02:02:20,954 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:03:40,147 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:03:40,147 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:03:40,148 [INFO] ms-clip: launching predict_smi (n_candidates=2518)
+2026-05-11 02:03:56,391 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:05:20,446 [INFO] spec 100/170  casmi2022_352  pool=2518  pred=RFCXSVIQTUCELA  correct=False  t=100.42s
+2026-05-11 02:05:20,583 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:05:20,583 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:05:20,583 [INFO] ms-clip: launching predict_smi (n_candidates=8953)
+2026-05-11 02:05:40,991 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:06:01,653 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:06:01,654 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:06:01,654 [INFO] ms-clip: launching predict_smi (n_candidates=41)
+2026-05-11 02:06:15,688 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:08:06,594 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2OC2OC(C)C(O)C(O)C2O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 02:09:06,652 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(O)C2OC2OCC(O)C(O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(O)C2OC2OCC(O)C(O)C2O)cc1'.
+2026-05-11 02:10:06,681 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1cc(COC(C)=O)c(Oc2cc(COC(C)=O)c(-c3c(CO)cc(OC)c(OC)c3OC)c(O)c2OC)c(OC)c1OC: CFM-ID did not respond within 60s for SMILES='COc1cc(COC(C)=O)c(Oc2cc(COC(C)=O)c(-c3c(CO)cc(OC)c(OC)c3OC)c(O)c2OC)c(OC)c1OC'.
+2026-05-11 02:11:06,747 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=CC(C)=CCc1c(OC2OC(C)C(O)C(O)C2O)cc(O)c2c(=O)c(OC3OC(C)C(O)C(O)C3O)c(-c3ccc(O)cc3)oc12: CFM-ID did not respond within 60s for SMILES='CC(C)=CCc1c(OC2OC(C)C(O)C(O)C2O)cc(O)c2c(=O)c(OC3OC(C)C(O)C(O)C3O)c(-c3ccc(O)cc3)oc12'.
+2026-05-11 02:11:06,894 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:11:06,894 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:11:06,894 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 02:11:28,679 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:11:34,612 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:11:34,612 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:11:34,612 [INFO] ms-clip: launching predict_smi (n_candidates=3665)
+2026-05-11 02:11:52,350 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:12:54,646 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:12:54,646 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:12:54,646 [INFO] ms-clip: launching predict_smi (n_candidates=252)
+2026-05-11 02:13:09,468 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:13:10,023 [WARNING] CFM-ID failed for spectrum=casmi2022_194 cand=C.CC1=C(O)C(=O)CC(C)(C)C1=O.CO.COC1=C(C)C(=O)C(C)(C)CC1=O: CFM-ID produced zero peaks for SMILES='C.CC1=C(O)C(=O)CC(C)(C)C1=O.CO.COC1=C(C)C(=O)C(C)(C)CC1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 02:14:05,296 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:14:05,296 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:14:05,296 [INFO] ms-clip: launching predict_smi (n_candidates=613)
+2026-05-11 02:14:20,573 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:15:37,507 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:15:37,507 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:15:37,507 [INFO] ms-clip: launching predict_smi (n_candidates=65)
+2026-05-11 02:15:51,996 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:17:30,649 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:17:30,649 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:17:30,649 [INFO] ms-clip: launching predict_smi (n_candidates=778)
+2026-05-11 02:17:46,212 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:20:25,505 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:20:25,505 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:20:25,505 [INFO] ms-clip: launching predict_smi (n_candidates=7495)
+2026-05-11 02:20:45,050 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:20:54,689 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:20:54,690 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:20:54,690 [INFO] ms-clip: launching predict_smi (n_candidates=967)
+2026-05-11 02:21:06,769 [WARNING] ms-clip dropped SMILES [CH-]=[N+](C(C)C)C(C)C; emitting sentinel -1.0
+2026-05-11 02:21:10,043 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:21:19,017 [INFO] spec 110/170  casmi2022_177  pool=967  pred=VXVVUHQULXCUPF  correct=False  t=24.44s
+2026-05-11 02:21:19,118 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:21:19,118 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:21:19,119 [INFO] ms-clip: launching predict_smi (n_candidates=718)
+2026-05-11 02:21:34,598 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:22:40,827 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:22:40,827 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:22:40,827 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-11 02:22:57,672 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:24:30,203 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:24:30,203 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:24:30,203 [INFO] ms-clip: launching predict_smi (n_candidates=74)
+2026-05-11 02:24:44,614 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:25:44,677 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O'.
+2026-05-11 02:26:44,744 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O'.
+2026-05-11 02:27:44,807 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1O'.
+2026-05-11 02:28:44,871 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2O)C(O)C(OC2OC(CO)C(O)C(O)C2O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2O)C(O)C(OC2OC(CO)C(O)C(O)C2O)C1O'.
+2026-05-11 02:29:44,935 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(OC2C(O)C(CO)OC(Oc3c(O)cc4oc(-c5ccc(O)c(O)c5)c(O)c(=O)c4c3O)C2(O)C2OC(C)C(O)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(O)C(CO)OC(Oc3c(O)cc4oc(-c5ccc(O)c(O)c5)c(O)c(=O)c4c3O)C2(O)C2OC(C)C(O)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 02:29:45,295 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:29:45,295 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:29:45,295 [INFO] ms-clip: launching predict_smi (n_candidates=6473)
+2026-05-11 02:30:05,810 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:31:06,971 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:31:06,972 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:31:06,972 [INFO] ms-clip: launching predict_smi (n_candidates=9364)
+2026-05-11 02:31:28,652 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:32:16,259 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:32:16,259 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:32:16,259 [INFO] ms-clip: launching predict_smi (n_candidates=1297)
+2026-05-11 02:32:32,381 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:34:26,624 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:34:26,624 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:34:26,624 [INFO] ms-clip: launching predict_smi (n_candidates=649)
+2026-05-11 02:34:42,130 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:34:46,502 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:34:46,502 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:34:46,502 [INFO] ms-clip: launching predict_smi (n_candidates=1091)
+2026-05-11 02:35:02,054 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:35:18,641 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:35:18,641 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:35:18,641 [INFO] ms-clip: launching predict_smi (n_candidates=333)
+2026-05-11 02:35:33,699 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:37:54,996 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:37:54,996 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:37:54,996 [INFO] ms-clip: launching predict_smi (n_candidates=4264)
+2026-05-11 02:38:12,732 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:38:38,483 [INFO] spec 120/170  casmi2022_264  pool=4264  pred=DDSNBYNHFSFPTF  correct=False  t=43.61s
+2026-05-11 02:38:38,591 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:38:38,591 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:38:38,591 [INFO] ms-clip: launching predict_smi (n_candidates=519)
+2026-05-11 02:38:53,310 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:40:07,499 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:40:07,500 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:40:07,500 [INFO] ms-clip: launching predict_smi (n_candidates=272)
+2026-05-11 02:40:22,453 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:41:05,153 [WARNING] CFM-ID failed for spectrum=casmi2022_334 cand=C=CC1(C)OC(O)C(O)C(O)C1C.C=CC1(C)OC(O)C2OC(C)(C)OC2C1C: CFM-ID produced zero peaks for SMILES='C=CC1(C)OC(O)C(O)C(O)C1C.C=CC1(C)OC(O)C2OC(C)(C)OC2C1C'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 02:41:30,906 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:41:30,906 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:41:30,906 [INFO] ms-clip: launching predict_smi (n_candidates=1489)
+2026-05-11 02:41:46,769 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:42:50,642 [WARNING] CFM-ID failed for spectrum=casmi2022_396 cand=CC#N.CC1C=CC2CCCCC2C1C(=O)C1(O)C(=O)N2CCC3C(=O)OC1C32O: CFM-ID produced zero peaks for SMILES='CC#N.CC1C=CC2CCCCC2C1C(=O)C1(O)C(=O)N2CCC3C(=O)OC1C32O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 02:43:03,105 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:43:03,105 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:43:03,105 [INFO] ms-clip: launching predict_smi (n_candidates=1585)
+2026-05-11 02:43:18,926 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:44:44,892 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:44:44,893 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:44:44,893 [INFO] ms-clip: launching predict_smi (n_candidates=809)
+2026-05-11 02:45:00,534 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:46:02,911 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:46:02,911 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:46:02,911 [INFO] ms-clip: launching predict_smi (n_candidates=2251)
+2026-05-11 02:46:19,821 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:47:21,921 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:47:21,921 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:47:21,921 [INFO] ms-clip: launching predict_smi (n_candidates=428)
+2026-05-11 02:47:36,890 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:48:35,010 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:48:35,010 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:48:35,010 [INFO] ms-clip: launching predict_smi (n_candidates=152)
+2026-05-11 02:48:50,065 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:50:00,965 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:50:00,966 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:50:00,966 [INFO] ms-clip: launching predict_smi (n_candidates=232)
+2026-05-11 02:50:15,941 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:53:11,848 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:53:11,848 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:53:11,848 [INFO] ms-clip: launching predict_smi (n_candidates=758)
+2026-05-11 02:53:24,110 [WARNING] ms-clip dropped SMILES [CH]n1nc(C)c2ccccc21; emitting sentinel -1.0
+2026-05-11 02:53:24,110 [WARNING] ms-clip dropped SMILES [CH]n1c(C)nc2ccccc21; emitting sentinel -1.0
+2026-05-11 02:53:24,110 [WARNING] ms-clip dropped SMILES [C]1NC=CN1c1ccccc1; emitting sentinel -1.0
+2026-05-11 02:53:24,110 [WARNING] ms-clip dropped SMILES C#CCn1[c-][n+](CC#C)cc1; emitting sentinel -1.0
+2026-05-11 02:53:27,367 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:53:39,168 [INFO] spec 130/170  casmi2022_117  pool=758  pred=OSRARURJYPOUOV  correct=False  t=27.43s
+2026-05-11 02:53:39,285 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:53:39,285 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:53:39,285 [INFO] ms-clip: launching predict_smi (n_candidates=2151)
+2026-05-11 02:53:56,026 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:54:02,368 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:54:02,368 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:54:02,368 [INFO] ms-clip: launching predict_smi (n_candidates=1026)
+2026-05-11 02:54:18,259 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:55:56,128 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:55:56,128 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:55:56,128 [INFO] ms-clip: launching predict_smi (n_candidates=4675)
+2026-05-11 02:56:14,967 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:57:22,294 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:57:22,295 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:57:22,295 [INFO] ms-clip: launching predict_smi (n_candidates=2525)
+2026-05-11 02:57:39,240 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:58:24,177 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 02:58:24,177 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 02:58:24,177 [INFO] ms-clip: launching predict_smi (n_candidates=19)
+2026-05-11 02:58:38,817 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 02:59:38,884 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(OC(C)=O)C2OC2OC(CO)C(O)C(O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(OC(C)=O)C2OC2OC(CO)C(O)C(O)C2O)cc1'.
+2026-05-11 03:00:38,911 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(OC(C)=O)C(OC3OC(CO)C(O)C(O)C3O)C2O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 03:00:39,466 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COC(=O)c1ccc(O)c(OC)c1.COC(=O)c1ccc(OC2COC2)c(OC)c1.COc1cc(C(=O)O)ccc1OC1COC1.OC1COC1: CFM-ID produced zero peaks for SMILES='COC(=O)c1ccc(O)c(OC)c1.COC(=O)c1ccc(OC2COC2)c(OC)c1.COc1cc(C(=O)O)ccc1OC1COC1.OC1COC1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 03:01:39,509 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(CC2COC(=O)C2(O)Cc2ccc(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c(OC)c2)cc1OC: CFM-ID did not respond within 60s for SMILES='COc1ccc(CC2COC(=O)C2(O)Cc2ccc(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c(OC)c2)cc1OC'.
+2026-05-11 03:02:39,549 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1cc(C)c2c(=O)cc(CC(C)O)oc2c1C1OC(CO)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID did not respond within 60s for SMILES='COc1cc(C)c2c(=O)cc(CC(C)O)oc2c1C1OC(CO)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1OC(=O)C=Cc1ccc(O)cc1'.
+2026-05-11 03:02:39,664 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:02:39,664 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:02:39,664 [INFO] ms-clip: launching predict_smi (n_candidates=2878)
+2026-05-11 03:02:57,041 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:03:08,448 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:03:08,448 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:03:08,448 [INFO] ms-clip: launching predict_smi (n_candidates=3285)
+2026-05-11 03:03:25,821 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:04:00,131 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:04:00,131 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:04:00,131 [INFO] ms-clip: launching predict_smi (n_candidates=13365)
+2026-05-11 03:04:21,191 [WARNING] ms-clip dropped SMILES CC(C)(C)N1[C-]=[N+](C(C)(C)C)C(=O)C1=O; emitting sentinel -1.0
+2026-05-11 03:04:24,522 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:04:54,225 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:04:54,225 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:04:54,225 [INFO] ms-clip: launching predict_smi (n_candidates=2621)
+2026-05-11 03:05:10,967 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:05:49,564 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:05:49,564 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:05:49,564 [INFO] ms-clip: launching predict_smi (n_candidates=259)
+2026-05-11 03:06:04,513 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:07:43,971 [WARNING] CFM-ID failed for spectrum=casmi2022_282 cand=CCCC(C(C)=O)C(=O)OCC.CCCC(CC#N)(C(C)=O)C(=O)OCC: CFM-ID produced zero peaks for SMILES='CCCC(C(C)=O)C(=O)OCC.CCCC(CC#N)(C(C)=O)C(=O)OCC'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 03:07:43,972 [INFO] spec 140/170  casmi2022_282  pool=259  pred=CCUGMZLHJFWECW  correct=True  t=114.51s
+2026-05-11 03:07:44,079 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:07:44,080 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:07:44,080 [INFO] ms-clip: launching predict_smi (n_candidates=1890)
+2026-05-11 03:08:00,341 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:08:24,434 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:08:24,434 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:08:24,434 [INFO] ms-clip: launching predict_smi (n_candidates=39)
+2026-05-11 03:08:39,541 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:09:50,817 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:09:50,817 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:09:50,817 [INFO] ms-clip: launching predict_smi (n_candidates=5706)
+2026-05-11 03:10:09,965 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:10:41,431 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:10:41,431 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:10:41,431 [INFO] ms-clip: launching predict_smi (n_candidates=347)
+2026-05-11 03:10:57,012 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:14:03,353 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:14:03,353 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:14:03,353 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 03:14:25,322 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:14:43,233 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:14:43,234 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:14:43,234 [INFO] ms-clip: launching predict_smi (n_candidates=8376)
+2026-05-11 03:15:04,089 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:15:39,250 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:15:39,250 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:15:39,250 [INFO] ms-clip: launching predict_smi (n_candidates=242)
+2026-05-11 03:15:53,993 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:16:27,395 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:16:27,395 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:16:27,395 [INFO] ms-clip: launching predict_smi (n_candidates=3735)
+2026-05-11 03:16:44,939 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:17:20,404 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:17:20,404 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:17:20,404 [INFO] ms-clip: launching predict_smi (n_candidates=5097)
+2026-05-11 03:17:39,185 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:18:23,293 [WARNING] CFM-ID failed for spectrum=casmi2022_63 cand=Cn1ccc(C#N)cc1=O.Cn1ccc(C(N)=O)cc1=O: CFM-ID produced zero peaks for SMILES='Cn1ccc(C#N)cc1=O.Cn1ccc(C(N)=O)cc1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 03:18:23,403 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:18:23,403 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:18:23,403 [INFO] ms-clip: launching predict_smi (n_candidates=714)
+2026-05-11 03:18:38,830 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:20:35,588 [INFO] spec 150/170  casmi2022_431  pool=714  pred=UGWFVUIRIKIENI  correct=False  t=132.29s
+2026-05-11 03:20:35,900 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:20:35,901 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:20:35,901 [INFO] ms-clip: launching predict_smi (n_candidates=12796)
+2026-05-11 03:20:59,860 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:21:19,978 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:21:19,978 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:21:19,978 [INFO] ms-clip: launching predict_smi (n_candidates=9394)
+2026-05-11 03:21:42,127 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:22:12,847 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:22:12,847 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:22:12,847 [INFO] ms-clip: launching predict_smi (n_candidates=2107)
+2026-05-11 03:22:29,362 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:23:12,386 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:23:12,386 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:23:12,386 [INFO] ms-clip: launching predict_smi (n_candidates=32)
+2026-05-11 03:23:26,548 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:24:26,612 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=CC(=O)OC1C(C)OC(Oc2c(-c3ccc(O)cc3)oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 03:25:26,656 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1cc(C2c3c(cc(OC)c(O)c3OC)CC(COC(=O)c3cc(O)c(O)c(O)c3)C2COC2OCC(O)C(O)C2O)cc(OC)c1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C2c3c(cc(OC)c(O)c3OC)CC(COC(=O)c3cc(O)c(O)c(O)c3)C2COC2OCC(O)C(O)C2O)cc(OC)c1O'.
+2026-05-11 03:26:26,669 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1cc(C=CC(=O)OCC2OC(CO)(OC3CC(COC(C)=O)C(O)C(O)C3O)C(OC(=O)C=Cc3ccc(O)cc3)C2O)ccc1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 03:27:26,684 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1ccc(OC2OC(COC(=O)c3ccccc3)C(OC(C)=O)C(O)C2OC2OC(C)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 03:28:02,895 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:28:02,895 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:28:02,895 [INFO] ms-clip: launching predict_smi (n_candidates=561)
+2026-05-11 03:28:18,284 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:31:39,983 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:31:39,983 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:31:39,983 [INFO] ms-clip: launching predict_smi (n_candidates=3746)
+2026-05-11 03:31:56,823 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:32:27,676 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:32:27,676 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:32:27,676 [INFO] ms-clip: launching predict_smi (n_candidates=33)
+2026-05-11 03:32:42,588 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:33:42,654 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2O)cc1'.
+2026-05-11 03:34:42,715 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1cc(C=Cc2ccc(OC)c(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c2O)cc(OC)c1OC: CFM-ID did not respond within 60s for SMILES='COc1cc(C=Cc2ccc(OC)c(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c2O)cc(OC)c1OC'.
+2026-05-11 03:35:42,721 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(OC2OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)c1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(OC2OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)c1O'.
+2026-05-11 03:36:42,774 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=CC(C)=CCc1c(OC2OC(CO)C(O)C(O)C2O)cc(O)c2c(=O)cc(-c3ccc(OC4OC(CO)C(O)C(O)C4O)cc3)oc12: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 03:37:42,839 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=CC(=O)OCC1OC(Oc2ccc3c(OC4CCC(C)CC4)c(OC(C)=O)c(=O)oc3c2)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID did not respond within 60s for SMILES='CC(=O)OCC1OC(Oc2ccc3c(OC4CCC(C)CC4)c(OC(C)=O)c(=O)oc3c2)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O'.
+2026-05-11 03:37:42,976 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:37:42,976 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:37:42,976 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 03:38:04,952 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:38:42,443 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:38:42,443 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:38:42,444 [INFO] ms-clip: launching predict_smi (n_candidates=8471)
+2026-05-11 03:39:03,788 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:39:59,594 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:39:59,594 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:39:59,594 [INFO] ms-clip: launching predict_smi (n_candidates=3665)
+2026-05-11 03:40:17,784 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:41:11,153 [INFO] spec 160/170  casmi2022_420  pool=3665  pred=DKBSGQSZNHEAAI  correct=False  t=71.68s
+2026-05-11 03:41:11,255 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:41:11,255 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:41:11,255 [INFO] ms-clip: launching predict_smi (n_candidates=420)
+2026-05-11 03:41:26,572 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:44:06,922 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:44:06,923 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:44:06,923 [INFO] ms-clip: launching predict_smi (n_candidates=7017)
+2026-05-11 03:44:27,019 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:44:49,047 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:44:49,047 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:44:49,047 [INFO] ms-clip: launching predict_smi (n_candidates=21520)
+2026-05-11 03:45:19,594 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:45:51,257 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:45:51,258 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:45:51,258 [INFO] ms-clip: launching predict_smi (n_candidates=2878)
+2026-05-11 03:46:08,236 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:47:28,878 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:47:28,878 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:47:28,879 [INFO] ms-clip: launching predict_smi (n_candidates=3545)
+2026-05-11 03:47:46,741 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:48:32,848 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:48:32,849 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:48:32,849 [INFO] ms-clip: launching predict_smi (n_candidates=5806)
+2026-05-11 03:48:51,657 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:49:17,683 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:49:17,684 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:49:17,684 [INFO] ms-clip: launching predict_smi (n_candidates=3049)
+2026-05-11 03:49:34,845 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:50:13,588 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:50:13,588 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:50:13,589 [INFO] ms-clip: launching predict_smi (n_candidates=1019)
+2026-05-11 03:50:28,964 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:50:47,372 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:50:47,372 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:50:47,372 [INFO] ms-clip: launching predict_smi (n_candidates=329)
+2026-05-11 03:51:01,955 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--password-env=<password>
+                    --user-env=<username>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:53:30,428 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 03:53:30,428 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 03:53:30,428 [INFO] ms-clip: launching predict_smi (n_candidates=393)
+2026-05-11 03:53:41,704 [WARNING] ms-clip dropped SMILES CO[C]N(C)C; emitting sentinel -1.0
+2026-05-11 03:53:41,705 [WARNING] ms-clip dropped SMILES [CH]N(C)CCO; emitting sentinel -1.0
+2026-05-11 03:53:45,016 [WARNING] SIRIUS failed: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!
+Usage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]
+                    [--select-license=<sid>] [[-u=<username> -p] |
+                    [--token=<token>] | [--user-env=<username>
+                    --password-env=<password>]]
+<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID
+or CANOPUS) and securely store a personal access token.
+
+
+      --clear, --logout      Logout. Deletes
+2026-05-11 03:53:48,736 [INFO] spec 170/170  casmi2022_91  pool=393  pred=ZVSTUQXCWRZVJO  correct=False  t=18.41s
+2026-05-11 03:53:48,736 [INFO] ============================================================
+2026-05-11 03:53:48,736 [INFO] CASMI 2022  primary=msclip  reranker=conditional
+2026-05-11 03:53:48,736 [INFO]   n_specs=170  n_correct=23  id_acc=0.1353
+2026-05-11 03:53:48,736 [INFO]   conditional_skipped=0  no_pool=0  elapsed=17589.5s
+2026-05-11 03:53:48,736 [INFO]   per-spec JSONL: data/eval/casmi/2022_conditional/casmi_identifications.jsonl
+2026-05-11 03:53:48,737 [INFO]   summary:        data/eval/casmi/2022_conditional/summary.json

@@ -1,0 +1,3 @@
+comparison,n_paired,n_d3_better,n_d2_better,n_tied,mean_delta,wilcoxon_p
+tanimoto: conditional vs msclip_only,170,51,48,71,0.00667,0.8972
+mcs_frac: conditional vs msclip_only,165,38,39,88,0.00877,0.6605

@@ -1,0 +1,3 @@
+config,rerank,n_specs,n_correct,id_acc_pct
+msclip_only,none,170,23,13.53
+conditional,sirius+cfmid (gate gap≥0.05),170,23,13.53

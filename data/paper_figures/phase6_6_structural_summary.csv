@@ -1,0 +1,5 @@
+metric,n,mean,median,p25,p75,p90,min,max
+tanimoto_msclip_only,170,0.3878,0.2188,0.1404,0.5897,1.0,0.0,1.0
+tanimoto_conditional,170,0.3945,0.2332,0.1441,0.6515,1.0,0.0,1.0
+mcs_frac_msclip_only,165,0.749,0.7826,0.5789,0.9286,1.0,0.2414,1.0
+mcs_frac_conditional,165,0.7578,0.7879,0.6111,0.9167,1.0,0.2571,1.0
