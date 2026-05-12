@@ -1,0 +1,19 @@
+{
+  "casmi_dataset": "2022",
+  "casmi_root": "/data/weiwentao/llm_agent_metabolomics/CASMI/casmi_2022/preprocessed/casmi2022",
+  "out_dir": "data/eval/casmi/2022_llm_reranker_v2",
+  "primary_retriever": "msclip",
+  "reranker_mode": "llm",
+  "rerank_with": [
+    "cfmid"
+  ],
+  "rerank_top_k": 5,
+  "max_candidates_per_spec": null,
+  "n_specs": 170,
+  "n_with_pred": 170,
+  "n_correct": 27,
+  "n_no_pubchem_pool": 0,
+  "n_conditional_skipped": 0,
+  "id_acc": 0.1588,
+  "elapsed_seconds": 13088.6
+}

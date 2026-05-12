@@ -1,0 +1,4 @@
+config_A,config_B,n_paired,delta_BminusA_spec,delta_BminusA_pp,ci95_lo_pp,ci95_hi_pp,mcnemar_b_AwrongBright,mcnemar_c_ArightBwrong,p_value,significant_at_bonf_alpha
+msclip_only,weighted,170,0,0.0,-4.61,4.61,8,8,1.0,False
+llm_reranker,msclip_only,170,-3,-1.76,-5.92,2.39,5,8,0.5811,False
+llm_reranker,weighted,170,-3,-1.76,-5.92,2.39,5,8,0.5811,False

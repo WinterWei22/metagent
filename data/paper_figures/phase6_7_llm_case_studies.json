@@ -1,0 +1,118 @@
+[
+  {
+    "category": "llm_right_weighted_wrong",
+    "spectrum_id": "casmi2022_226",
+    "formula": "C9H9NO",
+    "gt_smiles": "COc1ccc2[nH]ccc2c1",
+    "gt_inchikey_first_block": "DWAQDRSOVMLGRQ",
+    "weighted_predicted_smiles": "COc1ccc2c[nH]cc2c1",
+    "weighted_predicted_ik14": "RXBFSXIYSRQHNU",
+    "weighted_correct": false,
+    "llm_predicted_smiles": "COc1ccc2[nH]ccc2c1",
+    "llm_predicted_ik14": "DWAQDRSOVMLGRQ",
+    "llm_correct": true,
+    "llm_confidence": "medium",
+    "llm_narrative": "Spectrum casmi2022_226 (precursor m/z 148.075452106098).\nSelected top-1: COc1ccc2[nH]ccc2c1 (confidence: medium).\nJustification: All five candidates share the same formula C9H9NO and mass match (1.0), so selection hinges on CFM-ID agreement with the experimental spectrum. Candidate 1 (5-methoxyindole) has the highest CFM-ID cosine at 0.4855 (vs 0.4982 for candidate 0, but candidate 1's predicted peak list explicitly reproduces key experimental fragments including 148.0757 [M+H]+, 121.0648, 119.0491, 104.0495, and 92.0495, matching the observed 148.0754, 121.0647, 120.0445, 105.0573, and 92.0494). The MS-CLIP score (0.826) is also the highest among the 5-/6-methoxyindole isomers, and the loss of CH3 (•) to give 133.052 is characteristic of methoxy-aromatics. SIRIUS did not return a top-1 formula for any candidate, so formula ranking is uninformative.\nPeak-level claims:\n  - m/z 148.0754 corresponds to fragment of [M+H]+ (C9H10NO+)\n  - m/z 133.0520 corresponds to loss of CH3 (methyl radical) from [M+H]+\n  - m/z 117.0572 corresponds to loss of CH3 and O (•OCH3 loss effectively, yielding C8H7N+ indole cation)\n  - m/z 120.0445 corresponds to loss of CHO from [M+H]+ (C8H6N+)\n  - m/z 105.0573 corresponds to fragment of C7H7N+ after loss of CH2O and HCN-related rearrangement\n  - m/z 92.0494 corresponds to fragment of C6H6N+ (pyridinium-type ion from indole ring cleavage)",
+    "llm_peak_claims": [
+      "m/z 148.0754 corresponds to fragment of [M+H]+ (C9H10NO+)",
+      "m/z 133.0520 corresponds to loss of CH3 (methyl radical) from [M+H]+",
+      "m/z 117.0572 corresponds to loss of CH3 and O (•OCH3 loss effectively, yielding C8H7N+ indole cation)",
+      "m/z 120.0445 corresponds to loss of CHO from [M+H]+ (C8H6N+)",
+      "m/z 105.0573 corresponds to fragment of C7H7N+ after loss of CH2O and HCN-related rearrangement",
+      "m/z 92.0494 corresponds to fragment of C6H6N+ (pyridinium-type ion from indole ring cleavage)"
+    ],
+    "llm_fallback_used": false
+  },
+  {
+    "category": "llm_right_weighted_wrong",
+    "spectrum_id": "casmi2022_243",
+    "formula": "C32H44O10",
+    "gt_smiles": "CC(=O)OC1CC2C(CCC3=CC(OC4OC(C)C(O)C(O)C4O)CCC32C)C2(O)CCC(c3ccc(=O)oc3)C12C",
+    "gt_inchikey_first_block": "XBOVCSNIOQPGAW",
+    "weighted_predicted_smiles": "CC(=O)OC1CC2(O)C3CCC4=CC(OC5OC(C)C(O)C(O)C5O)CCC4(C)C3CCC2(C)C1c1ccc(=O)oc1",
+    "weighted_predicted_ik14": "VMLMEZINUVEFME",
+    "weighted_correct": false,
+    "llm_predicted_smiles": "CC(=O)OC1CC2C(CCC3=CC(OC4OC(C)C(O)C(O)C4O)CCC32C)C2(O)CCC(c3ccc(=O)oc3)C12C",
+    "llm_predicted_ik14": "XBOVCSNIOQPGAW",
+    "llm_correct": true,
+    "llm_confidence": "low",
+    "llm_narrative": "Spectrum casmi2022_243 (precursor m/z 589.299949560662).\nSelected top-1: CC(=O)OC1CC2C(CCC3=CC(OC4OC(C)C(O)C(O)C4O)CCC32C)C2(O)CCC(c3ccc(=O)oc3)C12C (confidence: low).\nJustification: Candidate 1 has the highest CFM-ID cosine score (0.1171) among all five candidates, making it the best spectral match despite the overall low scores. It shares the same molecular formula C32H44O10 and mass_match of 1.0 as all candidates, and its MS-CLIP score (0.677) is competitive. The experimental base peak at m/z 85.0284 is consistent with a butenolide/furanone fragment (C5H5O, exact mass 85.0284) expected from the alpha-methylene-gamma-butyrolactone moiety present in this steroid-lactone scaffold, and m/z 365.2105 aligns with the CFM-ID predicted peak at 365.2111 (delta < 1 mDa), supporting the steroid aglycone fragment after loss of the acetylated sugar (C32H44O10 - C8H12O5 = C24H32O5, MW ~408, but the [M+H-sugar-acetyl]+ fragment at ~365 is consistent with loss of 224 Da from precursor 589).\nPeak-level claims:\n  - m/z 365.2105 corresponds to loss of 224.0894 Da (acetylated deoxyhexose sugar, C8H16O5) from [M+H]+ at 589.2999, yielding the steroid aglycone fragment\n  - m/z 85.0284 corresponds to fragment of the alpha-methylene-gamma-butyrolactone (butenolide) ring, C5H5O2 (exact mass 85.0284)\n  - m/z 347.2001 corresponds to loss of 242.0998 Da (acetylated hexose sugar, C8H18O6) from [M+H]+, yielding a dehydrated steroid aglycone fragment\n  - m/z 225.1636 corresponds to fragment arising from retro-Diels-Alder or ring cleavage of the steroid D-ring bearing the lactone substituent",
+    "llm_peak_claims": [
+      "m/z 365.2105 corresponds to loss of 224.0894 Da (acetylated deoxyhexose sugar, C8H16O5) from [M+H]+ at 589.2999, yielding the steroid aglycone fragment",
+      "m/z 85.0284 corresponds to fragment of the alpha-methylene-gamma-butyrolactone (butenolide) ring, C5H5O2 (exact mass 85.0284)",
+      "m/z 347.2001 corresponds to loss of 242.0998 Da (acetylated hexose sugar, C8H18O6) from [M+H]+, yielding a dehydrated steroid aglycone fragment",
+      "m/z 225.1636 corresponds to fragment arising from retro-Diels-Alder or ring cleavage of the steroid D-ring bearing the lactone substituent"
+    ],
+    "llm_fallback_used": false
+  },
+  {
+    "category": "llm_wrong_weighted_right",
+    "spectrum_id": "casmi2022_271",
+    "formula": "C11H18N2O2",
+    "gt_smiles": "CC(C)CC1NC(=O)C2CCCN2C1=O",
+    "gt_inchikey_first_block": "SZJNCZMRZAUNQT",
+    "weighted_predicted_smiles": "CC(C)CC1NC(=O)C2CCCN2C1=O",
+    "weighted_predicted_ik14": "SZJNCZMRZAUNQT",
+    "weighted_correct": true,
+    "llm_predicted_smiles": "CCC(C)C1NC(=O)C2CCCN2C1=O",
+    "llm_predicted_ik14": "ZDACRNZBFJOLTC",
+    "llm_correct": false,
+    "llm_confidence": "medium",
+    "llm_narrative": "Spectrum casmi2022_271 (precursor m/z 211.143956950586).\nSelected top-1: CCC(C)C1NC(=O)C2CCCN2C1=O (confidence: medium).\nJustification: Candidate 1 (cyclo(Ile-Pro) diketopiperazine) has the highest CFM-ID predicted cosine versus the experimental spectrum at 0.9451, slightly above candidate 0's 0.9391 and well above candidates 3 (0.4935) and 4 (0.4729). All top-5 candidates share the same formula C11H18N2O2 with exact [M+H]+ mass match (1.0), so discrimination relies on fragmentation; the sec-butyl (Ile) side chain better accounts for the strong 70.0652 iminium and the 86.0964 peak than the isobutyl (Leu) isomer. SIRIUS formulas were unavailable for all candidates, so ranking is driven by CFM-ID agreement.\nPeak-level claims:\n  - m/z 70.0652 corresponds to fragment of proline-derived iminium ion [C4H8N]+\n  - m/z 183.1491 corresponds to loss of CO from [M+H]+ (28.0052 Da)\n  - m/z 86.0964 corresponds to fragment of sec-butyl iminium [C5H12N]+ from the isoleucine side chain\n  - m/z 166.1225 corresponds to loss of H2O+CO (45.0214 Da) from [M+H]+\n  - m/z 138.1275 corresponds to loss of 2xCO (73.017 Da) from [M+H]+ via diketopiperazine ring opening\n  - m/z 114.0913 corresponds to fragment of isoleucine immonium-related [C6H12NO]+ ion\n  - m/z 155.1542 corresponds to loss of C2H4N2O (84 Da from DKP ring) arising from diketopiperazine cleavage",
+    "llm_peak_claims": [
+      "m/z 70.0652 corresponds to fragment of proline-derived iminium ion [C4H8N]+",
+      "m/z 183.1491 corresponds to loss of CO from [M+H]+ (28.0052 Da)",
+      "m/z 86.0964 corresponds to fragment of sec-butyl iminium [C5H12N]+ from the isoleucine side chain",
+      "m/z 166.1225 corresponds to loss of H2O+CO (45.0214 Da) from [M+H]+",
+      "m/z 138.1275 corresponds to loss of 2xCO (73.017 Da) from [M+H]+ via diketopiperazine ring opening",
+      "m/z 114.0913 corresponds to fragment of isoleucine immonium-related [C6H12NO]+ ion",
+      "m/z 155.1542 corresponds to loss of C2H4N2O (84 Da from DKP ring) arising from diketopiperazine cleavage"
+    ],
+    "llm_fallback_used": false
+  },
+  {
+    "category": "both_right",
+    "spectrum_id": "casmi2022_106",
+    "formula": "C28H29N5OS",
+    "gt_smiles": "O=C(c1ccc(Nc2nccc(-c3cc4ccccc4s3)n2)cc1)N1CCC(N2CCCC2)CC1",
+    "gt_inchikey_first_block": "BWZJBXAPRCVCKQ",
+    "weighted_predicted_smiles": "O=C(c1ccc(Nc2nccc(-c3cc4ccccc4s3)n2)cc1)N1CCC(N2CCCC2)CC1",
+    "weighted_predicted_ik14": "BWZJBXAPRCVCKQ",
+    "weighted_correct": true,
+    "llm_predicted_smiles": "O=C(c1ccc(Nc2nccc(-c3cc4ccccc4s3)n2)cc1)N1CCC(N2CCCC2)CC1",
+    "llm_predicted_ik14": "BWZJBXAPRCVCKQ",
+    "llm_correct": true,
+    "llm_confidence": "high",
+    "llm_narrative": "Spectrum casmi2022_106 (precursor m/z 484.216078579256).\nSelected top-1: O=C(c1ccc(Nc2nccc(-c3cc4ccccc4s3)n2)cc1)N1CCC(N2CCCC2)CC1 (confidence: high).\nJustification: Candidate 0 has by far the highest CFM-ID cosine vs the experimental spectrum (0.6719) compared to all other candidates (<=0.2101), and its top predicted peak at m/z 330.0696 matches the dominant experimental base peak at 330.0692 within ~0.4 mDa. The MS-CLIP retrieval score is also highest (0.811) with exact mass match (1.0), while SIRIUS did not return a formula for any candidate. The pyrrolidinyl-piperidine amide neutral-loss fragment (C10H20N2, ~168 Da) cleanly explains the 484.2161 -> 330.0692 transition characteristic of this benzothiophene-aminopyrimidine-benzamide scaffold.\nPeak-level claims:\n  - m/z 330.0692 corresponds to loss of C10H20N2 (4-(pyrrolidin-1-yl)piperidine amide neutral loss, 154 Da from [M+H]+) yielding the benzothiophene-pyrimidinylamino-benzoyl cation C18H12N3OS+\n  - m/z 302.0744 corresponds to loss of CO from the 330.0692 acylium fragment (further -28 Da)\n  - m/z 124.1119 corresponds to fragment of the 4-(pyrrolidin-1-yl)piperidinium ion C8H14N+\n  - m/z 110.0961 corresponds to fragment of protonated methylenepyrrolidine/piperidinyl iminium C7H12N+\n  - m/z 84.0805 corresponds to fragment of the pyrrolidinyl-methyleneiminium ion C5H10N+",
+    "llm_peak_claims": [
+      "m/z 330.0692 corresponds to loss of C10H20N2 (4-(pyrrolidin-1-yl)piperidine amide neutral loss, 154 Da from [M+H]+) yielding the benzothiophene-pyrimidinylamino-benzoyl cation C18H12N3OS+",
+      "m/z 302.0744 corresponds to loss of CO from the 330.0692 acylium fragment (further -28 Da)",
+      "m/z 124.1119 corresponds to fragment of the 4-(pyrrolidin-1-yl)piperidinium ion C8H14N+",
+      "m/z 110.0961 corresponds to fragment of protonated methylenepyrrolidine/piperidinyl iminium C7H12N+",
+      "m/z 84.0805 corresponds to fragment of the pyrrolidinyl-methyleneiminium ion C5H10N+"
+    ],
+    "llm_fallback_used": false
+  },
+  {
+    "category": "both_wrong",
+    "spectrum_id": "casmi2022_10",
+    "formula": "C25H25N7O3",
+    "gt_smiles": "Cn1c(CNc2ccc(C(=N)N)cc2)nc2cc(C(=O)N(CCC(=O)O)c3ccccn3)ccc21",
+    "gt_inchikey_first_block": "YBSJFWOBGCMAKL",
+    "weighted_predicted_smiles": "COC(=O)CN(C(=O)c1ccc2c(c1)nc(CNc1ccc(C(=N)N)cc1)n2C)c1ccccn1",
+    "weighted_predicted_ik14": "MILTYUUGINBTFW",
+    "weighted_correct": false,
+    "llm_predicted_smiles": "CN(Cc1nc2cc(C(=O)N(CC(=O)O)c3ccccn3)ccc2n1C)c1ccc(C(=N)N)cc1",
+    "llm_predicted_ik14": "YLMQXRTVOWMEAV",
+    "llm_correct": false,
+    "llm_confidence": "medium",
+    "llm_narrative": "Spectrum casmi2022_10 (precursor m/z 472.208379934413).\nSelected top-1: CN(Cc1nc2cc(C(=O)N(CC(=O)O)c3ccccn3)ccc2n1C)c1ccc(C(=N)N)cc1 (confidence: medium).\nJustification: Candidate 3 (index 3) has the highest MS-CLIP score (0.775) among all candidates and is the only candidate with populated CFM-ID predicted peaks, yielding a CFM-ID cosine of 0.0811 against the experimental spectrum. Critically, the CFM-ID predicted peak at m/z 265.1084 matches the experimental peak at 265.1081 (Δ 0.3 mDa), providing direct peak-level structural corroboration absent for all other candidates. The predicted fragment at m/z 426.2037 corresponds to a neutral loss of 46.0047 Da from the precursor, consistent with loss of formic acid (CH2O2) from the glycine-derived acetic acid arm of the molecule.\nPeak-level claims:\n  - m/z 265.1081 corresponds to fragment of the benzimidazole-methylenediamine core (C14H13N4O2+, loss of the N-pyridyl-glycolyl carbonyl chain from [M+H]+)\n  - m/z 426.2037 (CFM-ID predicted) corresponds to loss of CH2O2 (formic acid, 46.0047 Da) from precursor [M+H]+ at 472.2084\n  - m/z 172.0628 corresponds to fragment arising from cleavage of the N-CH2 benzylic bond yielding a methylbenzimidazole-pyridine acylium ion (C9H8N3O+)\n  - m/z 144.0680 corresponds to loss of CO (27.9949 Da) from the m/z 172.0628 fragment, giving a methylated benzimidazolyl cation (C9H8N3+)",
+    "llm_peak_claims": [
+      "m/z 265.1081 corresponds to fragment of the benzimidazole-methylenediamine core (C14H13N4O2+, loss of the N-pyridyl-glycolyl carbonyl chain from [M+H]+)",
+      "m/z 426.2037 (CFM-ID predicted) corresponds to loss of CH2O2 (formic acid, 46.0047 Da) from precursor [M+H]+ at 472.2084",
+      "m/z 172.0628 corresponds to fragment arising from cleavage of the N-CH2 benzylic bond yielding a methylbenzimidazole-pyridine acylium ion (C9H8N3O+)",
+      "m/z 144.0680 corresponds to loss of CO (27.9949 Da) from the m/z 172.0628 fragment, giving a methylated benzimidazolyl cation (C9H8N3+)"
+    ],
+    "llm_fallback_used": false
+  }
+]

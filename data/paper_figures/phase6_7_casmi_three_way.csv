@@ -1,0 +1,4 @@
+config,rerank_with,n_specs,n_correct,id_acc_pct
+msclip_only,none,170,23,13.53
+weighted,"sirius,cfmid (gate gap≥0.05 always-trigger)",170,23,13.53
+llm_reranker,cfmid + LLM (opus47),170,26,15.29

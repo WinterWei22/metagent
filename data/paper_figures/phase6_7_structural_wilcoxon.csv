@@ -1,0 +1,7 @@
+metric,comparison,n_paired,n_A_better,n_B_better,n_tied,mean_AminusB,p_wilcoxon
+tanimoto,llm_reranker vs msclip_only,170,37,35,98,0.01054,0.805
+tanimoto,llm_reranker vs weighted,170,22,25,123,0.00387,0.9241
+tanimoto,weighted vs msclip_only,170,51,48,71,0.00667,0.8972
+mcs_frac,llm_reranker vs msclip_only,165,28,29,108,2e-05,0.8894
+mcs_frac,llm_reranker vs weighted,165,19,18,128,-0.00875,0.2979
+mcs_frac,weighted vs msclip_only,165,38,39,88,0.00877,0.6605

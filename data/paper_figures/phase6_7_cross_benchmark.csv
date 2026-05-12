@@ -1,0 +1,5 @@
+benchmark,reranker,n_specs,id_acc_pct,delta_vs_msclip_pp,p_vs_msclip,leakage
+sub6a_realid_v2,weighted (conditional gap≥0.05),448,66.96,10.27,<1e-6,RIKEN→GNPS reingest
+sub6a_realid_v2,llm-as-reranker (Phase 6.3 C),448,64.49,7.79,<1e-4,RIKEN→GNPS reingest
+casmi_2022,"weighted (= conditional, 100% trigger)",170,13.53,0.0,1.0,none (PubChem formula-restricted)
+casmi_2022,"llm-as-reranker (Phase 6.7, opus47)",170,15.29,1.76,0.5811,none (PubChem formula-restricted)

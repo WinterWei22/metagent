@@ -1,0 +1,668 @@
+/home/weiwentao/.local/lib/python3.13/site-packages/pydantic/_internal/_fields.py:161: UserWarning: Field "model_version" has conflict with protected namespace "model_".
+
+You may be able to resolve this warning by setting `model_config['protected_namespaces'] = ()`.
+  warnings.warn(
+2026-05-11 15:02:16,546 [INFO] loading CASMI 2022 specs from /data/weiwentao/llm_agent_metabolomics/CASMI/casmi_2022/preprocessed/casmi2022
+2026-05-11 15:02:16,749 [INFO] loaded 170 specs
+2026-05-11 15:02:16,749 [INFO] loading PubChem retrieval index
+2026-05-11 15:02:16,881 [INFO] PubChem retrieval loaded: 152 formulas, 402421 names
+2026-05-11 15:02:16,881 [INFO] LLM reranker: opus47 (openai, model=claude-opus-4-7)
+2026-05-11 15:02:16,963 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:02:16,963 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:02:16,963 [INFO] ms-clip: launching predict_smi (n_candidates=692)
+2026-05-11 15:03:30,448 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:03:30,448 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:03:30,448 [INFO] ms-clip: launching predict_smi (n_candidates=665)
+2026-05-11 15:03:43,656 [WARNING] CFM-ID failed for spectrum=casmi2022_491 cand=C=C(C)C(C)=C(C(=C)C)C(C(C(=C)C)=C(C)C)C1CC=C(C(=C)O)C=C1OC.CC: CFM-ID produced zero peaks for SMILES='C=C(C)C(C)=C(C(=C)C)C(C(C(=C)C)=C(C)C)C1CC=C(C(=C)O)C=C1OC.CC'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 15:04:33,879 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:04:33,879 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:04:33,879 [INFO] ms-clip: launching predict_smi (n_candidates=9282)
+2026-05-11 15:05:04,151 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:05:04,152 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:05:04,152 [INFO] ms-clip: launching predict_smi (n_candidates=3602)
+2026-05-11 15:05:36,767 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:05:36,767 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:05:36,767 [INFO] ms-clip: launching predict_smi (n_candidates=4837)
+2026-05-11 15:06:01,767 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:06:01,767 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:06:01,767 [INFO] ms-clip: launching predict_smi (n_candidates=2258)
+2026-05-11 15:07:09,065 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 15:08:40,851 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:08:40,851 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:08:40,851 [INFO] ms-clip: launching predict_smi (n_candidates=1504)
+2026-05-11 15:09:50,235 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:09:50,235 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:09:50,235 [INFO] ms-clip: launching predict_smi (n_candidates=1000)
+2026-05-11 15:10:11,376 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:10:11,376 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:10:11,376 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-11 15:10:36,346 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:10:36,346 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:10:36,346 [INFO] ms-clip: launching predict_smi (n_candidates=3984)
+2026-05-11 15:11:02,949 [INFO] spec 10/170  casmi2022_219  pool=3984  pred=ZUNJWEGRDSXKIO  correct=False  t=26.72s
+2026-05-11 15:11:03,092 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:11:03,092 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:11:03,092 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 15:11:55,422 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:11:55,422 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:11:55,422 [INFO] ms-clip: launching predict_smi (n_candidates=213)
+2026-05-11 15:12:17,164 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:12:17,164 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:12:17,164 [INFO] ms-clip: launching predict_smi (n_candidates=628)
+2026-05-11 15:12:53,203 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:12:53,203 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:12:53,203 [INFO] ms-clip: launching predict_smi (n_candidates=706)
+2026-05-11 15:13:19,388 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:13:19,388 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:13:19,388 [INFO] ms-clip: launching predict_smi (n_candidates=911)
+2026-05-11 15:14:29,430 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:14:29,431 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:14:29,431 [INFO] ms-clip: launching predict_smi (n_candidates=1281)
+2026-05-11 15:14:59,210 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:14:59,210 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:14:59,210 [INFO] ms-clip: launching predict_smi (n_candidates=2301)
+2026-05-11 15:15:21,949 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:15:21,949 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:15:21,949 [INFO] ms-clip: launching predict_smi (n_candidates=5721)
+2026-05-11 15:15:46,412 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:15:46,412 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:15:46,412 [INFO] ms-clip: launching predict_smi (n_candidates=1026)
+2026-05-11 15:16:12,500 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:16:12,500 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:16:12,501 [INFO] ms-clip: launching predict_smi (n_candidates=2875)
+2026-05-11 15:16:35,175 [INFO] spec 20/170  casmi2022_55  pool=2875  pred=KDEMLLUCAGVRCX  correct=False  t=22.79s
+2026-05-11 15:16:35,279 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:16:35,279 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:16:35,280 [INFO] ms-clip: launching predict_smi (n_candidates=1618)
+2026-05-11 15:16:59,718 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:16:59,718 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:16:59,718 [INFO] ms-clip: launching predict_smi (n_candidates=99)
+2026-05-11 15:18:11,691 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CCC7(C)C(O)CC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:19:11,706 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)CC(O)C7(C)CCC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:20:11,760 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(C)C(O)C(O)C7(C)CCC56C)C4(C)CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:21:11,823 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(C)C(O)C7(C)CCC56C)C4CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(C)C(O)C7(C)CCC56C)C4CO)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 15:22:11,883 [WARNING] CFM-ID failed for spectrum=casmi2022_442 cand=CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(O)C(O)C7(C)CCC56C)C4(C)C)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(OC3C(OC4CCC5(C)C(CCC6(C)C5CC=C5C7CC(C)(CO)C(O)C(O)C7(C)CCC56C)C4(C)C)OC(C(=O)O)C(O)C3O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 15:22:25,705 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:22:25,705 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:22:25,705 [INFO] ms-clip: launching predict_smi (n_candidates=33)
+2026-05-11 15:23:36,799 [WARNING] CFM-ID failed for spectrum=casmi2022_92 cand=CCCCC(C)CC(C)C(=O)N(C)C(Cc1ccc(OC)cc1)C(=O)NC(C(=O)N(C)C(C(=O)N1CC(O)CC1C(=O)N1C(=O)C=CC1C)C(C)C)C(C)OC(C)=O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:24:04,038 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:24:04,038 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:24:04,038 [INFO] ms-clip: launching predict_smi (n_candidates=4491)
+2026-05-11 15:24:28,599 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:24:28,599 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:24:28,600 [INFO] ms-clip: launching predict_smi (n_candidates=1152)
+2026-05-11 15:24:49,572 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:24:49,572 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:24:49,572 [INFO] ms-clip: launching predict_smi (n_candidates=591)
+2026-05-11 15:25:12,522 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:25:12,522 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:25:12,522 [INFO] ms-clip: launching predict_smi (n_candidates=216)
+2026-05-11 15:25:36,385 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:25:36,385 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:25:36,386 [INFO] ms-clip: launching predict_smi (n_candidates=258)
+2026-05-11 15:25:55,607 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:25:55,607 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:25:55,607 [INFO] ms-clip: launching predict_smi (n_candidates=2374)
+2026-05-11 15:27:35,582 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:27:35,582 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:27:35,582 [INFO] ms-clip: launching predict_smi (n_candidates=1381)
+2026-05-11 15:27:49,174 [WARNING] CFM-ID failed for spectrum=casmi2022_329 cand=C.c1cc2c(cc1C1OCC3C(c4ccc5c(c4)OCO5)OCC13)OCO2: CFM-ID produced zero peaks for SMILES='C.c1cc2c(cc1C1OCC3C(c4ccc5c(c4)OCO5)OCC13)OCO2'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 15:28:04,151 [INFO] spec 30/170  casmi2022_329  pool=1381  pred=SBTRZXNWSAPVDI  correct=False  t=28.82s
+2026-05-11 15:28:04,262 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:28:04,262 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:28:04,262 [INFO] ms-clip: launching predict_smi (n_candidates=1546)
+2026-05-11 15:28:35,516 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:28:35,516 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:28:35,516 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-11 15:29:46,428 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 15:30:46,495 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=COc1cc(C=CC(=O)OCC2OC(c3c(OC4OCC(O)(CO)C4O)c(C4OC(CO)C(O)C(O)C4O)c(O)c4c(=O)cc(-c5ccc(O)cc5)oc34)C(O)C(O)C2O)ccc1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C=CC(=O)OCC2OC(c3c(OC4OCC(O)(CO)C4O)c(C4OC(CO)C(O)C(O)C4O)c(O)c4c(=O)cc(-c5ccc(O)cc5)oc34)C(O)C(O)C2O)ccc1O'.
+2026-05-11 15:31:46,561 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 15:32:46,628 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 15:33:46,695 [WARNING] CFM-ID failed for spectrum=casmi2022_368 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(OC5OC(COC(=O)C=Cc6ccc(O)c(O)c6)C(O)C(O)C5O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(OC5OC(COC(=O)C=Cc6ccc(O)c(O)c6)C(O)C(O)C5O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 15:33:54,738 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:33:54,738 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:33:54,738 [INFO] ms-clip: launching predict_smi (n_candidates=9282)
+2026-05-11 15:34:46,217 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 15:35:10,133 [WARNING] llm_rerank attempt 2 parse error: no JSON object found
+2026-05-11 15:35:10,255 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:35:10,255 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:35:10,255 [INFO] ms-clip: launching predict_smi (n_candidates=4153)
+2026-05-11 15:35:35,522 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:35:35,522 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:35:35,522 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 15:36:04,908 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:36:04,908 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:36:04,908 [INFO] ms-clip: launching predict_smi (n_candidates=3132)
+2026-05-11 15:36:30,662 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:36:30,662 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:36:30,662 [INFO] ms-clip: launching predict_smi (n_candidates=32712)
+2026-05-11 15:37:18,026 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:37:18,026 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:37:18,026 [INFO] ms-clip: launching predict_smi (n_candidates=10251)
+2026-05-11 15:37:47,888 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:37:47,888 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:37:47,888 [INFO] ms-clip: launching predict_smi (n_candidates=49)
+2026-05-11 15:38:58,726 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CCCC(=O)OCC(OC(=O)CCC)C(OC(=O)CCC)C(Cn1c2nc(=O)[nH]c(=O)c-2nc2cc(C)c(C)cc21)OC(=O)CCC: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:39:58,776 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CCCCCCCCn1c(=O)nc2n(CC(OC(C)=O)C(OC(C)=O)C(COC(C)=O)OC(C)=O)c3cc(C)c(C)cc3nc-2c1=O: CFM-ID did not respond within 60s for SMILES='CCCCCCCCn1c(=O)nc2n(CC(OC(C)=O)C(OC(C)=O)C(COC(C)=O)OC(C)=O)c3cc(C)c(C)cc3nc-2c1=O'.
+2026-05-11 15:39:59,325 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=CC(C)(C)OC(=O)NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1.NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1: CFM-ID produced zero peaks for SMILES='CC(C)(C)OC(=O)NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1.NCC(NC(=O)OCc1ccccc1)C(=O)OC1CC1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 15:40:59,368 [WARNING] CFM-ID failed for spectrum=casmi2022_11 cand=C=CCOC(=O)CNC(=O)C(=O)C(CCC)NC(=O)C1CCCN1C(=O)C(NC(=O)Oc1ccc(C(=O)OC)cc1)C1CCCCC1: CFM-ID did not respond within 60s for SMILES='C=CCOC(=O)CNC(=O)C(=O)C(CCC)NC(=O)C1CCCN1C(=O)C(NC(=O)Oc1ccc(C(=O)OC)cc1)C1CCCCC1'.
+2026-05-11 15:41:24,720 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:41:24,720 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:41:24,720 [INFO] ms-clip: launching predict_smi (n_candidates=5339)
+2026-05-11 15:41:50,990 [INFO] spec 40/170  casmi2022_457  pool=5339  pred=YYAJJKZSQWOLIP  correct=True  t=26.39s
+2026-05-11 15:41:51,115 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:41:51,116 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:41:51,116 [INFO] ms-clip: launching predict_smi (n_candidates=4283)
+2026-05-11 15:42:13,049 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:42:13,050 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:42:13,050 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-11 15:43:25,095 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5OC(=O)C=Cc5ccc(O)cc5)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 15:44:25,137 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)c(O)c5)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:45:25,204 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1'.
+2026-05-11 15:46:25,222 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(OC2C(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(COC(=O)C=Cc6ccc(O)cc6)C(O)C(O)C5O)cc(O)c4c3=O)OC(CO)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 15:47:25,287 [WARNING] CFM-ID failed for spectrum=casmi2022_319 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(C)C(O)C(O)C4OC4OC(COC(=O)C=Cc5ccc(O)cc5)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1O'.
+2026-05-11 15:47:52,038 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:47:52,038 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:47:52,038 [INFO] ms-clip: launching predict_smi (n_candidates=4491)
+2026-05-11 15:48:27,258 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:48:27,258 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:48:27,258 [INFO] ms-clip: launching predict_smi (n_candidates=5199)
+2026-05-11 15:48:51,315 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:48:51,315 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:48:51,315 [INFO] ms-clip: launching predict_smi (n_candidates=264)
+2026-05-11 15:49:13,569 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:49:13,569 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:49:13,569 [INFO] ms-clip: launching predict_smi (n_candidates=117)
+2026-05-11 15:49:44,186 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:49:44,186 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:49:44,186 [INFO] ms-clip: launching predict_smi (n_candidates=278)
+2026-05-11 15:50:14,788 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:50:14,788 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:50:14,788 [INFO] ms-clip: launching predict_smi (n_candidates=2123)
+2026-05-11 15:50:47,791 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:50:47,791 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:50:47,791 [INFO] ms-clip: launching predict_smi (n_candidates=65)
+2026-05-11 15:51:10,891 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:51:10,891 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:51:10,892 [INFO] ms-clip: launching predict_smi (n_candidates=37)
+2026-05-11 15:51:22,763 [WARNING] CFM-ID failed for spectrum=casmi2022_130 cand=O=[N+]([O-])Nc1ccccc1.P: CFM-ID produced zero peaks for SMILES='O=[N+]([O-])Nc1ccccc1.P'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 15:51:31,451 [INFO] spec 50/170  casmi2022_130  pool=37  pred=AKQNRYKOISSYCP  correct=False  t=20.66s
+2026-05-11 15:51:31,706 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:51:31,707 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:51:31,707 [INFO] ms-clip: launching predict_smi (n_candidates=3469)
+2026-05-11 15:53:32,889 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 10.8s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 15:53:48,651 [WARNING] chat retry attempt 2/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 34.3s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 15:54:58,328 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:54:58,328 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:54:58,328 [INFO] ms-clip: launching predict_smi (n_candidates=61)
+2026-05-11 15:56:01,341 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 15:56:14,951 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:56:14,951 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:56:14,951 [INFO] ms-clip: launching predict_smi (n_candidates=51)
+2026-05-11 15:57:06,736 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:57:06,736 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:57:06,736 [INFO] ms-clip: launching predict_smi (n_candidates=161)
+2026-05-11 15:59:33,182 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 10.7s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 15:59:55,385 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 15:59:55,386 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 15:59:55,386 [INFO] ms-clip: launching predict_smi (n_candidates=764)
+2026-05-11 16:00:18,741 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:00:18,741 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:00:18,741 [INFO] ms-clip: launching predict_smi (n_candidates=784)
+2026-05-11 16:00:52,103 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:00:52,103 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:00:52,103 [INFO] ms-clip: launching predict_smi (n_candidates=2072)
+2026-05-11 16:02:05,365 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:02:05,365 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:02:05,365 [INFO] ms-clip: launching predict_smi (n_candidates=1150)
+2026-05-11 16:02:17,848 [WARNING] CFM-ID failed for spectrum=casmi2022_478 cand=CC.CC=CC=CC=CC1=CC2=CC(=O)C(C)(OC(=O)CC(C)O)C(=O)C2=C(C)O1: CFM-ID produced zero peaks for SMILES='CC.CC=CC=CC=CC1=CC2=CC(=O)C(C)(OC(=O)CC(C)O)C(=O)C2=C(C)O1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 16:02:18,405 [WARNING] CFM-ID failed for spectrum=casmi2022_478 cand=CC.COC(=O)CC(C)C1=CC=C2C3(C)CCC4=C(COC4=O)C3CC3OC23C1=O: CFM-ID produced zero peaks for SMILES='CC.COC(=O)CC(C)C1=CC=C2C3(C)CCC4=C(COC4=O)C3CC3OC23C1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 16:02:28,384 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:02:28,384 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:02:28,384 [INFO] ms-clip: launching predict_smi (n_candidates=5965)
+2026-05-11 16:02:56,114 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:02:56,114 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:02:56,114 [INFO] ms-clip: launching predict_smi (n_candidates=349)
+2026-05-11 16:03:30,577 [INFO] spec 60/170  casmi2022_367  pool=349  pred=OOKKJUJJHAYTGD  correct=False  t=34.57s
+2026-05-11 16:03:30,679 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:03:30,679 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:03:30,679 [INFO] ms-clip: launching predict_smi (n_candidates=83)
+2026-05-11 16:04:03,260 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:04:03,261 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:04:03,261 [INFO] ms-clip: launching predict_smi (n_candidates=4690)
+2026-05-11 16:04:17,938 [WARNING] ms-clip dropped SMILES [CH]N1CCC(=O)C(C)(C)C1; emitting sentinel -1.0
+2026-05-11 16:04:30,167 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:04:30,167 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:04:30,167 [INFO] ms-clip: launching predict_smi (n_candidates=4314)
+2026-05-11 16:04:54,490 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:04:54,490 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:04:54,490 [INFO] ms-clip: launching predict_smi (n_candidates=2019)
+2026-05-11 16:05:18,735 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:05:18,735 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:05:18,735 [INFO] ms-clip: launching predict_smi (n_candidates=385)
+2026-05-11 16:05:49,420 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:05:49,420 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:05:49,421 [INFO] ms-clip: launching predict_smi (n_candidates=29)
+2026-05-11 16:07:00,885 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(O)C(OC(Cc2ccccc2)C(=O)O)C1OC(=O)c1ccccc1)C(=O)OC: CFM-ID did not respond within 60s for SMILES='COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(O)C(OC(Cc2ccccc2)C(=O)O)C1OC(=O)c1ccccc1)C(=O)OC'.
+2026-05-11 16:08:00,948 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(OC(=O)c2ccccc2)C(OC(Cc2ccccc2)C(=O)O)C1O)C(=O)OC: CFM-ID did not respond within 60s for SMILES='COC(=O)C(OC1OC(C)C(O)C(O)C1O)C(OC1OC(CO)C(OC(=O)c2ccccc2)C(OC(Cc2ccccc2)C(=O)O)C1O)C(=O)OC'.
+2026-05-11 16:09:01,000 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=CC(=O)CCC1OC(Oc2ccc(C=O)cc2)C(OC(C)=O)C(OC(C)=O)C1OC1OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID did not respond within 60s for SMILES='CC(=O)CCC1OC(Oc2ccc(C=O)cc2)C(OC(C)=O)C(OC(C)=O)C1OC1OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O'.
+2026-05-11 16:10:01,066 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=CC(=O)OCC1OC(OCC2OC(C(=O)Cc3ccccc3)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID did not respond within 60s for SMILES='CC(=O)OCC1OC(OCC2OC(C(=O)Cc3ccccc3)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O'.
+2026-05-11 16:11:01,131 [WARNING] CFM-ID failed for spectrum=casmi2022_134 cand=COC(=O)C1OC(OC2C(OC3C(C(=O)OC)OC(O)C(O)C3O)OC(C)C(OC(=O)c3ccccc3)C2O)C(OCc2ccccc2)C(O)C1O: CFM-ID did not respond within 60s for SMILES='COC(=O)C1OC(OC2C(OC3C(C(=O)OC)OC(O)C(O)C3O)OC(C)C(OC(=O)c3ccccc3)C2O)C(OCc2ccccc2)C(O)C1O'.
+2026-05-11 16:11:42,857 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:11:42,857 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:11:42,857 [INFO] ms-clip: launching predict_smi (n_candidates=410)
+2026-05-11 16:12:14,548 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:12:14,548 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:12:14,548 [INFO] ms-clip: launching predict_smi (n_candidates=3188)
+2026-05-11 16:12:39,647 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:12:39,647 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:12:39,647 [INFO] ms-clip: launching predict_smi (n_candidates=3735)
+2026-05-11 16:13:04,871 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:13:04,871 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:13:04,871 [INFO] ms-clip: launching predict_smi (n_candidates=500)
+2026-05-11 16:13:30,437 [INFO] spec 70/170  casmi2022_306  pool=500  pred=NXAZWYWJZDFISF  correct=False  t=25.67s
+2026-05-11 16:13:30,538 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:13:30,538 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:13:30,538 [INFO] ms-clip: launching predict_smi (n_candidates=76)
+2026-05-11 16:14:41,935 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1cc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)ccc1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)ccc1O'.
+2026-05-11 16:15:41,998 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)cc3O2)cc1O'.
+2026-05-11 16:16:42,011 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(O)ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O2)cc1O'.
+2026-05-11 16:17:42,076 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(ccc(OC4OC(COC5OC(C)C(O)C(O)C5O)C(O)C(O)C4O)c3O)O2)cc1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 16:18:42,139 [WARNING] CFM-ID failed for spectrum=casmi2022_390 cand=COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(C)C(OC5OC(CO)C(O)C(O)C5O)C(O)C4O)cc3O2)cc1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C2CC(=O)c3c(O)cc(OC4OC(C)C(OC5OC(CO)C(O)C(O)C5O)C(O)C4O)cc3O2)cc1O'.
+2026-05-11 16:20:53,154 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 11.4s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:22:57,791 [WARNING] chat retry attempt 2/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 31.8s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:25:20,643 [WARNING] chat retry attempt 3/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 55.6s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:28:33,400 [WARNING] llm_rerank attempt 1 chat_fn failed: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+2026-05-11 16:28:58,480 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:28:58,480 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:28:58,480 [INFO] ms-clip: launching predict_smi (n_candidates=764)
+2026-05-11 16:29:09,789 [WARNING] ms-clip dropped SMILES CN1[C]CCCC1; emitting sentinel -1.0
+2026-05-11 16:29:09,789 [WARNING] ms-clip dropped SMILES [CH]N1CCCC1C; emitting sentinel -1.0
+2026-05-11 16:29:09,789 [WARNING] ms-clip dropped SMILES [CH-]=[N+](C=C)CCC; emitting sentinel -1.0
+2026-05-11 16:29:09,790 [WARNING] ms-clip dropped SMILES [CH]N1CCCCC1; emitting sentinel -1.0
+2026-05-11 16:29:09,790 [WARNING] ms-clip dropped SMILES C=C(C)[N+](C)=[C-]C; emitting sentinel -1.0
+2026-05-11 16:29:19,899 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:29:19,899 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:29:19,899 [INFO] ms-clip: launching predict_smi (n_candidates=3602)
+2026-05-11 16:31:04,520 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 8.5s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:31:23,113 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:31:23,113 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:31:23,113 [INFO] ms-clip: launching predict_smi (n_candidates=40)
+2026-05-11 16:32:34,368 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)c(O)c2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)c(O)c2)C(O)C(O)C1O'.
+2026-05-11 16:33:34,413 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2O)C(O)C(O)C1OC(=O)C=Cc1ccc(O)cc1'.
+2026-05-11 16:34:34,479 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)c(O)c4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)c(O)c4)oc4cc(OC5OC(C)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O'.
+2026-05-11 16:35:34,493 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(OC5OC(C)C(O)C(O)C5O)c(O)c4)oc4cc(O)cc(O)c4c3=O)C(OC(=O)C=Cc3ccc(O)cc3)C(O)C2O)C(O)C(O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 16:36:34,559 [WARNING] CFM-ID failed for spectrum=casmi2022_332 cand=CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OCC2OC(Oc3c(-c4ccc(O)cc4)oc4cc(OC5OC(CO)C(O)C(O)C5O)cc(O)c4c3=O)C(O)C(O)C2OC(=O)C=Cc2ccc(O)cc2)C(O)C(O)C1O'.
+2026-05-11 16:37:47,659 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 16:38:10,141 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:38:10,141 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:38:10,141 [INFO] ms-clip: launching predict_smi (n_candidates=146)
+2026-05-11 16:38:32,151 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:38:32,151 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:38:32,151 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-11 16:39:06,539 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:39:06,540 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:39:06,540 [INFO] ms-clip: launching predict_smi (n_candidates=671)
+2026-05-11 16:41:04,744 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 8.4s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:41:24,977 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:41:24,977 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:41:24,977 [INFO] ms-clip: launching predict_smi (n_candidates=3678)
+2026-05-11 16:41:51,777 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:41:51,777 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:41:51,778 [INFO] ms-clip: launching predict_smi (n_candidates=5806)
+2026-05-11 16:42:17,566 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:42:17,567 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:42:17,567 [INFO] ms-clip: launching predict_smi (n_candidates=525)
+2026-05-11 16:44:09,841 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 9.3s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:45:15,531 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 16:45:26,002 [INFO] spec 80/170  casmi2022_356  pool=525  pred=AWEDGODDRTXSDL  correct=False  t=188.54s
+2026-05-11 16:45:26,136 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:45:26,136 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:45:26,136 [INFO] ms-clip: launching predict_smi (n_candidates=4306)
+2026-05-11 16:47:33,370 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 16:48:09,313 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:48:09,314 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:48:09,314 [INFO] ms-clip: launching predict_smi (n_candidates=28)
+2026-05-11 16:49:20,023 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CC(CCSc1ccc(N(C)C)cc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CC(CCSc1ccc(N(C)C)cc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 16:50:20,090 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CCCN(CSc1cccc(N(C)C)c1)c1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CCCN(CSc1cccc(N(C)C)c1)c1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 16:51:20,156 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CCC(CSc1cccc(N(C)C)c1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CCC(CSc1cccc(N(C)C)c1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 16:52:20,222 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4cccc(Cl)c4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4cccc(Cl)c4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 16:53:20,288 [WARNING] CFM-ID failed for spectrum=casmi2022_391 cand=CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]: CFM-ID did not respond within 60s for SMILES='CN(C)CCC(CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(Cc4ccccc4-c4ccc(Cl)cc4)CC3)cc2)cc1[N+](=O)[O-]'.
+2026-05-11 16:55:05,186 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 8.2s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 16:55:36,856 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:55:36,856 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:55:36,856 [INFO] ms-clip: launching predict_smi (n_candidates=41)
+2026-05-11 16:56:39,046 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:56:39,046 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:56:39,046 [INFO] ms-clip: launching predict_smi (n_candidates=1070)
+2026-05-11 16:57:50,305 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:57:50,306 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:57:50,306 [INFO] ms-clip: launching predict_smi (n_candidates=2875)
+2026-05-11 16:58:42,806 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:58:42,806 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:58:42,806 [INFO] ms-clip: launching predict_smi (n_candidates=214)
+2026-05-11 16:59:12,777 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:59:12,777 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:59:12,778 [INFO] ms-clip: launching predict_smi (n_candidates=831)
+2026-05-11 16:59:42,713 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 16:59:42,713 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 16:59:42,713 [INFO] ms-clip: launching predict_smi (n_candidates=1389)
+2026-05-11 17:00:02,442 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:00:02,442 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:00:02,443 [INFO] ms-clip: launching predict_smi (n_candidates=1568)
+2026-05-11 17:00:30,815 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:00:30,815 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:00:30,815 [INFO] ms-clip: launching predict_smi (n_candidates=976)
+2026-05-11 17:01:32,897 [INFO] spec 90/170  casmi2022_479  pool=976  pred=DHASCSFRRKFSNQ  correct=False  t=62.19s
+2026-05-11 17:01:33,023 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:01:33,023 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:01:33,023 [INFO] ms-clip: launching predict_smi (n_candidates=2645)
+2026-05-11 17:01:45,796 [WARNING] ms-clip dropped SMILES COc1ccccc1-n1nc([S-])n[n+]1-c1ccccc1OC; emitting sentinel -1.0
+2026-05-11 17:02:01,362 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:02:01,362 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:02:01,362 [INFO] ms-clip: launching predict_smi (n_candidates=561)
+2026-05-11 17:02:28,712 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:02:28,712 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:02:28,712 [INFO] ms-clip: launching predict_smi (n_candidates=728)
+2026-05-11 17:02:40,996 [WARNING] ms-clip dropped SMILES Cc1cc(C)c(CN2[C]N(C(c3ccccc3)c3ccccc3)CC2)c(C)c1; emitting sentinel -1.0
+2026-05-11 17:02:40,996 [WARNING] ms-clip dropped SMILES Cc1ccccc1[N+]1=[C-]N(c2c(C)cccc2Cc2ccccc2)C(C)C1C; emitting sentinel -1.0
+2026-05-11 17:02:55,217 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:02:55,217 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:02:55,217 [INFO] ms-clip: launching predict_smi (n_candidates=25)
+2026-05-11 17:03:08,743 [WARNING] CFM-ID failed for spectrum=casmi2022_366 cand=CCC1NC(=O)C(NC(=O)CN2CCc3ccccc3C2)CCCCNC(=O)C2CCCN2C(=O)C(Cc2ccccc2)NC(=O)C(C(C)O)NC1=O.O=CO: CFM-ID produced zero peaks for SMILES='CCC1NC(=O)C(NC(=O)CN2CCc3ccccc3C2)CCCCNC(=O)C2CCCN2C(=O)C(Cc2ccccc2)NC(=O)C(C(C)O)NC1=O.O=CO'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 17:03:36,996 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:03:36,996 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:03:36,996 [INFO] ms-clip: launching predict_smi (n_candidates=1913)
+2026-05-11 17:03:49,043 [WARNING] ms-clip dropped SMILES Cc1cccc2c1N(C)[C]O2; emitting sentinel -1.0
+2026-05-11 17:04:24,263 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:04:24,263 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:04:24,263 [INFO] ms-clip: launching predict_smi (n_candidates=9508)
+2026-05-11 17:05:35,458 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:05:35,458 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:05:35,458 [INFO] ms-clip: launching predict_smi (n_candidates=97)
+2026-05-11 17:06:46,466 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=CC(=O)OC7)C(OC(C)=O)CC56O)C4(C)CC3OC12O: CFM-ID did not respond within 60s for SMILES='COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=CC(=O)OC7)C(OC(C)=O)CC56O)C4(C)CC3OC12O'.
+2026-05-11 17:07:46,531 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=COC(=O)C7)C(OC(C)=O)CC56O)C4(C)CC3OC12O: CFM-ID did not respond within 60s for SMILES='COC1CC(C)OC2OC3C=C4CCC5C(CCC6(C)C(C7=COC(=O)C7)C(OC(C)=O)CC56O)C4(C)CC3OC12O'.
+2026-05-11 17:08:46,595 [WARNING] CFM-ID failed for spectrum=casmi2022_243 cand=CCC1(c2ccc(C3OC(CO)C(O)C(O)C3O)c(C)c2)CC1(C)c1ccc(C2OC(CO)C(O)C(O)C2O)c(C)c1: CFM-ID did not respond within 60s for SMILES='CCC1(c2ccc(C3OC(CO)C(O)C(O)C3O)c(C)c2)CC1(C)c1ccc(C2OC(CO)C(O)C(O)C2O)c(C)c1'.
+2026-05-11 17:11:01,849 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 10.4s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:11:26,668 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:11:26,668 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:11:26,668 [INFO] ms-clip: launching predict_smi (n_candidates=4727)
+2026-05-11 17:11:41,280 [WARNING] ms-clip dropped SMILES COc1ccc(-n2[c-][n+](-c3ccc(C)cc3)c(C)c2C)cc1; emitting sentinel -1.0
+2026-05-11 17:11:41,281 [WARNING] ms-clip dropped SMILES Cc1c(C)[n+](OCc2ccccc2)[c-]n1Cc1ccccc1; emitting sentinel -1.0
+2026-05-11 17:11:41,283 [WARNING] ms-clip dropped SMILES [CH][N+](C)(C)C(=O)[N+]1([CH])c2ccccc2CCc2ccccc21; emitting sentinel -1.0
+2026-05-11 17:11:54,458 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:11:54,459 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:11:54,459 [INFO] ms-clip: launching predict_smi (n_candidates=2409)
+2026-05-11 17:13:22,690 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:13:22,690 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:13:22,690 [INFO] ms-clip: launching predict_smi (n_candidates=2518)
+2026-05-11 17:14:18,376 [INFO] spec 100/170  casmi2022_352  pool=2518  pred=UJMIKPDGCBKXCG  correct=False  t=55.78s
+2026-05-11 17:14:18,514 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:14:18,514 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:14:18,514 [INFO] ms-clip: launching predict_smi (n_candidates=8953)
+2026-05-11 17:16:06,248 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 11.3s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:16:36,482 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:16:36,482 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:16:36,482 [INFO] ms-clip: launching predict_smi (n_candidates=41)
+2026-05-11 17:17:47,392 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2OC2OC(C)C(O)C(O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2OC2OC(C)C(O)C(O)C2O)cc1'.
+2026-05-11 17:18:47,423 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(O)C2OC2OCC(O)C(O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(O)C2OC2OCC(O)C(O)C2O)cc1'.
+2026-05-11 17:19:47,445 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=COc1cc(COC(C)=O)c(Oc2cc(COC(C)=O)c(-c3c(CO)cc(OC)c(OC)c3OC)c(O)c2OC)c(OC)c1OC: CFM-ID did not respond within 60s for SMILES='COc1cc(COC(C)=O)c(Oc2cc(COC(C)=O)c(-c3c(CO)cc(OC)c(OC)c3OC)c(O)c2OC)c(OC)c1OC'.
+2026-05-11 17:20:47,477 [WARNING] CFM-ID failed for spectrum=casmi2022_382 cand=CC(C)=CCc1c(OC2OC(C)C(O)C(O)C2O)cc(O)c2c(=O)c(OC3OC(C)C(O)C(O)C3O)c(-c3ccc(O)cc3)oc12: CFM-ID did not respond within 60s for SMILES='CC(C)=CCc1c(OC2OC(C)C(O)C(O)C2O)cc(O)c2c(=O)c(OC3OC(C)C(O)C(O)C3O)c(-c3ccc(O)cc3)oc12'.
+2026-05-11 17:21:01,877 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:21:01,878 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:21:01,878 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 17:21:34,320 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:21:34,320 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:21:34,320 [INFO] ms-clip: launching predict_smi (n_candidates=3665)
+2026-05-11 17:22:06,158 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:22:06,158 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:22:06,158 [INFO] ms-clip: launching predict_smi (n_candidates=252)
+2026-05-11 17:22:18,153 [WARNING] CFM-ID failed for spectrum=casmi2022_194 cand=C.CC1=C(O)C(=O)CC(C)(C)C1=O.CO.COC1=C(C)C(=O)C(C)(C)CC1=O: CFM-ID produced zero peaks for SMILES='C.CC1=C(O)C(=O)CC(C)(C)C1=O.CO.COC1=C(C)C(=O)C(C)(C)CC1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 17:23:17,024 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:23:17,024 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:23:17,025 [INFO] ms-clip: launching predict_smi (n_candidates=613)
+2026-05-11 17:23:33,378 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 8.9s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:23:47,302 [WARNING] chat retry attempt 2/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 25.8s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:25:12,089 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:25:12,089 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:25:12,089 [INFO] ms-clip: launching predict_smi (n_candidates=65)
+2026-05-11 17:25:33,264 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:25:33,264 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:25:33,264 [INFO] ms-clip: launching predict_smi (n_candidates=778)
+2026-05-11 17:27:41,036 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 10.2s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:30:05,426 [WARNING] chat retry attempt 2/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 31.5s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:30:51,867 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:30:51,868 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:30:51,868 [INFO] ms-clip: launching predict_smi (n_candidates=7495)
+2026-05-11 17:31:18,406 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:31:18,406 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:31:18,407 [INFO] ms-clip: launching predict_smi (n_candidates=967)
+2026-05-11 17:31:29,787 [WARNING] ms-clip dropped SMILES [CH-]=[N+](C(C)C)C(C)C; emitting sentinel -1.0
+2026-05-11 17:32:02,089 [INFO] spec 110/170  casmi2022_177  pool=967  pred=VXVVUHQULXCUPF  correct=False  t=43.79s
+2026-05-11 17:32:02,176 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:32:02,176 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:32:02,176 [INFO] ms-clip: launching predict_smi (n_candidates=718)
+2026-05-11 17:32:35,814 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:32:35,814 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:32:35,814 [INFO] ms-clip: launching predict_smi (n_candidates=2519)
+2026-05-11 17:33:00,512 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:33:00,512 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:33:00,512 [INFO] ms-clip: launching predict_smi (n_candidates=74)
+2026-05-11 17:34:11,975 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)c(O)c4)oc3c2)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O'.
+2026-05-11 17:35:12,039 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C(O)C1OC1OC(CO)C(O)C(O)C1O'.
+2026-05-11 17:36:12,105 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(Oc2c(-c3ccc(O)c(O)c3)oc3cc(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1O'.
+2026-05-11 17:37:12,149 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(Oc2cc(O)c3c(=O)c(OC4OC(CO)C(O)C(O)C4O)c(-c4ccc(O)cc4)oc3c2O)C(O)C(OC2OC(CO)C(O)C(O)C2O)C1O: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 17:38:12,197 [WARNING] CFM-ID failed for spectrum=casmi2022_283 cand=CC1OC(OC2C(O)C(CO)OC(Oc3c(O)cc4oc(-c5ccc(O)c(O)c5)c(O)c(=O)c4c3O)C2(O)C2OC(C)C(O)C(O)C2O)C(O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC1OC(OC2C(O)C(CO)OC(Oc3c(O)cc4oc(-c5ccc(O)c(O)c5)c(O)c(=O)c4c3O)C2(O)C2OC(C)C(O)C(O)C2O)C(O)C(O)C1O'.
+2026-05-11 17:38:44,793 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:38:44,793 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:38:44,793 [INFO] ms-clip: launching predict_smi (n_candidates=6473)
+2026-05-11 17:40:27,764 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:40:27,764 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:40:27,764 [INFO] ms-clip: launching predict_smi (n_candidates=9364)
+2026-05-11 17:42:10,997 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:42:10,998 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:42:10,998 [INFO] ms-clip: launching predict_smi (n_candidates=1297)
+2026-05-11 17:42:53,133 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:42:53,133 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:42:53,133 [INFO] ms-clip: launching predict_smi (n_candidates=649)
+2026-05-11 17:46:03,174 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 11.9s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:47:25,993 [WARNING] llm_rerank attempt 1 parse error: no JSON object found
+2026-05-11 17:49:04,730 [WARNING] llm_rerank attempt 2 parse error: no JSON object found
+2026-05-11 17:49:04,840 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:49:04,840 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:49:04,840 [INFO] ms-clip: launching predict_smi (n_candidates=1091)
+2026-05-11 17:49:28,905 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:49:28,905 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:49:28,905 [INFO] ms-clip: launching predict_smi (n_candidates=333)
+2026-05-11 17:50:48,510 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:50:48,510 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:50:48,510 [INFO] ms-clip: launching predict_smi (n_candidates=4264)
+2026-05-11 17:51:13,296 [INFO] spec 120/170  casmi2022_264  pool=4264  pred=DDSNBYNHFSFPTF  correct=False  t=24.90s
+2026-05-11 17:51:13,402 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:51:13,402 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:51:13,402 [INFO] ms-clip: launching predict_smi (n_candidates=519)
+2026-05-11 17:51:37,696 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:51:37,696 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:51:37,696 [INFO] ms-clip: launching predict_smi (n_candidates=272)
+2026-05-11 17:51:49,559 [WARNING] CFM-ID failed for spectrum=casmi2022_334 cand=C=CC1(C)OC(O)C(O)C(O)C1C.C=CC1(C)OC(O)C2OC(C)(C)OC2C1C: CFM-ID produced zero peaks for SMILES='C=CC1(C)OC(O)C(O)C(O)C1C.C=CC1(C)OC(O)C2OC(C)(C)OC2C1C'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 17:53:13,182 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:53:13,182 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:53:13,182 [INFO] ms-clip: launching predict_smi (n_candidates=1489)
+2026-05-11 17:53:28,952 [WARNING] CFM-ID failed for spectrum=casmi2022_396 cand=CC#N.CC1C=CC2CCCCC2C1C(=O)C1(O)C(=O)N2CCC3C(=O)OC1C32O: CFM-ID produced zero peaks for SMILES='CC#N.CC1C=CC2CCCCC2C1C(=O)C1(O)C(=O)N2CCC3C(=O)OC1C32O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 17:53:56,929 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:53:56,929 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:53:56,929 [INFO] ms-clip: launching predict_smi (n_candidates=1585)
+2026-05-11 17:55:11,035 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:55:11,035 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:55:11,035 [INFO] ms-clip: launching predict_smi (n_candidates=809)
+2026-05-11 17:55:37,158 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:55:37,158 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:55:37,158 [INFO] ms-clip: launching predict_smi (n_candidates=2251)
+2026-05-11 17:57:31,236 [WARNING] chat retry attempt 1/3 after APIConnectionError: Error communicating with OpenAI: HTTPSConnectionPool(host='api.viviai.cc', port=443): Max retries exceeded with url: /v1 — sleeping 9.8s (caller=casmi_llm_reranker, trace=None)
+2026-05-11 17:58:28,414 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:58:28,414 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:58:28,415 [INFO] ms-clip: launching predict_smi (n_candidates=428)
+2026-05-11 17:58:46,422 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 17:58:46,422 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 17:58:46,422 [INFO] ms-clip: launching predict_smi (n_candidates=152)
+2026-05-11 18:00:06,702 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:00:06,702 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:00:06,702 [INFO] ms-clip: launching predict_smi (n_candidates=232)
+2026-05-11 18:00:29,287 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:00:29,287 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:00:29,287 [INFO] ms-clip: launching predict_smi (n_candidates=758)
+2026-05-11 18:00:41,237 [WARNING] ms-clip dropped SMILES [CH]n1nc(C)c2ccccc21; emitting sentinel -1.0
+2026-05-11 18:00:41,237 [WARNING] ms-clip dropped SMILES [CH]n1c(C)nc2ccccc21; emitting sentinel -1.0
+2026-05-11 18:00:41,238 [WARNING] ms-clip dropped SMILES [C]1NC=CN1c1ccccc1; emitting sentinel -1.0
+2026-05-11 18:00:41,238 [WARNING] ms-clip dropped SMILES C#CCn1[c-][n+](CC#C)cc1; emitting sentinel -1.0
+2026-05-11 18:00:59,580 [INFO] spec 130/170  casmi2022_117  pool=758  pred=OSRARURJYPOUOV  correct=False  t=30.40s
+2026-05-11 18:00:59,687 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:00:59,687 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:00:59,687 [INFO] ms-clip: launching predict_smi (n_candidates=2151)
+2026-05-11 18:01:23,610 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:01:23,610 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:01:23,611 [INFO] ms-clip: launching predict_smi (n_candidates=1026)
+2026-05-11 18:01:47,178 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:01:47,179 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:01:47,179 [INFO] ms-clip: launching predict_smi (n_candidates=4675)
+2026-05-11 18:02:27,758 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:02:27,758 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:02:27,758 [INFO] ms-clip: launching predict_smi (n_candidates=2525)
+2026-05-11 18:02:59,595 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:02:59,595 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:02:59,595 [INFO] ms-clip: launching predict_smi (n_candidates=19)
+2026-05-11 18:04:10,673 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(O)C(OC(C)=O)C2OC2OC(CO)C(O)C(O)C2O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 18:05:10,739 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(OC(C)=O)C(OC3OC(CO)C(O)C(O)C3O)C2O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(-c2oc3c(CC=C(C)C)c(O)cc(O)c3c(=O)c2OC2OC(C)C(OC(C)=O)C(OC3OC(CO)C(O)C(O)C3O)C2O)cc1'.
+2026-05-11 18:05:11,296 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COC(=O)c1ccc(O)c(OC)c1.COC(=O)c1ccc(OC2COC2)c(OC)c1.COc1cc(C(=O)O)ccc1OC1COC1.OC1COC1: CFM-ID produced zero peaks for SMILES='COC(=O)c1ccc(O)c(OC)c1.COC(=O)c1ccc(OC2COC2)c(OC)c1.COc1cc(C(=O)O)ccc1OC1COC1.OC1COC1'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 18:06:11,323 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1ccc(CC2COC(=O)C2(O)Cc2ccc(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c(OC)c2)cc1OC: CFM-ID did not respond within 60s for SMILES='COc1ccc(CC2COC(=O)C2(O)Cc2ccc(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c(OC)c2)cc1OC'.
+2026-05-11 18:07:11,370 [WARNING] CFM-ID failed for spectrum=casmi2022_3 cand=COc1cc(C)c2c(=O)cc(CC(C)O)oc2c1C1OC(CO)C(OC2OC(CO)C(O)C(O)C2O)C(O)C1OC(=O)C=Cc1ccc(O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 18:07:37,404 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:07:37,404 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:07:37,404 [INFO] ms-clip: launching predict_smi (n_candidates=2878)
+2026-05-11 18:08:34,826 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:08:34,827 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:08:34,827 [INFO] ms-clip: launching predict_smi (n_candidates=3285)
+2026-05-11 18:10:04,539 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:10:04,540 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:10:04,540 [INFO] ms-clip: launching predict_smi (n_candidates=13365)
+2026-05-11 18:10:25,660 [WARNING] ms-clip dropped SMILES CC(C)(C)N1[C-]=[N+](C(C)(C)C)C(=O)C1=O; emitting sentinel -1.0
+2026-05-11 18:10:36,352 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:10:36,352 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:10:36,352 [INFO] ms-clip: launching predict_smi (n_candidates=2621)
+2026-05-11 18:11:59,841 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:11:59,841 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:11:59,841 [INFO] ms-clip: launching predict_smi (n_candidates=259)
+2026-05-11 18:12:12,723 [WARNING] CFM-ID failed for spectrum=casmi2022_282 cand=CCCC(C(C)=O)C(=O)OCC.CCCC(CC#N)(C(C)=O)C(=O)OCC: CFM-ID produced zero peaks for SMILES='CCCC(C(C)=O)C(=O)OCC.CCCC(CC#N)(C(C)=O)C(=O)OCC'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 18:12:22,731 [INFO] spec 140/170  casmi2022_282  pool=259  pred=CCUGMZLHJFWECW  correct=True  t=22.99s
+2026-05-11 18:12:22,842 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:12:22,842 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:12:22,842 [INFO] ms-clip: launching predict_smi (n_candidates=1890)
+2026-05-11 18:12:46,571 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:12:46,572 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:12:46,572 [INFO] ms-clip: launching predict_smi (n_candidates=39)
+2026-05-11 18:13:07,970 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:13:07,970 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:13:07,970 [INFO] ms-clip: launching predict_smi (n_candidates=5706)
+2026-05-11 18:14:05,460 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:14:05,460 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:14:05,460 [INFO] ms-clip: launching predict_smi (n_candidates=347)
+2026-05-11 18:14:29,044 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:14:29,044 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:14:29,044 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 18:15:20,105 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:15:20,105 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:15:20,105 [INFO] ms-clip: launching predict_smi (n_candidates=8376)
+2026-05-11 18:15:52,813 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:15:52,813 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:15:52,813 [INFO] ms-clip: launching predict_smi (n_candidates=242)
+2026-05-11 18:16:20,975 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:16:20,975 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:16:20,975 [INFO] ms-clip: launching predict_smi (n_candidates=3735)
+2026-05-11 18:16:45,574 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:16:45,574 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:16:45,574 [INFO] ms-clip: launching predict_smi (n_candidates=5097)
+2026-05-11 18:17:01,114 [WARNING] CFM-ID failed for spectrum=casmi2022_63 cand=Cn1ccc(C#N)cc1=O.Cn1ccc(C(N)=O)cc1=O: CFM-ID produced zero peaks for SMILES='Cn1ccc(C#N)cc1=O.Cn1ccc(C(N)=O)cc1=O'. The molecule may be too large, too simple, or outside the model's training distribution.
+2026-05-11 18:17:32,845 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:17:32,845 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:17:32,845 [INFO] ms-clip: launching predict_smi (n_candidates=714)
+2026-05-11 18:17:56,434 [INFO] spec 150/170  casmi2022_431  pool=714  pred=UGWFVUIRIKIENI  correct=False  t=23.69s
+2026-05-11 18:17:56,592 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:17:56,592 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:17:56,592 [INFO] ms-clip: launching predict_smi (n_candidates=12796)
+2026-05-11 18:18:28,855 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:18:28,855 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:18:28,855 [INFO] ms-clip: launching predict_smi (n_candidates=9394)
+2026-05-11 18:19:10,776 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:19:10,776 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:19:10,776 [INFO] ms-clip: launching predict_smi (n_candidates=2107)
+2026-05-11 18:19:59,080 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:19:59,080 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:19:59,080 [INFO] ms-clip: launching predict_smi (n_candidates=32)
+2026-05-11 18:21:10,207 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=CC(=O)OC1C(C)OC(Oc2c(-c3ccc(O)cc3)oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C1O: CFM-ID did not respond within 60s for SMILES='CC(=O)OC1C(C)OC(Oc2c(-c3ccc(O)cc3)oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c2=O)C(O)C1O'.
+2026-05-11 18:22:10,246 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1cc(C2c3c(cc(OC)c(O)c3OC)CC(COC(=O)c3cc(O)c(O)c(O)c3)C2COC2OCC(O)C(O)C2O)cc(OC)c1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C2c3c(cc(OC)c(O)c3OC)CC(COC(=O)c3cc(O)c(O)c(O)c3)C2COC2OCC(O)C(O)C2O)cc(OC)c1O'.
+2026-05-11 18:23:10,311 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1cc(C=CC(=O)OCC2OC(CO)(OC3CC(COC(C)=O)C(O)C(O)C3O)C(OC(=O)C=Cc3ccc(O)cc3)C2O)ccc1O: CFM-ID did not respond within 60s for SMILES='COc1cc(C=CC(=O)OCC2OC(CO)(OC3CC(COC(C)=O)C(O)C(O)C3O)C(OC(=O)C=Cc3ccc(O)cc3)C2O)ccc1O'.
+2026-05-11 18:24:10,319 [WARNING] CFM-ID failed for spectrum=casmi2022_169 cand=COc1ccc(OC2OC(COC(=O)c3ccccc3)C(OC(C)=O)C(O)C2OC2OC(C)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)cc1: CFM-ID did not respond within 60s for SMILES='COc1ccc(OC2OC(COC(=O)c3ccccc3)C(OC(C)=O)C(O)C2OC2OC(C)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)cc1'.
+2026-05-11 18:24:34,269 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:24:34,269 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:24:34,270 [INFO] ms-clip: launching predict_smi (n_candidates=561)
+2026-05-11 18:24:58,727 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:24:58,727 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:24:58,727 [INFO] ms-clip: launching predict_smi (n_candidates=3746)
+2026-05-11 18:25:20,074 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:25:20,074 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:25:20,075 [INFO] ms-clip: launching predict_smi (n_candidates=33)
+2026-05-11 18:26:31,116 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1ccc(-c2oc3c(CC=C(C)C)c(OC4OC(CO)C(O)C(O)C4O)cc(O)c3c(=O)c2OC2OCC(O)C(O)C2O)cc1: CFM-ID shim at http://localhost:8088/predict returned HTTP 504: {"detail":"cfm-predict timed out"}
+2026-05-11 18:27:31,182 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1cc(C=Cc2ccc(OC)c(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c2O)cc(OC)c1OC: CFM-ID did not respond within 60s for SMILES='COc1cc(C=Cc2ccc(OC)c(OC3OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C3OC(C)=O)c2O)cc(OC)c1OC'.
+2026-05-11 18:28:31,199 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(OC2OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)c1O: CFM-ID did not respond within 60s for SMILES='COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(OC2OC(COC(C)=O)C(OC(C)=O)C(OC(C)=O)C2OC(C)=O)c1O'.
+2026-05-11 18:29:31,224 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=CC(C)=CCc1c(OC2OC(CO)C(O)C(O)C2O)cc(O)c2c(=O)cc(-c3ccc(OC4OC(CO)C(O)C(O)C4O)cc3)oc12: CFM-ID did not respond within 60s for SMILES='CC(C)=CCc1c(OC2OC(CO)C(O)C(O)C2O)cc(O)c2c(=O)cc(-c3ccc(OC4OC(CO)C(O)C(O)C4O)cc3)oc12'.
+2026-05-11 18:30:31,289 [WARNING] CFM-ID failed for spectrum=casmi2022_430 cand=CC(=O)OCC1OC(Oc2ccc3c(OC4CCC(C)CC4)c(OC(C)=O)c(=O)oc3c2)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O: CFM-ID did not respond within 60s for SMILES='CC(=O)OCC1OC(Oc2ccc3c(OC4CCC(C)CC4)c(OC(C)=O)c(=O)oc3c2)C(OC(C)=O)C(OC(C)=O)C1OC(C)=O'.
+2026-05-11 18:31:16,128 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:31:16,128 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:31:16,128 [INFO] ms-clip: launching predict_smi (n_candidates=9569)
+2026-05-11 18:31:45,186 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:31:45,186 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:31:45,186 [INFO] ms-clip: launching predict_smi (n_candidates=8471)
+2026-05-11 18:32:20,268 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:32:20,269 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:32:20,269 [INFO] ms-clip: launching predict_smi (n_candidates=3665)
+2026-05-11 18:33:35,744 [INFO] spec 160/170  casmi2022_420  pool=3665  pred=QNLRXEIUGHZEED  correct=False  t=75.59s
+2026-05-11 18:33:35,860 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:33:35,860 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:33:35,860 [INFO] ms-clip: launching predict_smi (n_candidates=420)
+2026-05-11 18:34:05,405 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:34:05,406 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:34:05,406 [INFO] ms-clip: launching predict_smi (n_candidates=7017)
+2026-05-11 18:34:32,366 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:34:32,366 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:34:32,366 [INFO] ms-clip: launching predict_smi (n_candidates=21520)
+2026-05-11 18:36:04,286 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:36:04,286 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:36:04,286 [INFO] ms-clip: launching predict_smi (n_candidates=2878)
+2026-05-11 18:36:34,916 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:36:34,916 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:36:34,916 [INFO] ms-clip: launching predict_smi (n_candidates=3545)
+2026-05-11 18:36:59,876 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:36:59,876 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:36:59,876 [INFO] ms-clip: launching predict_smi (n_candidates=5806)
+2026-05-11 18:37:25,833 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:37:25,833 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:37:25,833 [INFO] ms-clip: launching predict_smi (n_candidates=3049)
+2026-05-11 18:39:00,577 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:39:00,577 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:39:00,578 [INFO] ms-clip: launching predict_smi (n_candidates=1019)
+2026-05-11 18:39:35,175 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:39:35,176 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:39:35,176 [INFO] ms-clip: launching predict_smi (n_candidates=329)
+2026-05-11 18:39:55,391 [INFO] ms-clip: auto-picked GPU 7 (free 24092 MiB)
+2026-05-11 18:39:55,391 [INFO] ms-clip: using CUDA_VISIBLE_DEVICES=7
+2026-05-11 18:39:55,391 [INFO] ms-clip: launching predict_smi (n_candidates=393)
+2026-05-11 18:40:06,754 [WARNING] ms-clip dropped SMILES CO[C]N(C)C; emitting sentinel -1.0
+2026-05-11 18:40:06,755 [WARNING] ms-clip dropped SMILES [CH]N(C)CCO; emitting sentinel -1.0
+2026-05-11 18:40:25,514 [INFO] spec 170/170  casmi2022_91  pool=393  pred=ZVSTUQXCWRZVJO  correct=False  t=30.23s
+2026-05-11 18:40:25,514 [INFO] ============================================================
+2026-05-11 18:40:25,514 [INFO] CASMI 2022  primary=msclip  reranker=llm
+2026-05-11 18:40:25,514 [INFO]   n_specs=170  n_correct=27  id_acc=0.1588
+2026-05-11 18:40:25,514 [INFO]   conditional_skipped=0  no_pool=0  elapsed=13088.6s
+2026-05-11 18:40:25,514 [INFO]   per-spec JSONL: data/eval/casmi/2022_llm_reranker_v2/casmi_identifications.jsonl
+2026-05-11 18:40:25,515 [INFO]   summary:        data/eval/casmi/2022_llm_reranker_v2/summary.json

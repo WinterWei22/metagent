@@ -1,0 +1,4 @@
+config,n,top1_acc_pct,top3_acc_pct,top5_acc_pct,top10_acc_pct,top20_acc_pct,mrr,mrr_reachable,n_reachable
+msclip_only,170,13.53,22.94,28.24,35.88,43.53,0.2045,0.4698,74
+weighted,170,13.53,25.29,28.24,35.88,43.53,0.2126,0.4885,74
+llm_reranker,170,15.88,25.88,28.24,35.88,43.53,0.2271,0.5218,74
