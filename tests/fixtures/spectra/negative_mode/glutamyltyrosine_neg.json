@@ -1,0 +1,174 @@
+{
+  "compound_name": "glutamyltyrosine",
+  "smiles": "O=C(O)C(N)CCC(=O)NC(C(=O)O)CC1=CC=C(O)C=C1",
+  "inchikey": "VVLXCWVSSLFQDS-UHFFFAOYSA-N",
+  "hmdb_id": "",
+  "precursor_mz": 309.1088,
+  "adduct": "[M-H]-",
+  "ionization_mode": "negative",
+  "collision_energy": 6.0,
+  "peaks": [
+    [
+      70.03304,
+      6.7899
+    ],
+    [
+      74.02642,
+      6.7899
+    ],
+    [
+      81.04335,
+      15.8431
+    ],
+    [
+      93.03402,
+      7.5443
+    ],
+    [
+      96.75643,
+      7.9215
+    ],
+    [
+      96.99174,
+      12.4481
+    ],
+    [
+      97.04118,
+      7.9215
+    ],
+    [
+      99.05181,
+      10.9393
+    ],
+    [
+      109.03971,
+      24.1418
+    ],
+    [
+      109.04804,
+      7.9215
+    ],
+    [
+      113.03728,
+      11.6937
+    ],
+    [
+      119.05082,
+      24.1418
+    ],
+    [
+      123.0577,
+      15.8431
+    ],
+    [
+      127.04995,
+      69.4078
+    ],
+    [
+      128.03424,
+      1000.0
+    ],
+    [
+      129.03954,
+      48.6609
+    ],
+    [
+      133.05231,
+      8.676
+    ],
+    [
+      141.07008,
+      23.7646
+    ],
+    [
+      160.21008,
+      7.9215
+    ],
+    [
+      163.03238,
+      10.5621
+    ],
+    [
+      163.04301,
+      51.3014
+    ],
+    [
+      164.03685,
+      7.1671
+    ],
+    [
+      167.04581,
+      53.1875
+    ],
+    [
+      168.04372,
+      6.7899
+    ],
+    [
+      168.05165,
+      18.8608
+    ],
+    [
+      178.08641,
+      8.2988
+    ],
+    [
+      180.0659,
+      206.3372
+    ],
+    [
+      181.06918,
+      42.2482
+    ],
+    [
+      182.06642,
+      23.7646
+    ],
+    [
+      184.04282,
+      7.9215
+    ],
+    [
+      185.06351,
+      7.5443
+    ],
+    [
+      203.10907,
+      6.7899
+    ],
+    [
+      227.53702,
+      7.5443
+    ],
+    [
+      247.11418,
+      6.7899
+    ],
+    [
+      273.08743,
+      13.957
+    ],
+    [
+      291.0976,
+      165.2207
+    ],
+    [
+      291.96423,
+      6.7899
+    ],
+    [
+      293.11694,
+      10.5621
+    ],
+    [
+      309.10651,
+      141.4561
+    ]
+  ],
+  "source": "MassBank RIKEN MSBNK-RIKEN-PR309407",
+  "notes": "Real RIKEN MS/MS spectrum, accession MSBNK-RIKEN-PR309407. Free L-tyrosine is not present in the RIKEN PlaSMA collection (plant-metabolite focus); glutamyl-tyrosine (a dipeptide containing the tyrosine residue) was selected as the closest match within the amino_acid SMARTS class. Intensities normalised + rescaled as for citric_acid_neg.json.",
+  "ground_truth_compound_name": "Glutamyltyrosine",
+  "ground_truth_formula": "C14H18N2O6",
+  "ground_truth_exact_mass": 310.306,
+  "compound_class": "amino_acid"
+}

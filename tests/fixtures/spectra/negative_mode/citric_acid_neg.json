@@ -1,0 +1,102 @@
+{
+  "compound_name": "citric_acid",
+  "smiles": "O=C(O)CC(O)(C(=O)O)CC(=O)O",
+  "inchikey": "KRKNYBCHXYNGOX-UHFFFAOYSA-N",
+  "hmdb_id": "",
+  "precursor_mz": 191.0194,
+  "adduct": "[M-H]-",
+  "ionization_mode": "negative",
+  "collision_energy": 6.0,
+  "peaks": [
+    [
+      85.02995,
+      99.9017
+    ],
+    [
+      86.03409,
+      7.206
+    ],
+    [
+      87.00858,
+      186.7016
+    ],
+    [
+      87.06657,
+      5.8958
+    ],
+    [
+      88.0176,
+      6.8785
+    ],
+    [
+      89.00812,
+      10.4815
+    ],
+    [
+      111.00854,
+      1000.0
+    ],
+    [
+      111.68079,
+      5.2407
+    ],
+    [
+      112.01212,
+      50.7697
+    ],
+    [
+      129.01506,
+      13.1019
+    ],
+    [
+      129.02184,
+      15.3947
+    ],
+    [
+      129.02747,
+      23.2558
+    ],
+    [
+      130.02512,
+      10.4815
+    ],
+    [
+      130.99644,
+      6.5509
+    ],
+    [
+      132.0041,
+      5.2407
+    ],
+    [
+      135.02669,
+      5.5683
+    ],
+    [
+      154.99586,
+      5.8958
+    ],
+    [
+      173.00345,
+      8.5162
+    ],
+    [
+      173.01068,
+      32.0996
+    ],
+    [
+      174.02249,
+      8.1887
+    ],
+    [
+      191.01895,
+      143.4654
+    ]
+  ],
+  "source": "MassBank RIKEN MSBNK-RIKEN-PR309128",
+  "notes": "Real RIKEN MS/MS spectrum, accession MSBNK-RIKEN-PR309128. RIKEN's source record is annotated 'not validated, isomer of PR000227' — the SMILES + InChIKey + neutral mass still match citric acid, so this is acceptable as a spike-test fixture but should not be treated as gold-standard for benchmark scoring. Intensities are normalised to base peak = 1.0 (RIKEN convention) and rescaled ×1000 for parity with existing fixtures.",
+  "ground_truth_compound_name": "Citric acid (Not validated, isomer of 227)",
+  "ground_truth_formula": "C6H8O7",
+  "ground_truth_exact_mass": 192.123,
+  "compound_class": "organic_acid"
+}
