@@ -428,6 +428,7 @@ def _react_loop(
                 provider=provider,
                 trace_id=trace_id,
                 caller=f"{caller}_finalise",
+                response_format={"type": "json_object"},
             )
             narrative = (final_msg.get("content") or "").strip()
             messages.append(_echo_assistant(final_msg))

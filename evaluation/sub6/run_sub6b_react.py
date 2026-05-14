@@ -261,6 +261,7 @@ def run_sub6b_react(
                 provider=provider,
                 trace_id=task_id,
                 caller=f"{caller}_finalise",
+                response_format={"type": "json_object"},
             )
             narrative = (final_msg.get("content") or "").strip()
             if timed_out:
