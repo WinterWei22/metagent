@@ -1,0 +1,72 @@
+# MetDNA2 deployment-feasibility spike — NOT production.
+# Base pinned to Bioconductor 3.16 / R 4.2.3 to match MetDNA2 v1.0.7 release era
+# (Oct 2022). Latest Bioc/R will likely break BiocManager dep resolution.
+#
+# Build:
+#   docker build -f experiments/spike_tidymass/Dockerfile.spike \
+#                -t metagent-metdna2-spike:r423-bioc316 \
+#                experiments/spike_tidymass/
+# Expected: 2-4 hr wall time, ~6-8 GB final image.
+
+FROM bioconductor/bioconductor_docker:RELEASE_3_16
+
+LABEL spike="metdna2-feasibility-2026-05"
+LABEL maintainer="metagent-spike (not for production)"
+
+# System deps that R packages compile against. Most are already in the
+# bioconductor base, but Rdisop sometimes needs libnetcdf-dev and some
+# graph libs miss libxml2-dev on slim variants.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libnetcdf-dev \
+        libxml2-dev \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libgit2-dev \
+        zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install CRAN/Bioc deps via BiocManager (uses Bioc 3.16 snapshot — version-pinned).
+# jsonlite is required for clean JSON I/O between Python shim and R script.
+# Each layer is a separate RUN so a transient install failure doesn't redo all.
+RUN R -e 'BiocManager::install(c( \
+    "dplyr","tidyr","readr","stringr","tibble","purrr","ggplot2", \
+    "igraph","pbapply","randomForest","pryr","magrittr","rmarkdown", \
+    "caret","jsonlite","optparse" \
+    ), ask = FALSE, update = FALSE)'
+
+RUN R -e 'BiocManager::install(c( \
+    "Rdisop","BiocParallel","MSnbase","xcms" \
+    ), ask = FALSE, update = FALSE)'
+
+# devtools needed for github installs. Pull explicitly.
+RUN R -e 'BiocManager::install("devtools", ask = FALSE, update = FALSE)'
+
+# ZhuMetLab dependency chain — order matters.
+# 1) SpectraTools  → 2) MetBioInterpretation  → 3) MetDNA2
+# Pin nothing for now; if a future commit breaks compatibility we'll vendor.
+RUN R -e 'devtools::install_github("ZhuMetLab/SpectraTools", upgrade = "never")'
+RUN R -e 'devtools::install_github("ZhuMetLab/MetBioInterpretation", upgrade = "never")'
+RUN R -e 'devtools::install_github("ZhuMetLab/MetDNA2", upgrade = "never")'
+
+# TidyMass siblings (per spike scope expansion: metpath + metid)
+RUN R -e 'devtools::install_github("tidymass/metid", upgrade = "never")'
+RUN R -e 'devtools::install_github("tidymass/metpath", upgrade = "never")'
+
+# Sanity check at build time — fail fast if any package didn't load.
+RUN R -e 'library(MetDNA2); library(metid); library(metpath); cat("all loaded OK\n")'
+
+# Mount points:
+#   /spike/data  → reference DBs (downloaded later in D2, persisted on host)
+#   /spike/io    → JSON I/O for D3 shim
+WORKDIR /spike
+RUN mkdir -p /spike/data /spike/io /spike/scripts
+COPY run_metdna.R /spike/scripts/run_metdna.R
+
+# Default entrypoint: shim mode.
+# Usage from host:
+#   docker run --rm -v $PWD/data:/spike/data -v $PWD/io:/spike/io \
+#              metagent-metdna2-spike:r423-bioc316 \
+#              Rscript /spike/scripts/run_metdna.R \
+#              --input /spike/io/in.json --output /spike/io/out.json
+ENTRYPOINT ["Rscript"]
+CMD ["/spike/scripts/run_metdna.R", "--help"]
