@@ -362,25 +362,176 @@ class ValidationResult(BaseModel):
     drop_reason: str | None = None
 
 
-def validate(claim_obj: dict) -> ValidationResult:
-    """Validate a candidate claim dict against the grammar.
+_BANNED_SUBSTRING_CATEGORIES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("hedge", BANNED_HEDGES),
+    ("directional", BANNED_DIRECTIONAL),
+    ("abstract", BANNED_ABSTRACT),
+    ("meta", BANNED_META),
+)
 
-    Phase B1 D0 — stub. The full implementation in D2 will:
 
-    1. Reject if the ``grammar`` field is missing or not a
-       :class:`ClaimGrammar` value.
-    2. Reject if any field in ``REQUIRED_FIELDS[grammar]`` is missing or
-       empty.
-    3. Reject if ``claim_text`` contains a banned phrase from
-       :data:`BANNED_HEDGES`, :data:`BANNED_DIRECTIONAL`,
-       :data:`BANNED_ABSTRACT`, or :data:`BANNED_META`.
-    4. Parse via the appropriate per-class pydantic schema; surface
-       schema errors as ``drop_reason``.
-    5. Return ``ValidationResult(is_valid=True, grammar=<class>,
-       drop_reason=None)`` on success.
+def _find_banned_substring(text: str) -> tuple[str, str] | None:
+    """Return ``(category, term)`` for the first banned phrase that
+    appears in ``text`` (case-insensitive whole-word for short tokens,
+    plain substring for multi-word phrases), or ``None``."""
+    haystack = text.lower()
+    for category, terms in _BANNED_SUBSTRING_CATEGORIES:
+        for term in terms:
+            needle = term.lower()
+            if " " in needle or "-" in needle:
+                # Multi-word / hyphenated phrase: plain substring match
+                # is appropriate (false positives are rare for these
+                # patterns).
+                if needle in haystack:
+                    return category, term
+            else:
+                # Single token: anchor at word boundaries so common
+                # English words ("axis" in "Axis Bank", "drives" — wait,
+                # drives is intentionally not banned — etc.) only fire
+                # when the LLM actually wrote them as standalone words.
+                if re.search(rf"\b{re.escape(needle)}\b", haystack):
+                    return category, term
+    return None
+
+
+def _find_banned_regex(text: str) -> str | None:
+    """Return the first BANNED_TOOL_ROUNDTRIP_PATTERNS regex that matches
+    ``text`` (case-sensitive — KEGG IDs are literal), or ``None``."""
+    for pattern in BANNED_TOOL_ROUNDTRIP_PATTERNS:
+        if re.search(pattern, text):
+            return pattern
+    return None
+
+
+_CLAIM_V2_ADAPTER = None  # type: ignore[var-annotated]
+
+
+def _get_claim_adapter():
+    """Lazily build the pydantic TypeAdapter for ClaimV2.
+
+    Importing TypeAdapter at module top would force pydantic to resolve
+    the discriminator union on import, which costs measurable time on
+    every ``from verifier.grammar import …`` even when ``validate`` is
+    never called.
     """
-    return ValidationResult(
-        is_valid=False,
-        grammar=None,
-        drop_reason="stub-not-implemented-phase-b1-d0",
-    )
+    global _CLAIM_V2_ADAPTER
+    if _CLAIM_V2_ADAPTER is None:
+        from pydantic import TypeAdapter  # local import
+        _CLAIM_V2_ADAPTER = TypeAdapter(ClaimV2)
+    return _CLAIM_V2_ADAPTER
+
+
+def validate(claim_obj: dict) -> ValidationResult:
+    """Validate a candidate claim dict against the v2 grammar.
+
+    Returns ``ValidationResult(is_valid=True, grammar=<class>,
+    drop_reason=None)`` on success; on any failure returns
+    ``is_valid=False`` and a human-readable ``drop_reason`` describing
+    the first rule that fired. Order of checks is deliberately:
+
+    1. ``claim_obj`` is a non-empty dict.
+    2. ``grammar`` key present and is one of ``ClaimGrammar``.
+    3. ``claim_text`` key present, is a string, non-empty after strip.
+    4. ``claim_text`` does NOT match any BANNED_* substring lexicon.
+    5. ``claim_text`` does NOT match BANNED_TOOL_ROUNDTRIP_PATTERNS.
+    6. ``REQUIRED_FIELDS[grammar]`` all present and non-empty.
+    7. Pydantic discriminator union parses cleanly (catches
+       enzyme_or_reaction-generic, term_type out-of-enum, empty
+       signal_compound_ids, etc.).
+
+    Step 6 catches every shape-level constraint encoded in
+    :class:`PathwayMembershipClaim` /
+    :class:`MetabolitePathwayLinkClaim` /
+    :class:`PathwayEnrichmentClaim` /
+    :class:`DriverMetaboliteClaim`. Step 4–5 also live in the schema in
+    theory, but doing the cheap string scan first gives a precise
+    drop_reason ("hedge: may") instead of a pydantic ValidationError
+    blob, which keeps the feedback hint actionable.
+    """
+    if not isinstance(claim_obj, dict) or not claim_obj:
+        return ValidationResult(
+            is_valid=False,
+            grammar=None,
+            drop_reason="claim is not a non-empty dict",
+        )
+
+    raw_grammar = claim_obj.get("grammar")
+    if not isinstance(raw_grammar, str):
+        return ValidationResult(
+            is_valid=False,
+            grammar=None,
+            drop_reason=f"grammar field missing or non-string: {raw_grammar!r}",
+        )
+    try:
+        grammar = ClaimGrammar(raw_grammar)
+    except ValueError:
+        valid = ", ".join(g.value for g in ClaimGrammar)
+        return ValidationResult(
+            is_valid=False,
+            grammar=None,
+            drop_reason=(
+                f"grammar={raw_grammar!r} is not a valid ClaimGrammar "
+                f"value (expected one of: {valid})"
+            ),
+        )
+
+    raw_text = claim_obj.get("claim_text")
+    if not isinstance(raw_text, str) or not raw_text.strip():
+        return ValidationResult(
+            is_valid=False,
+            grammar=grammar,
+            drop_reason="claim_text missing or empty",
+        )
+    text = raw_text.strip()
+
+    banned_hit = _find_banned_substring(text)
+    if banned_hit is not None:
+        cat, term = banned_hit
+        return ValidationResult(
+            is_valid=False,
+            grammar=grammar,
+            drop_reason=f"banned {cat} phrase: {term!r}",
+        )
+
+    regex_hit = _find_banned_regex(text)
+    if regex_hit is not None:
+        return ValidationResult(
+            is_valid=False,
+            grammar=grammar,
+            drop_reason=f"banned tool-roundtrip pattern: {regex_hit}",
+        )
+
+    for field in REQUIRED_FIELDS[grammar]:
+        value = claim_obj.get(field)
+        if value is None:
+            return ValidationResult(
+                is_valid=False,
+                grammar=grammar,
+                drop_reason=f"required field {field!r} missing",
+            )
+        if isinstance(value, str) and not value.strip():
+            return ValidationResult(
+                is_valid=False,
+                grammar=grammar,
+                drop_reason=f"required field {field!r} is empty string",
+            )
+        if isinstance(value, list) and not value:
+            return ValidationResult(
+                is_valid=False,
+                grammar=grammar,
+                drop_reason=f"required field {field!r} is empty list",
+            )
+
+    adapter = _get_claim_adapter()
+    try:
+        adapter.validate_python(claim_obj)
+    except Exception as exc:  # pydantic.ValidationError, but be defensive
+        # First-error summary keeps the drop_reason readable.
+        line0 = str(exc).splitlines()[0]
+        return ValidationResult(
+            is_valid=False,
+            grammar=grammar,
+            drop_reason=f"schema validation failed: {line0}",
+        )
+
+    return ValidationResult(is_valid=True, grammar=grammar, drop_reason=None)

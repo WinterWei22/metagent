@@ -43,6 +43,7 @@ from verifier.claim_classifier import classify_claims
 from verifier.claim_extractor import (
     ClaimExtractionError,
     extract_claims,
+    extract_claims_from_json,
     extract_claims_rulebased,
 )
 from verifier.claim_table import build_claim_table
@@ -58,6 +59,7 @@ from verifier.schemas import (
     ClaimType,
     ClaimVerdict,
     ClassifiedClaim,
+    DroppedClaim,
     VerifiedClaim,
     VerifiedIdentification,
 )
@@ -87,12 +89,15 @@ def verify(
     warnings: list[str] = []
     llm_calls = 0
 
+    dropped_all: list[DroppedClaim] = []
+
     # ---------- v1 pass ----------
-    classified_v1, calls, w = _extract_classify(
+    classified_v1, calls, w, dropped = _extract_classify(
         llm_output, trace_id=f"{trace_id}.s1s2_v1"
     )
     llm_calls += calls
     warnings += w
+    dropped_all += dropped
     if classified_v1 is None:
         # Stage 1 failed; cannot proceed.
         return _failed(
@@ -100,6 +105,7 @@ def verify(
             trace_id=trace_id,
             warnings=warnings,
             llm_calls=llm_calls,
+            dropped_claims=dropped_all,
         )
 
     verified_v1 = _verify_per_claim(
@@ -124,6 +130,7 @@ def verify(
             warnings=warnings,
             llm_calls=llm_calls,
             trace_id=trace_id,
+            dropped_claims=dropped_all,
         )
 
     rewritten = rewrite(
@@ -133,11 +140,12 @@ def verify(
     )
     llm_calls += 1
 
-    classified_v2, calls, w = _extract_classify(
+    classified_v2, calls, w, dropped = _extract_classify(
         rewritten, trace_id=f"{trace_id}.s1s2_v2"
     )
     llm_calls += calls
     warnings += w
+    dropped_all += dropped
     if classified_v2 is None:
         # Re-extract failed — preserve v1 record but flag the failure.
         warnings.append(
@@ -151,6 +159,7 @@ def verify(
             warnings=warnings,
             llm_calls=llm_calls,
             trace_id=trace_id,
+            dropped_claims=dropped_all,
         )
 
     verified_v2 = _verify_per_claim(
@@ -173,6 +182,7 @@ def verify(
         warnings=warnings,
         llm_calls=llm_calls,
         trace_id=trace_id,
+        dropped_claims=dropped_all,
     )
 
 
@@ -183,11 +193,23 @@ def verify(
 
 def _extract_classify(
     text: str, *, trace_id: str
-) -> tuple[list[ClassifiedClaim] | None, int, list[str]]:
-    """Run Stage 1 + Stage 2. Returns (classified, llm_calls, warnings).
+) -> tuple[
+    list[ClassifiedClaim] | None,
+    int,
+    list[str],
+    list[DroppedClaim],
+]:
+    """Run Stage 1 + Stage 2.
+
+    Returns ``(classified, llm_calls, warnings, dropped)``.
 
     ``classified`` is None when Stage 1 raised — caller treats that as a
     fatal cascade failure for the relevant pass.
+
+    ``dropped`` is the list of claims rejected by the grammar v2 path
+    (empty list when the legacy extractor path is used). Surfacing it
+    here is the Phase B1 D2 hook that lets ``_final`` aggregate the
+    ``dropped_by_grammar`` metric across passes.
 
     Empty / whitespace-only input short-circuits: ``extract_claims`` skips
     the LLM call, we return an empty classified list, and llm_calls stays
@@ -199,27 +221,44 @@ def _extract_classify(
     call, sentence-level split that preserves compound mechanistic
     phrases). The rule-based path is paper-finding-tied to Layer F
     activation; see ``reports/eval/layerf_loop_closed.md`` for context.
+
+    Phase B1 D2: a third mode, triggered when ``text`` parses as a v2
+    grammar JSON payload (``{"narrative_text": str, "claims": list}``),
+    routes through :func:`extract_claims_from_json` — zero LLM call,
+    schema validation only. The dropped claim list returned by that
+    function is surfaced as the 4th tuple element.
     """
     warnings: list[str] = []
+    dropped: list[DroppedClaim] = []
     if not text.strip():
-        return [], 0, warnings
+        return [], 0, warnings, dropped
 
     extractor_mode = os.environ.get("METAGENT_VERIFIER_EXTRACTOR", "llm").lower()
     try:
-        if extractor_mode == "rule-based":
-            extracted = extract_claims_rulebased(text, trace_id=f"{trace_id}.extract")
+        # Phase B1 D2: auto-detect v2 grammar JSON payload regardless of mode.
+        # extract_claims_from_json raises ClaimExtractionError when the
+        # payload is not a v2 object — we then fall back to the configured
+        # extractor (LLM or rule-based) for v1 narrative shapes.
+        try:
+            extracted, dropped = extract_claims_from_json(
+                text, trace_id=f"{trace_id}.extract"
+            )
             extract_calls = 0
-        else:
-            extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
-            extract_calls = 1
+        except ClaimExtractionError:
+            if extractor_mode == "rule-based":
+                extracted = extract_claims_rulebased(text, trace_id=f"{trace_id}.extract")
+                extract_calls = 0
+            else:
+                extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
+                extract_calls = 1
     except ClaimExtractionError as exc:
         warnings.append(f"VERIFICATION_PARSE_FAILED at stage1: {exc}")
-        return None, 1, warnings
+        return None, 1, warnings, dropped
 
     classified, classify_calls = classify_claims(
         extracted, trace_id=f"{trace_id}.classify"
     )
-    return classified, extract_calls + classify_calls, warnings
+    return classified, extract_calls + classify_calls, warnings, dropped
 
 
 def _verify_per_claim(
@@ -315,6 +354,7 @@ def _final(
     warnings: list[str],
     llm_calls: int,
     trace_id: str,
+    dropped_claims: list[DroppedClaim] | None = None,
 ) -> VerifiedIdentification:
     # Phase A2 D1: synthesise stable claim_ids and populate feedback_hint
     # before serialising. The build_claim_table helper still applies its
@@ -324,7 +364,12 @@ def _final(
     claims_v2 = annotate_claims(claims_v2, pass_id="v2")
     table_v1 = build_claim_table(claims_v1, pass_id="v1")
     table_v2 = build_claim_table(claims_v2, pass_id="v2")
-    metrics = compute_claim_metrics(claims_v1=claims_v1, claims_v2=claims_v2)
+    dropped = list(dropped_claims or [])
+    metrics = compute_claim_metrics(
+        claims_v1=claims_v1,
+        claims_v2=claims_v2,
+        dropped_by_grammar=len(dropped),
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -333,6 +378,7 @@ def _final(
         claims_v2=claims_v2,
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
+        dropped_claims=dropped,
         overall_verdict=_aggregate_verdict(claims_v2),
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -346,10 +392,15 @@ def _failed(
     trace_id: str,
     warnings: list[str],
     llm_calls: int,
+    dropped_claims: list[DroppedClaim] | None = None,
 ) -> VerifiedIdentification:
     table_v1 = build_claim_table([], pass_id="v1")
     table_v2 = build_claim_table([], pass_id="v2")
-    metrics = compute_claim_metrics(claims_v1=[], claims_v2=[])
+    dropped = list(dropped_claims or [])
+    metrics = compute_claim_metrics(
+        claims_v1=[], claims_v2=[],
+        dropped_by_grammar=len(dropped),
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -358,6 +409,7 @@ def _failed(
         claims_v2=[],
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
+        dropped_claims=dropped,
         overall_verdict="failed",
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -403,7 +455,7 @@ def verify_sub6(
     warnings: list[str] = []
     llm_calls = 0
 
-    classified, calls, w = _extract_classify(
+    classified, calls, w, dropped = _extract_classify(
         llm_output, trace_id=f"{trace_id}.s1s2"
     )
     llm_calls += calls
@@ -414,6 +466,7 @@ def verify_sub6(
             trace_id=trace_id,
             warnings=warnings,
             llm_calls=llm_calls,
+            dropped_claims=dropped,
         )
 
     verified = _verify_per_claim_sub6(
@@ -438,6 +491,7 @@ def verify_sub6(
         warnings=warnings,
         llm_calls=llm_calls,
         trace_id=trace_id,
+        dropped_claims=dropped,
     )
 
 

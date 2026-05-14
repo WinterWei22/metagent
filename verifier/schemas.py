@@ -716,6 +716,13 @@ class ClaimMetrics(BaseModel):
     unsupported_claims: int = 0
     unverifiable_claims: int = 0
     error_claims: int = 0
+    dropped_by_grammar: int = 0
+    """Phase B1 D2: count of claims rejected by ``verifier.grammar.validate``
+    before reaching any verifier layer. NOT part of the ``total_claims``
+    denominator — the supported / unsupported / contradicted /
+    unverifiable rate denominators are ``total_claims`` (post-grammar),
+    matching the v2 metric definition in
+    ``docs/claim_grammar_v2.md``."""
     supported_ratio: float | None = None
     contradiction_rate: float | None = None
     unverifiable_rate: float | None = None
@@ -795,6 +802,15 @@ class VerifiedIdentification(BaseModel):
         None,
         description="Aggregate claim-level metrics computed from the verifier output.",
     )
+    dropped_claims: list[DroppedClaim] = Field(
+        default_factory=list,
+        description=(
+            "Phase B1 D2: claims the grammar v2 extractor rejected. NOT "
+            "scored. Surfaced so feedback hints (D4) can quote them back "
+            "to the LLM and so the audit trail records what the LLM "
+            "actually emitted before grammar filtering."
+        ),
+    )
     overall_verdict: Literal[
         "verified",
         "partially_verified",
@@ -839,4 +855,51 @@ class VerifiedIdentification(BaseModel):
     generated_at: datetime = Field(
         ...,
         description="UTC timestamp at which ``verify()`` returned.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Phase B1 D2 — dropped-by-grammar bookkeeping
+# ---------------------------------------------------------------------------
+
+
+class DroppedClaim(BaseModel):
+    """A claim object that the grammar v2 extractor refused.
+
+    Dropped claims are NOT routed to a verifier layer; they are bucketed
+    under ``dropped_by_grammar`` in the verdict metric and excluded from
+    the supported / unsupported / contradicted / unverifiable_v0
+    denominator. The point of keeping them around (rather than
+    silently discarding) is so feedback hints (D4) can quote the
+    rejected text back to the LLM.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    claim_text: str = Field(
+        ...,
+        description="Verbatim ``claim_text`` from the LLM JSON output.",
+    )
+    grammar_attempt: str | None = Field(
+        None,
+        description=(
+            "The ``grammar`` value the LLM declared, if any. None when the "
+            "field was missing entirely or was non-string."
+        ),
+    )
+    drop_reason: str = Field(
+        ...,
+        description=(
+            "Human-readable explanation from "
+            "``verifier.grammar.validate``. Used as the basis for the "
+            "feedback-hint sent back to the LLM in the next iteration."
+        ),
+    )
+    raw_object: dict | None = Field(
+        None,
+        description=(
+            "Original LLM-emitted dict for the dropped claim, kept so a "
+            "future audit can replay the validation pass without re-"
+            "running the LLM."
+        ),
     )
