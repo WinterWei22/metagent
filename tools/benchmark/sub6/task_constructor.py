@@ -41,6 +41,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Literal
 
+from scipy.stats import hypergeom
+
 from schemas.common import ToolError
 
 from .compound_curator import CuratedCompound, _classify_pathway_bucket
@@ -90,7 +92,7 @@ _DISEASE_KEYWORDS: tuple[str, ...] = (
 )
 
 _ACCEPTABLE_MAM_SOURCES: frozenset[str] = frozenset({
-    "kegg", "reactome", "smpdb", "wikipathways",
+    "kegg", "reactome", "smpdb", "wikipathways", "lipidmaps",
 })
 
 _DEFAULT_MAX_PATHWAY_K: int = 500
@@ -223,6 +225,7 @@ def _pathway_short(pathway_id: str) -> str:
 
 
 _SOURCE_RANK: dict[str, int] = {
+    "lipidmaps": -1,  # lipid-domain curated fallback for sparse RaMP lipid coverage
     "kegg": 0,    # canonical KEGG pathways — most defensible benchmark targets
     "hmdb": 1,    # SMPDB (RaMP stores SMPDB under type='hmdb')
     "wiki": 2,    # WikiPathways
@@ -274,8 +277,95 @@ def _pick_primary_pathway(
     ptype = (compound.ramp_pathway_sources[idx]
              if idx < len(compound.ramp_pathway_sources) else "")
     source_label = {"kegg": "kegg", "reactome": "reactome", "wiki": "wikipathways",
-                    "hmdb": "smpdb", "pfocr": "pfocr"}.get(ptype, ptype or "unknown")
-    return pid, name, source_label, None
+                    "hmdb": "smpdb", "pfocr": "pfocr",
+                    "lipidmaps": "lipidmaps"}.get(ptype, ptype or "unknown")
+    external_id = pid.removeprefix("lm_pathway:") if source_label == "lipidmaps" else None
+    return pid, name, source_label, external_id
+
+
+def _bh_fdr_local(p_values: list[float]) -> list[float]:
+    n = len(p_values)
+    if n == 0:
+        return []
+    order = sorted(range(n), key=lambda i: p_values[i])
+    sorted_p = [p_values[i] for i in order]
+    q_sorted = [0.0] * n
+    running_min = 1.0
+    for k in range(n - 1, -1, -1):
+        rank = k + 1
+        running_min = min(running_min, sorted_p[k] * n / rank)
+        q_sorted[k] = min(running_min, 1.0)
+    out = [0.0] * n
+    for sorted_idx, orig_idx in enumerate(order):
+        out[orig_idx] = q_sorted[sorted_idx]
+    return out
+
+
+def _compute_lipidmaps_enrichment(
+    input_ids: list[str],
+    curated_compounds: list[CuratedCompound],
+    *,
+    id_type: str,
+    top_n: int = 10,
+) -> list[EnrichmentResult]:
+    """Local hypergeometric enrichment over LIPID MAPS pathway memberships.
+
+    This is intentionally separate from RaMP enrichment. It only considers
+    ``CuratedCompound`` pathway entries whose source is ``lipidmaps``.
+    """
+    pathway_members: dict[str, set[str]] = defaultdict(set)
+    pathway_meta: dict[str, tuple[str, str | None]] = {}
+    background_ids: set[str] = set()
+    for c in curated_compounds:
+        cid = (c.kegg_id or c.inchikey) if id_type == "kegg" else c.inchikey
+        if not cid:
+            continue
+        background_ids.add(cid)
+        for i, pid in enumerate(c.ramp_pathway_ids):
+            src = c.ramp_pathway_sources[i] if i < len(c.ramp_pathway_sources) else ""
+            if src != "lipidmaps":
+                continue
+            pathway_members[pid].add(cid)
+            if pid not in pathway_meta:
+                name = c.ramp_pathway_names[i] if i < len(c.ramp_pathway_names) else pid
+                pathway_meta[pid] = (name, pid.removeprefix("lm_pathway:"))
+    inputs = []
+    seen_inputs: set[str] = set()
+    for cid in input_ids:
+        if cid and cid not in seen_inputs:
+            seen_inputs.add(cid)
+            inputs.append(cid)
+    resolved = set(inputs) & background_ids
+    n = len(resolved)
+    N = len(background_ids)
+    if not n or not N:
+        return []
+    rows: list[tuple[str, list[str], int, float]] = []
+    for pid, members in pathway_members.items():
+        matched = sorted(resolved & members)
+        if not matched:
+            continue
+        K = len(members)
+        p = float(hypergeom.sf(len(matched) - 1, N, K, n))
+        rows.append((pid, matched, K, p))
+    fdrs = _bh_fdr_local([r[3] for r in rows])
+    out: list[EnrichmentResult] = []
+    for (pid, matched, k_total, p), fdr in zip(rows, fdrs, strict=True):
+        name, external_id = pathway_meta.get(pid, (pid, pid.removeprefix("lm_pathway:")))
+        fold = (len(matched) / n) / (k_total / N) if k_total and N else 0.0
+        out.append(EnrichmentResult(
+            pathway_id=pid,
+            pathway_name=name,
+            pathway_source="lipidmaps",
+            pathway_external_id=external_id,
+            total_pathway_compounds=k_total,
+            matched_compounds=matched,
+            p_value=p,
+            fdr=fdr,
+            fold_enrichment=fold,
+        ))
+    out.sort(key=lambda r: (r.fdr, r.p_value, r.pathway_id))
+    return out[:top_n]
 
 
 def _build_input_ids(
@@ -419,7 +509,7 @@ def construct_compound_only_tasks(
                            if i < len(c.ramp_pathway_sources) else "")
                 src_norm = {"kegg": "kegg", "reactome": "reactome",
                              "hmdb": "smpdb", "wiki": "wikipathways",
-                             "pfocr": "pfocr"}.get(src_raw, src_raw)
+                             "pfocr": "pfocr", "lipidmaps": "lipidmaps"}.get(src_raw, src_raw)
                 pathway_meta_lookup[pid] = (name, src_norm)
         acceptable_pathway_ids = set()
         for pid, (name, src_norm) in pathway_meta_lookup.items():
@@ -572,7 +662,14 @@ def construct_compound_only_tasks(
                     stats.drop_reasons.get("enrichment_failed", 0) + 1)
                 continue
 
-            ok, matched_top = _ground_truth_in_top3(pid, signal_ids, rep.top_pathways)
+            lipidmaps_top: list[EnrichmentResult] = []
+            if psource == "lipidmaps":
+                lipidmaps_top = _compute_lipidmaps_enrichment(
+                    input_ids, curated_compounds, id_type=id_type, top_n=10,
+                )
+                ok, matched_top = _ground_truth_in_top3(pid, signal_ids, lipidmaps_top)
+            else:
+                ok, matched_top = _ground_truth_in_top3(pid, signal_ids, rep.top_pathways)
             if not ok:
                 stats.n_dropped_ground_truth_not_in_top3 += 1
                 logger.debug(
@@ -611,6 +708,16 @@ def construct_compound_only_tasks(
             )
             task_id = _make_unique_task_id(task_id, seen_task_ids)
 
+            enrichment_payload = rep.to_json()
+            if lipidmaps_top:
+                enrichment_payload["lipidmaps_top_pathways"] = [
+                    r.to_json() for r in lipidmaps_top
+                ]
+                enrichment_payload["top_pathways"] = (
+                    [r.to_json() for r in lipidmaps_top[:3]]
+                    + enrichment_payload.get("top_pathways", [])
+                )[:10]
+
             task = EnrichmentTask(
                 task_id=task_id,
                 task_type="compound_only_enrichment",
@@ -626,7 +733,7 @@ def construct_compound_only_tasks(
                 },
                 ground_truth_signal_compounds=signal_ids,
                 ground_truth_noise_compounds=noise_ids,
-                ramp_enrichment_result=rep.to_json(),
+                ramp_enrichment_result=enrichment_payload,
                 seed=seed,
                 cli_seed=cli_seed,
                 signal_count=n_signal,

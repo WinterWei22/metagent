@@ -67,6 +67,8 @@ DEFAULT_MASSBANK_ROOT = "/data/weiwentao/llm_agent_metabolomics/massbank/raw/Mas
 DEFAULT_CLASSYFIRE = "data/classyfire_cache.sqlite"
 DEFAULT_OUTPUT = "data/benchmark/sub6/"
 DEFAULT_REPORT = "reports/benchmark/sub6_construction_report.md"
+DEFAULT_LIPIDMAPS_LMSD = "data/lipidmaps/lmsd_2026-05-08.tsv"
+DEFAULT_LIPIDMAPS_PATHWAYS = "data/lipidmaps/lipid_pathways_2026-05-08.json"
 
 # Files we delete on successful run to avoid stale Plant artefacts shipping
 # alongside the new mammalian-only build.
@@ -88,6 +90,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Comma-separated list of MassBank contributors to scan.",
     )
     p.add_argument("--classyfire-cache", default=DEFAULT_CLASSYFIRE)
+    p.add_argument("--enable-lipidmaps", action="store_true",
+                   help="Enable LIPID MAPS / WikiPathways Lipids Portal fallback "
+                        "for lipid_metabolism HMDB candidates.")
+    p.add_argument("--lipidmaps-lmsd-path", default=DEFAULT_LIPIDMAPS_LMSD)
+    p.add_argument("--lipidmaps-pathway-path", default=DEFAULT_LIPIDMAPS_PATHWAYS)
     p.add_argument("--output-dir", default=DEFAULT_OUTPUT)
     p.add_argument("--report-path", default=DEFAULT_REPORT)
     p.add_argument("--target-6b-mammalian", type=int, default=20)
@@ -153,6 +160,9 @@ def main(argv: list[str] | None = None) -> int:
         excluded_pathway_types=("pfocr",),
         target_size=args.target_curated_hmdb,
         pathway_min_compounds=args.pathway_min_compounds,
+        enable_lipidmaps=args.enable_lipidmaps,
+        lipidmaps_lmsd_path=args.lipidmaps_lmsd_path,
+        lipidmaps_pathway_path=args.lipidmaps_pathway_path,
     )
     log.info("  → %d HMDB-Mammalian compounds", len(hmdb_curated))
 
