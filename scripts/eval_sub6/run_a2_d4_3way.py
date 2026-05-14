@@ -168,6 +168,8 @@ def _process_one_task(
     max_react_turns: int,
     max_feedback_iters: int,
     total_timeout: float,
+    model: str = "MiniMax-M2.7",
+    provider: str = "minimax",
 ) -> dict:
     """Run all three variants for one task. Resume-aware: existing
     narrative.json / result.json files on disk are reused so a re-run
@@ -190,7 +192,7 @@ def _process_one_task(
         t0 = time.perf_counter()
         single_result = run_sub6b(
             task,
-            model="MiniMax-M2.7", provider="minimax",
+            model=model, provider=provider,
             caller="a2_d4_single", llm_retries=1,
         )
         single_elapsed = time.perf_counter() - t0
@@ -229,7 +231,7 @@ def _process_one_task(
         t0 = time.perf_counter()
         react_result = run_sub6b_react(
             task,
-            model="MiniMax-M2.7", provider="minimax",
+            model=model, provider=provider,
             max_turns=max_react_turns, total_timeout=total_timeout,
             caller="a2_d4_react",
         )
@@ -283,7 +285,7 @@ def _process_one_task(
             iter0_n_turns=react_n_turns,
             iter0_force_finalised=react_force_fin,
             verifier_fn=verifier_fn,
-            model="MiniMax-M2.7", provider="minimax",
+            model=model, provider=provider,
             max_react_turns=max_react_turns,
             max_feedback_iterations=max_feedback_iters,
             total_timeout=total_timeout,
@@ -394,6 +396,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Parallel task pool size (D0a). 1 = sequential (legacy); "
              "5 = recommended for MiniMax pilots; >10 risks rate-limit.",
     )
+    parser.add_argument(
+        "--model", default="MiniMax-M2.7",
+        help="Narrative LLM model id. Defaults to MiniMax-M2.7. "
+             "Use 'gpt-5.5' or 'claude-opus-4-7' for cross-LLM smoke "
+             "(set --provider openai for both).",
+    )
+    parser.add_argument(
+        "--provider", default="minimax", choices=("minimax", "openai"),
+        help="Provider routing. minimax = api.minimaxi.com; "
+             "openai = viviai relay (handles gpt-5.5 + claude-opus-4-7).",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -427,6 +440,8 @@ def main(argv: list[str] | None = None) -> int:
             max_react_turns=args.max_react_turns,
             max_feedback_iters=args.max_feedback_iters,
             total_timeout=args.total_timeout,
+            model=args.model,
+            provider=args.provider,
         )
 
     task_records = [tasks_by_id[tid] for tid in task_ids]
