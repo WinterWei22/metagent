@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
+  <defs>
+    <style>
+      .bg { fill: #fbfbf8; }
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .sub { font: 400 16px Arial, sans-serif; fill: #6b7280; }
+      .box { rx: 18; ry: 18; stroke-width: 2; }
+      .lane { rx: 24; ry: 24; fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; }
+      .h { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .t { font: 400 14px Arial, sans-serif; fill: #374151; }
+      .s { font: 400 12px Arial, sans-serif; fill: #6b7280; }
+      .arrow { stroke: #334155; stroke-width: 3.5; fill: none; marker-end: url(#arrow); }
+      .arrow2 { stroke: #7c3aed; stroke-width: 3.5; fill: none; marker-end: url(#arrowPurple); }
+      .card { rx: 20; ry: 20; fill: #ffffff; stroke: #d1d5db; stroke-width: 2; }
+      .metric { font: 700 28px Arial, sans-serif; fill: #111827; }
+      .metric2 { font: 700 22px Arial, sans-serif; fill: #111827; }
+      .legend { font: 400 13px Arial, sans-serif; fill: #374151; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="980"/>
+  <text class="title" x="70" y="66">Stage2 Benchmark Construction</text>
+  <text class="sub" x="70" y="94">Final data snapshot used for Sub-6 writing</text>
+
+  <!-- flow lane -->
+  <rect class="lane" x="60" y="125" width="1480" height="180"/>
+  <text class="h" x="88" y="160">Construction flow</text>
+
+  <rect class="box" x="85" y="190" width="220" height="74" fill="#dbeafe" stroke="#2563eb"/>
+  <text class="h" x="108" y="218">HMDB + RaMP</text>
+  <text class="s" x="108" y="243">upstream join</text>
+
+  <rect class="box" x="355" y="190" width="220" height="74" fill="#dcfce7" stroke="#16a34a"/>
+  <text class="h" x="378" y="218">600 candidates</text>
+  <text class="s" x="378" y="243">5 balanced domains</text>
+
+  <rect class="box" x="625" y="190" width="220" height="74" fill="#fef3c7" stroke="#d97706"/>
+  <text class="h" x="648" y="218">250 curated</text>
+  <text class="s" x="648" y="243">50 per bucket</text>
+
+  <rect class="box" x="895" y="190" width="240" height="74" fill="#ede9fe" stroke="#7c3aed"/>
+  <text class="h" x="918" y="218">63 Sub-6B tasks</text>
+  <text class="s" x="918" y="243">13 pathways</text>
+
+  <rect class="box" x="1185" y="190" width="240" height="74" fill="#ffe4e6" stroke="#e11d48"/>
+  <text class="h" x="1208" y="218">38 Sub-6A tasks</text>
+  <text class="s" x="1208" y="243">459 spectra</text>
+
+  <path class="arrow" d="M305,227 L352,227"/>
+  <path class="arrow" d="M575,227 L622,227"/>
+  <path class="arrow" d="M845,227 L892,227"/>
+  <path class="arrow" d="M1135,227 L1182,227"/>
+
+  <!-- note under flow -->
+  <rect class="box" x="1060" y="128" width="360" height="30" rx="999" ry="999" fill="#f5f3ff" stroke="#c4b5fd"/>
+  <text class="s" x="1080" y="148">LIPID MAPS fallback only affects lipid bucket</text>
+
+  <!-- lower cards -->
+  <rect class="lane" x="60" y="330" width="1480" height="590"/>
+  <text class="h" x="88" y="366">Final composition</text>
+
+  <!-- Donut 1: curated buckets -->
+  <rect class="card" x="90" y="405" width="450" height="450"/>
+  <text class="h" x="120" y="445">Curated pool</text>
+  <text class="sub" x="120" y="470">250 compounds, perfectly balanced</text>
+
+  <g transform="translate(315 620)">
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#e5e7eb" stroke-width="34"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#22c55e" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="0" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#3b82f6" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="-115.2" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#f59e0b" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="-230.4" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#a855f7" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="-345.6" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#ec4899" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="-460.8" transform="rotate(-90)"/>
+    <circle r="58" cx="0" cy="0" fill="#ffffff"/>
+    <text class="metric" x="-24" y="8">50</text>
+  </g>
+
+  <g>
+    <rect x="118" y="700" width="14" height="14" fill="#22c55e"/><text class="legend" x="140" y="712">amino acid</text>
+    <rect x="240" y="700" width="14" height="14" fill="#3b82f6"/><text class="legend" x="262" y="712">central</text>
+    <rect x="340" y="700" width="14" height="14" fill="#f59e0b"/><text class="legend" x="362" y="712">lipid</text>
+    <rect x="118" y="728" width="14" height="14" fill="#a855f7"/><text class="legend" x="140" y="740">nucleotide</text>
+    <rect x="240" y="728" width="14" height="14" fill="#ec4899"/><text class="legend" x="262" y="740">other</text>
+    <text class="metric2" x="118" y="790">50 / bucket</text>
+    <text class="s" x="118" y="818">Five equal buckets.</text>
+  </g>
+
+  <!-- Donut 2: sub6b buckets -->
+  <rect class="card" x="575" y="405" width="450" height="450"/>
+  <text class="h" x="605" y="445">Sub-6B tasks</text>
+  <text class="sub" x="605" y="470">63 tasks, 5 buckets, lipid rescued by v3</text>
+
+  <g transform="translate(800 620)">
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#e5e7eb" stroke-width="34"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#22c55e" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="0" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#3b82f6" stroke-width="34" stroke-dasharray="57.6 576" stroke-dashoffset="-115.2" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#f59e0b" stroke-width="34" stroke-dasharray="63.36 576" stroke-dashoffset="-172.8" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#a855f7" stroke-width="34" stroke-dasharray="230.4 576" stroke-dashoffset="-236.16" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#ec4899" stroke-width="34" stroke-dasharray="115.2 576" stroke-dashoffset="-466.56" transform="rotate(-90)"/>
+    <circle r="58" cx="0" cy="0" fill="#ffffff"/>
+    <text class="metric" x="-24" y="8">63</text>
+  </g>
+
+  <g>
+    <rect x="605" y="700" width="14" height="14" fill="#22c55e"/><text class="legend" x="627" y="712">amino acid 20</text>
+    <rect x="735" y="700" width="14" height="14" fill="#3b82f6"/><text class="legend" x="757" y="712">central 10</text>
+    <rect x="845" y="700" width="14" height="14" fill="#f59e0b"/><text class="legend" x="867" y="712">lipid 11</text>
+    <rect x="605" y="728" width="14" height="14" fill="#a855f7"/><text class="legend" x="627" y="740">nucleotide 2</text>
+    <rect x="735" y="728" width="14" height="14" fill="#ec4899"/><text class="legend" x="757" y="740">other 20</text>
+    <text class="metric2" x="605" y="790">13 pathways</text>
+    <text class="s" x="605" y="818">10/11 lipid tasks are WP167 variants.</text>
+  </g>
+
+  <!-- Sub-6A card -->
+  <rect class="card" x="1060" y="405" width="450" height="450"/>
+  <text class="h" x="1090" y="445">Sub-6A spectra</text>
+  <text class="sub" x="1090" y="470">38 tasks, 459 spectra, mostly GNPS</text>
+
+  <g transform="translate(1285 620)">
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#e5e7eb" stroke-width="34"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#14b8a6" stroke-width="34" stroke-dasharray="202.8 576" stroke-dashoffset="0" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#8b5cf6" stroke-width="34" stroke-dasharray="31.0 576" stroke-dashoffset="-202.8" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#fb7185" stroke-width="34" stroke-dasharray="36.4 576" stroke-dashoffset="-233.8" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#f59e0b" stroke-width="34" stroke-dasharray="6.3 576" stroke-dashoffset="-270.2" transform="rotate(-90)"/>
+    <circle r="92" cx="0" cy="0" fill="none" stroke="#3b82f6" stroke-width="34" stroke-dasharray="20 576" stroke-dashoffset="-276.5" transform="rotate(-90)"/>
+    <circle r="58" cx="0" cy="0" fill="#ffffff"/>
+    <text class="metric" x="-34" y="8">459</text>
+  </g>
+
+  <g>
+    <rect x="1090" y="700" width="14" height="14" fill="#14b8a6"/><text class="legend" x="1112" y="712">GNPS 323</text>
+    <rect x="1190" y="700" width="14" height="14" fill="#8b5cf6"/><text class="legend" x="1212" y="712">MassBank 69</text>
+    <rect x="1310" y="700" width="14" height="14" fill="#fb7185"/><text class="legend" x="1332" y="712">MoNA 58</text>
+    <rect x="1090" y="728" width="14" height="14" fill="#f59e0b"/><text class="legend" x="1112" y="740">other 9</text>
+    <rect x="1190" y="728" width="14" height="14" fill="#3b82f6"/><text class="legend" x="1212" y="740">38 tasks</text>
+    <text class="metric2" x="1090" y="790">3+ compounds/task</text>
+    <text class="s" x="1090" y="818">Runtime exclusions are preserved.</text>
+  </g>
+
+  <!-- Bottom ribbon -->
+  <rect class="box" x="90" y="880" width="1420" height="54" rx="999" ry="999" fill="#111827" stroke="#111827"/>
+  <text class="t" x="118" y="913" fill="#ffffff">Final dataset: 600 upstream candidates → 250 curated compounds → 63 Sub-6B tasks → 38 Sub-6A tasks</text>
+  <text class="s" x="1045" y="913" fill="#ffffff">LIPID MAPS raises lipid coverage to 11 tasks</text>
+</svg>
