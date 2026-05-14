@@ -70,8 +70,8 @@ def _effective_ranking(rec: dict) -> list[str]:
 
 def _mrr_from_ranked_candidates(
     records: list[dict],
-) -> tuple[float, float, float, int]:
-    """Compute Top-1 acc, Top-5 acc, MRR from per-spec JSONL records.
+) -> tuple[float, float, float, float, int]:
+    """Compute Top-1, Top-3, Top-5 acc, MRR from per-spec JSONL records.
 
     For ``none``/``conditional`` configs uses ``ranked_candidates`` directly
     (MS-CLIP order). For the ``llm`` config, reconstructs the LLM-preferred
@@ -79,9 +79,10 @@ def _mrr_from_ranked_candidates(
 
     Falls back to ``correct_top1`` when no ranked list is present.
 
-    Returns (top1_acc, top5_acc, mrr, n_with_rank).
+    Returns (top1_acc, top3_acc, top5_acc, mrr, n_with_rank).
     """
-    top1_hits = top5_hits = mrr_sum = 0
+    top1_hits = top3_hits = top5_hits = 0
+    mrr_sum = 0.0
     n_ranked = n_total = 0
 
     for rec in records:
@@ -101,19 +102,22 @@ def _mrr_from_ranked_candidates(
             if rank is not None:
                 if rank == 1:
                     top1_hits += 1
+                if rank <= 3:
+                    top3_hits += 1
                 if rank <= 5:
                     top5_hits += 1
                 mrr_sum += 1.0 / rank
         else:
-            # Fallback: correct_top1 only (no ranked list available).
             if rec.get("correct_top1") is True:
                 top1_hits += 1
+                top3_hits += 1
                 top5_hits += 1
                 mrr_sum += 1.0
 
     n = n_total
     return (
         top1_hits / n if n else 0.0,
+        top3_hits / n if n else 0.0,
         top5_hits / n if n else 0.0,
         mrr_sum / n if n else 0.0,
         n_ranked,
@@ -159,13 +163,14 @@ def main(argv=None) -> int:
             rows.append({
                 "pool": pool, "reranker": label,
                 "n": "", "n_correct": "", "top1_acc": "MISSING",
-                "top5_acc": "", "mrr": "", "mrr_delta_vs_msclip_only": "",
-                "elapsed_s": "",
+                "top3_acc": "", "top5_acc": "", "mrr": "",
+                "top1_delta": "", "top3_delta": "", "top5_delta": "",
+                "mrr_delta_vs_msclip_only": "", "elapsed_s": "",
             })
             continue
 
         records = _load_jsonl(jsonl_path)
-        top1, top5, mrr, n_ranked = _mrr_from_ranked_candidates(records)
+        top1, top3, top5, mrr, n_ranked = _mrr_from_ranked_candidates(records)
         n = len(records)
         n_correct = sum(1 for r in records if r.get("correct_top1") is True)
 
@@ -183,27 +188,40 @@ def main(argv=None) -> int:
             "n": n,
             "n_correct": n_correct,
             "top1_acc": f"{top1:.4f}",
+            "top3_acc": f"{top3:.4f}",
             "top5_acc": f"{top5:.4f}",
             "mrr": f"{mrr:.4f}",
-            "mrr_delta_vs_msclip_only": "",  # filled below
+            "top1_delta": "",   # filled below
+            "top3_delta": "",
+            "top5_delta": "",
+            "mrr_delta_vs_msclip_only": "",
             "elapsed_s": elapsed,
         })
         print(f"{pool:8s} {label:16s}  n={n}  top1={top1*100:.2f}%  "
-              f"top5={top5*100:.2f}%  mrr={mrr:.4f}  ranked={n_ranked}")
+              f"top3={top3*100:.2f}%  top5={top5*100:.2f}%  mrr={mrr:.4f}  ranked={n_ranked}")
 
-    # Fill in MRR delta vs msclip_only baseline for each pool
-    baseline: dict[str, float] = {}
+    # Fill in delta columns vs msclip_only baseline for each pool
+    baseline: dict[str, dict] = {}
     for r in rows:
         if r["reranker"] == "msclip_only" and r["mrr"] not in ("MISSING", ""):
-            baseline[r["pool"]] = float(r["mrr"])
+            baseline[r["pool"]] = {
+                "top1": float(r["top1_acc"]),
+                "top3": float(r["top3_acc"]),
+                "top5": float(r["top5_acc"]),
+                "mrr": float(r["mrr"]),
+            }
     for r in rows:
         if r["mrr"] not in ("MISSING", "") and r["pool"] in baseline:
-            delta = float(r["mrr"]) - baseline[r["pool"]]
-            r["mrr_delta_vs_msclip_only"] = f"{delta:+.4f}"
+            b = baseline[r["pool"]]
+            r["top1_delta"] = f"{float(r['top1_acc']) - b['top1']:+.4f}"
+            r["top3_delta"] = f"{float(r['top3_acc']) - b['top3']:+.4f}"
+            r["top5_delta"] = f"{float(r['top5_acc']) - b['top5']:+.4f}"
+            r["mrr_delta_vs_msclip_only"] = f"{float(r['mrr']) - b['mrr']:+.4f}"
 
     args.out_csv.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = ["pool", "reranker", "n", "n_correct",
-                  "top1_acc", "top5_acc", "mrr",
+                  "top1_acc", "top3_acc", "top5_acc", "mrr",
+                  "top1_delta", "top3_delta", "top5_delta",
                   "mrr_delta_vs_msclip_only", "elapsed_s"]
     with args.out_csv.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)

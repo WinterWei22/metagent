@@ -172,6 +172,58 @@ def main(argv: list[str] | None = None) -> int:
             "burn LLM API budget."
         ),
     )
+    p.add_argument(
+        "--rerank-with",
+        default="",
+        help=(
+            "Phase 6.2: comma-separated list of rerank signals to apply to the "
+            "library_search top-K candidates. Allowed values: 'sirius', 'cfmid'. "
+            "Empty (default) preserves the v2 baseline / Phase 6.1 behaviour. "
+            "Combine like 'sirius,cfmid' for the full evidence_score formula."
+        ),
+    )
+    p.add_argument(
+        "--rerank-top-k",
+        type=int,
+        default=5,
+        help="Phase 6.2: number of head candidates to rerank (tail preserved). Default 5.",
+    )
+    p.add_argument(
+        "--cfmid-cache-dir",
+        default="data/cache/cfmid",
+        help="Phase 6.2: disk cache directory for CFM-ID predicted spectra.",
+    )
+    p.add_argument(
+        "--peak-evidence-dir",
+        default=None,
+        help=(
+            "Phase 6.2: when set (e.g. data/eval/sub6/v2_phase6_2/full/peak_evidence), "
+            "write per-spectrum peak_evidence JSON files here. Only takes effect "
+            "when --rerank-with is non-empty."
+        ),
+    )
+    p.add_argument(
+        "--primary-retriever",
+        default="modcos",
+        choices=("modcos", "msclip"),
+        help=(
+            "Phase 6.3: which library_search score is the primary ranker. "
+            "'modcos' (default) preserves Phase 6.1/6.2 baseline; 'msclip' "
+            "post-sorts surviving candidates by ms-clip rescaled score."
+        ),
+    )
+    p.add_argument(
+        "--reranker",
+        default="weighted",
+        choices=("weighted", "llm", "none", "conditional"),
+        help=(
+            "Phase 6.3-6.5: top-1 selection. 'weighted' = Phase 6.2 "
+            "evidence_score; 'llm' = single LLM call/spec that picks top-1 + "
+            "emits peak_claims; 'none' = keep primary order; 'conditional' "
+            "(Phase 6.5) = msclip-confidence-gated rerank (skip rerank when "
+            "msclip top1≥0.85 AND top1-top2 gap≥0.15)."
+        ),
+    )
     args = p.parse_args(argv)
 
     if not (args.sub6a or args.sub6b or args.both):
@@ -189,6 +241,16 @@ def main(argv: list[str] | None = None) -> int:
                 p.error(f"--libraries: unknown library {lib!r}; allowed: gnps, inhouse")
     else:
         libraries_tuple = ("gnps",)
+
+    # Phase 6.2: parse + validate --rerank-with.
+    rerank_tuple: tuple[str, ...] = ()
+    if args.rerank_with:
+        rerank_tuple = tuple(
+            tok.strip().lower() for tok in args.rerank_with.split(",") if tok.strip()
+        )
+        for tok in rerank_tuple:
+            if tok not in ("sirius", "cfmid"):
+                p.error(f"--rerank-with: unknown signal {tok!r}; allowed: sirius, cfmid")
 
     provider, model = _resolve_narrative_llm(args.narrative_llm)
     if args.llm_model:
@@ -272,6 +334,15 @@ def main(argv: list[str] | None = None) -> int:
             lookup = CompoundLookup.from_curated(Path(args.curated))
             print(f"  loaded curated pool: {len(lookup)} entries")
 
+        peak_evidence_dir = (
+            Path(args.peak_evidence_dir) if args.peak_evidence_dir else None
+        )
+        cfmid_cache_dir = Path(args.cfmid_cache_dir)
+        if rerank_tuple:
+            print(
+                f"  rerank: {','.join(rerank_tuple)} (top_k={args.rerank_top_k}, "
+                f"cfmid_cache={cfmid_cache_dir}, peak_evidence={peak_evidence_dir})"
+            )
         results = run_sub6a_batch(
             sub6a_in,
             sub6a_out,
@@ -286,6 +357,12 @@ def main(argv: list[str] | None = None) -> int:
             mass_tolerance_ppm=args.mass_tolerance_ppm,
             libraries=libraries_tuple,
             skip_narrative=args.skip_narrative,
+            rerank_with=rerank_tuple,
+            rerank_top_k=args.rerank_top_k,
+            cfmid_cache_dir=cfmid_cache_dir,
+            peak_evidence_dir=peak_evidence_dir,
+            primary_retriever=args.primary_retriever,
+            reranker_mode=args.reranker,
         )
         ok = sum(1 for r in results if r.error is None)
         print(f"Sub-6A: processed {len(results)} tasks, ok={ok}, fail={len(results)-ok}")

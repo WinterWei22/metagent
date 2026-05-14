@@ -122,6 +122,11 @@ def run_sub6a(
     mass_tolerance_ppm: float | None = None,
     libraries: tuple[str, ...] = ("gnps",),
     skip_narrative: bool = False,
+    rerank_with: tuple[str, ...] = (),
+    rerank_top_k: int = 5,
+    cfmid_cache_dir: Path | None = None,
+    primary_retriever: str = "modcos",
+    reranker_mode: str = "weighted",
 ) -> Sub6AResult:
     """Process one Sub-6A task end-to-end.
 
@@ -146,6 +151,22 @@ def run_sub6a(
     # 1. Per-spectrum identification.
     t_id = time.perf_counter()
     ident_list: list[SpectrumIdentification] = []
+    # When reranker_mode=="llm" the LLM is invoked per-spectrum during
+    # identify_spectrum (single-call-per-spectrum design — narrative is the
+    # by-product of reranking). The chat function and kwargs come from the
+    # task-level chat_fn/model/provider so we keep one LLM client config.
+    if reranker_mode == "llm":
+        chat = chat_fn or llm_client.chat
+        llm_chat_kwargs = {
+            "temperature": temperature,
+            "model": model,
+            "trace_id": task["task_id"],
+            "caller": caller + ":llm_rerank",
+            **_chat_kwargs(provider),
+        }
+    else:
+        chat = None
+        llm_chat_kwargs = None
     for sp in spectra:
         ident = identify_spectrum(
             sp,
@@ -156,6 +177,13 @@ def run_sub6a(
             strategy=strategy,
             lookup=lookup,
             mass_tolerance_ppm=mass_tolerance_ppm,
+            rerank_with=tuple(rerank_with),
+            rerank_top_k=rerank_top_k,
+            cfmid_cache_dir=cfmid_cache_dir,
+            primary_retriever=primary_retriever,
+            reranker_mode=reranker_mode,
+            llm_chat_fn=chat if reranker_mode == "llm" else None,
+            llm_chat_kwargs=llm_chat_kwargs,
         )
         ident_list.append(ident)
     elapsed_id = time.perf_counter() - t_id
@@ -174,7 +202,20 @@ def run_sub6a(
     err: str | None = None
     narrative = ""
     llm_calls = 0
-    if skip_narrative:
+    if reranker_mode == "llm":
+        # Phase 6.3 path — narrative is concatenated per-spectrum LLM rerank
+        # output. The LLM was already called once per spectrum inside
+        # identify_spectrum; this block stitches those outputs into the
+        # task-level narrative for the verifier extractor to consume.
+        chunks: list[str] = []
+        for ident in ident_list:
+            if ident.llm_rerank_narrative:
+                chunks.append(ident.llm_rerank_narrative)
+                llm_calls += 1
+        narrative = "\n\n---\n\n".join(chunks)
+        if not narrative:
+            err = "llm_rerank produced no narratives"
+    elif skip_narrative:
         # Phase 6.1 ablation path — identification only, no LLM call.
         err = "skip_narrative=True — narrative omitted"
     elif metabolites:
@@ -240,6 +281,12 @@ def run_sub6a_batch(
     mass_tolerance_ppm: float | None = None,
     libraries: tuple[str, ...] = ("gnps",),
     skip_narrative: bool = False,
+    rerank_with: tuple[str, ...] = (),
+    rerank_top_k: int = 5,
+    cfmid_cache_dir: Path | None = None,
+    peak_evidence_dir: Path | None = None,
+    primary_retriever: str = "modcos",
+    reranker_mode: str = "weighted",
 ) -> list[Sub6AResult]:
     """Iterate ``tasks_path`` (JSONL), append ``Sub6AResult`` rows to
     ``output_path``, skipping already-completed task_ids.
@@ -277,7 +324,20 @@ def run_sub6a_batch(
                 mass_tolerance_ppm=mass_tolerance_ppm,
                 libraries=tuple(libraries),
                 skip_narrative=skip_narrative,
+                rerank_with=tuple(rerank_with),
+                rerank_top_k=rerank_top_k,
+                cfmid_cache_dir=cfmid_cache_dir,
+                primary_retriever=primary_retriever,
+                reranker_mode=reranker_mode,
             )
+            # Phase 6.2: dump peak_evidence per spectrum to disk if requested.
+            if peak_evidence_dir is not None and rerank_with:
+                peak_evidence_dir.mkdir(parents=True, exist_ok=True)
+                for ident in r.identifications:
+                    pe = ident.get("peak_evidence")
+                    if pe:
+                        sid = pe.get("spectrum_id") or ident.get("spectrum_id")
+                        (peak_evidence_dir / f"{sid}.json").write_text(json.dumps(pe, indent=2))
             append_jsonl(output_path, asdict(r))
             results.append(r)
             processed += 1
