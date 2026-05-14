@@ -1,19 +1,37 @@
 .env
 api_key.txt
 api_key_*.txt
-logs/*.jsonl
 __pycache__/
 *.pyc
 
-# Phase 6.x — operational/state directories that should never enter the repo
+# Operational/state directories
 .claude/
 .codex
 .codex/
 .vscode/
 .idea/
 
-# Phase 6.x — large derived data + on-disk caches
-data/cache/
-
-# Phase 6.x — runtime lockfiles
+# Lockfiles
 *.lock
+
+# Caches (regeneratable from upstream sources)
+data/cache/
+data/classyfire_cache.sqlite
+data/kegg/kgml/
+
+# Bulk downloaded reference data (re-download from source)
+data/lipidmaps/
+ref_paper/
+
+# Eval outputs (regeneratable from code + benchmark inputs; hundreds of MB)
+data/eval/sub6/v*/
+data/eval/sub6/sub6a_*.jsonl
+data/eval/sub6/sub6b_*.jsonl
+
+# Run logs and results
+logs/
+results/
+
+# NPC-classified derived pools (regeneratable; many MB each)
+data/processed/*_npc_classified*.jsonl
+data/processed/.npclassifier_*_checkpoint.json
