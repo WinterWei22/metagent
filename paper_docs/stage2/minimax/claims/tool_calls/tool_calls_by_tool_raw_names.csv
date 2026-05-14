@@ -1,0 +1,11 @@
+mode,raw_tool_name,n_calls
+Feedback revision,search_literature,75
+Feedback revision,query_pathway_membership,24
+Feedback revision,query_ramp_enrichment,6
+Feedback revision,query_kegg_path,5
+Feedback revision,lookup_compound_info,2
+MetAgent-ReAct,query_pathway_membership,201
+MetAgent-ReAct,query_kegg_path,139
+MetAgent-ReAct,query_ramp_enrichment,63
+MetAgent-ReAct,lookup_compound_info,3
+MetAgent-ReAct,query_ramp_en Enrichment,1

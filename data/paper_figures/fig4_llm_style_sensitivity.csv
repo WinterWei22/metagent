@@ -1,0 +1,4 @@
+track,n_tasks,llm,se_total,se_supported,se_unsupported,se_contradicted,se_unverifiable,se_supported_pct,se_unverifiable_pct
+v1_baseline_minimax,14,MiniMax-M2.7,28,3,1,9,15,10.71,53.57
+v1_opus_sanity,14,claude-opus-4-7,25,0,0,5,20,0.0,80.0
+v2_opus,38,claude-opus-4-7,114,1,2,9,102,0.88,89.47

@@ -1,0 +1,7 @@
+track,n_tasks,driver_contra_n,driver_contra_pct
+sub6b_v1_minimax,20,1,5.0
+sub6b_v2_opus,63,17,26.98
+sub6a_perfect_v1_minimax,14,3,21.43
+sub6a_perfect_v2_opus,38,14,36.84
+sub6a_real_v1_minimax,14,1,7.14
+sub6a_real_v2_opus,38,10,26.32

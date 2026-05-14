@@ -1,0 +1,4 @@
+config,gained,lost,same_correct,same_wrong,net_delta_spectra
+cfmid,16,25,242,86,-9
+full,16,20,247,86,-4
+sirius,6,10,257,96,-4

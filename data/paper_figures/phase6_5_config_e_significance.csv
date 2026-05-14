@@ -1,0 +1,4 @@
+comparison,n_paired,delta_spec,delta_pp,ci95_lo_pp,ci95_hi_pp,mcnemar_b,mcnemar_c,p_value
+Config_E vs msclip_only,448,38,8.48,4.24,12.72,66,28,0.0001
+Config_E vs phase63b (B),448,3,0.67,-0.09,1.43,3,0,0.25
+Config_E vs modcos_only,448,-8,-1.79,-5.23,1.66,27,35,0.3742

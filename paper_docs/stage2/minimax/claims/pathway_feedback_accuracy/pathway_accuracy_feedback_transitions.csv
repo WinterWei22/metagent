@@ -1,0 +1,316 @@
+task_id,metric,label,before_correct,after_correct,transition,ground_truth_pathway,before_predicted_top_pathway,after_predicted_top_pathway
+compound_only_enrich_mammalian_RAMP_P_000000016_seed1,strict_top1_hit,Strict GT top-1,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed2,strict_top1_hit,Strict GT top-1,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed4,strict_top1_hit,Strict GT top-1,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed6,strict_top1_hit,Strict GT top-1,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed7,strict_top1_hit,Strict GT top-1,False,True,corrected,"Glycine, serine and threonine metabolism",enriched pathway,"Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed9,strict_top1_hit,Strict GT top-1,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000106_seed0,strict_top1_hit,Strict GT top-1,False,True,corrected,Tyrosine metabolism,Top pathway,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed2,strict_top1_hit,Strict GT top-1,False,True,corrected,Tyrosine metabolism,Alkaptonuria,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed3,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tyrosine metabolism,Tyrosine metabolism,tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed8,strict_top1_hit,Strict GT top-1,True,False,lost,Tyrosine metabolism,Tyrosine metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed0,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed1,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed2,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed3,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed4,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed5,strict_top1_hit,Strict GT top-1,True,False,lost,Tryptophan metabolism,Tryptophan metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed6,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed7,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed8,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism pathway
+compound_only_enrich_mammalian_RAMP_P_000000398_seed0,strict_top1_hit,Strict GT top-1,True,False,lost,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed1,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Galactose Metabolism,galactose metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed2,strict_top1_hit,Strict GT top-1,False,True,corrected,Galactose Metabolism,Galactosemia,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed3,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Galactose Metabolism,Leloir pathway,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed4,strict_top1_hit,Strict GT top-1,True,False,lost,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed5,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed6,strict_top1_hit,Strict GT top-1,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed7,strict_top1_hit,Strict GT top-1,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed8,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Galactose Metabolism,Galactosemia,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed9,strict_top1_hit,Strict GT top-1,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000421_seed1,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed2,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed3,strict_top1_hit,Strict GT top-1,False,True,corrected,Androgen and Estrogen Metabolism,enriched pathway,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed4,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed5,strict_top1_hit,Strict GT top-1,True,False,lost,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,actual pathway
+compound_only_enrich_mammalian_RAMP_P_000000421_seed6,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed8,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000025682_seed2,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Celecoxib Action Pathway,Celecoxib Action Pathway,Celecoxib Action Pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed0,strict_top1_hit,Strict GT top-1,False,True,corrected,Biological oxidations,Xenobiotics,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed1,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Biological oxidations,Phase II - Conjugation of compounds,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed2,strict_top1_hit,Strict GT top-1,False,True,corrected,Biological oxidations,trans-sulfuration pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed3,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed4,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Biological oxidations,Phase II - Conjugation of compounds,The top pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed5,strict_top1_hit,Strict GT top-1,False,True,corrected,Biological oxidations,The top pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed6,strict_top1_hit,Strict GT top-1,True,False,lost,Biological oxidations,Biological oxidations,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed7,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed8,strict_top1_hit,Strict GT top-1,True,False,lost,Biological oxidations,Biological oxidations,Reactome pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed9,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Biological oxidations,oxidative metabolism,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050096_seed6,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Metabolism of amino acids and derivatives,acid catabolism,Alkaptonuria
+compound_only_enrich_mammalian_RAMP_P_000050099_seed6,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Pyrimidine catabolism,enriched pathway,thymine catabolism
+compound_only_enrich_mammalian_RAMP_P_000052855_seed0,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Sulfatase and aromatase pathway,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000053042_seed9,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Steroid biosynthesis,Androgen and Estrogen Metabolism,Androgen receptor network in prostate cancer
+compound_only_enrich_mammalian_RAMP_P_000053306_seed1,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Pyrimidine metabolism,Pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_RAMP_P_000053306_seed7,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Pyrimidine metabolism,pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_lm_pathway_WP167_seed0,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Eicosanoid synthesis,The top pathway,KEGG pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed1,strict_top1_hit,Strict GT top-1,False,True,corrected,Eicosanoid synthesis,top pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed2,strict_top1_hit,Strict GT top-1,False,True,corrected,Eicosanoid synthesis,that pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed3,strict_top1_hit,Strict GT top-1,True,False,lost,Eicosanoid synthesis,Eicosanoid synthesis,inflammatory signaling
+compound_only_enrich_mammalian_lm_pathway_WP167_seed4,strict_top1_hit,Strict GT top-1,False,True,corrected,Eicosanoid synthesis,significant pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed5,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed6,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed7,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Eicosanoid synthesis,enriched pathway,Rofecoxib Action Pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed8,strict_top1_hit,Strict GT top-1,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed9,strict_top1_hit,Strict GT top-1,False,False,kept_incorrect,Eicosanoid synthesis,Top pathway,SMP00075 pathway
+compound_only_enrich_mammalian_RAMP_P_000000016_seed1,strict_top3_hit,Strict top-3,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed4,strict_top3_hit,Strict top-3,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed7,strict_top3_hit,Strict top-3,False,True,corrected,"Glycine, serine and threonine metabolism",enriched pathway,"Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed9,strict_top3_hit,Strict top-3,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000106_seed0,strict_top3_hit,Strict top-3,False,True,corrected,Tyrosine metabolism,Top pathway,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,Tyrosine metabolism,Alkaptonuria,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed3,strict_top3_hit,Strict top-3,True,True,kept_correct,Tyrosine metabolism,Tyrosine metabolism,tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed8,strict_top3_hit,Strict top-3,True,False,lost,Tyrosine metabolism,Tyrosine metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed0,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed1,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed3,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed4,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed5,strict_top3_hit,Strict top-3,True,False,lost,Tryptophan metabolism,Tryptophan metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed7,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed8,strict_top3_hit,Strict top-3,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism pathway
+compound_only_enrich_mammalian_RAMP_P_000000398_seed0,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed1,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,galactose metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,Galactosemia,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed3,strict_top3_hit,Strict top-3,False,True,corrected,Galactose Metabolism,Leloir pathway,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed4,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed5,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed7,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed8,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,Galactosemia,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed9,strict_top3_hit,Strict top-3,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000421_seed1,strict_top3_hit,Strict top-3,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed3,strict_top3_hit,Strict top-3,False,True,corrected,Androgen and Estrogen Metabolism,enriched pathway,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed4,strict_top3_hit,Strict top-3,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed5,strict_top3_hit,Strict top-3,True,False,lost,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,actual pathway
+compound_only_enrich_mammalian_RAMP_P_000000421_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed8,strict_top3_hit,Strict top-3,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000025682_seed2,strict_top3_hit,Strict top-3,True,True,kept_correct,Celecoxib Action Pathway,Celecoxib Action Pathway,Celecoxib Action Pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed0,strict_top3_hit,Strict top-3,False,True,corrected,Biological oxidations,Xenobiotics,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed1,strict_top3_hit,Strict top-3,False,True,corrected,Biological oxidations,Phase II - Conjugation of compounds,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed2,strict_top3_hit,Strict top-3,False,True,corrected,Biological oxidations,trans-sulfuration pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed3,strict_top3_hit,Strict top-3,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed4,strict_top3_hit,Strict top-3,True,False,lost,Biological oxidations,Phase II - Conjugation of compounds,The top pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed5,strict_top3_hit,Strict top-3,False,True,corrected,Biological oxidations,The top pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,Biological oxidations,Biological oxidations,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed7,strict_top3_hit,Strict top-3,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed8,strict_top3_hit,Strict top-3,True,False,lost,Biological oxidations,Biological oxidations,Reactome pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed9,strict_top3_hit,Strict top-3,True,True,kept_correct,Biological oxidations,oxidative metabolism,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050096_seed6,strict_top3_hit,Strict top-3,False,True,corrected,Metabolism of amino acids and derivatives,acid catabolism,Alkaptonuria
+compound_only_enrich_mammalian_RAMP_P_000050099_seed6,strict_top3_hit,Strict top-3,False,False,kept_incorrect,Pyrimidine catabolism,enriched pathway,thymine catabolism
+compound_only_enrich_mammalian_RAMP_P_000052855_seed0,strict_top3_hit,Strict top-3,True,True,kept_correct,Sulfatase and aromatase pathway,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000053042_seed9,strict_top3_hit,Strict top-3,False,True,corrected,Steroid biosynthesis,Androgen and Estrogen Metabolism,Androgen receptor network in prostate cancer
+compound_only_enrich_mammalian_RAMP_P_000053306_seed1,strict_top3_hit,Strict top-3,True,True,kept_correct,Pyrimidine metabolism,Pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_RAMP_P_000053306_seed7,strict_top3_hit,Strict top-3,True,True,kept_correct,Pyrimidine metabolism,pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_lm_pathway_WP167_seed0,strict_top3_hit,Strict top-3,False,False,kept_incorrect,Eicosanoid synthesis,The top pathway,KEGG pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed1,strict_top3_hit,Strict top-3,False,True,corrected,Eicosanoid synthesis,top pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed2,strict_top3_hit,Strict top-3,False,True,corrected,Eicosanoid synthesis,that pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed3,strict_top3_hit,Strict top-3,True,False,lost,Eicosanoid synthesis,Eicosanoid synthesis,inflammatory signaling
+compound_only_enrich_mammalian_lm_pathway_WP167_seed4,strict_top3_hit,Strict top-3,False,True,corrected,Eicosanoid synthesis,significant pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed5,strict_top3_hit,Strict top-3,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed6,strict_top3_hit,Strict top-3,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed7,strict_top3_hit,Strict top-3,False,False,kept_incorrect,Eicosanoid synthesis,enriched pathway,Rofecoxib Action Pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed8,strict_top3_hit,Strict top-3,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed9,strict_top3_hit,Strict top-3,False,False,kept_incorrect,Eicosanoid synthesis,Top pathway,SMP00075 pathway
+compound_only_enrich_mammalian_RAMP_P_000000016_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,"Glycine, serine and threonine metabolism",enriched pathway,"Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed9,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000106_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Tyrosine metabolism,Top pathway,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Tyrosine metabolism,Alkaptonuria,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tyrosine metabolism,Tyrosine metabolism,tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Tyrosine metabolism,Tyrosine metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed5,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Tryptophan metabolism,Tryptophan metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism pathway
+compound_only_enrich_mammalian_RAMP_P_000000398_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Galactose Metabolism,Galactosemia,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Galactose Metabolism,Leloir pathway,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed5,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Galactose Metabolism,Galactosemia,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed9,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000421_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Androgen and Estrogen Metabolism,enriched pathway,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed5,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,actual pathway
+compound_only_enrich_mammalian_RAMP_P_000000421_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000025682_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Celecoxib Action Pathway,Celecoxib Action Pathway,Celecoxib Action Pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Biological oxidations,Xenobiotics,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Biological oxidations,Phase II - Conjugation of compounds,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Biological oxidations,trans-sulfuration pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Biological oxidations,Phase II - Conjugation of compounds,The top pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed5,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Biological oxidations,The top pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Biological oxidations,Biological oxidations,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Biological oxidations,Biological oxidations,Reactome pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed9,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Biological oxidations,oxidative metabolism,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050096_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Metabolism of amino acids and derivatives,acid catabolism,Alkaptonuria
+compound_only_enrich_mammalian_RAMP_P_000050099_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Pyrimidine catabolism,enriched pathway,thymine catabolism
+compound_only_enrich_mammalian_RAMP_P_000052855_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Sulfatase and aromatase pathway,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000053042_seed9,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Steroid biosynthesis,Androgen and Estrogen Metabolism,Androgen receptor network in prostate cancer
+compound_only_enrich_mammalian_RAMP_P_000053306_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Pyrimidine metabolism,Pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_RAMP_P_000053306_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Pyrimidine metabolism,pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_lm_pathway_WP167_seed0,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,The top pathway,KEGG pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed1,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Eicosanoid synthesis,top pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed2,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Eicosanoid synthesis,that pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed3,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,False,lost,Eicosanoid synthesis,Eicosanoid synthesis,inflammatory signaling
+compound_only_enrich_mammalian_lm_pathway_WP167_seed4,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,True,corrected,Eicosanoid synthesis,significant pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed5,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed6,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed7,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,enriched pathway,Rofecoxib Action Pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed8,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed9,semantic_gt_hit_at_0_80,Semantic GT >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,Top pathway,SMP00075 pathway
+compound_only_enrich_mammalian_RAMP_P_000000016_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,"Glycine, serine and threonine metabolism",enriched pathway,"Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed9,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000106_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Tyrosine metabolism,Top pathway,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tyrosine metabolism,Alkaptonuria,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tyrosine metabolism,Tyrosine metabolism,tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Tyrosine metabolism,Tyrosine metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed5,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Tryptophan metabolism,Tryptophan metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism pathway
+compound_only_enrich_mammalian_RAMP_P_000000398_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactosemia,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Galactose Metabolism,Leloir pathway,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed5,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactosemia,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed9,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000421_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Androgen and Estrogen Metabolism,enriched pathway,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed5,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,actual pathway
+compound_only_enrich_mammalian_RAMP_P_000000421_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000025682_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Celecoxib Action Pathway,Celecoxib Action Pathway,Celecoxib Action Pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Biological oxidations,Xenobiotics,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Biological oxidations,Phase II - Conjugation of compounds,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Biological oxidations,trans-sulfuration pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Biological oxidations,Phase II - Conjugation of compounds,The top pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed5,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Biological oxidations,The top pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Biological oxidations,Biological oxidations,Reactome pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed9,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Biological oxidations,oxidative metabolism,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050096_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Metabolism of amino acids and derivatives,acid catabolism,Alkaptonuria
+compound_only_enrich_mammalian_RAMP_P_000050099_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,False,kept_incorrect,Pyrimidine catabolism,enriched pathway,thymine catabolism
+compound_only_enrich_mammalian_RAMP_P_000052855_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Sulfatase and aromatase pathway,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000053042_seed9,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Steroid biosynthesis,Androgen and Estrogen Metabolism,Androgen receptor network in prostate cancer
+compound_only_enrich_mammalian_RAMP_P_000053306_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Pyrimidine metabolism,Pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_RAMP_P_000053306_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Pyrimidine metabolism,pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_lm_pathway_WP167_seed0,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,The top pathway,KEGG pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed1,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Eicosanoid synthesis,top pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed2,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Eicosanoid synthesis,that pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed3,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,False,lost,Eicosanoid synthesis,Eicosanoid synthesis,inflammatory signaling
+compound_only_enrich_mammalian_lm_pathway_WP167_seed4,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,True,corrected,Eicosanoid synthesis,significant pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed5,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed6,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed7,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,enriched pathway,Rofecoxib Action Pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed8,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed9,semantic_top3_hit_at_0_80,Semantic top-3 >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,Top pathway,SMP00075 pathway
+compound_only_enrich_mammalian_RAMP_P_000000016_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,"Glycine, serine and threonine metabolism",enriched pathway,"Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000016_seed9,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,"Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism","Glycine, serine and threonine metabolism"
+compound_only_enrich_mammalian_RAMP_P_000000106_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Tyrosine metabolism,Top pathway,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tyrosine metabolism,Alkaptonuria,Tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tyrosine metabolism,Tyrosine metabolism,tyrosine metabolism
+compound_only_enrich_mammalian_RAMP_P_000000106_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Tyrosine metabolism,Tyrosine metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed5,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Tryptophan metabolism,Tryptophan metabolism,enriched pathway
+compound_only_enrich_mammalian_RAMP_P_000000141_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,tryptophan metabolism,Tryptophan metabolism
+compound_only_enrich_mammalian_RAMP_P_000000141_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Tryptophan metabolism,Tryptophan metabolism,Tryptophan metabolism pathway
+compound_only_enrich_mammalian_RAMP_P_000000398_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactosemia,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Galactose Metabolism,Leloir pathway,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed5,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactose Metabolism,galactose metabolism
+compound_only_enrich_mammalian_RAMP_P_000000398_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,Galactosemia,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000398_seed9,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Galactose Metabolism,galactose metabolism,Galactosemia
+compound_only_enrich_mammalian_RAMP_P_000000421_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Androgen and Estrogen Metabolism,enriched pathway,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed5,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,actual pathway
+compound_only_enrich_mammalian_RAMP_P_000000421_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000000421_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000025682_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Celecoxib Action Pathway,Celecoxib Action Pathway,Celecoxib Action Pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Biological oxidations,Xenobiotics,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Biological oxidations,Phase II - Conjugation of compounds,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Biological oxidations,trans-sulfuration pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Biological oxidations,Phase II - Conjugation of compounds,The top pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed5,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Biological oxidations,The top pathway,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050021_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Biological oxidations,Biological oxidations,Biological oxidations
+compound_only_enrich_mammalian_RAMP_P_000050021_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Biological oxidations,Biological oxidations,Reactome pathway
+compound_only_enrich_mammalian_RAMP_P_000050021_seed9,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Biological oxidations,oxidative metabolism,xenobiotic metabolism
+compound_only_enrich_mammalian_RAMP_P_000050096_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Metabolism of amino acids and derivatives,acid catabolism,Alkaptonuria
+compound_only_enrich_mammalian_RAMP_P_000050099_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,False,kept_incorrect,Pyrimidine catabolism,enriched pathway,thymine catabolism
+compound_only_enrich_mammalian_RAMP_P_000052855_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Sulfatase and aromatase pathway,Androgen and Estrogen Metabolism,Androgen and Estrogen Metabolism
+compound_only_enrich_mammalian_RAMP_P_000053042_seed9,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Steroid biosynthesis,Androgen and Estrogen Metabolism,Androgen receptor network in prostate cancer
+compound_only_enrich_mammalian_RAMP_P_000053306_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Pyrimidine metabolism,Pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_RAMP_P_000053306_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Pyrimidine metabolism,pyrimidine metabolism,Pyrimidine metabolism
+compound_only_enrich_mammalian_lm_pathway_WP167_seed0,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,The top pathway,KEGG pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed1,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Eicosanoid synthesis,top pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed2,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Eicosanoid synthesis,that pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed3,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,False,lost,Eicosanoid synthesis,Eicosanoid synthesis,inflammatory signaling
+compound_only_enrich_mammalian_lm_pathway_WP167_seed4,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Eicosanoid synthesis,significant pathway,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed5,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed6,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed7,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,True,corrected,Eicosanoid synthesis,enriched pathway,Rofecoxib Action Pathway
+compound_only_enrich_mammalian_lm_pathway_WP167_seed8,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,True,True,kept_correct,Eicosanoid synthesis,Eicosanoid synthesis,Eicosanoid synthesis
+compound_only_enrich_mammalian_lm_pathway_WP167_seed9,semantic_top10_hit_at_0_80,Semantic top-10 >= 0.80,False,False,kept_incorrect,Eicosanoid synthesis,Top pathway,SMP00075 pathway

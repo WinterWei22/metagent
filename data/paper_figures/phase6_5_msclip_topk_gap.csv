@@ -1,0 +1,4 @@
+bucket,n_spectra,frac_of_total,pre_rerank_pct,post_rerank_pct,delta_pp
+wide (≥0.15),93,20.76,95.7,88.89,-9.68
+medium (0.05-0.15),65,14.51,78.46,75.38,-3.08
+narrow (<0.05),265,59.15,43.02,56.06,12.83

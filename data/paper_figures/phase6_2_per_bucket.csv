@@ -1,0 +1,17 @@
+config,bucket,n_spectra,n_correct,id_acc
+gnps_only,kegg,265,195,73.58
+gnps_only,reactome,51,41,80.39
+gnps_only,smpdb,15,7,46.67
+gnps_only,wikipathways,38,24,63.16
+cfmid,kegg,265,182,68.68
+cfmid,reactome,51,43,84.31
+cfmid,smpdb,15,7,46.67
+cfmid,wikipathways,38,26,68.42
+full,kegg,265,186,70.19
+full,reactome,51,44,86.27
+full,smpdb,15,7,46.67
+full,wikipathways,38,26,68.42
+sirius,kegg,265,189,71.32
+sirius,reactome,51,42,82.35
+sirius,smpdb,15,7,46.67
+sirius,wikipathways,38,25,65.79

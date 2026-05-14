@@ -1,0 +1,750 @@
+{
+  "task_id": "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+  "input": {
+    "n_spectra": 10,
+    "ground_truth_pathway": {
+      "pathway_id": "RAMP_P_000050099",
+      "pathway_name": "Pyrimidine catabolism",
+      "pathway_source": "reactome",
+      "external_id": "R-HSA-73621",
+      "primary_pathway_pre_aggregation": "RAMP_P_000000043"
+    },
+    "ground_truth_signal_compounds": [
+      "C00526",
+      "C00906",
+      "C00881",
+      "C05100",
+      "C00429"
+    ],
+    "first_spectrum": {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00000577924",
+      "source_id": "CCMSLIB00000577924",
+      "precursor_mz": 228.1,
+      "ion_mode": "positive",
+      "adduct": "[M+H]1+",
+      "n_peaks": 37,
+      "peaks": [
+        [
+          50.760288,
+          2258.018555
+        ],
+        [
+          53.109318,
+          1888.213257
+        ],
+        [
+          58.532028,
+          1944.61853
+        ],
+        [
+          60.362377,
+          1738.083496
+        ],
+        [
+          71.049797,
+          3009.692627
+        ],
+        [
+          71.060951,
+          2495.456787
+        ],
+        [
+          72.128296,
+          7789.962891
+        ],
+        [
+          73.029106,
+          10845.135742
+        ],
+        [
+          81.070564,
+          2088.293701
+        ],
+        [
+          86.191826,
+          2243.032471
+        ],
+        [
+          87.092087,
+          4549.027344
+        ],
+        [
+          89.629662,
+          2002.343262
+        ],
+        [
+          95.024445,
+          9348.274414
+        ],
+        [
+          95.086067,
+          2186.88501
+        ],
+        [
+          95.548904,
+          2179.237061
+        ],
+        [
+          96.714325,
+          3188.076416
+        ],
+        [
+          99.04232,
+          1635.510498
+        ],
+        [
+          99.044441,
+          28180.361328
+        ],
+        [
+          99.092117,
+          2465.500977
+        ],
+        [
+          100.112343,
+          3796.19751
+        ],
+        [
+          107.326714,
+          2393.174316
+        ],
+        [
+          109.101486,
+          2496.837158
+        ],
+        [
+          112.050797,
+          3299682.25
+        ],
+        [
+          112.09005,
+          3635.310791
+        ],
+        [
+          113.054199,
+          4571.70166
+        ],
+        [
+          115.0867,
+          8490.842773
+        ],
+        [
+          117.054688,
+          79079.3125
+        ],
+        [
+          142.097473,
+          4825.835449
+        ],
+        [
+          142.133713,
+          2181.947754
+        ],
+        [
+          146.838547,
+          2083.443359
+        ],
+        [
+          170.128906,
+          4937.00293
+        ],
+        [
+          194.658798,
+          2261.233398
+        ],
+        [
+          210.170837,
+          9132.780273
+        ],
+        [
+          228.181549,
+          33958.136719
+        ],
+        [
+          228.207458,
+          2678.399902
+        ],
+        [
+          228.219055,
+          4927.004883
+        ],
+        [
+          228.231735,
+          46124.839844
+        ]
+      ]
+    },
+    "all_spectra_meta": [
+      {
+        "spectrum_id": "sub6a-gnps-CCMSLIB00000577924",
+        "precursor_mz": 228.1,
+        "n_peaks": 37,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-MoNA031994",
+        "precursor_mz": 229.0818975,
+        "n_peaks": 41,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-CCMSLIB00000577907",
+        "precursor_mz": 115.05,
+        "n_peaks": 60,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-MoNA036841",
+        "precursor_mz": 129.0658535,
+        "n_peaks": 33,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-CCMSLIB00005720659",
+        "precursor_mz": 226.083,
+        "n_peaks": 48,
+        "ion_mode": "negative"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-MoNA033382",
+        "precursor_mz": 129.0658535,
+        "n_peaks": 36,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-MoNA032862",
+        "precursor_mz": 118.0611025,
+        "n_peaks": 34,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-MoNA036203",
+        "precursor_mz": 118.0611025,
+        "n_peaks": 30,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-CCMSLIB00006121641",
+        "precursor_mz": 129.066,
+        "n_peaks": 30,
+        "ion_mode": "positive"
+      },
+      {
+        "spectrum_id": "sub6a-gnps-CCMSLIB00010142384",
+        "precursor_mz": 228.098,
+        "n_peaks": 67,
+        "ion_mode": "positive"
+      }
+    ]
+  },
+  "stage1_identifications": [
+    {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00000577924",
+      "predicted_name": "2'-deoxycytidine CollisionEnergy:102040",
+      "predicted_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "gt_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "predicted_score": 0.9998431400076712,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-MoNA031994",
+      "predicted_name": "HMDB:HMDB00012-21 Deoxyuridine",
+      "predicted_inchikey_first_block": "MXHRCPNRJAMMIM",
+      "gt_inchikey_first_block": "MXHRCPNRJAMMIM",
+      "predicted_score": 0.5108366165787949,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00000577907",
+      "predicted_name": "DIHYDROURACIL",
+      "predicted_inchikey_first_block": "OIVLITBTBDPEFK",
+      "gt_inchikey_first_block": "OIVLITBTBDPEFK",
+      "predicted_score": 0.6004966568357117,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-MoNA036841",
+      "predicted_name": "5,6-DIHYDRO THYMINE",
+      "predicted_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "gt_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "predicted_score": 0.9061667761489379,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00005720659",
+      "predicted_name": "ReSpect:PT201440 2'-Deoxycytidine|dC|dCYD|2'-Deoxy-CYD|Cytosine deoxyriboside|4-amino-1-[(2R,4S,5R)-4-hydroxy-5-(hydroxymethyl)oxolan-2-yl]pyrimidin-2-one",
+      "predicted_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "gt_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "predicted_score": 0.6795544415676327,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-MoNA033382",
+      "predicted_name": "5,6-DIHYDRO THYMINE",
+      "predicted_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "gt_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "predicted_score": 0.9705142663842233,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-MoNA032862",
+      "predicted_name": "GUANIDINEACETIC ACID",
+      "predicted_inchikey_first_block": "BPMFZUMJYQTVII",
+      "gt_inchikey_first_block": "BPMFZUMJYQTVII",
+      "predicted_score": 0.9874779641978936,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-MoNA036203",
+      "predicted_name": "GUANIDINEACETIC ACID",
+      "predicted_inchikey_first_block": "BPMFZUMJYQTVII",
+      "gt_inchikey_first_block": "BPMFZUMJYQTVII",
+      "predicted_score": 0.9295221249818705,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00006121641",
+      "predicted_name": "Dihydrothymine - 40.0 eV",
+      "predicted_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "gt_inchikey_first_block": "NBAKTGXDIBVZOO",
+      "predicted_score": 0.9988479528103686,
+      "correct_top1": true
+    },
+    {
+      "spectrum_id": "sub6a-gnps-CCMSLIB00010142384",
+      "predicted_name": "2'-deoxycytidine",
+      "predicted_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "gt_inchikey_first_block": "CKTSBUTUHBMZGZ",
+      "predicted_score": 0.9999995271284581,
+      "correct_top1": true
+    }
+  ],
+  "stage1_summary": {
+    "n_spectra": 10,
+    "n_identified": 10,
+    "n_correct_top1": 10,
+    "identification_accuracy": 1.0,
+    "elapsed_id_seconds": 1.1678127646446228,
+    "id_strategy": "library_search"
+  },
+  "stage2_identified_metabolites": [
+    {
+      "name": "2'-deoxycytidine CollisionEnergy:102040",
+      "inchikey_first_block": "CKTSBUTUHBMZGZ"
+    },
+    {
+      "name": "HMDB:HMDB00012-21 Deoxyuridine",
+      "inchikey_first_block": "MXHRCPNRJAMMIM"
+    },
+    {
+      "name": "DIHYDROURACIL",
+      "inchikey_first_block": "OIVLITBTBDPEFK"
+    },
+    {
+      "name": "5,6-DIHYDRO THYMINE",
+      "inchikey_first_block": "NBAKTGXDIBVZOO"
+    },
+    {
+      "name": "GUANIDINEACETIC ACID",
+      "inchikey_first_block": "BPMFZUMJYQTVII"
+    }
+  ],
+  "stage2_narrative": {
+    "llm_model": "claude-opus-4-7",
+    "elapsed_seconds": 17.32693112269044,
+    "text": "## Pathway Analysis\n\n### 1. Affected Pathways\n\nThe metabolite profile strongly implicates **pyrimidine degradation** as the primary affected pathway, with a secondary signal in **creatine/arginine metabolism**.\n\nFour of the five metabolites are pyrimidine-related:\n- 2'-Deoxycytidine — a pyrimidine deoxyribonucleoside\n- Deoxyuridine — a pyrimidine deoxyribonucleoside\n- Dihydrouracil — a pyrimidine degradation intermediate\n- 5,6-Dihydrothymine — a pyrimidine degradation intermediate\n\nGuanidinoacetic acid is the sole outlier, belonging to the **creatine biosynthesis pathway** (arginine + glycine → guanidinoacetate, catalyzed by AGAT).\n\n### 2. Key Drivers\n\nThe key drivers are **dihydrouracil** and **5,6-dihydrothymine**. These are direct products of dihydropyrimidine dehydrogenase (DPD/DPYD), the rate-limiting enzyme in pyrimidine catabolism. Their co-elevation alongside the upstream nucleosides (deoxyuridine, deoxycytidine) suggests either increased flux through the degradation pathway or impaired downstream clearance (e.g., reduced dihydropyrimidinase activity). Deoxyuridine accumulation can also reflect imbalanced nucleotide salvage or thymidylate synthase perturbation.\n\n### 3. Biological Significance\n\nDisrupted pyrimidine catabolism has direct implications for nucleotide pool homeostasis, DNA replication fidelity, and cellular proliferation. Elevated dihydropyrimidine intermediates are clinically associated with DPYD deficiency, which also predicts severe toxicity to fluoropyrimidine chemotherapeutics (e.g., 5-fluorouracil). If this is a treatment study involving such drugs, the pattern is consistent with DPYD inhibition or downregulation. More broadly, pyrimidine imbalance can trigger replication stress and affect epigenetic methylation capacity.\n\nGuanidinoacetate elevation suggests increased demand on the creatine synthesis pathway, possibly reflecting altered energy buffering or arginine metabolism — though with only one metabolite, this signal is weaker and may be incidental.\n\n### 4. Upstream/Downstream Relationships\n\nWithin pyrimidine catabolism, the canonical order is:\n\n**Cytidine/Deoxycytidine → Uridine/Deoxyuridine → Dihydrouracil → β-ureidopropionate → β-alanine**\n\nThymine follows a parallel route: **Thymidine → Dihydrothymine → β-ureidoisobutyrate → β-aminoisobutyrate**\n\nThe simultaneous accumulation of both upstream nucleosides and mid-pathway dihydro intermediates suggests the bottleneck lies at or after dihydropyrimidinase (the second enzyme), or that flux into the pathway is globally elevated. Notably, β-alanine and β-aminoisobutyrate — the terminal products — are absent from the list, which would be consistent with a mid-pathway block rather than simple pathway upregulation."
+  },
+  "stage3_verdicts": {
+    "totals": {
+      "contradicted": 2,
+      "unverifiable_v0": 24,
+      "supported": 10,
+      "unsupported": 4
+    },
+    "by_type": {
+      "set_enrichment": {
+        "contradicted": 2,
+        "unverifiable_v0": 1
+      },
+      "biological_claim": {
+        "unverifiable_v0": 13,
+        "supported": 9,
+        "unsupported": 4
+      },
+      "driver_metabolite": {
+        "supported": 1
+      },
+      "factual_roundtrip_claim": {
+        "unverifiable_v0": 1
+      },
+      "pathway_relationship": {
+        "unverifiable_v0": 7
+      },
+      "grounded_claim": {
+        "unverifiable_v0": 2
+      }
+    },
+    "claims": [
+      {
+        "n": 1,
+        "type": "set_enrichment",
+        "subtype": "pathway_membership",
+        "text": "The metabolite profile strongly implicates pyrimidine degradation as the primary affected pathway",
+        "verdict": "contradicted",
+        "evidence": "Claimed pathway 'metabolite profile strongly implicates pyrimidine degradation' is not in top_pathways[:10]; ground-truth top-1 is 'Pyrimidine catabolism'.",
+        "correction": "Pyrimidine catabolism"
+      },
+      {
+        "n": 2,
+        "type": "set_enrichment",
+        "subtype": "pathway_membership",
+        "text": "The metabolite profile implicates creatine/arginine metabolism as a secondary affected pathway",
+        "verdict": "contradicted",
+        "evidence": "Claimed pathway 'arginine metabolism' is not in top_pathways[:10]; ground-truth top-1 is 'Pyrimidine catabolism'.",
+        "correction": "Pyrimidine catabolism"
+      },
+      {
+        "n": 3,
+        "type": "set_enrichment",
+        "subtype": "unknown",
+        "text": "Four of the five metabolites are pyrimidine-related",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict.",
+        "correction": null
+      },
+      {
+        "n": 4,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "2'-Deoxycytidine is a pyrimidine deoxyribonucleoside",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 5,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Deoxyuridine is a pyrimidine deoxyribonucleoside",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 6,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Dihydrouracil is a pyrimidine degradation intermediate",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000053, derived from cpd:C00429) is in at least one of the 5 resolved pathways for the claim (4 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 7,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "5,6-Dihydrothymine is a pyrimidine degradation intermediate",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'Dihydrothymine is a pyrimidine degradation' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted",
+        "correction": null
+      },
+      {
+        "n": 8,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Guanidinoacetic acid belongs to the creatine biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000219492, derived from cpd:C00581) is in at least one of the 5 resolved pathways for the claim (3 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 9,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "The creatine biosynthesis pathway involves the reaction arginine + glycine → guanidinoacetate",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'The creatine biosynthesis pathway' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted.",
+        "correction": null
+      },
+      {
+        "n": 10,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The reaction arginine + glycine → guanidinoacetate is catalyzed by AGAT",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 11,
+        "type": "driver_metabolite",
+        "subtype": "driver_list",
+        "text": "The key drivers are dihydrouracil and 5,6-dihydrothymine",
+        "verdict": "supported",
+        "evidence": "All 2 claimed driver(s) are members of ground_truth_signal_compounds. precision=1.00 recall=0.40.",
+        "correction": null
+      },
+      {
+        "n": 12,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Dihydrouracil is a direct product of dihydropyrimidine dehydrogenase (DPD/DPYD)",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 13,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "5,6-Dihydrothymine is a direct product of dihydropyrimidine dehydrogenase (DPD/DPYD)",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 14,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Dihydropyrimidine dehydrogenase (DPD/DPYD) is the rate-limiting enzyme in pyrimidine catabolism",
+        "verdict": "supported",
+        "evidence": "Pathway phrase 'is the rate-limiting enzyme in pyrimidine catabolism' matches 'Pyrimidine catabolism' in task context (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 15,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Co-elevation of dihydrouracil and 5,6-dihydrothymine alongside upstream nucleosides suggests either increased flux through the degradation pathway or impaired downstream clearance",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'either increased flux through the degradation' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradic",
+        "correction": null
+      },
+      {
+        "n": 16,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Impaired downstream clearance may reflect reduced dihydropyrimidinase activity",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 17,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Deoxyuridine accumulation can reflect imbalanced nucleotide salvage",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 18,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Deoxyuridine accumulation can reflect thymidylate synthase perturbation",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 19,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Disrupted pyrimidine catabolism has direct implications for nucleotide pool homeostasis",
+        "verdict": "supported",
+        "evidence": "Pathway phrase 'Disrupted pyrimidine catabolism' matches 'Pyrimidine catabolism' in task context (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 20,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Disrupted pyrimidine catabolism has direct implications for DNA replication fidelity",
+        "verdict": "supported",
+        "evidence": "Pathway phrase 'Disrupted pyrimidine catabolism' matches 'Pyrimidine catabolism' in task context (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 21,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Disrupted pyrimidine catabolism has direct implications for cellular proliferation",
+        "verdict": "supported",
+        "evidence": "Pathway phrase 'Disrupted pyrimidine catabolism' matches 'Pyrimidine catabolism' in task context (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 22,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Elevated dihydropyrimidine intermediates are clinically associated with DPYD deficiency",
+        "verdict": "unverifiable_v0",
+        "evidence": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather than a contradiction.",
+        "correction": null
+      },
+      {
+        "n": 23,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "DPYD deficiency predicts severe toxicity to fluoropyrimidine chemotherapeutics",
+        "verdict": "unverifiable_v0",
+        "evidence": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather than a contradiction.",
+        "correction": null
+      },
+      {
+        "n": 24,
+        "type": "factual_roundtrip_claim",
+        "subtype": "unknown",
+        "text": "5-fluorouracil is a fluoropyrimidine chemotherapeutic",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'factual_roundtrip_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limita",
+        "correction": null
+      },
+      {
+        "n": 25,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Pyrimidine imbalance can trigger replication stress",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 26,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Pyrimidine imbalance can affect epigenetic methylation capacity",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 27,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Guanidinoacetate elevation suggests increased demand on the creatine synthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000219492, derived from cpd:C00581) is in at least one of the 5 resolved pathways for the claim (3 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 28,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Within pyrimidine catabolism, Cytidine/Deoxycytidine is upstream of Uridine/Deoxyuridine",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'Within pyrimidine catabolism, Cytidine/Deoxycytidine' did not resolve to a KEGG cpd: ID; object 'Uridine/Deoxyuridine' did not resolve to a KEGG cpd: ID; pathway-pair fal",
+        "correction": null
+      },
+      {
+        "n": 29,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Within pyrimidine catabolism, Uridine/Deoxyuridine is upstream of Dihydrouracil",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'Within pyrimidine catabolism, Uridine/Deoxyuridine' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not resolve to KEGG-source RaMP path",
+        "correction": null
+      },
+      {
+        "n": 30,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Within pyrimidine catabolism, Dihydrouracil is upstream of β-ureidopropionate",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'Within pyrimidine catabolism, Dihydrouracil' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not resolve to KEGG-source RaMP pathways",
+        "correction": null
+      },
+      {
+        "n": 31,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Within pyrimidine catabolism, β-ureidopropionate is upstream of β-alanine",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'Within pyrimidine catabolism, β-ureidopropionate' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not resolve to KEGG-source RaMP pathwa",
+        "correction": null
+      },
+      {
+        "n": 32,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Thymidine is upstream of Dihydrothymine in pyrimidine catabolism",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: object 'Dihydrothymine' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not resolve to KEGG-source RaMP pathways",
+        "correction": null
+      },
+      {
+        "n": 33,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Dihydrothymine is upstream of β-ureidoisobutyrate in pyrimidine catabolism",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'Dihydrothymine' did not resolve to a KEGG cpd: ID; object 'β-ureidoisobutyrate' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not reso",
+        "correction": null
+      },
+      {
+        "n": 34,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "β-ureidoisobutyrate is upstream of β-aminoisobutyrate in pyrimidine catabolism",
+        "verdict": "unverifiable_v0",
+        "evidence": "KEGG reaction graph: subject 'β-ureidoisobutyrate' did not resolve to a KEGG cpd: ID; object 'β-aminoisobutyrate' did not resolve to a KEGG cpd: ID; pathway-pair fallback also failed: phrases did not ",
+        "correction": null
+      },
+      {
+        "n": 35,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Thymine follows a parallel degradation route to uracil in pyrimidine catabolism",
+        "verdict": "supported",
+        "evidence": "Canonical name 'Pyrimidine catabolism' appears in claim text (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 36,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Simultaneous accumulation of upstream nucleosides and mid-pathway dihydro intermediates suggests the bottleneck lies at or after dihydropyrimidinase",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 37,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Dihydropyrimidinase is the second enzyme in pyrimidine catabolism",
+        "verdict": "supported",
+        "evidence": "Pathway phrase 'is the second enzyme in pyrimidine catabolism' matches 'Pyrimidine catabolism' in task context (ground_truth_pathway).",
+        "correction": null
+      },
+      {
+        "n": 38,
+        "type": "grounded_claim",
+        "subtype": "unknown",
+        "text": "β-alanine is absent from the detected metabolite list",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'grounded_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limitation.",
+        "correction": null
+      },
+      {
+        "n": 39,
+        "type": "grounded_claim",
+        "subtype": "unknown",
+        "text": "β-aminoisobutyrate is absent from the detected metabolite list",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'grounded_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limitation.",
+        "correction": null
+      },
+      {
+        "n": 40,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Absence of terminal products β-alanine and β-aminoisobutyrate is consistent with a mid-pathway block rather than simple pathway upregulation",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'mid-pathway block rather than simple pathway' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradict",
+        "correction": null
+      }
+    ]
+  }
+}

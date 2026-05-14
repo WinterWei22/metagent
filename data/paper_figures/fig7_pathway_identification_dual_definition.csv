@@ -1,0 +1,6 @@
+track,narrative_llm,n_tasks,strict_se_supported_claims,strict_tasks_covered,strict_task_coverage_pct,broad_pathway_id_supported_claims,broad_tasks_covered,broad_task_coverage_pct,set_enrichment_enrichment_pathway_sup,set_enrichment_pathway_membership_sup,set_enrichment_unknown_sup,driver_metabolite_driver_list_sup,driver_metabolite_unknown_sup,biological_claim_pathway_membership_sup,pathway_relationship_pathway_membership_sup
+sub6b_minimax,MiniMax-M2.7,63,2,2,3.17,415,61,96.83,2,0,0,32,0,376,5
+sub6b_gpt55,gpt-5.5,63,5,5,7.94,725,61,96.83,5,0,0,84,0,630,6
+sub6b_opus,claude-opus-4-7,63,2,2,3.17,472,62,98.41,2,0,0,42,0,420,8
+sub6a_perfect_opus,claude-opus-4-7,38,1,1,2.63,275,38,100.0,1,0,0,35,0,236,3
+sub6a_real_opus,claude-opus-4-7,38,2,2,5.26,203,36,94.74,2,0,0,24,0,173,4

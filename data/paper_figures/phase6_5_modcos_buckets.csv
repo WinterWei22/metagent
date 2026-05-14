@@ -1,0 +1,6 @@
+bucket,n_spectra,frac_of_total,n_pre_correct,pre_acc_pct,n_post_correct,post_acc_pct,delta_spectra,delta_pp
+very_high (≥0.9),227,63.41,197,86.78,197,86.78,0,0.0
+high (0.8-0.9),38,10.61,30,78.95,30,78.95,0,0.0
+medium (0.6-0.8),28,7.82,17,60.71,16,57.14,-1,-3.57
+low (0.4-0.6),23,6.42,15,65.22,10,43.48,-5,-21.74
+very_low (<0.4),42,11.73,8,19.05,10,23.81,2,4.76

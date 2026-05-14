@@ -1,0 +1,14 @@
+claim_subtype,supported,unsupported,contradicted,unverifiable_v0,total
+biological_context,81,55,1,683,820
+pathway_membership,610,76,11,74,771
+unknown,8,0,30,516,554
+database_id,17,8,0,454,479
+enrichment_pathway,108,7,4,0,119
+literature_pmid,0,0,0,17,17
+driver_list,13,0,2,0,15
+literature_free_text,0,0,0,12,12
+ranking,8,1,1,0,10
+formula,0,0,0,6,6
+pathway_shared_intermediates,4,0,0,0,4
+chemical_taxonomy,0,0,0,3,3
+pathway_cross_talk,1,0,0,0,1

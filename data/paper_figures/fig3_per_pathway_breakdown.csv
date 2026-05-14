@@ -1,0 +1,9 @@
+pathway_id,pathway_name,bucket,n_tasks,n_claims,sup_pct,unsup_pct,contra_pct,unverif_pct,driver_contra_n
+RAMP_P_000000398,Galactose Metabolism,central_metabolism,10,559,20.39,11.99,4.47,63.15,2
+RAMP_P_000050021,Biological oxidations,other_metabolism,10,498,10.44,6.83,2.21,80.52,4
+RAMP_P_000000203,Cerivastatin Action Pathway,other_metabolism,10,483,17.39,18.84,7.45,56.31,4
+RAMP_P_000000141,Tryptophan metabolism,amino_acid_metabolism,9,463,25.27,9.5,2.81,62.42,0
+RAMP_P_000000421,Androgen and Estrogen Metabolism,other_metabolism,7,385,16.1,13.77,3.12,67.01,1
+RAMP_P_000000016,"Glycine, serine and threonine metabolism",amino_acid_metabolism,6,335,16.42,13.13,5.37,65.07,3
+RAMP_P_000000106,Tyrosine metabolism,amino_acid_metabolism,4,196,19.9,8.67,4.08,67.35,1
+RAMP_P_000053306,Pyrimidine metabolism,nucleotide_metabolism,2,105,25.71,14.29,5.71,54.29,2

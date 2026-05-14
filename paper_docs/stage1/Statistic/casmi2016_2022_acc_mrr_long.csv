@@ -1,0 +1,7 @@
+benchmark,benchmark_label,config,method_label,n,n_reachable,top1_acc_pct,acc,mrr,mrr_reachable,top3_acc_pct,top5_acc_pct,top10_acc_pct,top20_acc_pct
+casmi_2016_cat2,CASMI 2016,msclip_only,MS-CLIP,208,158,28.85,0.28850000000000003,0.4059,0.5344,47.6,55.29,64.42,75.96
+casmi_2016_cat2,CASMI 2016,weighted,MS-CLIP + tools weighted,208,158,27.88,0.2788,0.4064,0.535,49.52,55.29,64.42,75.96
+casmi_2016_cat2,CASMI 2016,llm_reranker,MS-CLIP + tools + LLM reranking (MetAgent),208,158,37.5,0.375,0.4677,0.6157,51.92,55.29,64.42,75.96
+casmi_2022,CASMI 2022,msclip_only,MS-CLIP,170,74,13.53,0.1353,0.2045,0.4698,22.94,28.24,35.88,43.53
+casmi_2022,CASMI 2022,weighted,MS-CLIP + tools weighted,170,74,13.53,0.1353,0.2126,0.4885,25.29,28.24,35.88,43.53
+casmi_2022,CASMI 2022,llm_reranker,MS-CLIP + tools + LLM reranking (MetAgent),170,74,15.88,0.1588,0.2271,0.5218,25.88,28.24,35.88,43.53

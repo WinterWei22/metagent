@@ -1,0 +1,2 @@
+n_spectra_with_llm_rerank,n_fallback_used,fallback_rate_pct,n_peak_claims_total,peak_claims_per_spectrum,confidence_low,confidence_medium,confidence_high
+448,297,66.29,881,1.97,320,39,89

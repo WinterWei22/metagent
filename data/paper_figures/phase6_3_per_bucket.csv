@@ -1,0 +1,13 @@
+config,bucket,n_spectra,n_correct,id_acc
+A_modcos_weighted,kegg,265,186,70.19
+A_modcos_weighted,reactome,51,44,86.27
+A_modcos_weighted,smpdb,15,7,46.67
+A_modcos_weighted,wikipathways,38,26,68.42
+B_msclip_weighted,kegg,265,176,66.42
+B_msclip_weighted,reactome,47,36,76.6
+B_msclip_weighted,smpdb,15,8,53.33
+B_msclip_weighted,wikipathways,38,24,63.16
+C_msclip_llm,kegg,265,180,67.92
+C_msclip_llm,reactome,51,39,76.47
+C_msclip_llm,smpdb,15,8,53.33
+C_msclip_llm,wikipathways,38,25,65.79

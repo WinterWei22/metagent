@@ -1,0 +1,1008 @@
+{
+  "case_id": "Challenge-033",
+  "selected_reason": "LLM rescue case where the conditional weighted arm skipped rerank due to a high MS-CLIP gap, but the LLM recovered the ground truth from rank 4 using a plausible diaryl-sulfide C-S cleavage argument.",
+  "dataset": "CASMI 2016 category 2",
+  "ground_truth": {
+    "inchikey_first_block": "VWGKEVWFBOUAND",
+    "smiles": "OC1=CC=C(SC2=CC=C(O)C=C2)C=C1",
+    "formula": "C12H10O2S",
+    "precursor_mz": 217.0329,
+    "ion_mode": "negative",
+    "adduct": "[M-H]-",
+    "n_experimental_peaks": 2
+  },
+  "source_records": {
+    "msclip_only": {
+      "spectrum_id": "Challenge-033",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C12H10O2S",
+      "gt_inchikey_first_block": "VWGKEVWFBOUAND",
+      "gt_smiles": "OC1=CC=C(SC2=CC=C(O)C=C2)C=C1",
+      "predicted_inchikey_first_block": "RRWYVSNRZFXBOC",
+      "predicted_smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+      "predicted_score": 0.7242944240570068,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "none",
+      "rerank_applied": [],
+      "error": null,
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+          "name": "2-(Phenylsulfanyl)-1,4-benzenediol",
+          "source_id": "CASMI16:Challenge-033:9302856",
+          "score": 0.7242944240570068,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "RRWYVSNRZFXBOC"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "COC(=S)Oc1ccc2ccccc2c1",
+          "name": "O-Methyl O-2-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500444",
+          "score": 0.655759334564209,
+          "modcos": null,
+          "msclip": 0.656,
+          "ik14": "ZKMHCMSEUXUZMX"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "O=S(c1ccccc1O)c2ccccc2",
+          "name": "2-(Phenylsulfinyl)phenol",
+          "source_id": "CASMI16:Challenge-033:9323783",
+          "score": 0.6528690010309219,
+          "modcos": null,
+          "msclip": 0.653,
+          "ik14": "LHYFMWGDNOTXEL"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1cc(ccc1O)Sc2ccc(cc2)O",
+          "name": "4,4′-Thiodiphenol",
+          "source_id": "CASMI16:Challenge-033:16612",
+          "score": 0.6509357392787933,
+          "modcos": null,
+          "msclip": 0.651,
+          "ik14": "VWGKEVWFBOUAND"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1ccc(cc1)OSOc2ccccc2",
+          "name": "1,1'-[Sulfanediylbis(oxy)]dibenzene",
+          "source_id": "CASMI16:Challenge-033:29369030",
+          "score": 0.6407138854265213,
+          "modcos": null,
+          "msclip": 0.641,
+          "ik14": "JHYBWOJWPAOJDQ"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "C=CCOc1ccc2c(c1)ccc(=S)o2",
+          "name": "6-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28494434",
+          "score": 0.6360422819852829,
+          "modcos": null,
+          "msclip": 0.636,
+          "ik14": "BFJPCOLVRFNXSH"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(c(c1)O)Sc2ccccc2O",
+          "name": "THIOBISPHENOL",
+          "source_id": "CASMI16:Challenge-033:75488",
+          "score": 0.6345525979995728,
+          "modcos": null,
+          "msclip": 0.635,
+          "ik14": "BLDLRWQLBOJPEB"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "C[N+](=S(=O)(C)C)c1ccc(cc1)Cl",
+          "name": "(4-Chlorophenyl)[dimethyl(oxido)-lambda~6~-sulfanylidene]methylammonium",
+          "source_id": "CASMI16:Challenge-033:3213549",
+          "score": 0.6292797476053238,
+          "modcos": null,
+          "msclip": 0.629,
+          "ik14": "JLGMEMQUGAZTTP"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "C=CCOc1ccc2ccc(=S)oc2c1",
+          "name": "7-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28496751",
+          "score": 0.6270839273929596,
+          "modcos": null,
+          "msclip": 0.627,
+          "ik14": "JKHHDRMDQLMVSB"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "O=Cc2scc(c1ccc(OC)cc1)c2",
+          "name": "4-(4-Methoxyphenyl)-2-thiophenecarbaldehyde",
+          "source_id": "CASMI16:Challenge-033:9381798",
+          "score": 0.6257033348083496,
+          "modcos": null,
+          "msclip": 0.626,
+          "ik14": "QHFFOHGKCLHHFU"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "C=CS(=O)(=O)c1ccc2ccccc2c1",
+          "name": "2-(Vinylsulfonyl)naphthalene",
+          "source_id": "CASMI16:Challenge-033:270146",
+          "score": 0.6215732172131538,
+          "modcos": null,
+          "msclip": 0.622,
+          "ik14": "MUJRPOWKCLTMDN"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1c3ccsc3)OCCO2",
+          "name": "6-(3-Thienyl)-2,3-dihydro-1,4-benzodioxine",
+          "source_id": "CASMI16:Challenge-033:12930160",
+          "score": 0.6181406676769257,
+          "modcos": null,
+          "msclip": 0.618,
+          "ik14": "XGRXNWDSEKTNIX"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "COC(=S)Oc1cccc2c1cccc2",
+          "name": "O-Methyl O-1-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500443",
+          "score": 0.6168504804372787,
+          "modcos": null,
+          "msclip": 0.617,
+          "ik14": "HOWCBJQIQREGAB"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1ccc2c(c1)cccc2SCC(=O)O",
+          "name": "2-(1-naphthylthio)acetic acid",
+          "source_id": "CASMI16:Challenge-033:500446",
+          "score": 0.616413377225399,
+          "modcos": null,
+          "msclip": 0.616,
+          "ik14": "PIQCZHHPDSYZPP"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "CC(=O)c1ccc(o1)Sc2ccccc2",
+          "name": "1-[5-(Phenylsulfanyl)-2-furyl]ethanone",
+          "source_id": "CASMI16:Challenge-033:21491567",
+          "score": 0.6088805198669434,
+          "modcos": null,
+          "msclip": 0.609,
+          "ik14": "NEHXCSMMJGKPLK"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ccc(cc1)Sc2ccc(o2)C=O",
+          "name": "5-[(4-Methylphenyl)sulfanyl]-2-furaldehyde",
+          "source_id": "CASMI16:Challenge-033:664358",
+          "score": 0.6084263846278191,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "RQCQYRQPIGDHKV"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "Cc1ccc(cc1)SC(=O)c2ccco2",
+          "name": "S-(4-Methylphenyl) 2-furancarbothioate",
+          "source_id": "CASMI16:Challenge-033:1597256",
+          "score": 0.6077740266919136,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "LGMDWAVLRZKTPT"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "Cc1ccccc1OC(=O)c2cccs2",
+          "name": "2-Methylphenyl 2-thiophenecarboxylate",
+          "source_id": "CASMI16:Challenge-033:498856",
+          "score": 0.6062937676906586,
+          "modcos": null,
+          "msclip": 0.606,
+          "ik14": "GMPPUOGQRVKMAE"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "O=S(O)c2ccccc2c1ccccc1",
+          "name": "2-Biphenylsulfinic acid",
+          "source_id": "CASMI16:Challenge-033:7822450",
+          "score": 0.6043728217482567,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LZCLZDCSBDVAOV"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1ccc(cc1)OP(=S)(NN)NN",
+          "name": "O-Phenyl phosphorodihydrazidothioate",
+          "source_id": "CASMI16:Challenge-033:295959",
+          "score": 0.6042521744966507,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LAPIUCXITZBJQC"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_msclip_only/casmi_identifications.jsonl",
+      "_source_line": 33
+    },
+    "conditional": {
+      "spectrum_id": "Challenge-033",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C12H10O2S",
+      "gt_inchikey_first_block": "VWGKEVWFBOUAND",
+      "gt_smiles": "OC1=CC=C(SC2=CC=C(O)C=C2)C=C1",
+      "predicted_inchikey_first_block": "RRWYVSNRZFXBOC",
+      "predicted_smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+      "predicted_score": 0.7242944240570068,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "conditional",
+      "rerank_applied": [],
+      "error": null,
+      "gate": {
+        "conditional_skipped": true,
+        "gate_reason": "msclip_high_confidence_skip (top1=0.724, gap=0.068)",
+        "gate_msclip_top1": 0.724,
+        "gate_msclip_gap": 0.06799999999999995
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+          "name": "2-(Phenylsulfanyl)-1,4-benzenediol",
+          "source_id": "CASMI16:Challenge-033:9302856",
+          "score": 0.7242944240570068,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "RRWYVSNRZFXBOC"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "COC(=S)Oc1ccc2ccccc2c1",
+          "name": "O-Methyl O-2-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500444",
+          "score": 0.655759334564209,
+          "modcos": null,
+          "msclip": 0.656,
+          "ik14": "ZKMHCMSEUXUZMX"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "O=S(c1ccccc1O)c2ccccc2",
+          "name": "2-(Phenylsulfinyl)phenol",
+          "source_id": "CASMI16:Challenge-033:9323783",
+          "score": 0.6528690010309219,
+          "modcos": null,
+          "msclip": 0.653,
+          "ik14": "LHYFMWGDNOTXEL"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1cc(ccc1O)Sc2ccc(cc2)O",
+          "name": "4,4′-Thiodiphenol",
+          "source_id": "CASMI16:Challenge-033:16612",
+          "score": 0.6509357392787933,
+          "modcos": null,
+          "msclip": 0.651,
+          "ik14": "VWGKEVWFBOUAND"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1ccc(cc1)OSOc2ccccc2",
+          "name": "1,1'-[Sulfanediylbis(oxy)]dibenzene",
+          "source_id": "CASMI16:Challenge-033:29369030",
+          "score": 0.6407138854265213,
+          "modcos": null,
+          "msclip": 0.641,
+          "ik14": "JHYBWOJWPAOJDQ"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "C=CCOc1ccc2c(c1)ccc(=S)o2",
+          "name": "6-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28494434",
+          "score": 0.6360422819852829,
+          "modcos": null,
+          "msclip": 0.636,
+          "ik14": "BFJPCOLVRFNXSH"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(c(c1)O)Sc2ccccc2O",
+          "name": "THIOBISPHENOL",
+          "source_id": "CASMI16:Challenge-033:75488",
+          "score": 0.6345525979995728,
+          "modcos": null,
+          "msclip": 0.635,
+          "ik14": "BLDLRWQLBOJPEB"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "C[N+](=S(=O)(C)C)c1ccc(cc1)Cl",
+          "name": "(4-Chlorophenyl)[dimethyl(oxido)-lambda~6~-sulfanylidene]methylammonium",
+          "source_id": "CASMI16:Challenge-033:3213549",
+          "score": 0.6292797476053238,
+          "modcos": null,
+          "msclip": 0.629,
+          "ik14": "JLGMEMQUGAZTTP"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "C=CCOc1ccc2ccc(=S)oc2c1",
+          "name": "7-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28496751",
+          "score": 0.6270839273929596,
+          "modcos": null,
+          "msclip": 0.627,
+          "ik14": "JKHHDRMDQLMVSB"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "O=Cc2scc(c1ccc(OC)cc1)c2",
+          "name": "4-(4-Methoxyphenyl)-2-thiophenecarbaldehyde",
+          "source_id": "CASMI16:Challenge-033:9381798",
+          "score": 0.6257033348083496,
+          "modcos": null,
+          "msclip": 0.626,
+          "ik14": "QHFFOHGKCLHHFU"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "C=CS(=O)(=O)c1ccc2ccccc2c1",
+          "name": "2-(Vinylsulfonyl)naphthalene",
+          "source_id": "CASMI16:Challenge-033:270146",
+          "score": 0.6215732172131538,
+          "modcos": null,
+          "msclip": 0.622,
+          "ik14": "MUJRPOWKCLTMDN"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1c3ccsc3)OCCO2",
+          "name": "6-(3-Thienyl)-2,3-dihydro-1,4-benzodioxine",
+          "source_id": "CASMI16:Challenge-033:12930160",
+          "score": 0.6181406676769257,
+          "modcos": null,
+          "msclip": 0.618,
+          "ik14": "XGRXNWDSEKTNIX"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "COC(=S)Oc1cccc2c1cccc2",
+          "name": "O-Methyl O-1-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500443",
+          "score": 0.6168504804372787,
+          "modcos": null,
+          "msclip": 0.617,
+          "ik14": "HOWCBJQIQREGAB"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1ccc2c(c1)cccc2SCC(=O)O",
+          "name": "2-(1-naphthylthio)acetic acid",
+          "source_id": "CASMI16:Challenge-033:500446",
+          "score": 0.616413377225399,
+          "modcos": null,
+          "msclip": 0.616,
+          "ik14": "PIQCZHHPDSYZPP"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "CC(=O)c1ccc(o1)Sc2ccccc2",
+          "name": "1-[5-(Phenylsulfanyl)-2-furyl]ethanone",
+          "source_id": "CASMI16:Challenge-033:21491567",
+          "score": 0.6088805198669434,
+          "modcos": null,
+          "msclip": 0.609,
+          "ik14": "NEHXCSMMJGKPLK"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ccc(cc1)Sc2ccc(o2)C=O",
+          "name": "5-[(4-Methylphenyl)sulfanyl]-2-furaldehyde",
+          "source_id": "CASMI16:Challenge-033:664358",
+          "score": 0.6084263846278191,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "RQCQYRQPIGDHKV"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "Cc1ccc(cc1)SC(=O)c2ccco2",
+          "name": "S-(4-Methylphenyl) 2-furancarbothioate",
+          "source_id": "CASMI16:Challenge-033:1597256",
+          "score": 0.6077740266919136,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "LGMDWAVLRZKTPT"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "Cc1ccccc1OC(=O)c2cccs2",
+          "name": "2-Methylphenyl 2-thiophenecarboxylate",
+          "source_id": "CASMI16:Challenge-033:498856",
+          "score": 0.6062937676906586,
+          "modcos": null,
+          "msclip": 0.606,
+          "ik14": "GMPPUOGQRVKMAE"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "O=S(O)c2ccccc2c1ccccc1",
+          "name": "2-Biphenylsulfinic acid",
+          "source_id": "CASMI16:Challenge-033:7822450",
+          "score": 0.6043728217482567,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LZCLZDCSBDVAOV"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1ccc(cc1)OP(=S)(NN)NN",
+          "name": "O-Phenyl phosphorodihydrazidothioate",
+          "source_id": "CASMI16:Challenge-033:295959",
+          "score": 0.6042521744966507,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LAPIUCXITZBJQC"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_conditional/casmi_identifications.jsonl",
+      "_source_line": 33
+    },
+    "llm_reranker": {
+      "spectrum_id": "Challenge-033",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C12H10O2S",
+      "gt_inchikey_first_block": "VWGKEVWFBOUAND",
+      "gt_smiles": "OC1=CC=C(SC2=CC=C(O)C=C2)C=C1",
+      "predicted_inchikey_first_block": "VWGKEVWFBOUAND",
+      "predicted_smiles": "c1cc(ccc1O)Sc2ccc(cc2)O",
+      "predicted_score": 0.6509357392787933,
+      "correct_top1": true,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "llm",
+      "rerank_applied": [
+        "cfmid"
+      ],
+      "error": null,
+      "gate": null,
+      "llm_rerank": {
+        "narrative": "Spectrum Challenge-033 (precursor m/z 217.0329).\nSelected top-1: c1cc(ccc1O)Sc2ccc(cc2)O (confidence: medium).\nJustification: The diagnostic base peak at m/z 123.9983 corresponds exactly to [C6H4OS]•- (calc. 123.9983), requiring a neutral loss of 93.0346 Da = C6H5O• (phenoxy radical) from the [M-H]- at 217.0329. Only 4,4'-thiodiphenol (index 3) cleanly produces this ion via symmetric homolytic C–S cleavage of a hydroxyphenyl radical, whereas candidate 0's CFM-ID predicts its base peak at m/z 109.0117 (thiophenolate, CFM cosine 0.4344) with no prediction at 123.99, and candidates 1/2/4 lack CFM-predicted peaks consistent with 123.9983. SIRIUS provided no top-1 formula for any candidate, so selection rests on mechanistic fit to the phenoxy-loss channel that is structurally trivial only for the para,para'-thiodiphenol scaffold.\nPeak-level claims:\n  - m/z 217.0329 corresponds to fragment of [M-H]- of C12H10O2S (4,4'-thiodiphenol)\n  - m/z 123.9983 corresponds to loss of C6H5O radical (phenoxy, 93.0346 Da) from [M-H]-\n  - m/z 123.9983 corresponds to fragment [C6H4OS]•- arising from homolytic C–S cleavage of the diaryl sulfide",
+        "peak_claims": [
+          "m/z 217.0329 corresponds to fragment of [M-H]- of C12H10O2S (4,4'-thiodiphenol)",
+          "m/z 123.9983 corresponds to loss of C6H5O radical (phenoxy, 93.0346 Da) from [M-H]-",
+          "m/z 123.9983 corresponds to fragment [C6H4OS]•- arising from homolytic C–S cleavage of the diaryl sulfide"
+        ],
+        "confidence": "medium",
+        "fallback_used": false,
+        "parse_error": null,
+        "ranked_indices": [
+          3,
+          0,
+          1,
+          2,
+          4
+        ]
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+          "name": "2-(Phenylsulfanyl)-1,4-benzenediol",
+          "source_id": "CASMI16:Challenge-033:9302856",
+          "score": 0.7242944240570068,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "RRWYVSNRZFXBOC"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "COC(=S)Oc1ccc2ccccc2c1",
+          "name": "O-Methyl O-2-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500444",
+          "score": 0.655759334564209,
+          "modcos": null,
+          "msclip": 0.656,
+          "ik14": "ZKMHCMSEUXUZMX"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "O=S(c1ccccc1O)c2ccccc2",
+          "name": "2-(Phenylsulfinyl)phenol",
+          "source_id": "CASMI16:Challenge-033:9323783",
+          "score": 0.6528690010309219,
+          "modcos": null,
+          "msclip": 0.653,
+          "ik14": "LHYFMWGDNOTXEL"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1cc(ccc1O)Sc2ccc(cc2)O",
+          "name": "4,4′-Thiodiphenol",
+          "source_id": "CASMI16:Challenge-033:16612",
+          "score": 0.6509357392787933,
+          "modcos": null,
+          "msclip": 0.651,
+          "ik14": "VWGKEVWFBOUAND"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1ccc(cc1)OSOc2ccccc2",
+          "name": "1,1'-[Sulfanediylbis(oxy)]dibenzene",
+          "source_id": "CASMI16:Challenge-033:29369030",
+          "score": 0.6407138854265213,
+          "modcos": null,
+          "msclip": 0.641,
+          "ik14": "JHYBWOJWPAOJDQ"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "C=CCOc1ccc2c(c1)ccc(=S)o2",
+          "name": "6-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28494434",
+          "score": 0.6360422819852829,
+          "modcos": null,
+          "msclip": 0.636,
+          "ik14": "BFJPCOLVRFNXSH"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(c(c1)O)Sc2ccccc2O",
+          "name": "THIOBISPHENOL",
+          "source_id": "CASMI16:Challenge-033:75488",
+          "score": 0.6345525979995728,
+          "modcos": null,
+          "msclip": 0.635,
+          "ik14": "BLDLRWQLBOJPEB"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "C[N+](=S(=O)(C)C)c1ccc(cc1)Cl",
+          "name": "(4-Chlorophenyl)[dimethyl(oxido)-lambda~6~-sulfanylidene]methylammonium",
+          "source_id": "CASMI16:Challenge-033:3213549",
+          "score": 0.6292797476053238,
+          "modcos": null,
+          "msclip": 0.629,
+          "ik14": "JLGMEMQUGAZTTP"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "C=CCOc1ccc2ccc(=S)oc2c1",
+          "name": "7-(Allyloxy)-2H-chromene-2-thione",
+          "source_id": "CASMI16:Challenge-033:28496751",
+          "score": 0.6270839273929596,
+          "modcos": null,
+          "msclip": 0.627,
+          "ik14": "JKHHDRMDQLMVSB"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "O=Cc2scc(c1ccc(OC)cc1)c2",
+          "name": "4-(4-Methoxyphenyl)-2-thiophenecarbaldehyde",
+          "source_id": "CASMI16:Challenge-033:9381798",
+          "score": 0.6257033348083496,
+          "modcos": null,
+          "msclip": 0.626,
+          "ik14": "QHFFOHGKCLHHFU"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "C=CS(=O)(=O)c1ccc2ccccc2c1",
+          "name": "2-(Vinylsulfonyl)naphthalene",
+          "source_id": "CASMI16:Challenge-033:270146",
+          "score": 0.6215732172131538,
+          "modcos": null,
+          "msclip": 0.622,
+          "ik14": "MUJRPOWKCLTMDN"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1c3ccsc3)OCCO2",
+          "name": "6-(3-Thienyl)-2,3-dihydro-1,4-benzodioxine",
+          "source_id": "CASMI16:Challenge-033:12930160",
+          "score": 0.6181406676769257,
+          "modcos": null,
+          "msclip": 0.618,
+          "ik14": "XGRXNWDSEKTNIX"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "COC(=S)Oc1cccc2c1cccc2",
+          "name": "O-Methyl O-1-naphthyl carbonothioate",
+          "source_id": "CASMI16:Challenge-033:500443",
+          "score": 0.6168504804372787,
+          "modcos": null,
+          "msclip": 0.617,
+          "ik14": "HOWCBJQIQREGAB"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1ccc2c(c1)cccc2SCC(=O)O",
+          "name": "2-(1-naphthylthio)acetic acid",
+          "source_id": "CASMI16:Challenge-033:500446",
+          "score": 0.616413377225399,
+          "modcos": null,
+          "msclip": 0.616,
+          "ik14": "PIQCZHHPDSYZPP"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "CC(=O)c1ccc(o1)Sc2ccccc2",
+          "name": "1-[5-(Phenylsulfanyl)-2-furyl]ethanone",
+          "source_id": "CASMI16:Challenge-033:21491567",
+          "score": 0.6088805198669434,
+          "modcos": null,
+          "msclip": 0.609,
+          "ik14": "NEHXCSMMJGKPLK"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ccc(cc1)Sc2ccc(o2)C=O",
+          "name": "5-[(4-Methylphenyl)sulfanyl]-2-furaldehyde",
+          "source_id": "CASMI16:Challenge-033:664358",
+          "score": 0.6084263846278191,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "RQCQYRQPIGDHKV"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "Cc1ccc(cc1)SC(=O)c2ccco2",
+          "name": "S-(4-Methylphenyl) 2-furancarbothioate",
+          "source_id": "CASMI16:Challenge-033:1597256",
+          "score": 0.6077740266919136,
+          "modcos": null,
+          "msclip": 0.608,
+          "ik14": "LGMDWAVLRZKTPT"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "Cc1ccccc1OC(=O)c2cccs2",
+          "name": "2-Methylphenyl 2-thiophenecarboxylate",
+          "source_id": "CASMI16:Challenge-033:498856",
+          "score": 0.6062937676906586,
+          "modcos": null,
+          "msclip": 0.606,
+          "ik14": "GMPPUOGQRVKMAE"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "O=S(O)c2ccccc2c1ccccc1",
+          "name": "2-Biphenylsulfinic acid",
+          "source_id": "CASMI16:Challenge-033:7822450",
+          "score": 0.6043728217482567,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LZCLZDCSBDVAOV"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1ccc(cc1)OP(=S)(NN)NN",
+          "name": "O-Phenyl phosphorodihydrazidothioate",
+          "source_id": "CASMI16:Challenge-033:295959",
+          "score": 0.6042521744966507,
+          "modcos": null,
+          "msclip": 0.604,
+          "ik14": "LAPIUCXITZBJQC"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_llm_reranker/casmi_identifications.jsonl",
+      "_source_line": 33
+    }
+  },
+  "cfmid_only_reconstructed_peak_evidence": {
+    "spectrum_id": "Challenge-033",
+    "experimental_peaks": [
+      [
+        123.9983,
+        1.0
+      ],
+      [
+        217.0329,
+        0.8068130315378412
+      ]
+    ],
+    "sirius": {},
+    "cfmid_top1": {
+      "smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+      "predicted_peaks": [
+        [
+          56.98044,
+          0.1444
+        ],
+        [
+          79.01894,
+          0.0617
+        ],
+        [
+          109.01174,
+          1.0
+        ],
+        [
+          123.02739,
+          0.0626
+        ],
+        [
+          133.01174,
+          0.0674
+        ],
+        [
+          138.98592,
+          0.2346
+        ],
+        [
+          149.00666,
+          0.0401
+        ],
+        [
+          217.03287,
+          1.0
+        ]
+      ],
+      "cosine_vs_experimental": 0.43436776073516725,
+      "model_version": "cfm-id-4.4.7"
+    },
+    "candidates_evaluated": [
+      {
+        "smiles": "S(c1ccccc1)c2cc(O)ccc2O",
+        "name": "2-(Phenylsulfanyl)-1,4-benzenediol",
+        "source_id": "CASMI16:Challenge-033:9302856",
+        "formula": "C12H10O2S",
+        "modcos": 0.7242944240570068,
+        "predicted_cosine": 0.43436776073516725,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.620028097843353,
+        "rank_after_rerank": 1
+      },
+      {
+        "smiles": "c1ccc(cc1)OSOc2ccccc2",
+        "name": "1,1'-[Sulfanediylbis(oxy)]dibenzene",
+        "source_id": "CASMI16:Challenge-033:29369030",
+        "formula": "C12H10O2S",
+        "modcos": 0.6407138854265213,
+        "predicted_cosine": 0.44243968662219246,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5890174601572663,
+        "rank_after_rerank": 2
+      },
+      {
+        "smiles": "O=S(c1ccccc1O)c2ccccc2",
+        "name": "2-(Phenylsulfinyl)phenol",
+        "source_id": "CASMI16:Challenge-033:9323783",
+        "formula": "C12H10O2S",
+        "modcos": 0.6528690010309219,
+        "predicted_cosine": 0.3417047965177733,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5636590393677008,
+        "rank_after_rerank": 3
+      },
+      {
+        "smiles": "c1cc(ccc1O)Sc2ccc(cc2)O",
+        "name": "4,4′-Thiodiphenol",
+        "source_id": "CASMI16:Challenge-033:16612",
+        "formula": "C12H10O2S",
+        "modcos": 0.6509357392787933,
+        "predicted_cosine": 0.32734857788627136,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5585788690773987,
+        "rank_after_rerank": 4
+      },
+      {
+        "smiles": "COC(=S)Oc1ccc2ccccc2c1",
+        "name": "O-Methyl O-2-naphthyl carbonothioate",
+        "source_id": "CASMI16:Challenge-033:500444",
+        "formula": "C12H10O2S",
+        "modcos": 0.655759334564209,
+        "predicted_cosine": 0.13031279453912806,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.501397572187422,
+        "rank_after_rerank": 5
+      }
+    ],
+    "rerank_config": {
+      "top_k_for_rerank": 5,
+      "use_sirius": false,
+      "use_cfmid": true,
+      "predicted_cosine_da_tol": 0.01,
+      "mass_match_ppm": 5.0,
+      "sirius_gate_factor": 0.5
+    },
+    "timing": {
+      "cfmid_total": 8.342654466629028,
+      "cfmid_cache_hits": 5.0
+    }
+  },
+  "llm_input_order_after_cfmid_rerank": [
+    {
+      "input_index": 0,
+      "name": "2-(Phenylsulfanyl)-1,4-benzenediol",
+      "smiles": "S(c1ccccc1)c2cc(O)ccc2O"
+    },
+    {
+      "input_index": 1,
+      "name": "1,1'-[Sulfanediylbis(oxy)]dibenzene",
+      "smiles": "c1ccc(cc1)OSOc2ccccc2"
+    },
+    {
+      "input_index": 2,
+      "name": "2-(Phenylsulfinyl)phenol",
+      "smiles": "O=S(c1ccccc1O)c2ccccc2"
+    },
+    {
+      "input_index": 3,
+      "name": "4,4′-Thiodiphenol",
+      "smiles": "c1cc(ccc1O)Sc2ccc(cc2)O"
+    },
+    {
+      "input_index": 4,
+      "name": "O-Methyl O-2-naphthyl carbonothioate",
+      "smiles": "COC(=S)Oc1ccc2ccccc2c1"
+    }
+  ],
+  "selected_top1_cfmid_predictions": {
+    "msclip_only": {
+      "cache_hit": true,
+      "cosine": 0.43436776073516725,
+      "predicted_peaks": [
+        [
+          56.98044,
+          0.1444
+        ],
+        [
+          79.01894,
+          0.0617
+        ],
+        [
+          109.01174,
+          1.0
+        ],
+        [
+          123.02739,
+          0.0626
+        ],
+        [
+          133.01174,
+          0.0674
+        ],
+        [
+          138.98592,
+          0.2346
+        ],
+        [
+          149.00666,
+          0.0401
+        ],
+        [
+          217.03287,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    },
+    "conditional": {
+      "cache_hit": true,
+      "cosine": 0.43436776073516725,
+      "predicted_peaks": [
+        [
+          56.98044,
+          0.1444
+        ],
+        [
+          79.01894,
+          0.0617
+        ],
+        [
+          109.01174,
+          1.0
+        ],
+        [
+          123.02739,
+          0.0626
+        ],
+        [
+          133.01174,
+          0.0674
+        ],
+        [
+          138.98592,
+          0.2346
+        ],
+        [
+          149.00666,
+          0.0401
+        ],
+        [
+          217.03287,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    },
+    "llm_reranker": {
+      "cache_hit": true,
+      "cosine": 0.32734857788627136,
+      "predicted_peaks": [
+        [
+          93.03459,
+          0.4347
+        ],
+        [
+          94.99609,
+          0.2332
+        ],
+        [
+          121.01174,
+          0.342
+        ],
+        [
+          122.99101,
+          1.0
+        ],
+        [
+          125.00666,
+          0.4705
+        ],
+        [
+          149.00666,
+          1.0
+        ],
+        [
+          163.02231,
+          0.3128
+        ],
+        [
+          217.03287,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    }
+  },
+  "claim_mass_sanity": {
+    "precursor_mz": 217.0329,
+    "123.9983_delta": 93.0346,
+    "reported_loss_C6H5O_radical_mass": 93.0346,
+    "C6H4OS_radical_anion_mass_approx": 123.9983,
+    "note": "For [M-H]- C12H9O2S- to C6H4OS- fragment, complementary neutral is approximately C6H5O."
+  },
+  "provenance": {
+    "generated_at": "2026-05-12 16:06:01 +0800",
+    "reports_consulted": [
+      "reports/eval/casmi_2016_cat2_v1.md",
+      "reports/eval/llm_reranker_v2.md"
+    ],
+    "notes": [
+      "The conditional weighted run skipped SIRIUS/CFM-ID for this spectrum because the MS-CLIP top1-top2 gap was 0.068 >= the skip threshold.",
+      "CFM-ID evidence was reconstructed for comparison using the same reranker code path and existing data/cache/cfmid cache.",
+      "LLM ranked_indices are over the CFM-ID-reranked input order."
+    ]
+  }
+}

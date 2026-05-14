@@ -1,0 +1,6 @@
+config,primary,reranker,n_spectra,pre_rerank_top1_correct,pre_rerank_top1_pct,post_rerank_top1_correct,post_rerank_top1_pct,delta_pp,delta_spectra,rerank_changed_top1,rerank_changed_top1_pct,gained,lost,same_correct,same_wrong
+Phase_6.2_cfmid,modcos,weighted (cfmid only),358,267,74.58,258,72.07,-2.51,-9,69,19.27,16,25,242,75
+Phase_6.2_full,modcos,weighted (sirius+cfmid),358,267,74.58,263,73.46,-1.12,-4,64,17.88,16,20,247,75
+Phase_6.2_sirius,modcos,weighted (sirius only),358,267,74.58,263,73.46,-1.12,-4,34,9.5,6,10,257,85
+Phase_6.3_B_msclip_weighted,msclip,weighted (sirius+cfmid),354,262,74.01,244,68.93,-5.08,-18,72,20.34,13,31,231,79
+Phase_6.3_C_msclip_llm,msclip,LLM (Opus-4-7),358,265,74.02,247,68.99,-5.03,-18,73,20.39,13,31,234,80

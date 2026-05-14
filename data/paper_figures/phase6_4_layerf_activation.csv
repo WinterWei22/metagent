@@ -1,0 +1,3 @@
+n_task_errors,layer_f_unverif,n_tasks,layer_f_dispatched,layer_f_supported,layer_f_unsupported,total_claims,consistency_claim,extractor,factual_roundtrip_claim,grounded_claim,pathway_relationship,layer_f_contradicted,peak_mechanistic_claim,biological_claim
+9,0,38,0,0,0,1484,4,opus47 (Phase 6.3 D7),738,741,0,0,0,1
+1,159,38,858,0,0,2773,300,rule-based (Phase 6.4),102,1509,1,699,858,1

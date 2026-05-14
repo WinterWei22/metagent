@@ -1,0 +1,15 @@
+narrative_llm,claim_type,n_total,n_supported,n_unsupported,n_contradicted,n_unverifiable,sup_pct,unsup_pct,contra_pct,unverif_pct
+opus47,biological_claim,2288,511,402,53,1322,22.33,17.57,2.32,57.78
+opus47,set_enrichment,156,2,2,32,120,1.28,1.28,20.51,76.92
+opus47,driver_metabolite,83,42,2,28,11,50.6,2.41,33.73,13.25
+opus47,pathway_relationship,168,39,6,5,118,23.21,3.57,2.98,70.24
+opus47,grounded_claim,64,0,0,0,64,0.0,0.0,0.0,100.0
+opus47,factual_roundtrip_claim,401,0,0,0,401,0.0,0.0,0.0,100.0
+opus47,consistency_claim,120,0,0,19,101,0.0,0.0,15.83,84.17
+gpt55,biological_claim,2371,726,490,46,1109,30.62,20.67,1.94,46.77
+gpt55,set_enrichment,143,5,6,31,101,3.5,4.2,21.68,70.63
+gpt55,driver_metabolite,128,84,10,33,1,65.62,7.81,25.78,0.78
+gpt55,pathway_relationship,144,39,9,0,96,27.08,6.25,0.0,66.67
+gpt55,grounded_claim,127,0,0,0,127,0.0,0.0,0.0,100.0
+gpt55,factual_roundtrip_claim,9,0,0,0,9,0.0,0.0,0.0,100.0
+gpt55,consistency_claim,34,0,0,5,29,0.0,0.0,14.71,85.29

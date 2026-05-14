@@ -1,0 +1,6 @@
+primary_rank,cfmid_input_index,name,ik14,smiles,msclip,cfmid_cosine,mass_match,cfmid_evidence_score,cfmid_rank,weighted_conditional_skipped,llm_rank
+1,0,"2-(Phenylsulfanyl)-1,4-benzenediol",RRWYVSNRZFXBOC,S(c1ccccc1)c2cc(O)ccc2O,0.724,0.43436776073516725,1.0,0.620028097843353,1,True,2
+2,4,O-Methyl O-2-naphthyl carbonothioate,ZKMHCMSEUXUZMX,COC(=S)Oc1ccc2ccccc2c1,0.656,0.13031279453912806,1.0,0.501397572187422,5,True,5
+3,2,2-(Phenylsulfinyl)phenol,LHYFMWGDNOTXEL,O=S(c1ccccc1O)c2ccccc2,0.653,0.3417047965177733,1.0,0.5636590393677008,3,True,4
+4,3,"4,4′-Thiodiphenol",VWGKEVWFBOUAND,c1cc(ccc1O)Sc2ccc(cc2)O,0.651,0.32734857788627136,1.0,0.5585788690773987,4,True,1
+5,1,"1,1'-[Sulfanediylbis(oxy)]dibenzene",JHYBWOJWPAOJDQ,c1ccc(cc1)OSOc2ccccc2,0.641,0.44243968662219246,1.0,0.5890174601572663,2,True,3

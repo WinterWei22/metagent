@@ -1,0 +1,92 @@
+{
+  "n_pool": 39,
+  "n_chosen": 5,
+  "cases": [
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+      "claim_text": "L-DOPA is upstream of dopamine",
+      "verdict": "SUPPORTED",
+      "kegg_path": [
+        "cpd:C00355",
+        "cpd:C03758"
+      ],
+      "path_length": 1,
+      "direction": "forward",
+      "src_compound": "L-DOPA",
+      "dst_compound": "dopamine",
+      "kegg_pathway_context": "Galactose Metabolism",
+      "bucket": "",
+      "evidence_raw": "KEGG reaction graph: directional path L-DOPA (cpd:C00355) \u2192 dopamine (cpd:C03758) in 1 hop(s) [cpd:C00355 \u2192 cpd:C03758]; direction=forward"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_text": "Pregnenolone is upstream of DHEA in the steroidogenic chain",
+      "verdict": "SUPPORTED",
+      "kegg_path": [
+        "cpd:C01953",
+        "cpd:C05138",
+        "cpd:C01227"
+      ],
+      "path_length": 2,
+      "direction": "forward",
+      "src_compound": "Pregnenolone",
+      "dst_compound": "DHEA",
+      "kegg_pathway_context": "Androgen and Estrogen Metabolism",
+      "bucket": "",
+      "evidence_raw": "KEGG reaction graph: directional path Pregnenolone (cpd:C01953) \u2192 DHEA (cpd:C01227) in 2 hop(s) [cpd:C01953 \u2192 cpd:C05138 \u2192 cpd:C01227]; direction=forward"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_text": "Cholesterol is upstream of pregnenolone in the steroidogenic chain",
+      "verdict": "SUPPORTED",
+      "kegg_path": [
+        "cpd:C00187",
+        "cpd:C05500",
+        "cpd:C05501",
+        "cpd:C01953"
+      ],
+      "path_length": 3,
+      "direction": "forward",
+      "src_compound": "Cholesterol",
+      "dst_compound": "pregnenolone",
+      "kegg_pathway_context": "Androgen and Estrogen Metabolism",
+      "bucket": "",
+      "evidence_raw": "KEGG reaction graph: directional path Cholesterol (cpd:C00187) \u2192 pregnenolone (cpd:C01953) in 3 hop(s) [cpd:C00187 \u2192 cpd:C05500 \u2192 cpd:C05501 \u2192 cpd:C01953]; direction=forward"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "claim_text": "Cystathionine feeds into glutathione synthesis",
+      "verdict": "SUPPORTED",
+      "kegg_path": [
+        "cpd:C00051",
+        "cpd:C00025",
+        "cpd:C00037",
+        "cpd:C00065",
+        "cpd:C02291"
+      ],
+      "path_length": 4,
+      "direction": "bidirectional",
+      "src_compound": "glutathione synthesis",
+      "dst_compound": "Cystathionine",
+      "kegg_pathway_context": "Glycine, serine and threonine metabolism",
+      "bucket": "",
+      "evidence_raw": "KEGG reaction graph: directional path glutathione synthesis (cpd:C00051) \u2192 Cystathionine (cpd:C02291) in 4 hop(s) [cpd:C00051 \u2192 cpd:C00025 \u2192 cpd:C00037 \u2192 cpd:C00065 \u2192 cpd:C02291]; direction=bidirectional"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_text": "DHEA is upstream of androstenedione in the steroidogenic chain",
+      "verdict": "SUPPORTED",
+      "kegg_path": [
+        "cpd:C01227",
+        "cpd:C00280"
+      ],
+      "path_length": 1,
+      "direction": "bidirectional",
+      "src_compound": "DHEA",
+      "dst_compound": "androstenedione",
+      "kegg_pathway_context": "Androgen and Estrogen Metabolism",
+      "bucket": "",
+      "evidence_raw": "KEGG reaction graph: directional path DHEA (cpd:C01227) \u2192 androstenedione (cpd:C00280) in 1 hop(s) [cpd:C01227 \u2192 cpd:C00280]; direction=bidirectional"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+bucket,n_spectra,frac_of_total,n_pre_correct,pre_acc_pct,n_post_correct,post_acc_pct,delta_spectra,delta_pp
+wide (≥0.15),184,51.4,166,90.22,165,89.67,-1,-0.54
+medium (0.05-0.15),67,18.72,45,67.16,43,64.18,-2,-2.99
+narrow (<0.05),107,29.89,56,52.34,55,51.4,-1,-0.93

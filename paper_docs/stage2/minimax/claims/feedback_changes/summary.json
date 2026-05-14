@@ -1,0 +1,93 @@
+{
+  "input_root": "data/eval/sub6/v4_a3_d3_with_lit/feedback",
+  "n_tasks": 63,
+  "verdict_totals_before": {
+    "supported": 781,
+    "unsupported": 271,
+    "contradicted": 76,
+    "unverifiable_v0": 1977
+  },
+  "verdict_totals_final_selected_internal": {
+    "supported": 826,
+    "unsupported": 119,
+    "contradicted": 40,
+    "unverifiable_v0": 1817
+  },
+  "verdict_totals_final_verdict_json": {
+    "supported": 850,
+    "unsupported": 147,
+    "contradicted": 49,
+    "unverifiable_v0": 1765
+  },
+  "verdict_delta_final_selected_minus_before": {
+    "supported": 45,
+    "unsupported": -152,
+    "contradicted": -36,
+    "unverifiable_v0": -160
+  },
+  "verdict_delta_final_verdict_json_minus_before": {
+    "supported": 69,
+    "unsupported": -124,
+    "contradicted": -27,
+    "unverifiable_v0": -212
+  },
+  "quality_improved_tasks": 47,
+  "quality_unchanged_tasks": 16,
+  "quality_worsened_tasks": 0,
+  "quality_improved_tasks_rescored": 47,
+  "quality_unchanged_tasks_rescored": 6,
+  "quality_worsened_tasks_rescored": 10,
+  "before_quality_total": 347,
+  "final_quality_total": 159,
+  "final_rescored_quality_total": 196,
+  "delta_quality_total": -188,
+  "delta_rescored_quality_total": -151,
+  "pathway_identification_changed_tasks": 20,
+  "pathway_identification_unchanged_tasks": 43,
+  "final_iter_idx_counts": [
+    [
+      2,
+      31
+    ],
+    [
+      1,
+      18
+    ],
+    [
+      0,
+      14
+    ]
+  ],
+  "termination_reason_counts": [
+    [
+      "max_iterations_reached",
+      36
+    ],
+    [
+      "timeout_in_feedback_loop",
+      17
+    ],
+    [
+      "no_actionable_claims_after_iter",
+      9
+    ],
+    [
+      "early_exit_no_revisions",
+      1
+    ]
+  ],
+  "rollback_reason_counts": [
+    [
+      "None",
+      44
+    ],
+    [
+      "feedback_made_it_worse",
+      12
+    ],
+    [
+      "iter2_degraded",
+      7
+    ]
+  ]
+}

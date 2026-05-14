@@ -1,0 +1,48 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+  "ground_truth_pathway": {
+    "pathway_id": "RAMP_P_000000106",
+    "pathway_name": "Tyrosine metabolism",
+    "pathway_source": "kegg",
+    "external_id": "map00350",
+    "primary_pathway_pre_aggregation": "RAMP_P_000000106"
+  },
+  "top_pathway": {
+    "pathway_id": "RAMP_P_000000106",
+    "pathway_name": "Tyrosine metabolism",
+    "pathway_source": "kegg",
+    "pathway_external_id": "map00350",
+    "total_pathway_compounds": 69,
+    "matched_compounds": [
+      "C02953",
+      "C05578",
+      "C04043",
+      "C00070",
+      "C15571"
+    ],
+    "p_value": 3.6728967711326835e-13,
+    "fdr": 6.61121418803883e-11,
+    "fold_enrichment": 435.1127214170693
+  },
+  "matched_metabolites": [
+    "Dihydrobiopterin",
+    "5,6-Dihydroxyindole",
+    "3,4-Dihydroxyphenylacetaldehyde",
+    "Copper",
+    "Pyrocatechol"
+  ],
+  "other_metabolites": [
+    "Eicosapentaenoic acid",
+    "Sucrose",
+    "1-Pyrroline-5-carboxylic acid",
+    "Aspirin"
+  ],
+  "final_iter_idx": 1,
+  "verdicts_total": {
+    "supported": 18,
+    "unverifiable_v0": 12,
+    "contradicted": 1
+  },
+  "rendered_report_lines": 30,
+  "output_stem": "metagent_case_tyrosine_colored_report"
+}

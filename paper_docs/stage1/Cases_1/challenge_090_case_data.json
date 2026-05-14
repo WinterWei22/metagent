@@ -1,0 +1,879 @@
+{
+  "case_id": "Challenge-090",
+  "selected_reason": "LLM rescue case: MS-CLIP top-1 is wrong, weighted SIRIUS+CFM-ID top-1 is wrong, LLM reranker selects the ground truth.",
+  "dataset": "CASMI 2016 category 2",
+  "ground_truth": {
+    "inchikey_first_block": "YHMYGUUIMTVXNW",
+    "smiles": "SC1=NC2=CC=CC=C2N1",
+    "formula": "C7H6N2S",
+    "precursor_mz": 151.0324,
+    "ion_mode": "positive",
+    "adduct": "[M+H]+",
+    "n_experimental_peaks": 7
+  },
+  "source_records": {
+    "msclip_only": {
+      "spectrum_id": "Challenge-090",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N2S",
+      "gt_inchikey_first_block": "YHMYGUUIMTVXNW",
+      "gt_smiles": "SC1=NC2=CC=CC=C2N1",
+      "predicted_inchikey_first_block": "QZQLBBPKPGSZBH",
+      "predicted_smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+      "predicted_score": 0.7850098013877869,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "none",
+      "rerank_applied": [],
+      "error": null,
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+          "name": "1,2-Dihydro-3H-indazole-3-thione",
+          "source_id": "CASMI16:Challenge-090:14302654",
+          "score": 0.7850098013877869,
+          "modcos": null,
+          "msclip": 0.785,
+          "ik14": "QZQLBBPKPGSZBH"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1ccc2c(c1)[nH]c(n2)S",
+          "name": "benzimidazole-2-thiol",
+          "source_id": "CASMI16:Challenge-090:616466",
+          "score": 0.7763515710830688,
+          "modcos": null,
+          "msclip": 0.776,
+          "ik14": "YHMYGUUIMTVXNW"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1ccc2c(c1)nc(s2)N",
+          "name": "2-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:8382",
+          "score": 0.7707772552967072,
+          "modcos": null,
+          "msclip": 0.771,
+          "ik14": "UHGULLIUJBCTEF"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccn2c(c1)c[nH]c2=S",
+          "name": "Imidazo[1,5-a]pyridine-3(2H)-thione",
+          "source_id": "CASMI16:Challenge-090:644373",
+          "score": 0.7556928396224976,
+          "modcos": null,
+          "msclip": 0.756,
+          "ik14": "IPOYUTJDAMAUNH"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "Cc1nc2cccnc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556071",
+          "score": 0.7401114702224731,
+          "modcos": null,
+          "msclip": 0.74,
+          "ik14": "NVXPSQIYZCKHMN"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1ccc2c(c1)c(sn2)N",
+          "name": "2,1-Benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:10430008",
+          "score": 0.7332782298326492,
+          "modcos": null,
+          "msclip": 0.733,
+          "ik14": "JSKJAICVFPRVHJ"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "Cc1nc2c(s1)cccn2",
+          "name": "2-Methyl[1,3]thiazolo[4,5-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556075",
+          "score": 0.7305494844913483,
+          "modcos": null,
+          "msclip": 0.731,
+          "ik14": "CGSWTRTYXLGAFI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc2c(c1)c(ns2)N",
+          "name": "1,2-benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:81213",
+          "score": 0.7303773313760757,
+          "modcos": null,
+          "msclip": 0.73,
+          "ik14": "WIJQCPIRWXSWQG"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "c1ccc2c(c1)N=CNS2",
+          "name": "2H-1,2,4-Benzothiadiazin",
+          "source_id": "CASMI16:Challenge-090:415700",
+          "score": 0.7289398908615112,
+          "modcos": null,
+          "msclip": 0.729,
+          "ik14": "QRKDOAWSBBGNLE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "Cc1nc2ccncc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556064",
+          "score": 0.7276066243648529,
+          "modcos": null,
+          "msclip": 0.728,
+          "ik14": "NTPKGMUVGJRKBM"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "Cc1nc2cnccc2s1",
+          "name": "2-Methyl[1,3]thiazolo[4,5-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556065",
+          "score": 0.7243646383285522,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "YODDSQSDFALFLC"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1S)[nH]cn2",
+          "name": "1H-Benzimidazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13334088",
+          "score": 0.718604326248169,
+          "modcos": null,
+          "msclip": 0.719,
+          "ik14": "SOMKOFZJHWCRCJ"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1cc2c(cc1N)scn2",
+          "name": "6-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:61585",
+          "score": 0.7181444317102432,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "FAYAYUOZWYJNBD"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1cc2c(cc1N)ncs2",
+          "name": "1,3-Benzothiazol-5-amine",
+          "source_id": "CASMI16:Challenge-090:63914",
+          "score": 0.7177517712116241,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "UJZYHMZRXGNDFB"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1ccn2c(c1)cc(n2)S",
+          "name": "Pyrazolo[1,5-a]pyridine-2-thiol",
+          "source_id": "CASMI16:Challenge-090:37668160",
+          "score": 0.7052141427993774,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "RQKFLEZYRCCFEO"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "c1cc2c(cc1S)cn[nH]2",
+          "name": "1H-Indazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13996745",
+          "score": 0.7050386071205139,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "ZISLUPNINLZWRT"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1ccc2c(c1)C=NSN2",
+          "name": "1H-2,1,3-Benzothiadiazine",
+          "source_id": "CASMI16:Challenge-090:15182060",
+          "score": 0.704570397734642,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "GMCRNNWINPJXJN"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cc2cnsc2cc1N",
+          "name": "1,2-Benzothiazol-6-amine",
+          "source_id": "CASMI16:Challenge-090:13355258",
+          "score": 0.6997422277927399,
+          "modcos": null,
+          "msclip": 0.7,
+          "ik14": "SFJKMYTWPTTZOS"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "Cc1ccc2c(c1)snn2",
+          "name": "6-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:716663",
+          "score": 0.6994237452745438,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "ARGLHVHBIBSIAD"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "Cc1ccc2c(c1)nns2",
+          "name": "5-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:284336",
+          "score": 0.6989148110151291,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "XYLUQSLPJCAEQL"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_msclip_only/casmi_identifications.jsonl",
+      "_source_line": 90
+    },
+    "conditional": {
+      "spectrum_id": "Challenge-090",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N2S",
+      "gt_inchikey_first_block": "YHMYGUUIMTVXNW",
+      "gt_smiles": "SC1=NC2=CC=CC=C2N1",
+      "predicted_inchikey_first_block": "IPOYUTJDAMAUNH",
+      "predicted_smiles": "c1ccn2c(c1)c[nH]c2=S",
+      "predicted_score": 0.7556928396224976,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "conditional",
+      "rerank_applied": [
+        "sirius",
+        "cfmid"
+      ],
+      "error": null,
+      "gate": {
+        "conditional_skipped": false,
+        "gate_reason": "ambiguous_trigger (top1=0.785, gap=0.009)",
+        "gate_msclip_top1": 0.785,
+        "gate_msclip_gap": 0.009000000000000008
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+          "name": "1,2-Dihydro-3H-indazole-3-thione",
+          "source_id": "CASMI16:Challenge-090:14302654",
+          "score": 0.7850098013877869,
+          "modcos": null,
+          "msclip": 0.785,
+          "ik14": "QZQLBBPKPGSZBH"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1ccc2c(c1)[nH]c(n2)S",
+          "name": "benzimidazole-2-thiol",
+          "source_id": "CASMI16:Challenge-090:616466",
+          "score": 0.7763515710830688,
+          "modcos": null,
+          "msclip": 0.776,
+          "ik14": "YHMYGUUIMTVXNW"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1ccc2c(c1)nc(s2)N",
+          "name": "2-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:8382",
+          "score": 0.7707772552967072,
+          "modcos": null,
+          "msclip": 0.771,
+          "ik14": "UHGULLIUJBCTEF"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccn2c(c1)c[nH]c2=S",
+          "name": "Imidazo[1,5-a]pyridine-3(2H)-thione",
+          "source_id": "CASMI16:Challenge-090:644373",
+          "score": 0.7556928396224976,
+          "modcos": null,
+          "msclip": 0.756,
+          "ik14": "IPOYUTJDAMAUNH"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "Cc1nc2cccnc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556071",
+          "score": 0.7401114702224731,
+          "modcos": null,
+          "msclip": 0.74,
+          "ik14": "NVXPSQIYZCKHMN"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1ccc2c(c1)c(sn2)N",
+          "name": "2,1-Benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:10430008",
+          "score": 0.7332782298326492,
+          "modcos": null,
+          "msclip": 0.733,
+          "ik14": "JSKJAICVFPRVHJ"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "Cc1nc2c(s1)cccn2",
+          "name": "2-Methyl[1,3]thiazolo[4,5-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556075",
+          "score": 0.7305494844913483,
+          "modcos": null,
+          "msclip": 0.731,
+          "ik14": "CGSWTRTYXLGAFI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc2c(c1)c(ns2)N",
+          "name": "1,2-benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:81213",
+          "score": 0.7303773313760757,
+          "modcos": null,
+          "msclip": 0.73,
+          "ik14": "WIJQCPIRWXSWQG"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "c1ccc2c(c1)N=CNS2",
+          "name": "2H-1,2,4-Benzothiadiazin",
+          "source_id": "CASMI16:Challenge-090:415700",
+          "score": 0.7289398908615112,
+          "modcos": null,
+          "msclip": 0.729,
+          "ik14": "QRKDOAWSBBGNLE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "Cc1nc2ccncc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556064",
+          "score": 0.7276066243648529,
+          "modcos": null,
+          "msclip": 0.728,
+          "ik14": "NTPKGMUVGJRKBM"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "Cc1nc2cnccc2s1",
+          "name": "2-Methyl[1,3]thiazolo[4,5-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556065",
+          "score": 0.7243646383285522,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "YODDSQSDFALFLC"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1S)[nH]cn2",
+          "name": "1H-Benzimidazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13334088",
+          "score": 0.718604326248169,
+          "modcos": null,
+          "msclip": 0.719,
+          "ik14": "SOMKOFZJHWCRCJ"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1cc2c(cc1N)scn2",
+          "name": "6-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:61585",
+          "score": 0.7181444317102432,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "FAYAYUOZWYJNBD"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1cc2c(cc1N)ncs2",
+          "name": "1,3-Benzothiazol-5-amine",
+          "source_id": "CASMI16:Challenge-090:63914",
+          "score": 0.7177517712116241,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "UJZYHMZRXGNDFB"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1ccn2c(c1)cc(n2)S",
+          "name": "Pyrazolo[1,5-a]pyridine-2-thiol",
+          "source_id": "CASMI16:Challenge-090:37668160",
+          "score": 0.7052141427993774,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "RQKFLEZYRCCFEO"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "c1cc2c(cc1S)cn[nH]2",
+          "name": "1H-Indazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13996745",
+          "score": 0.7050386071205139,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "ZISLUPNINLZWRT"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1ccc2c(c1)C=NSN2",
+          "name": "1H-2,1,3-Benzothiadiazine",
+          "source_id": "CASMI16:Challenge-090:15182060",
+          "score": 0.704570397734642,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "GMCRNNWINPJXJN"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cc2cnsc2cc1N",
+          "name": "1,2-Benzothiazol-6-amine",
+          "source_id": "CASMI16:Challenge-090:13355258",
+          "score": 0.6997422277927399,
+          "modcos": null,
+          "msclip": 0.7,
+          "ik14": "SFJKMYTWPTTZOS"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "Cc1ccc2c(c1)snn2",
+          "name": "6-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:716663",
+          "score": 0.6994237452745438,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "ARGLHVHBIBSIAD"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "Cc1ccc2c(c1)nns2",
+          "name": "5-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:284336",
+          "score": 0.6989148110151291,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "XYLUQSLPJCAEQL"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_conditional/casmi_identifications.jsonl",
+      "_source_line": 90
+    },
+    "llm_reranker": {
+      "spectrum_id": "Challenge-090",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N2S",
+      "gt_inchikey_first_block": "YHMYGUUIMTVXNW",
+      "gt_smiles": "SC1=NC2=CC=CC=C2N1",
+      "predicted_inchikey_first_block": "YHMYGUUIMTVXNW",
+      "predicted_smiles": "c1ccc2c(c1)[nH]c(n2)S",
+      "predicted_score": 0.7763515710830688,
+      "correct_top1": true,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "llm",
+      "rerank_applied": [
+        "cfmid"
+      ],
+      "error": null,
+      "gate": null,
+      "llm_rerank": {
+        "narrative": "Spectrum Challenge-090 (precursor m/z 151.0324).\nSelected top-1: c1ccc2c(c1)[nH]c(n2)S (confidence: medium).\nJustification: Benzimidazole-2-thiol (index 1) carries the highest MS-CLIP score (0.776) and a CFM-ID cosine of 0.6216 against the experimental spectrum. The experimental peaks at 118.0525 and 119.0604 correspond to characteristic losses of SH (−32.98 Da) and S (−31.97 Da) from the free thiol group, which are diagnostic for 2-mercaptobenzimidazole-type structures. The fragment at 93.0573 (C6H7N+) is consistent with ring-opening loss of COS (57.98 Da) from the bicyclic system, and the peak at 65.0385 matches the cyclopentadienyl/pyridinium fragment C5H5+ (65.039), further supporting a benzimidazole scaffold.\nPeak-level claims:\n  - m/z 118.0525 corresponds to loss of SH (32.980 Da) from precursor [M+H]+ at 151.0324\n  - m/z 119.0604 corresponds to loss of S (31.972 Da) from precursor [M+H]+ at 151.0324\n  - m/z 93.0573 corresponds to loss of COS (57.975 Da) from precursor [M+H]+ at 151.0324, yielding C6H7N+\n  - m/z 65.0385 corresponds to fragment of C5H5+ arising from retro-cycloaddition of the benzimidazole ring",
+        "peak_claims": [
+          "m/z 118.0525 corresponds to loss of SH (32.980 Da) from precursor [M+H]+ at 151.0324",
+          "m/z 119.0604 corresponds to loss of S (31.972 Da) from precursor [M+H]+ at 151.0324",
+          "m/z 93.0573 corresponds to loss of COS (57.975 Da) from precursor [M+H]+ at 151.0324, yielding C6H7N+",
+          "m/z 65.0385 corresponds to fragment of C5H5+ arising from retro-cycloaddition of the benzimidazole ring"
+        ],
+        "confidence": "medium",
+        "fallback_used": false,
+        "parse_error": null,
+        "ranked_indices": [
+          1,
+          0,
+          3,
+          2,
+          4
+        ]
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+          "name": "1,2-Dihydro-3H-indazole-3-thione",
+          "source_id": "CASMI16:Challenge-090:14302654",
+          "score": 0.7850098013877869,
+          "modcos": null,
+          "msclip": 0.785,
+          "ik14": "QZQLBBPKPGSZBH"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1ccc2c(c1)[nH]c(n2)S",
+          "name": "benzimidazole-2-thiol",
+          "source_id": "CASMI16:Challenge-090:616466",
+          "score": 0.7763515710830688,
+          "modcos": null,
+          "msclip": 0.776,
+          "ik14": "YHMYGUUIMTVXNW"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1ccc2c(c1)nc(s2)N",
+          "name": "2-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:8382",
+          "score": 0.7707772552967072,
+          "modcos": null,
+          "msclip": 0.771,
+          "ik14": "UHGULLIUJBCTEF"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccn2c(c1)c[nH]c2=S",
+          "name": "Imidazo[1,5-a]pyridine-3(2H)-thione",
+          "source_id": "CASMI16:Challenge-090:644373",
+          "score": 0.7556928396224976,
+          "modcos": null,
+          "msclip": 0.756,
+          "ik14": "IPOYUTJDAMAUNH"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "Cc1nc2cccnc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556071",
+          "score": 0.7401114702224731,
+          "modcos": null,
+          "msclip": 0.74,
+          "ik14": "NVXPSQIYZCKHMN"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1ccc2c(c1)c(sn2)N",
+          "name": "2,1-Benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:10430008",
+          "score": 0.7332782298326492,
+          "modcos": null,
+          "msclip": 0.733,
+          "ik14": "JSKJAICVFPRVHJ"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "Cc1nc2c(s1)cccn2",
+          "name": "2-Methyl[1,3]thiazolo[4,5-b]pyridine",
+          "source_id": "CASMI16:Challenge-090:556075",
+          "score": 0.7305494844913483,
+          "modcos": null,
+          "msclip": 0.731,
+          "ik14": "CGSWTRTYXLGAFI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc2c(c1)c(ns2)N",
+          "name": "1,2-benzothiazol-3-amine",
+          "source_id": "CASMI16:Challenge-090:81213",
+          "score": 0.7303773313760757,
+          "modcos": null,
+          "msclip": 0.73,
+          "ik14": "WIJQCPIRWXSWQG"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "c1ccc2c(c1)N=CNS2",
+          "name": "2H-1,2,4-Benzothiadiazin",
+          "source_id": "CASMI16:Challenge-090:415700",
+          "score": 0.7289398908615112,
+          "modcos": null,
+          "msclip": 0.729,
+          "ik14": "QRKDOAWSBBGNLE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "Cc1nc2ccncc2s1",
+          "name": "2-Methyl[1,3]thiazolo[5,4-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556064",
+          "score": 0.7276066243648529,
+          "modcos": null,
+          "msclip": 0.728,
+          "ik14": "NTPKGMUVGJRKBM"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "Cc1nc2cnccc2s1",
+          "name": "2-Methyl[1,3]thiazolo[4,5-c]pyridine",
+          "source_id": "CASMI16:Challenge-090:556065",
+          "score": 0.7243646383285522,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "YODDSQSDFALFLC"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "c1cc2c(cc1S)[nH]cn2",
+          "name": "1H-Benzimidazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13334088",
+          "score": 0.718604326248169,
+          "modcos": null,
+          "msclip": 0.719,
+          "ik14": "SOMKOFZJHWCRCJ"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1cc2c(cc1N)scn2",
+          "name": "6-Aminobenzothiazole",
+          "source_id": "CASMI16:Challenge-090:61585",
+          "score": 0.7181444317102432,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "FAYAYUOZWYJNBD"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "c1cc2c(cc1N)ncs2",
+          "name": "1,3-Benzothiazol-5-amine",
+          "source_id": "CASMI16:Challenge-090:63914",
+          "score": 0.7177517712116241,
+          "modcos": null,
+          "msclip": 0.718,
+          "ik14": "UJZYHMZRXGNDFB"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1ccn2c(c1)cc(n2)S",
+          "name": "Pyrazolo[1,5-a]pyridine-2-thiol",
+          "source_id": "CASMI16:Challenge-090:37668160",
+          "score": 0.7052141427993774,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "RQKFLEZYRCCFEO"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "c1cc2c(cc1S)cn[nH]2",
+          "name": "1H-Indazole-5-thiol",
+          "source_id": "CASMI16:Challenge-090:13996745",
+          "score": 0.7050386071205139,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "ZISLUPNINLZWRT"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1ccc2c(c1)C=NSN2",
+          "name": "1H-2,1,3-Benzothiadiazine",
+          "source_id": "CASMI16:Challenge-090:15182060",
+          "score": 0.704570397734642,
+          "modcos": null,
+          "msclip": 0.705,
+          "ik14": "GMCRNNWINPJXJN"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cc2cnsc2cc1N",
+          "name": "1,2-Benzothiazol-6-amine",
+          "source_id": "CASMI16:Challenge-090:13355258",
+          "score": 0.6997422277927399,
+          "modcos": null,
+          "msclip": 0.7,
+          "ik14": "SFJKMYTWPTTZOS"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "Cc1ccc2c(c1)snn2",
+          "name": "6-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:716663",
+          "score": 0.6994237452745438,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "ARGLHVHBIBSIAD"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "Cc1ccc2c(c1)nns2",
+          "name": "5-Methyl-1,2,3-benzothiadiazole",
+          "source_id": "CASMI16:Challenge-090:284336",
+          "score": 0.6989148110151291,
+          "modcos": null,
+          "msclip": 0.699,
+          "ik14": "XYLUQSLPJCAEQL"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_llm_reranker/casmi_identifications.jsonl",
+      "_source_line": 90
+    }
+  },
+  "reconstructed_peak_evidence": {
+    "spectrum_id": "Challenge-090",
+    "experimental_peaks": [
+      [
+        65.0385,
+        0.00127660832587643
+      ],
+      [
+        92.0494,
+        0.004919361624066624
+      ],
+      [
+        93.0573,
+        0.0497158928820336
+      ],
+      [
+        118.0525,
+        0.018353304473492062
+      ],
+      [
+        119.0604,
+        0.009803145874364356
+      ],
+      [
+        150.0244,
+        0.0011749858986886683
+      ],
+      [
+        151.0324,
+        1.0
+      ]
+    ],
+    "sirius": {
+      "error": "SiriusNotInstalledError: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!\nUsage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]\n                    [--select-license=<sid>] [[-u=<username> -p] |\n                    [--token=<token>] | [--user-env=<username>\n                    --password-env=<password>]]\n<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID\nor CANOPUS) and securely store a personal access token.\n\n\n      --clear, --logout      Logout. Deletes"
+    },
+    "cfmid_top1": {
+      "smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+      "predicted_peaks": [
+        [
+          77.03858,
+          1.0
+        ],
+        [
+          79.05423,
+          1.0
+        ],
+        [
+          107.06037,
+          0.036699999999999997
+        ],
+        [
+          121.01065,
+          0.6297
+        ],
+        [
+          151.03245,
+          1.0
+        ]
+      ],
+      "cosine_vs_experimental": 0.5417026737366456,
+      "model_version": "cfm-id-4.4.7"
+    },
+    "candidates_evaluated": [
+      {
+        "smiles": "c1ccn2c(c1)c[nH]c2=S",
+        "name": "Imidazo[1,5-a]pyridine-3(2H)-thione",
+        "source_id": "CASMI16:Challenge-090:644373",
+        "formula": "C7H6N2S",
+        "modcos": 0.7556928396224976,
+        "predicted_cosine": 0.6500586185009911,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.6972947213992964,
+        "rank_after_rerank": 1
+      },
+      {
+        "smiles": "c1ccc2c(c1)[nH]c(n2)S",
+        "name": "benzimidazole-2-thiol",
+        "source_id": "CASMI16:Challenge-090:616466",
+        "formula": "C7H6N2S",
+        "modcos": 0.7763515710830688,
+        "predicted_cosine": 0.6215780802530979,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.6970140525091569,
+        "rank_after_rerank": 2
+      },
+      {
+        "smiles": "c1ccc2c(c1)c(=S)[nH][nH]2",
+        "name": "1,2-Dihydro-3H-indazole-3-thione",
+        "source_id": "CASMI16:Challenge-090:14302654",
+        "formula": "C7H6N2S",
+        "modcos": 0.7850098013877869,
+        "predicted_cosine": 0.5417026737366456,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.6765147226761085,
+        "rank_after_rerank": 3
+      },
+      {
+        "smiles": "c1ccc2c(c1)nc(s2)N",
+        "name": "2-Aminobenzothiazole",
+        "source_id": "CASMI16:Challenge-090:8382",
+        "formula": "C7H6N2S",
+        "modcos": 0.7707772552967072,
+        "predicted_cosine": 0.5587902229488482,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.6759479690033374,
+        "rank_after_rerank": 4
+      },
+      {
+        "smiles": "Cc1nc2cccnc2s1",
+        "name": "2-Methyl[1,3]thiazolo[5,4-b]pyridine",
+        "source_id": "CASMI16:Challenge-090:556071",
+        "formula": "C7H6N2S",
+        "modcos": 0.7401114702224731,
+        "predicted_cosine": 0.4814896747791685,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.6404914905227399,
+        "rank_after_rerank": 5
+      }
+    ],
+    "rerank_config": {
+      "top_k_for_rerank": 5,
+      "use_sirius": true,
+      "use_cfmid": true,
+      "predicted_cosine_da_tol": 0.01,
+      "mass_match_ppm": 5.0,
+      "sirius_gate_factor": 0.5
+    },
+    "timing": {
+      "sirius": 3.344423294067383,
+      "cfmid_total": 8.627613306045532,
+      "cfmid_cache_hits": 5.0
+    }
+  },
+  "reconstructed_weighted_order_top5": [
+    "c1ccn2c(c1)c[nH]c2=S",
+    "c1ccc2c(c1)[nH]c(n2)S",
+    "c1ccc2c(c1)c(=S)[nH][nH]2",
+    "c1ccc2c(c1)nc(s2)N",
+    "Cc1nc2cccnc2s1"
+  ],
+  "provenance": {
+    "generated_at": "2026-05-12 15:13:41 +0800",
+    "reports_consulted": [
+      "reports/eval/casmi_2016_cat2_v1.md",
+      "reports/eval/casmi_ood_v1.md",
+      "reports/eval/llm_reranker_v2.md",
+      "reports/spike/negative_mode_spike_2026-04-28.md"
+    ],
+    "notes": [
+      "CASMI per-spectrum JSONL keeps final ranked_candidates and llm_rerank, but strips the full original peak_evidence.candidates_evaluated table for weighted runs.",
+      "The CFM-ID evidence in this package was reconstructed for the top-5 MS-CLIP candidates using evaluation.sub6.rerank.rerank_with_sirius_cfmid and data/cache/cfmid cache hits.",
+      "Live SIRIUS reconstruction attempted but current local SIRIUS requires login; the resulting error is retained in reconstructed_peak_evidence.sirius."
+    ]
+  }
+}

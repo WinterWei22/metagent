@@ -1,0 +1,543 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+  "input": {
+    "differential_metabolites": [
+      {
+        "name": "Dehydroepiandrosterone",
+        "kegg_id": "C01227",
+        "compound_class": "central_metabolism"
+      },
+      {
+        "name": "Indoleacetaldehyde",
+        "kegg_id": "C00637",
+        "compound_class": "amino_acid_metabolism"
+      },
+      {
+        "name": "Androstenedione",
+        "kegg_id": "C00280",
+        "compound_class": "lipid_metabolism"
+      },
+      {
+        "name": "Menadione",
+        "kegg_id": "C05377",
+        "compound_class": "other"
+      },
+      {
+        "name": "(S)-3-Hydroxyisobutyric acid",
+        "kegg_id": "C06001",
+        "compound_class": "amino_acid_metabolism"
+      },
+      {
+        "name": "Estradiol",
+        "kegg_id": "C00951",
+        "compound_class": "lipid_metabolism"
+      },
+      {
+        "name": "Estrone",
+        "kegg_id": "C00468",
+        "compound_class": "lipid_metabolism"
+      },
+      {
+        "name": "Testosterone",
+        "kegg_id": "C00535",
+        "compound_class": "lipid_metabolism"
+      }
+    ],
+    "ground_truth_pathway": {
+      "pathway_id": "RAMP_P_000052855",
+      "pathway_name": "Sulfatase and aromatase pathway",
+      "pathway_source": "wikipathways",
+      "external_id": "WP5368",
+      "primary_pathway_pre_aggregation": "RAMP_P_000000421"
+    },
+    "ground_truth_signal_compounds": [
+      "C00951",
+      "C00280",
+      "C00468",
+      "C00535",
+      "C01227"
+    ],
+    "noise_compounds": null
+  },
+  "narrative": {
+    "llm_model": "claude-opus-4-7",
+    "elapsed_seconds": 16.323173612356186,
+    "metabolite_count": 8,
+    "text": "# Metabolomics Pathway Analysis\n\n## 1. Most Likely Affected Pathways\n\nThe dominant signal is **steroid hormone biosynthesis** (KEGG map00140). Six of the eight metabolites sit squarely in this pathway: dehydroepiandrosterone (DHEA), androstenedione, testosterone, estrone, and estradiol form a connected biosynthetic chain. Secondary signals include:\n\n- **Tryptophan metabolism** (indoleacetaldehyde, an intermediate between tryptamine/indole-3-pyruvate and indole-3-acetate)\n- **Valine degradation / branched-chain amino acid (BCAA) catabolism** ((S)-3-hydroxyisobutyric acid is a valine-specific intermediate)\n- **Ubiquinone and other terpenoid-quinone biosynthesis / vitamin K cycle** (menadione, vitamin K3)\n\n## 2. Key Drivers\n\nWithin steroidogenesis, the key drivers are **DHEA and androstenedione** as upstream Δ5/Δ4 androgen precursors, **testosterone** as the central androgen, and the **estrone ↔ estradiol** pair as the terminal estrogenic outputs. The coordinated movement of both precursors and end products (rather than a single intermediate) is what makes this pathway assignment robust. For the minor pathways, indoleacetaldehyde and (S)-3-hydroxyisobutyric acid are each single-node hits, so they are suggestive rather than definitive.\n\n## 3. Biological Significance\n\nCoordinated shifts across DHEA → androstenedione → testosterone → estrone/estradiol point to altered activity of the steroidogenic enzyme cascade, most notably 3β-HSD, 17β-HSD, and aromatase (CYP19A1). This pattern is typical of perturbations in adrenal or gonadal function, sex-hormone-responsive tissues, or endocrine-disrupting exposures. Because both androgens and estrogens shift together, the change is likely at a shared upstream node rather than at aromatase alone. The accompanying signals are biologically coherent: 3-hydroxyisobutyric acid elevation often reflects altered mitochondrial BCAA oxidation (linked to insulin resistance and energy stress), and menadione relates to quinone/redox and vitamin K-dependent processes, both of which can modulate steroidogenic cell redox tone. Indoleacetaldehyde points toward altered tryptophan handling, which intersects with neuroendocrine signaling.\n\n## 4. Upstream / Downstream Relationships\n\nThe clear directional chain is: **cholesterol → pregnenolone → DHEA → androstenedione → testosterone → estradiol**, with androstenedione → estrone as the parallel aromatase branch and estrone ↔ estradiol interconverted by 17β-HSD. DHEA and androstenedione are upstream hubs; estradiol is the downstream bioactive endpoint. Cross-pathway, mitochondrial BCAA catabolism (3-hydroxyisobutyrate) and quinone redox status (menadione) feed the cofactor and NAD(P)H/redox pool that steroidogenic CYPs depend on, providing a plausible metabolic link between the minor hits and the central steroid signal."
+  },
+  "verdicts": {
+    "totals": {
+      "unsupported": 10,
+      "supported": 10,
+      "unverifiable_v0": 29
+    },
+    "by_type": {
+      "biological_claim": {
+        "unsupported": 10,
+        "supported": 9,
+        "unverifiable_v0": 21
+      },
+      "factual_roundtrip_claim": {
+        "unverifiable_v0": 1
+      },
+      "grounded_claim": {
+        "unverifiable_v0": 2
+      },
+      "driver_metabolite": {
+        "supported": 1
+      },
+      "set_enrichment": {
+        "unverifiable_v0": 1
+      },
+      "consistency_claim": {
+        "unverifiable_v0": 1
+      },
+      "pathway_relationship": {
+        "unverifiable_v0": 3
+      }
+    },
+    "claims": [
+      {
+        "n": 1,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "The dominant signal is steroid hormone biosynthesis",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'dominant signal is steroid hormone biosynthesis' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contrad",
+        "correction": null
+      },
+      {
+        "n": 2,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Steroid hormone biosynthesis maps to KEGG map00140",
+        "verdict": "supported",
+        "evidence": "Pathway ID 'map00140' resolves to RAMP_P_000000074 in RaMP, but is not in this task's enrichment context. SUPPORTED on membership, not on relevance.",
+        "correction": null
+      },
+      {
+        "n": 3,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Six of the eight metabolites sit in the steroid hormone biosynthesis pathway",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'sit in the steroid hormone biosynthesis' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted.",
+        "correction": null
+      },
+      {
+        "n": 4,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Dehydroepiandrosterone (DHEA) is one of the six metabolites in the steroid hormone biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000054, derived from cpd:C01227) is in at least one of the 1 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 5,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Androstenedione is one of the six metabolites in the steroid hormone biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000037, derived from cpd:C00280) is in at least one of the 1 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 6,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Testosterone is one of the six metabolites in the steroid hormone biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000156, derived from cpd:C00535) is in at least one of the 1 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 7,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Estrone is one of the six metabolites in the steroid hormone biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000093, derived from cpd:C00468) is in at least one of the 1 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 8,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Estradiol is one of the six metabolites in the steroid hormone biosynthesis pathway",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000097, derived from cpd:C00951) is in at least one of the 1 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 9,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "DHEA, androstenedione, testosterone, estrone, and estradiol form a connected biosynthetic chain",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 10,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Indoleacetaldehyde is a secondary signal in tryptophan metabolism",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000909, derived from cpd:C00637) is in at least one of the 2 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 11,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Indoleacetaldehyde is an intermediate between tryptamine/indole-3-pyruvate and indole-3-acetate",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 12,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Indoleacetaldehyde is associated with tryptophan metabolism",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'Indoleacetaldehyde is associated with tryptophan metabolism' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather ",
+        "correction": null
+      },
+      {
+        "n": 13,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "(S)-3-hydroxyisobutyric acid is a secondary signal in valine degradation / branched-chain amino acid catabolism",
+        "verdict": "unsupported",
+        "evidence": "RaMP knows compound cpd:C06001 (ramp_id=RAMP_C_000000016) is in 19 pathways; the claimed pathway 'a secondary signal in valine degradation' is not among them. However the compound IS in eligible-typed",
+        "correction": null
+      },
+      {
+        "n": 14,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "(S)-3-hydroxyisobutyric acid is a valine-specific intermediate",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 15,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Menadione is a secondary signal in ubiquinone and other terpenoid-quinone biosynthesis / vitamin K cycle",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'in ubiquinone and other terpenoid-quinone biosynthesis' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than ",
+        "correction": null
+      },
+      {
+        "n": 16,
+        "type": "factual_roundtrip_claim",
+        "subtype": "unknown",
+        "text": "Menadione is also known as vitamin K3",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'factual_roundtrip_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limita",
+        "correction": null
+      },
+      {
+        "n": 17,
+        "type": "grounded_claim",
+        "subtype": "unknown",
+        "text": "DHEA is an upstream Δ5/Δ4 androgen precursor in steroidogenesis",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'grounded_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limitation.",
+        "correction": null
+      },
+      {
+        "n": 18,
+        "type": "grounded_claim",
+        "subtype": "unknown",
+        "text": "Androstenedione is an upstream Δ5/Δ4 androgen precursor in steroidogenesis",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'grounded_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limitation.",
+        "correction": null
+      },
+      {
+        "n": 19,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Testosterone is the central androgen in steroidogenesis",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 20,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Estrone and estradiol are the terminal estrogenic outputs in steroidogenesis",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 21,
+        "type": "driver_metabolite",
+        "subtype": "driver_list",
+        "text": "DHEA and androstenedione are key drivers of the steroid hormone biosynthesis pathway enrichment",
+        "verdict": "supported",
+        "evidence": "All 1 claimed driver(s) are members of ground_truth_signal_compounds. precision=1.00 recall=0.20.",
+        "correction": null
+      },
+      {
+        "n": 22,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "Indoleacetaldehyde is a single-node hit in tryptophan metabolism",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000909, derived from cpd:C00637) is in at least one of the 2 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 23,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "(S)-3-hydroxyisobutyric acid is a single-node hit in valine degradation / BCAA catabolism",
+        "verdict": "supported",
+        "evidence": "RaMP analytehaspathway confirms compound (RAMP_C_000000016, derived from cpd:C06001) is in at least one of the 2 resolved pathways for the claim (1 membership row(s)).",
+        "correction": null
+      },
+      {
+        "n": 24,
+        "type": "set_enrichment",
+        "subtype": "unknown",
+        "text": "Coordinated shifts across DHEA, androstenedione, testosterone, and estrone/estradiol indicate altered activity of the steroidogenic enzyme cascade",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict.",
+        "correction": null
+      },
+      {
+        "n": 25,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "3β-HSD is notably involved in the steroidogenic enzyme cascade",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 26,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "17β-HSD is notably involved in the steroidogenic enzyme cascade",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 27,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Aromatase (CYP19A1) is notably involved in the steroidogenic enzyme cascade",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 28,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The steroidogenic perturbation pattern is typical of perturbations in adrenal or gonadal function",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 29,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The steroidogenic perturbation pattern is typical of perturbations in sex-hormone-responsive tissues",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 30,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The steroidogenic perturbation pattern is typical of endocrine-disrupting exposures",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 31,
+        "type": "consistency_claim",
+        "subtype": "unknown",
+        "text": "Both androgens and estrogens shift together in this pattern",
+        "verdict": "unverifiable_v0",
+        "evidence": "Sub-6 verifier does not support claim_type 'consistency_claim': existing layer requires IdentificationReport (spectrum-centric), but Sub-6 supplies SubsixSourceReport. Treated as declared limitation.",
+        "correction": null
+      },
+      {
+        "n": 32,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The change is likely at a shared upstream node rather than at aromatase alone",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 33,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "3-hydroxyisobutyric acid elevation often reflects altered mitochondrial BCAA oxidation",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'elevation often reflects altered mitochondrial BCAA oxidation' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rathe",
+        "correction": null
+      },
+      {
+        "n": 34,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Altered mitochondrial BCAA oxidation is linked to insulin resistance",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'Altered mitochondrial BCAA oxidation' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted.",
+        "correction": null
+      },
+      {
+        "n": 35,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Altered mitochondrial BCAA oxidation is linked to energy stress",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'Altered mitochondrial BCAA oxidation' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted.",
+        "correction": null
+      },
+      {
+        "n": 36,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Menadione relates to quinone/redox processes",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 37,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Menadione relates to vitamin K-dependent processes",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 38,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Quinone/redox and vitamin K-dependent processes can modulate steroidogenic cell redox tone",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer 6d could not detect a recognised relationship keyword (upstream / downstream / cross-talk / shared).",
+        "correction": null
+      },
+      {
+        "n": 39,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Indoleacetaldehyde points toward altered tryptophan handling",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 40,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Tryptophan handling intersects with neuroendocrine signaling",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'Tryptophan handling intersects with neuroendocrine signaling' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather",
+        "correction": null
+      },
+      {
+        "n": 41,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "The directional biosynthetic chain is: cholesterol → pregnenolone → DHEA → androstenedione → testosterone → estradiol",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 42,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Androstenedione converts to estrone via the parallel aromatase branch",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 43,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Estrone and estradiol are interconverted by 17β-HSD",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 44,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "DHEA is an upstream hub in the steroidogenic chain",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 45,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Androstenedione is an upstream hub in the steroidogenic chain",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 46,
+        "type": "biological_claim",
+        "subtype": "biological_context",
+        "text": "Estradiol is the downstream bioactive endpoint in the steroidogenic chain",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.",
+        "correction": null
+      },
+      {
+        "n": 47,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Mitochondrial BCAA catabolism (3-hydroxyisobutyrate) feeds the cofactor and NAD(P)H/redox pool that steroidogenic CYPs depend on",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer 6d could not detect a recognised relationship keyword (upstream / downstream / cross-talk / shared).",
+        "correction": null
+      },
+      {
+        "n": 48,
+        "type": "pathway_relationship",
+        "subtype": "unknown",
+        "text": "Quinone redox status (menadione) feeds the cofactor and NAD(P)H/redox pool that steroidogenic CYPs depend on",
+        "verdict": "unverifiable_v0",
+        "evidence": "Layer 6d could not detect a recognised relationship keyword (upstream / downstream / cross-talk / shared).",
+        "correction": null
+      },
+      {
+        "n": 49,
+        "type": "biological_claim",
+        "subtype": "pathway_membership",
+        "text": "There is a plausible metabolic link between the minor pathway hits and the central steroid signal via cofactor/redox pools",
+        "verdict": "unsupported",
+        "evidence": "Pathway 'metabolic link between the minor pathway' not present in this task's ground_truth_pathway, top_pathways[:10], or RaMP. Treated as unsupported (no positive evidence) rather than contradicted.",
+        "correction": null
+      }
+    ]
+  }
+}

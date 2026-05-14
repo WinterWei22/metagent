@@ -1,0 +1,125 @@
+{
+  "react_total_tool_calls": 407,
+  "react_tasks": 63,
+  "feedback_revision_named_tool_calls": 112,
+  "feedback_revision_tasks": 63,
+  "feedback_revision_tasks_with_calls": 41,
+  "feedback_full_result_json_tool_calls": 510,
+  "tool_counts": [
+    {
+      "mode": "Feedback revision",
+      "tool_group": "Compound lookup",
+      "tool_name": "lookup_compound_info",
+      "n_calls": 2,
+      "n_tasks": 1
+    },
+    {
+      "mode": "Feedback revision",
+      "tool_group": "Enrichment",
+      "tool_name": "query_ramp_enrichment",
+      "n_calls": 6,
+      "n_tasks": 6
+    },
+    {
+      "mode": "Feedback revision",
+      "tool_group": "Literature",
+      "tool_name": "search_literature",
+      "n_calls": 75,
+      "n_tasks": 37
+    },
+    {
+      "mode": "Feedback revision",
+      "tool_group": "Pathway evidence",
+      "tool_name": "query_pathway_membership",
+      "n_calls": 24,
+      "n_tasks": 14
+    },
+    {
+      "mode": "Feedback revision",
+      "tool_group": "Pathway evidence",
+      "tool_name": "query_kegg_path",
+      "n_calls": 5,
+      "n_tasks": 5
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "tool_group": "Compound lookup",
+      "tool_name": "lookup_compound_info",
+      "n_calls": 3,
+      "n_tasks": 3
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "tool_group": "Enrichment",
+      "tool_name": "query_ramp_enrichment",
+      "n_calls": 64,
+      "n_tasks": 63
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "tool_group": "Pathway evidence",
+      "tool_name": "query_pathway_membership",
+      "n_calls": 201,
+      "n_tasks": 63
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "tool_group": "Pathway evidence",
+      "tool_name": "query_kegg_path",
+      "n_calls": 139,
+      "n_tasks": 63
+    }
+  ],
+  "raw_tool_counts": [
+    {
+      "mode": "Feedback revision",
+      "raw_tool_name": "search_literature",
+      "n_calls": 75
+    },
+    {
+      "mode": "Feedback revision",
+      "raw_tool_name": "query_pathway_membership",
+      "n_calls": 24
+    },
+    {
+      "mode": "Feedback revision",
+      "raw_tool_name": "query_ramp_enrichment",
+      "n_calls": 6
+    },
+    {
+      "mode": "Feedback revision",
+      "raw_tool_name": "query_kegg_path",
+      "n_calls": 5
+    },
+    {
+      "mode": "Feedback revision",
+      "raw_tool_name": "lookup_compound_info",
+      "n_calls": 2
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "raw_tool_name": "query_pathway_membership",
+      "n_calls": 201
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "raw_tool_name": "query_kegg_path",
+      "n_calls": 139
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "raw_tool_name": "query_ramp_enrichment",
+      "n_calls": 63
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "raw_tool_name": "lookup_compound_info",
+      "n_calls": 3
+    },
+    {
+      "mode": "MetAgent-ReAct",
+      "raw_tool_name": "query_ramp_en Enrichment",
+      "n_calls": 1
+    }
+  ]
+}

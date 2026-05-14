@@ -1,0 +1,9 @@
+claim_type,supported,unsupported,contradicted,unverifiable_v0,total
+biological_claim,712,140,4,748,1604
+factual_roundtrip_claim,0,0,0,502,502
+grounded_claim,0,0,0,263,263
+set_enrichment,108,7,13,74,202
+consistency_claim,0,0,30,76,106
+pathway_relationship,17,0,0,47,64
+driver_metabolite,13,0,2,24,39
+literature_claim,0,0,0,31,31

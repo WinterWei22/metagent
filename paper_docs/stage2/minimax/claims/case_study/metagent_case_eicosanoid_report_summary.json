@@ -1,0 +1,45 @@
+{
+  "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+  "ground_truth_pathway": {
+    "pathway_id": "lm_pathway:WP167",
+    "pathway_name": "Eicosanoid synthesis",
+    "pathway_source": "lipidmaps",
+    "external_id": "WP167",
+    "primary_pathway_pre_aggregation": "lm_pathway:WP167"
+  },
+  "top_pathway": {
+    "pathway_id": "lm_pathway:WP167",
+    "pathway_name": "Eicosanoid synthesis",
+    "pathway_source": "lipidmaps",
+    "pathway_external_id": "WP167",
+    "total_pathway_compounds": 5,
+    "matched_compounds": [
+      "C00219",
+      "C00909",
+      "C04742",
+      "C04805",
+      "C14717"
+    ],
+    "p_value": 2.7412671903426344e-09,
+    "fdr": 2.467140471308371e-08,
+    "fold_enrichment": 35.57142857142857
+  },
+  "matched_metabolites": [
+    "5-HETE",
+    "15-HETE",
+    "Leukotriene A4",
+    "15-Deoxy-d-12,14-PGJ2",
+    "Arachidonic acid"
+  ],
+  "other_metabolites": [
+    "Glycolaldehyde",
+    "Losartan"
+  ],
+  "final_iter_idx": 2,
+  "verdicts_total": {
+    "supported": 13,
+    "unverifiable_v0": 35,
+    "unsupported": 3,
+    "contradicted": 1
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "version": "v2",
+  "generated": "2026-05-07",
+  "sub6b": {
+    "tasks": 63,
+    "unique_pathways": 13,
+    "pathway_distribution": [
+      {
+        "pathway_id": "RAMP_P_000000398",
+        "name": "Galactose Metabolism",
+        "source": "kegg",
+        "external_id": "map00052",
+        "n_tasks": 10
+      },
+      {
+        "pathway_id": "RAMP_P_000050021",
+        "name": "Biological oxidations",
+        "source": "reactome",
+        "external_id": "R-HSA-211859",
+        "n_tasks": 10
+      },
+      {
+        "pathway_id": "RAMP_P_000000203",
+        "name": "Cerivastatin Action Pathway",
+        "source": "smpdb",
+        "external_id": "SMP00111",
+        "n_tasks": 10
+      },
+      {
+        "pathway_id": "RAMP_P_000000141",
+        "name": "Tryptophan metabolism",
+        "source": "kegg",
+        "external_id": "map00380",
+        "n_tasks": 9
+      },
+      {
+        "pathway_id": "RAMP_P_000000421",
+        "name": "Androgen and Estrogen Metabolism",
+        "source": "kegg",
+        "external_id": "map00150",
+        "n_tasks": 7
+      },
+      {
+        "pathway_id": "RAMP_P_000000016",
+        "name": "Glycine, serine and threonine metabolism",
+        "source": "kegg",
+        "external_id": "map00260",
+        "n_tasks": 6
+      },
+      {
+        "pathway_id": "RAMP_P_000000106",
+        "name": "Tyrosine metabolism",
+        "source": "kegg",
+        "external_id": "map00350",
+        "n_tasks": 4
+      },
+      {
+        "pathway_id": "RAMP_P_000053306",
+        "name": "Pyrimidine metabolism",
+        "source": "wikipathways",
+        "external_id": "WP4022",
+        "n_tasks": 2
+      },
+      {
+        "pathway_id": "RAMP_P_000052855",
+        "name": "Sulfatase and aromatase pathway",
+        "source": "wikipathways",
+        "external_id": "WP5368",
+        "n_tasks": 1
+      },
+      {
+        "pathway_id": "RAMP_P_000053042",
+        "name": "Steroid biosynthesis",
+        "source": "wikipathways",
+        "external_id": "WP496",
+        "n_tasks": 1
+      },
+      {
+        "pathway_id": "RAMP_P_000025682",
+        "name": "Celecoxib Action Pathway",
+        "source": "smpdb",
+        "external_id": "SMP00096",
+        "n_tasks": 1
+      },
+      {
+        "pathway_id": "RAMP_P_000050099",
+        "name": "Pyrimidine catabolism",
+        "source": "reactome",
+        "external_id": "R-HSA-73621",
+        "n_tasks": 1
+      },
+      {
+        "pathway_id": "RAMP_P_000050096",
+        "name": "Metabolism of amino acids and derivatives",
+        "source": "reactome",
+        "external_id": "R-HSA-71291",
+        "n_tasks": 1
+      }
+    ],
+    "differential_metabolite_stats": {
+      "min": 7,
+      "median": 9,
+      "mean": 9.3,
+      "max": 13,
+      "total": 586
+    },
+    "signal_compound_stats": {
+      "min": 5,
+      "median": 6,
+      "mean": 5.81,
+      "max": 8
+    },
+    "noise_compound_stats": {
+      "min": 0,
+      "median": 0,
+      "mean": 0,
+      "max": 0
+    }
+  },
+  "sub6a": {
+    "tasks": 38,
+    "total_spectra": 459,
+    "spectra_per_task": {
+      "min": 4,
+      "median": 12,
+      "mean": 12.08,
+      "max": 23
+    },
+    "spectrum_source_breakdown": {
+      "GNPS": 323,
+      "MassBank": 69,
+      "other": 9,
+      "MoNA": 58
+    }
+  },
+  "curated_pool": {
+    "compounds": 250,
+    "bucket_distribution": {
+      "central_metabolism": 50,
+      "lipid_metabolism": 50,
+      "nucleotide_metabolism": 50,
+      "amino_acid_metabolism": 50,
+      "other": 50
+    },
+    "classyfire_source": {
+      "hmdb_chemical_class": 24,
+      "npclassifier": 226
+    }
+  },
+  "hmdb_upstream_pool": {
+    "compounds": 600,
+    "pathway_domain_distribution": {
+      "amino_acid_metabolism": 120,
+      "central_metabolism": 120,
+      "lipid_metabolism": 120,
+      "nucleotide_metabolism": 120,
+      "other": 120
+    }
+  },
+  "files": {
+    "sub6b_tasks": {
+      "path": "data/benchmark/sub6/sub6b_mammalian_tasks_v2.jsonl",
+      "md5": "23594c0a3c6ab7a906baad1e0cd622dc",
+      "size_bytes": 4872237
+    },
+    "sub6a_tasks": {
+      "path": "data/benchmark/sub6/sub6a_e2e_tasks_v2.jsonl",
+      "md5": "73f0f3a336dc3d0be87571d15cfc6831",
+      "size_bytes": 3557026
+    },
+    "curated": {
+      "path": "data/benchmark/sub6/curated_hmdb_mammalian_v2.jsonl",
+      "md5": "2a8a9f35e8cf84a9c1e2a452eb00561e",
+      "size_bytes": 1759288
+    },
+    "hmdb_pool": {
+      "path": "data/processed/hmdb_candidates_npc_classified_v2.jsonl",
+      "md5": "8824f112a1a63e2f91fcc451ce157244",
+      "size_bytes": 7237675
+    }
+  }
+}

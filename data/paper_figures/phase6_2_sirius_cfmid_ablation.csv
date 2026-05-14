@@ -1,0 +1,5 @@
+config,rerank_with,n_tasks,n_spectra,n_correct,id_acc_overall,id_acc_taskmean,wall_id_seconds,peak_evidence_files
+gnps_only,,38,459,309,67.3203,67.3681,146.4,0
+cfmid,cfmid,38,459,302,65.7952,66.5678,4483.2,358
+full,"sirius,cfmid",38,459,308,67.1024,67.8403,7962.1,358
+sirius,sirius,38,459,305,66.4488,66.2779,7119.7,358

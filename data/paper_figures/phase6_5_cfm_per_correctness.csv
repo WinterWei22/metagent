@@ -1,0 +1,4 @@
+group,n_candidates,cfm_cosine_n,cfm_cosine_mean,cfm_cosine_median,cfm_cosine_p25,cfm_cosine_p75,in_exp_pct_n,in_exp_pct_mean,in_exp_pct_median,in_exp_pct_p25,in_exp_pct_p75
+correct candidate,312,312,0.3902,0.4002,0.0897,0.6457,267,28.0412,23.5294,4.4444,45.8333
+wrong candidate,1088,1088,0.1922,0.0977,0.0086,0.3467,91,9.9192,2.7778,0.0,15.5556
+all candidates,1400,1400,0.2363,0.1378,0.0142,0.4191,358,23.4348,15.5556,0.0,39.0244

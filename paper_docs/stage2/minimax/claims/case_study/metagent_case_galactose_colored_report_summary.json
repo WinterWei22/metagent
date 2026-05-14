@@ -1,0 +1,51 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+  "ground_truth_pathway": {
+    "pathway_id": "RAMP_P_000000398",
+    "pathway_name": "Galactose Metabolism",
+    "pathway_source": "kegg",
+    "external_id": "map00052",
+    "primary_pathway_pre_aggregation": "RAMP_P_000000398"
+  },
+  "top_pathway": {
+    "pathway_id": "RAMP_P_000000399",
+    "pathway_name": "Galactosemia",
+    "pathway_source": "smpdb",
+    "pathway_external_id": "SMP00182",
+    "total_pathway_compounds": 30,
+    "matched_compounds": [
+      "C00137",
+      "C00089",
+      "C00221",
+      "C01697",
+      "C01235",
+      "C00116"
+    ],
+    "p_value": 3.599917109890451e-18,
+    "fdr": 2.1960980273247276e-15,
+    "fold_enrichment": 1080.82
+  },
+  "matched_metabolites": [
+    "myo-Inositol",
+    "Sucrose",
+    "D-Glucose",
+    "Galactitol",
+    "Galactinol",
+    "Glycerol"
+  ],
+  "other_metabolites": [
+    "L-Cysteine",
+    "S-Adenosylhomocysteine",
+    "Fumaric acid",
+    "5,6-Epoxy-8,11,14-eicosatrienoic acid"
+  ],
+  "final_iter_idx": 2,
+  "verdicts_total": {
+    "supported": 18,
+    "unverifiable_v0": 20,
+    "unsupported": 1,
+    "contradicted": 1
+  },
+  "rendered_report_lines": 32,
+  "output_stem": "metagent_case_galactose_colored_report"
+}

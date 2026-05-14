@@ -1,0 +1,6 @@
+bucket,n_spectra,pct
+both_correct,230,51.34
+modcos_only,58,12.95
+msclip_only,24,5.36
+both_wrong,111,24.78
+TOTAL,448,100.0

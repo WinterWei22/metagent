@@ -1,0 +1,4 @@
+config,n_spectra_with_pe,sirius_top1_returned,sirius_top1_returned_pct,cfmid_predicted_returned,cfmid_predicted_returned_pct,cfmid_predicted_cosine_gt_0.5_pct,sirius_gate_applied_total_claims
+cfmid,358,0,0.0,358,100.0,34.64,0
+full,358,358,100.0,358,100.0,34.64,798
+sirius,358,291,81.28,0,0.0,0.0,636

@@ -1,0 +1,1308 @@
+{
+  "case_id": "Challenge-095",
+  "selected_reason": "LLM rescue case with chemically plausible tetrazole fragmentation: MS-CLIP and weighted rerank choose wrong top-1, LLM reranker chooses the ground truth.",
+  "dataset": "CASMI 2016 category 2",
+  "ground_truth": {
+    "inchikey_first_block": "MARUHZGHZWCEQU",
+    "smiles": "N1N=NN=C1C1=CC=CC=C1",
+    "formula": "C7H6N4",
+    "precursor_mz": 147.0665,
+    "ion_mode": "positive",
+    "adduct": "[M+H]+",
+    "n_experimental_peaks": 10
+  },
+  "source_records": {
+    "msclip_only": {
+      "spectrum_id": "Challenge-095",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N4",
+      "gt_inchikey_first_block": "MARUHZGHZWCEQU",
+      "gt_smiles": "N1N=NN=C1C1=CC=CC=C1",
+      "predicted_inchikey_first_block": "YPYPBEGIASEWKA",
+      "predicted_smiles": "[2H]c2ncoc2c1ccccc1",
+      "predicted_score": 0.7351434081792831,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "none",
+      "rerank_applied": [],
+      "error": null,
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "[2H]c2ncoc2c1ccccc1",
+          "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+          "source_id": "CASMI16:Challenge-095:9438575",
+          "score": 0.7351434081792831,
+          "modcos": null,
+          "msclip": 0.735,
+          "ik14": "YPYPBEGIASEWKA"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1cnccc1c2[nH]ncn2",
+          "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:176379",
+          "score": 0.7237091809511185,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "OYJDWYWNACFAQB"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1cnccc1n2cnnc2",
+          "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:17973689",
+          "score": 0.7228504866361618,
+          "modcos": null,
+          "msclip": 0.723,
+          "ik14": "HGBIXRBWIWLVML"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccc(cc1)c2n[nH]nn2",
+          "name": "5-Phenyl-1H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:78860",
+          "score": 0.7124243229627609,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "MARUHZGHZWCEQU"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1cncnc1c2c[nH]nc2",
+          "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:4249902",
+          "score": 0.7119783163070679,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "XHWTWNCQBNQUDK"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1c[nH]nc1c2cnccn2",
+          "name": "2-(1H-Pyrazol-3-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:14404392",
+          "score": 0.7069898396730423,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "XBSVVLLAMHTBPS"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(cc1)n2cnnn2",
+          "name": "phenyltetrazol",
+          "source_id": "CASMI16:Challenge-095:122096",
+          "score": 0.7067875266075134,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "IYPXPGSELZFFMI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc(cc1)n2ncnn2",
+          "name": "2-Phenyl-2H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:251294",
+          "score": 0.7028070092201233,
+          "modcos": null,
+          "msclip": 0.703,
+          "ik14": "QLDFMNWSPWEFIM"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "Cc1nc2cccnc2nn1",
+          "name": "3-Methylpyrido[3,2-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450739",
+          "score": 0.6961278915405273,
+          "modcos": null,
+          "msclip": 0.696,
+          "ik14": "TYYIWEFAWZZEOE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "c1cc(cnc1)c2[nH]ncn2",
+          "name": "3-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:183315",
+          "score": 0.6938361525535583,
+          "modcos": null,
+          "msclip": 0.694,
+          "ik14": "PFUBXXBFRUAXCG"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "c1cnc([nH]1)c2cncnc2",
+          "name": "5-(1H-Imidazol-2-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:11318443",
+          "score": 0.6912353038787842,
+          "modcos": null,
+          "msclip": 0.691,
+          "ik14": "YKQWFRUYFSDCKK"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "Cc1nc2ccncc2nn1",
+          "name": "3-Methylpyrido[4,3-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:10571188",
+          "score": 0.6903707981109619,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KBRUTNYKYCNWGD"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1ccc2c(c1)c(nnn2)N",
+          "name": "1,2,3-Benzotriazin-4-amine",
+          "source_id": "CASMI16:Challenge-095:489183",
+          "score": 0.6900622248649597,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KFTFNTPGDZCQSP"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "Cc1nc2cnccc2nn1",
+          "name": "3-Methylpyrido[3,4-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450697",
+          "score": 0.6895792484283447,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "RYAFSYUBWRLFHS"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1cc(nnc1)c2cc[nH]n2",
+          "name": "pyrazolyldiazine",
+          "source_id": "CASMI16:Challenge-095:25946087",
+          "score": 0.6879487335681915,
+          "modcos": null,
+          "msclip": 0.688,
+          "ik14": "XEODJMCAUUKTEC"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ncc2c(n1)nccn2",
+          "name": "2-Methylpteridine",
+          "source_id": "CASMI16:Challenge-095:512605",
+          "score": 0.6862347424030304,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "BIGRRCHSUAXSEE"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1cnc([nH]1)c2cnccn2",
+          "name": "2-(1H-Imidazol-2-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:10783107",
+          "score": 0.6855618953704834,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "KBXRNBDAFWDLKI"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cnc(cn1)c2c[nH]nc2",
+          "name": "2-(1H-Pyrazol-4-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:3592462",
+          "score": 0.6847700774669647,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "RJLTUYDPHVYZIR"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "c1cc(cnc1)n2cnnc2",
+          "name": "3-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:26947609",
+          "score": 0.6847119033336639,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "FGMCDLAVUAMIPS"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1cnc(nc1)c2cc[nH]n2",
+          "name": "pyrimidyl-pyrazole",
+          "source_id": "CASMI16:Challenge-095:25946941",
+          "score": 0.6841747462749481,
+          "modcos": null,
+          "msclip": 0.684,
+          "ik14": "BWIHJLOBZMKPKS"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_msclip_only/casmi_identifications.jsonl",
+      "_source_line": 95
+    },
+    "conditional": {
+      "spectrum_id": "Challenge-095",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N4",
+      "gt_inchikey_first_block": "MARUHZGHZWCEQU",
+      "gt_smiles": "N1N=NN=C1C1=CC=CC=C1",
+      "predicted_inchikey_first_block": "OYJDWYWNACFAQB",
+      "predicted_smiles": "c1cnccc1c2[nH]ncn2",
+      "predicted_score": 0.7237091809511185,
+      "correct_top1": false,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "conditional",
+      "rerank_applied": [
+        "sirius",
+        "cfmid"
+      ],
+      "error": null,
+      "gate": {
+        "conditional_skipped": false,
+        "gate_reason": "ambiguous_trigger (top1=0.735, gap=0.011)",
+        "gate_msclip_top1": 0.735,
+        "gate_msclip_gap": 0.01100000000000001
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "[2H]c2ncoc2c1ccccc1",
+          "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+          "source_id": "CASMI16:Challenge-095:9438575",
+          "score": 0.7351434081792831,
+          "modcos": null,
+          "msclip": 0.735,
+          "ik14": "YPYPBEGIASEWKA"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1cnccc1c2[nH]ncn2",
+          "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:176379",
+          "score": 0.7237091809511185,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "OYJDWYWNACFAQB"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1cnccc1n2cnnc2",
+          "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:17973689",
+          "score": 0.7228504866361618,
+          "modcos": null,
+          "msclip": 0.723,
+          "ik14": "HGBIXRBWIWLVML"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccc(cc1)c2n[nH]nn2",
+          "name": "5-Phenyl-1H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:78860",
+          "score": 0.7124243229627609,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "MARUHZGHZWCEQU"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1cncnc1c2c[nH]nc2",
+          "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:4249902",
+          "score": 0.7119783163070679,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "XHWTWNCQBNQUDK"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1c[nH]nc1c2cnccn2",
+          "name": "2-(1H-Pyrazol-3-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:14404392",
+          "score": 0.7069898396730423,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "XBSVVLLAMHTBPS"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(cc1)n2cnnn2",
+          "name": "phenyltetrazol",
+          "source_id": "CASMI16:Challenge-095:122096",
+          "score": 0.7067875266075134,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "IYPXPGSELZFFMI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc(cc1)n2ncnn2",
+          "name": "2-Phenyl-2H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:251294",
+          "score": 0.7028070092201233,
+          "modcos": null,
+          "msclip": 0.703,
+          "ik14": "QLDFMNWSPWEFIM"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "Cc1nc2cccnc2nn1",
+          "name": "3-Methylpyrido[3,2-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450739",
+          "score": 0.6961278915405273,
+          "modcos": null,
+          "msclip": 0.696,
+          "ik14": "TYYIWEFAWZZEOE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "c1cc(cnc1)c2[nH]ncn2",
+          "name": "3-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:183315",
+          "score": 0.6938361525535583,
+          "modcos": null,
+          "msclip": 0.694,
+          "ik14": "PFUBXXBFRUAXCG"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "c1cnc([nH]1)c2cncnc2",
+          "name": "5-(1H-Imidazol-2-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:11318443",
+          "score": 0.6912353038787842,
+          "modcos": null,
+          "msclip": 0.691,
+          "ik14": "YKQWFRUYFSDCKK"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "Cc1nc2ccncc2nn1",
+          "name": "3-Methylpyrido[4,3-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:10571188",
+          "score": 0.6903707981109619,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KBRUTNYKYCNWGD"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1ccc2c(c1)c(nnn2)N",
+          "name": "1,2,3-Benzotriazin-4-amine",
+          "source_id": "CASMI16:Challenge-095:489183",
+          "score": 0.6900622248649597,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KFTFNTPGDZCQSP"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "Cc1nc2cnccc2nn1",
+          "name": "3-Methylpyrido[3,4-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450697",
+          "score": 0.6895792484283447,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "RYAFSYUBWRLFHS"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1cc(nnc1)c2cc[nH]n2",
+          "name": "pyrazolyldiazine",
+          "source_id": "CASMI16:Challenge-095:25946087",
+          "score": 0.6879487335681915,
+          "modcos": null,
+          "msclip": 0.688,
+          "ik14": "XEODJMCAUUKTEC"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ncc2c(n1)nccn2",
+          "name": "2-Methylpteridine",
+          "source_id": "CASMI16:Challenge-095:512605",
+          "score": 0.6862347424030304,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "BIGRRCHSUAXSEE"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1cnc([nH]1)c2cnccn2",
+          "name": "2-(1H-Imidazol-2-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:10783107",
+          "score": 0.6855618953704834,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "KBXRNBDAFWDLKI"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cnc(cn1)c2c[nH]nc2",
+          "name": "2-(1H-Pyrazol-4-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:3592462",
+          "score": 0.6847700774669647,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "RJLTUYDPHVYZIR"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "c1cc(cnc1)n2cnnc2",
+          "name": "3-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:26947609",
+          "score": 0.6847119033336639,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "FGMCDLAVUAMIPS"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1cnc(nc1)c2cc[nH]n2",
+          "name": "pyrimidyl-pyrazole",
+          "source_id": "CASMI16:Challenge-095:25946941",
+          "score": 0.6841747462749481,
+          "modcos": null,
+          "msclip": 0.684,
+          "ik14": "BWIHJLOBZMKPKS"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_conditional/casmi_identifications.jsonl",
+      "_source_line": 95
+    },
+    "llm_reranker": {
+      "spectrum_id": "Challenge-095",
+      "casmi_dataset": "casmi2016_cat2",
+      "casmi_formula": "C7H6N4",
+      "gt_inchikey_first_block": "MARUHZGHZWCEQU",
+      "gt_smiles": "N1N=NN=C1C1=CC=CC=C1",
+      "predicted_inchikey_first_block": "MARUHZGHZWCEQU",
+      "predicted_smiles": "c1ccc(cc1)c2n[nH]nn2",
+      "predicted_score": 0.7124243229627609,
+      "correct_top1": true,
+      "n_candidates_returned": 20,
+      "n_after_exclusion": 20,
+      "primary_retriever": "msclip",
+      "reranker_mode": "llm",
+      "rerank_applied": [
+        "cfmid"
+      ],
+      "error": null,
+      "gate": null,
+      "llm_rerank": {
+        "narrative": "Spectrum Challenge-095 (precursor m/z 147.0665).\nSelected top-1: c1ccc(cc1)c2n[nH]nn2 (confidence: high).\nJustification: Candidate 2 (5-phenyl-1H-tetrazole) uniquely explains the dominant fragmentation pattern: the base peak at m/z 104.0494 corresponds to loss of HN3 (43.0171 Da) yielding the benzonitrile cation C7H6N+ (104.0495), the diagnostic signature of 5-aryltetrazoles, and m/z 77.0384 matches the phenyl cation C6H5+ (77.0386) which requires a free phenyl group not present in the pyridyl/pyrimidinyl candidates 0, 1, and 3. CFM-ID cosine of 0.0931 is the highest among the mass-matched C7H6N4 isomers, and candidate 4 is rejected on mass (C9H7NO, mass_match=0).\nPeak-level claims:\n  - m/z 104.0494 corresponds to loss of HN3 (hydrazoic acid, 43.0171 Da) from [M+H]+ giving benzonitrile cation C7H6N+\n  - m/z 119.0603 corresponds to loss of N2 (28.0062 Da) from [M+H]+\n  - m/z 77.0384 corresponds to fragment of C6H5+ phenyl cation from the phenyl ring\n  - m/z 91.0542 corresponds to fragment of C7H7+ (tropylium-like) arising from the phenyl-C=N unit after ring rearrangement\n  - m/z 65.0386 corresponds to fragment of C5H5+ from loss of C2H2 from the phenyl cation",
+        "peak_claims": [
+          "m/z 104.0494 corresponds to loss of HN3 (hydrazoic acid, 43.0171 Da) from [M+H]+ giving benzonitrile cation C7H6N+",
+          "m/z 119.0603 corresponds to loss of N2 (28.0062 Da) from [M+H]+",
+          "m/z 77.0384 corresponds to fragment of C6H5+ phenyl cation from the phenyl ring",
+          "m/z 91.0542 corresponds to fragment of C7H7+ (tropylium-like) arising from the phenyl-C=N unit after ring rearrangement",
+          "m/z 65.0386 corresponds to fragment of C5H5+ from loss of C2H2 from the phenyl cation"
+        ],
+        "confidence": "high",
+        "fallback_used": false,
+        "parse_error": null,
+        "ranked_indices": [
+          2,
+          0,
+          1,
+          3,
+          4
+        ]
+      },
+      "ranked_candidates": [
+        {
+          "rank_after_primary": 1,
+          "smiles": "[2H]c2ncoc2c1ccccc1",
+          "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+          "source_id": "CASMI16:Challenge-095:9438575",
+          "score": 0.7351434081792831,
+          "modcos": null,
+          "msclip": 0.735,
+          "ik14": "YPYPBEGIASEWKA"
+        },
+        {
+          "rank_after_primary": 2,
+          "smiles": "c1cnccc1c2[nH]ncn2",
+          "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:176379",
+          "score": 0.7237091809511185,
+          "modcos": null,
+          "msclip": 0.724,
+          "ik14": "OYJDWYWNACFAQB"
+        },
+        {
+          "rank_after_primary": 3,
+          "smiles": "c1cnccc1n2cnnc2",
+          "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:17973689",
+          "score": 0.7228504866361618,
+          "modcos": null,
+          "msclip": 0.723,
+          "ik14": "HGBIXRBWIWLVML"
+        },
+        {
+          "rank_after_primary": 4,
+          "smiles": "c1ccc(cc1)c2n[nH]nn2",
+          "name": "5-Phenyl-1H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:78860",
+          "score": 0.7124243229627609,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "MARUHZGHZWCEQU"
+        },
+        {
+          "rank_after_primary": 5,
+          "smiles": "c1cncnc1c2c[nH]nc2",
+          "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:4249902",
+          "score": 0.7119783163070679,
+          "modcos": null,
+          "msclip": 0.712,
+          "ik14": "XHWTWNCQBNQUDK"
+        },
+        {
+          "rank_after_primary": 6,
+          "smiles": "c1c[nH]nc1c2cnccn2",
+          "name": "2-(1H-Pyrazol-3-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:14404392",
+          "score": 0.7069898396730423,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "XBSVVLLAMHTBPS"
+        },
+        {
+          "rank_after_primary": 7,
+          "smiles": "c1ccc(cc1)n2cnnn2",
+          "name": "phenyltetrazol",
+          "source_id": "CASMI16:Challenge-095:122096",
+          "score": 0.7067875266075134,
+          "modcos": null,
+          "msclip": 0.707,
+          "ik14": "IYPXPGSELZFFMI"
+        },
+        {
+          "rank_after_primary": 8,
+          "smiles": "c1ccc(cc1)n2ncnn2",
+          "name": "2-Phenyl-2H-tetrazole",
+          "source_id": "CASMI16:Challenge-095:251294",
+          "score": 0.7028070092201233,
+          "modcos": null,
+          "msclip": 0.703,
+          "ik14": "QLDFMNWSPWEFIM"
+        },
+        {
+          "rank_after_primary": 9,
+          "smiles": "Cc1nc2cccnc2nn1",
+          "name": "3-Methylpyrido[3,2-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450739",
+          "score": 0.6961278915405273,
+          "modcos": null,
+          "msclip": 0.696,
+          "ik14": "TYYIWEFAWZZEOE"
+        },
+        {
+          "rank_after_primary": 10,
+          "smiles": "c1cc(cnc1)c2[nH]ncn2",
+          "name": "3-(1H-1,2,4-Triazol-5-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:183315",
+          "score": 0.6938361525535583,
+          "modcos": null,
+          "msclip": 0.694,
+          "ik14": "PFUBXXBFRUAXCG"
+        },
+        {
+          "rank_after_primary": 11,
+          "smiles": "c1cnc([nH]1)c2cncnc2",
+          "name": "5-(1H-Imidazol-2-yl)pyrimidine",
+          "source_id": "CASMI16:Challenge-095:11318443",
+          "score": 0.6912353038787842,
+          "modcos": null,
+          "msclip": 0.691,
+          "ik14": "YKQWFRUYFSDCKK"
+        },
+        {
+          "rank_after_primary": 12,
+          "smiles": "Cc1nc2ccncc2nn1",
+          "name": "3-Methylpyrido[4,3-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:10571188",
+          "score": 0.6903707981109619,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KBRUTNYKYCNWGD"
+        },
+        {
+          "rank_after_primary": 13,
+          "smiles": "c1ccc2c(c1)c(nnn2)N",
+          "name": "1,2,3-Benzotriazin-4-amine",
+          "source_id": "CASMI16:Challenge-095:489183",
+          "score": 0.6900622248649597,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "KFTFNTPGDZCQSP"
+        },
+        {
+          "rank_after_primary": 14,
+          "smiles": "Cc1nc2cnccc2nn1",
+          "name": "3-Methylpyrido[3,4-e][1,2,4]triazine",
+          "source_id": "CASMI16:Challenge-095:450697",
+          "score": 0.6895792484283447,
+          "modcos": null,
+          "msclip": 0.69,
+          "ik14": "RYAFSYUBWRLFHS"
+        },
+        {
+          "rank_after_primary": 15,
+          "smiles": "c1cc(nnc1)c2cc[nH]n2",
+          "name": "pyrazolyldiazine",
+          "source_id": "CASMI16:Challenge-095:25946087",
+          "score": 0.6879487335681915,
+          "modcos": null,
+          "msclip": 0.688,
+          "ik14": "XEODJMCAUUKTEC"
+        },
+        {
+          "rank_after_primary": 16,
+          "smiles": "Cc1ncc2c(n1)nccn2",
+          "name": "2-Methylpteridine",
+          "source_id": "CASMI16:Challenge-095:512605",
+          "score": 0.6862347424030304,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "BIGRRCHSUAXSEE"
+        },
+        {
+          "rank_after_primary": 17,
+          "smiles": "c1cnc([nH]1)c2cnccn2",
+          "name": "2-(1H-Imidazol-2-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:10783107",
+          "score": 0.6855618953704834,
+          "modcos": null,
+          "msclip": 0.686,
+          "ik14": "KBXRNBDAFWDLKI"
+        },
+        {
+          "rank_after_primary": 18,
+          "smiles": "c1cnc(cn1)c2c[nH]nc2",
+          "name": "2-(1H-Pyrazol-4-yl)pyrazine",
+          "source_id": "CASMI16:Challenge-095:3592462",
+          "score": 0.6847700774669647,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "RJLTUYDPHVYZIR"
+        },
+        {
+          "rank_after_primary": 19,
+          "smiles": "c1cc(cnc1)n2cnnc2",
+          "name": "3-(4H-1,2,4-Triazol-4-yl)pyridine",
+          "source_id": "CASMI16:Challenge-095:26947609",
+          "score": 0.6847119033336639,
+          "modcos": null,
+          "msclip": 0.685,
+          "ik14": "FGMCDLAVUAMIPS"
+        },
+        {
+          "rank_after_primary": 20,
+          "smiles": "c1cnc(nc1)c2cc[nH]n2",
+          "name": "pyrimidyl-pyrazole",
+          "source_id": "CASMI16:Challenge-095:25946941",
+          "score": 0.6841747462749481,
+          "modcos": null,
+          "msclip": 0.684,
+          "ik14": "BWIHJLOBZMKPKS"
+        }
+      ],
+      "_source_file": "data/eval/casmi/2016_cat2_llm_reranker/casmi_identifications.jsonl",
+      "_source_line": 95
+    }
+  },
+  "cfmid_only_reconstructed_peak_evidence": {
+    "spectrum_id": "Challenge-095",
+    "experimental_peaks": [
+      [
+        65.0386,
+        0.0013557162237710274
+      ],
+      [
+        66.0464,
+        0.0016866689036573073
+      ],
+      [
+        77.0384,
+        0.0033206698294523415
+      ],
+      [
+        90.0464,
+        0.002382215363842407
+      ],
+      [
+        91.0542,
+        0.00883821275419567
+      ],
+      [
+        92.0492,
+        0.0010717288485623693
+      ],
+      [
+        95.0489,
+        0.0019304249436578045
+      ],
+      [
+        104.0494,
+        1.0
+      ],
+      [
+        119.0603,
+        0.018198829180467294
+      ],
+      [
+        147.0664,
+        0.14803560336617982
+      ]
+    ],
+    "sirius": {},
+    "cfmid_top1": {
+      "smiles": "[2H]c2ncoc2c1ccccc1",
+      "predicted_peaks": [
+        [
+          51.02293,
+          0.2953
+        ],
+        [
+          63.02293,
+          0.9655
+        ],
+        [
+          75.02293,
+          0.4304
+        ],
+        [
+          77.03858,
+          0.33770000000000006
+        ],
+        [
+          89.03858,
+          0.6334000000000001
+        ],
+        [
+          91.05423,
+          0.8835
+        ],
+        [
+          94.02874,
+          0.3901
+        ],
+        [
+          96.04439,
+          0.5136
+        ],
+        [
+          101.03858,
+          0.6870999999999999
+        ],
+        [
+          103.05423,
+          0.4474
+        ],
+        [
+          106.02874,
+          0.36560000000000004
+        ],
+        [
+          120.04439,
+          0.46909999999999996
+        ],
+        [
+          144.04439,
+          0.31079999999999997
+        ],
+        [
+          146.06004,
+          1.0
+        ]
+      ],
+      "cosine_vs_experimental": 0.003934388385722992,
+      "model_version": "cfm-id-4.4.7"
+    },
+    "candidates_evaluated": [
+      {
+        "smiles": "c1cnccc1c2[nH]ncn2",
+        "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+        "source_id": "CASMI16:Challenge-095:176379",
+        "formula": "C7H6N4",
+        "modcos": 0.7237091809511185,
+        "predicted_cosine": 0.09188949725807871,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5170505215578711,
+        "rank_after_rerank": 1
+      },
+      {
+        "smiles": "c1cnccc1n2cnnc2",
+        "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+        "source_id": "CASMI16:Challenge-095:17973689",
+        "formula": "C7H6N4",
+        "modcos": 0.7228504866361618,
+        "predicted_cosine": 0.08634258871757265,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5150429712697365,
+        "rank_after_rerank": 2
+      },
+      {
+        "smiles": "c1ccc(cc1)c2n[nH]nn2",
+        "name": "5-Phenyl-1H-tetrazole",
+        "source_id": "CASMI16:Challenge-095:78860",
+        "formula": "C7H6N4",
+        "modcos": 0.7124243229627609,
+        "predicted_cosine": 0.0930999635808042,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5128997182593457,
+        "rank_after_rerank": 3
+      },
+      {
+        "smiles": "c1cncnc1c2c[nH]nc2",
+        "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+        "source_id": "CASMI16:Challenge-095:4249902",
+        "formula": "C7H6N4",
+        "modcos": 0.7119783163070679,
+        "predicted_cosine": 0.08324693171503532,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5097654060373378,
+        "rank_after_rerank": 4
+      },
+      {
+        "smiles": "[2H]c2ncoc2c1ccccc1",
+        "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+        "source_id": "CASMI16:Challenge-095:9438575",
+        "formula": "C9H7NO",
+        "modcos": 0.7351434081792831,
+        "predicted_cosine": 0.003934388385722992,
+        "mass_match": 0.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.29523767978743015,
+        "rank_after_rerank": 5
+      }
+    ],
+    "rerank_config": {
+      "top_k_for_rerank": 5,
+      "use_sirius": false,
+      "use_cfmid": true,
+      "predicted_cosine_da_tol": 0.01,
+      "mass_match_ppm": 5.0,
+      "sirius_gate_factor": 0.5
+    },
+    "timing": {
+      "cfmid_total": 8.171460390090942,
+      "cfmid_cache_hits": 5.0
+    }
+  },
+  "sirius_cfmid_reconstruction_attempt": {
+    "spectrum_id": "Challenge-095",
+    "experimental_peaks": [
+      [
+        65.0386,
+        0.0013557162237710274
+      ],
+      [
+        66.0464,
+        0.0016866689036573073
+      ],
+      [
+        77.0384,
+        0.0033206698294523415
+      ],
+      [
+        90.0464,
+        0.002382215363842407
+      ],
+      [
+        91.0542,
+        0.00883821275419567
+      ],
+      [
+        92.0492,
+        0.0010717288485623693
+      ],
+      [
+        95.0489,
+        0.0019304249436578045
+      ],
+      [
+        104.0494,
+        1.0
+      ],
+      [
+        119.0603,
+        0.018198829180467294
+      ],
+      [
+        147.0664,
+        0.14803560336617982
+      ]
+    ],
+    "sirius": {
+      "error": "SiriusNotInstalledError: SIRIUS is installed but this build requires login before running formula trees: Login ERROR: Please Login to use the SIRIUS command line tool!\nUsage: sirius login [-hV] [--clear] [--limits] [--request-token-only] [--show]\n                    [--select-license=<sid>] [[-u=<username> -p] |\n                    [--token=<token>] | [--user-env=<username>\n                    --password-env=<password>]]\n<STANDALONE> Allows a user to login for SIRIUS Webservices (e.g. CSI:FingerID\nor CANOPUS) and securely store a personal access token.\n\n\n      --clear, --logout      Logout. Deletes"
+    },
+    "cfmid_top1": {
+      "smiles": "[2H]c2ncoc2c1ccccc1",
+      "predicted_peaks": [
+        [
+          51.02293,
+          0.2953
+        ],
+        [
+          63.02293,
+          0.9655
+        ],
+        [
+          75.02293,
+          0.4304
+        ],
+        [
+          77.03858,
+          0.33770000000000006
+        ],
+        [
+          89.03858,
+          0.6334000000000001
+        ],
+        [
+          91.05423,
+          0.8835
+        ],
+        [
+          94.02874,
+          0.3901
+        ],
+        [
+          96.04439,
+          0.5136
+        ],
+        [
+          101.03858,
+          0.6870999999999999
+        ],
+        [
+          103.05423,
+          0.4474
+        ],
+        [
+          106.02874,
+          0.36560000000000004
+        ],
+        [
+          120.04439,
+          0.46909999999999996
+        ],
+        [
+          144.04439,
+          0.31079999999999997
+        ],
+        [
+          146.06004,
+          1.0
+        ]
+      ],
+      "cosine_vs_experimental": 0.003934388385722992,
+      "model_version": "cfm-id-4.4.7"
+    },
+    "candidates_evaluated": [
+      {
+        "smiles": "c1cnccc1c2[nH]ncn2",
+        "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+        "source_id": "CASMI16:Challenge-095:176379",
+        "formula": "C7H6N4",
+        "modcos": 0.7237091809511185,
+        "predicted_cosine": 0.09188949725807871,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5170505215578711,
+        "rank_after_rerank": 1
+      },
+      {
+        "smiles": "c1cnccc1n2cnnc2",
+        "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+        "source_id": "CASMI16:Challenge-095:17973689",
+        "formula": "C7H6N4",
+        "modcos": 0.7228504866361618,
+        "predicted_cosine": 0.08634258871757265,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5150429712697365,
+        "rank_after_rerank": 2
+      },
+      {
+        "smiles": "c1ccc(cc1)c2n[nH]nn2",
+        "name": "5-Phenyl-1H-tetrazole",
+        "source_id": "CASMI16:Challenge-095:78860",
+        "formula": "C7H6N4",
+        "modcos": 0.7124243229627609,
+        "predicted_cosine": 0.0930999635808042,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5128997182593457,
+        "rank_after_rerank": 3
+      },
+      {
+        "smiles": "c1cncnc1c2c[nH]nc2",
+        "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+        "source_id": "CASMI16:Challenge-095:4249902",
+        "formula": "C7H6N4",
+        "modcos": 0.7119783163070679,
+        "predicted_cosine": 0.08324693171503532,
+        "mass_match": 1.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.5097654060373378,
+        "rank_after_rerank": 4
+      },
+      {
+        "smiles": "[2H]c2ncoc2c1ccccc1",
+        "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+        "source_id": "CASMI16:Challenge-095:9438575",
+        "formula": "C9H7NO",
+        "modcos": 0.7351434081792831,
+        "predicted_cosine": 0.003934388385722992,
+        "mass_match": 0.0,
+        "pathway_presence": 0.0,
+        "sirius_match": 0.0,
+        "sirius_gate_applied": false,
+        "evidence_score": 0.29523767978743015,
+        "rank_after_rerank": 5
+      }
+    ],
+    "rerank_config": {
+      "top_k_for_rerank": 5,
+      "use_sirius": true,
+      "use_cfmid": true,
+      "predicted_cosine_da_tol": 0.01,
+      "mass_match_ppm": 5.0,
+      "sirius_gate_factor": 0.5
+    },
+    "timing": {
+      "sirius": 3.3408138751983643,
+      "cfmid_total": 0.005260944366455078,
+      "cfmid_cache_hits": 5.0
+    }
+  },
+  "llm_input_order_after_cfmid_rerank": [
+    {
+      "input_index": 0,
+      "name": "4-(1H-1,2,4-Triazol-5-yl)pyridine",
+      "smiles": "c1cnccc1c2[nH]ncn2"
+    },
+    {
+      "input_index": 1,
+      "name": "4-(4H-1,2,4-Triazol-4-yl)pyridine",
+      "smiles": "c1cnccc1n2cnnc2"
+    },
+    {
+      "input_index": 2,
+      "name": "5-Phenyl-1H-tetrazole",
+      "smiles": "c1ccc(cc1)c2n[nH]nn2"
+    },
+    {
+      "input_index": 3,
+      "name": "4-(1H-Pyrazol-4-yl)pyrimidine",
+      "smiles": "c1cncnc1c2c[nH]nc2"
+    },
+    {
+      "input_index": 4,
+      "name": "5-Phenyl(4-~2~H)-1,3-oxazole",
+      "smiles": "[2H]c2ncoc2c1ccccc1"
+    }
+  ],
+  "selected_top1_cfmid_predictions": {
+    "msclip_only": {
+      "cache_hit": true,
+      "cosine": 0.003934388385722992,
+      "predicted_peaks": [
+        [
+          51.02293,
+          0.2953
+        ],
+        [
+          63.02293,
+          0.9655
+        ],
+        [
+          75.02293,
+          0.4304
+        ],
+        [
+          77.03858,
+          0.33770000000000006
+        ],
+        [
+          89.03858,
+          0.6334000000000001
+        ],
+        [
+          91.05423,
+          0.8835
+        ],
+        [
+          94.02874,
+          0.3901
+        ],
+        [
+          96.04439,
+          0.5136
+        ],
+        [
+          101.03858,
+          0.6870999999999999
+        ],
+        [
+          103.05423,
+          0.4474
+        ],
+        [
+          106.02874,
+          0.36560000000000004
+        ],
+        [
+          120.04439,
+          0.46909999999999996
+        ],
+        [
+          144.04439,
+          0.31079999999999997
+        ],
+        [
+          146.06004,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    },
+    "conditional": {
+      "cache_hit": true,
+      "cosine": 0.09188949725807871,
+      "predicted_peaks": [
+        [
+          54.03383,
+          0.21719999999999998
+        ],
+        [
+          64.01818,
+          0.3356
+        ],
+        [
+          75.02293,
+          0.12960000000000002
+        ],
+        [
+          78.03383,
+          0.49939999999999996
+        ],
+        [
+          88.01818,
+          0.10310000000000001
+        ],
+        [
+          90.03383,
+          0.1458
+        ],
+        [
+          92.04948,
+          0.2811
+        ],
+        [
+          105.04472,
+          1.0
+        ],
+        [
+          120.05562,
+          0.1099
+        ],
+        [
+          147.06652,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    },
+    "llm_reranker": {
+      "cache_hit": true,
+      "cosine": 0.0930999635808042,
+      "predicted_peaks": [
+        [
+          49.00728,
+          0.1649
+        ],
+        [
+          51.02293,
+          1.0
+        ],
+        [
+          53.03858,
+          0.624
+        ],
+        [
+          63.02293,
+          0.0737
+        ],
+        [
+          65.03858,
+          0.1317
+        ],
+        [
+          102.03383,
+          0.0641
+        ],
+        [
+          119.03522,
+          0.0001
+        ],
+        [
+          121.05087,
+          0.12
+        ],
+        [
+          145.05087,
+          0.14550000000000002
+        ],
+        [
+          147.06652,
+          1.0
+        ]
+      ],
+      "model_version": "cfm-id-4.4.7"
+    }
+  },
+  "claim_mass_sanity": {
+    "precursor_mz": 147.0665,
+    "104.0494_delta": 43.0171,
+    "HN3_monoisotopic_mass": 43.017047,
+    "119.0603_delta": 28.0062,
+    "N2_monoisotopic_mass": 28.006148,
+    "77.0384_assignment": "C6H5+ phenyl cation, monoisotopic mass approx 77.03858"
+  },
+  "provenance": {
+    "generated_at": "2026-05-12 15:44:37 +0800",
+    "reports_consulted": [
+      "reports/eval/casmi_2016_cat2_v1.md",
+      "reports/eval/casmi_ood_v1.md",
+      "reports/eval/llm_reranker_v2.md"
+    ],
+    "notes": [
+      "The run_casmi JSONL retains final top-1 outcomes and LLM output, but strips full weighted peak_evidence from the stored per-spectrum record.",
+      "CFM-ID evidence was reconstructed for the top-5 MS-CLIP candidates using evaluation.sub6.rerank.rerank_with_sirius_cfmid and the existing data/cache/cfmid cache.",
+      "The current local SIRIUS CLI still requires login, so SIRIUS tree evidence was not reconstructed; the exact error is retained in sirius_cfmid_reconstruction_attempt.sirius.",
+      "LLM ranked_indices are indices over the CFM-ID-reranked input order, not the original MS-CLIP primary order."
+    ]
+  }
+}

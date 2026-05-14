@@ -1,0 +1,6 @@
+track,narrative_llm,n_tasks,strict_GSEA_tasks,strict_GSEA_pct,STRICT_gt_tasks,STRICT_gt_pct,gt_or_syn_tasks,gt_or_syn_pct,broad_any_pathway_tasks,broad_any_pathway_pct
+sub6b_minimax,MiniMax-M2.7,63,2,3.17,17,26.98,28,44.44,61,96.83
+sub6b_gpt55,gpt-5.5,63,5,7.94,21,33.33,27,42.86,61,96.83
+sub6b_opus,claude-opus-4-7,63,2,3.17,20,31.75,32,50.79,62,98.41
+sub6a_perfect_opus,claude-opus-4-7,38,1,2.63,11,28.95,17,44.74,38,100.0
+sub6a_real_opus,claude-opus-4-7,38,2,5.26,10,26.32,13,34.21,36,94.74

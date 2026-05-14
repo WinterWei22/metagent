@@ -1,0 +1,4 @@
+track,n_tasks,n_claims,sup_pct,unsup_pct,contra_pct,unverif_pct,id_accuracy
+sub6b_opus,63,3281,18.1,12.56,4.18,65.16,
+sub6a_perfect_opus,38,1924,19.13,14.6,4.21,62.06,1.0
+sub6a_real_opus,38,1881,14.19,14.83,4.47,66.51,0.6737

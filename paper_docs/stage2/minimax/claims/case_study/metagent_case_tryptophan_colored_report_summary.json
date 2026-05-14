@@ -1,0 +1,52 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+  "ground_truth_pathway": {
+    "pathway_id": "RAMP_P_000000141",
+    "pathway_name": "Tryptophan metabolism",
+    "pathway_source": "kegg",
+    "external_id": "map00380",
+    "primary_pathway_pre_aggregation": "RAMP_P_000000141"
+  },
+  "top_pathway": {
+    "pathway_id": "RAMP_P_000000141",
+    "pathway_name": "Tryptophan metabolism",
+    "pathway_source": "kegg",
+    "pathway_external_id": "map00380",
+    "total_pathway_compounds": 54,
+    "matched_compounds": [
+      "C00078",
+      "C01598",
+      "C03722",
+      "C00637",
+      "C00780",
+      "C00632",
+      "C00398"
+    ],
+    "p_value": 7.942273720609415e-20,
+    "fdr": 1.8664343243432124e-17,
+    "fold_enrichment": 700.5314814814814
+  },
+  "matched_metabolites": [
+    "L-Tryptophan",
+    "Melatonin",
+    "Quinolinic acid",
+    "Indoleacetaldehyde",
+    "Serotonin",
+    "3-Hydroxyanthranilic acid",
+    "Tryptamine"
+  ],
+  "other_metabolites": [
+    "1-Pyrroline-5-carboxylic acid",
+    "L-Valine",
+    "Pyrroline hydroxycarboxylic acid"
+  ],
+  "final_iter_idx": 1,
+  "verdicts_total": {
+    "supported": 25,
+    "unverifiable_v0": 31,
+    "unsupported": 2,
+    "contradicted": 1
+  },
+  "rendered_report_lines": 39,
+  "output_stem": "metagent_case_tryptophan_colored_report"
+}

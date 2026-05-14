@@ -1,0 +1,4 @@
+bucket,n_spectra,frac_of_total,pre_rerank_msclip_correct,pre_rerank_msclip_pct,post_rerank_B_n,post_rerank_B_correct,post_rerank_B_pct,delta_pp
+high (0.8-0.9),313,69.87,210,67.09,310,229,73.87,6.07
+medium (0.6-0.8),102,22.77,42,41.18,101,46,45.54,3.92
+low (0.4-0.6),8,1.79,2,25.0,8,2,25.0,0.0

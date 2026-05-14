@@ -1,0 +1,10 @@
+mode,tool_group,tool_name,n_calls,n_tasks
+Feedback revision,Compound lookup,lookup_compound_info,2,1
+Feedback revision,Enrichment,query_ramp_enrichment,6,6
+Feedback revision,Literature,search_literature,75,37
+Feedback revision,Pathway evidence,query_pathway_membership,24,14
+Feedback revision,Pathway evidence,query_kegg_path,5,5
+MetAgent-ReAct,Compound lookup,lookup_compound_info,3,3
+MetAgent-ReAct,Enrichment,query_ramp_enrichment,64,63
+MetAgent-ReAct,Pathway evidence,query_pathway_membership,201,63
+MetAgent-ReAct,Pathway evidence,query_kegg_path,139,63

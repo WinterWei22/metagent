@@ -1,0 +1,51 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+  "ground_truth_pathway": {
+    "pathway_id": "RAMP_P_000000016",
+    "pathway_name": "Glycine, serine and threonine metabolism",
+    "pathway_source": "kegg",
+    "external_id": "map00260",
+    "primary_pathway_pre_aggregation": "RAMP_P_000000016"
+  },
+  "top_pathway": {
+    "pathway_id": "RAMP_P_000000016",
+    "pathway_name": "Glycine, serine and threonine metabolism",
+    "pathway_source": "kegg",
+    "pathway_external_id": "map00260",
+    "total_pathway_compounds": 57,
+    "matched_compounds": [
+      "C00077",
+      "C00109",
+      "C16241",
+      "C00021",
+      "C00097",
+      "C00073"
+    ],
+    "p_value": 2.19630265037927e-16,
+    "fdr": 2.9122973144029123e-13,
+    "fold_enrichment": 568.8526315789474
+  },
+  "matched_metabolites": [
+    "Ornithine",
+    "2-Ketobutyric acid",
+    "(R)-Lipoic acid",
+    "S-Adenosylhomocysteine",
+    "L-Cysteine",
+    "L-Methionine"
+  ],
+  "other_metabolites": [
+    "1-Pyrroline-5-carboxylic acid",
+    "5,6-Dihydroxyindole",
+    "Nitrate",
+    "Phenylephrine"
+  ],
+  "final_iter_idx": 2,
+  "verdicts_total": {
+    "supported": 13,
+    "unverifiable_v0": 14,
+    "unsupported": 3,
+    "contradicted": 1
+  },
+  "rendered_report_lines": 16,
+  "output_stem": "metagent_case_glycine_serine_threonine_colored_report"
+}

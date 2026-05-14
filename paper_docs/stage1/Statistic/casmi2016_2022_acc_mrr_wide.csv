@@ -1,0 +1,5 @@
+benchmark,benchmark_label,metric,MS-CLIP,MS-CLIP + tools weighted,MS-CLIP + tools + LLM reranking (MetAgent)
+casmi_2016_cat2,CASMI 2016,acc_pct,28.85,27.88,37.5
+casmi_2016_cat2,CASMI 2016,mrr,0.4059,0.4064,0.4677
+casmi_2022,CASMI 2022,acc_pct,13.53,13.53,15.88
+casmi_2022,CASMI 2022,mrr,0.2045,0.2126,0.2271
