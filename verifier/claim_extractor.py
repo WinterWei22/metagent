@@ -72,6 +72,91 @@ def _parse_claim_list(text: str) -> list | None:
 CALLER = "verifier.stage1.extract_claims"
 
 
+# Phase 6.4: rule-based alternative extractor for Sub-6A real-id v2.
+# The default LLM extractor (Opus-4-7) decomposes compound mechanistic
+# phrases like "m/z 109.0648 corresponds to fragment of A-ring enone" into
+# atomic sub-claims, neither of which carries both the m/z AND the
+# mechanism keyword required by Layer F's regex contract
+# (verifier/claim_classifier.py:107-119). The rule-based path below splits
+# the narrative on sentence / bullet boundaries WITHOUT decomposing line
+# content, so compound mechanistic sentences arrive at the classifier
+# intact and can be routed to PEAK_MECHANISTIC.
+_BULLET_RE = re.compile(r"^[\s]*(?:[-*•]\s+|\d+\.\s+)", re.MULTILINE)
+_SENTENCE_END_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z])")
+
+
+def extract_claims_rulebased(llm_output: str, *, trace_id: str | None = None) -> list[ExtractedClaim]:
+    """Sentence-level non-LLM extractor.
+
+    Splits ``llm_output`` on bullet markers and sentence boundaries, then
+    emits each non-trivial line as a single :class:`ExtractedClaim`. Does
+    NOT atomically decompose compound phrases — the goal is to preserve
+    sentence-level mechanistic statements so the rule-based classifier
+    (`verifier/claim_classifier.py`) can route them to PEAK_MECHANISTIC.
+
+    Parameters
+    ----------
+    llm_output : str
+        The narrative text (single LLM-as-reranker output, or any free-form
+        text). Empty / whitespace returns ``[]``.
+    trace_id : optional, accepted for API compatibility with the LLM
+        extractor but unused (this path makes no LLM calls).
+
+    Returns
+    -------
+    list[ExtractedClaim]
+        One claim per non-empty sentence/bullet. ``claim_text`` is the raw
+        sentence; ``normalized_text`` and ``extracted_fields`` populate as
+        usual via ``parse_claim_fields``.
+    """
+    if not llm_output or not llm_output.strip():
+        return []
+
+    # Step 1: line-level split. Bullets are the dominant structure in
+    # LLM-as-reranker output (each "Peak-level claims:" entry is a bullet).
+    raw_lines: list[str] = []
+    for chunk in llm_output.splitlines():
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        # Strip leading bullet marker if any.
+        chunk = _BULLET_RE.sub("", chunk).strip()
+        if not chunk:
+            continue
+        raw_lines.append(chunk)
+
+    # Step 2: sentence-level split within each line. We split only on
+    # ". " followed by uppercase, so "[M+H]+" embedded in a clause stays
+    # intact (the Track-V `rfind` bug analog).
+    sentences: list[str] = []
+    for line in raw_lines:
+        parts = _SENTENCE_END_RE.split(line)
+        for p in parts:
+            p = p.strip()
+            if len(p) >= 8:  # filter trivially short fragments
+                sentences.append(p)
+
+    # Step 3: emit ExtractedClaim per sentence. Subject is heuristic —
+    # leave None and let the classifier fill via rule.
+    claims: list[ExtractedClaim] = []
+    for sent in sentences:
+        normalized = normalize_claim_text(sent)
+        fields = parse_claim_fields(sent)
+        claims.append(
+            ExtractedClaim(
+                source_text=sent,
+                claim_text=sent,
+                normalized_text=normalized,
+                subject=None,
+                peak_mz=fields.mz,
+                neutral_loss=fields.neutral_loss,
+                claim_subtype=infer_claim_subtype(sent, fields),
+                extracted_fields=fields,
+            )
+        )
+    return claims
+
+
 class ClaimExtractionError(RuntimeError):
     """Raised when Stage 1 cannot parse a usable claim list from the LLM.
 

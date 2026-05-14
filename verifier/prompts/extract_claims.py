@@ -51,10 +51,28 @@ For "D-Gulose (C7H14O7)" emit "D-Gulose has molecular formula C7H14O7".
 For each claim, identify the subject when one is named (a metabolite, a
 pathway ID, a candidate index). Use null when no specific subject applies.
 
+Pathway-enrichment narratives (Sub-6) follow a recognisable shape;
+extract these as separate atomic claims:
+
+- "These metabolites are enriched in Tyrosine metabolism (FDR=2e-11)" →
+  one claim "Differential metabolites are enriched in Tyrosine metabolism"
+  with subject "Tyrosine metabolism", plus a separate claim about the
+  FDR value if numeric.
+- "Tyrosine and DOPA are key drivers of this enrichment" → one claim
+  "Tyrosine and DOPA are key drivers of the enrichment", subject =
+  "Tyrosine metabolism" (if known) else null.
+- "Tyrosine metabolism is upstream of dopamine synthesis" → one claim
+  with subject "Tyrosine metabolism".
+- "These two pathways share several intermediates including DOPA" →
+  one claim, subject = first pathway named.
+
 Only return a JSON list, for example:
 [
   {{"claim_text": "D-Gulose has molecular formula C7H14O7", "subject": "D-Gulose"}},
-  {{"claim_text": "Caffeine maps to KEGG pathway map00232", "subject": "Caffeine"}}
+  {{"claim_text": "Caffeine maps to KEGG pathway map00232", "subject": "Caffeine"}},
+  {{"claim_text": "These differential metabolites are enriched in Tyrosine metabolism", "subject": "Tyrosine metabolism"}},
+  {{"claim_text": "Tyrosine and DOPA are key drivers of the enrichment", "subject": "Tyrosine metabolism"}},
+  {{"claim_text": "Tyrosine metabolism and Phenylalanine metabolism share several intermediates", "subject": "Tyrosine metabolism"}}
 ]
 
 Report:
