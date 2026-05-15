@@ -61,9 +61,17 @@ class VerdictReport(NamedTuple):
     (i.e. ``claim_id`` and ``feedback_hint`` populated). The runner
     pulls only ``CONTRADICTED`` and ``UNSUPPORTED`` claims for the
     feedback message; other verdicts inform the quality score only.
+
+    Phase B1 D4: ``dropped_claims`` and ``task_outcome`` are plumbed
+    through so the feedback prompt can name dropped claims back to the
+    LLM and so the runner can decide between Mode B refusal-retry and
+    normal feedback. Defaults keep pre-D4 callers (and unit-test
+    fixtures) working with the old 2-field constructor.
     """
     claims: list[VerifiedClaim]
     verdicts_total: dict[str, int]
+    dropped_claims: list = ()
+    task_outcome: str = "normal"
 
 
 VerifierFn = Callable[[str], VerdictReport]
@@ -184,20 +192,60 @@ def _format_claim_block(claims: list[VerifiedClaim]) -> str:
     return "\n".join(lines)
 
 
+def _format_dropped_block(dropped_claims: list) -> str:
+    """Phase B1 D4: render grammar-dropped claims for the feedback prompt.
+
+    Each ``DroppedClaim`` carries a ``drop_reason`` from
+    ``verifier.grammar.validate``; we look up a per-reason hint via
+    ``feedback_hints.generate_drop_hint`` so the agent gets actionable
+    guidance instead of just a pydantic error blob.
+    """
+    if not dropped_claims:
+        return "  (none)"
+    from verifier.feedback_hints import generate_drop_hint
+    lines: list[str] = []
+    for d in dropped_claims:
+        text = (d.claim_text or "(empty)").replace("\n", " ").strip()
+        if len(text) > 240:
+            text = text[:237] + "..."
+        grammar = d.grammar_attempt or "?"
+        hint = generate_drop_hint(d).replace("\n", " ").strip()
+        lines.append(f"- **[grammar={grammar}]** \"{text}\"")
+        lines.append(f"    Drop reason: {d.drop_reason}")
+        lines.append(f"    Hint: {hint}")
+    return "\n".join(lines)
+
+
 def build_feedback_message(
     *,
     contradicted: list[VerifiedClaim],
     unsupported: list[VerifiedClaim],
     original_narrative: str,
+    unverifiable: list[VerifiedClaim] | None = None,
+    dropped: list | None = None,
 ) -> str:
-    """Render the feedback user message from the markdown template."""
+    """Render the feedback user message from the markdown template.
+
+    Phase B1 D4: wires the four new placeholders the D1 template
+    introduced (``{n_unverifiable}``, ``{n_dropped_by_grammar}``,
+    ``{unverifiable_block}``, ``{dropped_block}``) plus the renamed
+    ``{original_narrative_text}``. ``unverifiable`` and ``dropped``
+    default to ``None`` so legacy callers (pre-D4 ablation runs) still
+    work — they get empty blocks.
+    """
+    unverifiable = unverifiable or []
+    dropped = dropped or []
     template = _load_feedback_template()
     return template.format(
         n_contradicted=len(contradicted),
         n_unsupported=len(unsupported),
+        n_unverifiable=len(unverifiable),
+        n_dropped_by_grammar=len(dropped),
         contradicted_block=_format_claim_block(contradicted),
         unsupported_block=_format_claim_block(unsupported),
-        original_narrative=(original_narrative or "(empty)").strip(),
+        unverifiable_block=_format_claim_block(unverifiable),
+        dropped_block=_format_dropped_block(dropped),
+        original_narrative_text=(original_narrative or "(empty)").strip(),
     )
 
 
@@ -567,12 +615,27 @@ def run_sub6b_react_feedback(
     termination_reason: str | None = None
 
     for fb in range(1, max_feedback_iterations + 1):
-        # Stop early when nothing actionable remains.
+        # Phase B1 D4: actionable now includes CONTRADICTED, UNSUPPORTED,
+        # UNVERIFIABLE_V0 (D4 hint added) AND any grammar-dropped claims
+        # from the prev iteration. We also handle Mode B
+        # (EMPTY_HONEST_REFUSAL) as a task-level signal that triggers
+        # the refusal-specific outer retry.
         actionable = [
             c for c in prev_report.claims
             if c.verdict in (ClaimVerdict.CONTRADICTED, ClaimVerdict.UNSUPPORTED)
         ]
-        if not actionable:
+        unverifiable = [
+            c for c in prev_report.claims
+            if c.verdict == ClaimVerdict.UNVERIFIABLE_V0
+        ]
+        prev_dropped = list(prev_report.dropped_claims or [])
+        is_mode_b = prev_report.task_outcome == "empty_honest_refusal"
+        # Outer retry budget for Mode B: only fb iter 1 retries; after
+        # one shot we accept the refusal as final.
+        if is_mode_b and fb > 1:
+            termination_reason = "mode_b_accepted_after_refusal_retry"
+            break
+        if not (actionable or unverifiable or prev_dropped or is_mode_b):
             termination_reason = (
                 "early_exit_no_revisions" if fb == 1
                 else "no_actionable_claims_after_iter"
@@ -590,7 +653,12 @@ def run_sub6b_react_feedback(
             contradicted=contradicted,
             unsupported=unsupported,
             original_narrative=prev_narrative,
+            unverifiable=unverifiable,
+            dropped=prev_dropped,
         )
+        if is_mode_b:
+            from verifier.feedback_hints import generate_refusal_hint
+            feedback_msg = generate_refusal_hint() + "\n\n" + feedback_msg
         messages.append({"role": "user", "content": feedback_msg})
 
         # Constrained ReAct: fewer turns for feedback iteration (LLM should
@@ -853,11 +921,23 @@ def run_sub6b_feedback_from_narrative(
 
         contradicted = [c for c in actionable if c.verdict == ClaimVerdict.CONTRADICTED]
         unsupported = [c for c in actionable if c.verdict == ClaimVerdict.UNSUPPORTED]
+        # Phase B1 D4 — same outer-retry / dropped / UNV plumbing here.
+        unverifiable_b = [
+            c for c in prev_report.claims
+            if c.verdict == ClaimVerdict.UNVERIFIABLE_V0
+        ]
+        prev_dropped_b = list(prev_report.dropped_claims or [])
+        is_mode_b = prev_report.task_outcome == "empty_honest_refusal"
         feedback_msg = build_feedback_message(
             contradicted=contradicted,
             unsupported=unsupported,
             original_narrative=prev_narrative,
+            unverifiable=unverifiable_b,
+            dropped=prev_dropped_b,
         )
+        if is_mode_b:
+            from verifier.feedback_hints import generate_refusal_hint
+            feedback_msg = generate_refusal_hint() + "\n\n" + feedback_msg
         messages.append({"role": "user", "content": feedback_msg})
 
         feedback_max_turns = max(2, (max_react_turns + 1) // 2)
@@ -1032,7 +1112,14 @@ def main(argv: list[str] | None = None) -> int:
             driver_lookup=driver_lookup,
         )
         total = Counter(c.verdict.value for c in v.claims_v2)
-        return VerdictReport(claims=list(v.claims_v2), verdicts_total=dict(total))
+        return VerdictReport(
+            claims=list(v.claims_v2),
+            verdicts_total=dict(total),
+            dropped_claims=list(getattr(v, "dropped_claims", []) or []),
+            task_outcome=getattr(
+                getattr(v, "task_outcome", None), "value", "normal"
+            ),
+        )
 
     persister = TaskPersister(Path(args.persist_dir), args.task_id)
     result = run_sub6b_react_feedback(
