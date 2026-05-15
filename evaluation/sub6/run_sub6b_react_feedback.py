@@ -139,7 +139,7 @@ class Sub6BAgentFeedbackResult:
 
 DEFAULT_MAX_REACT_TURNS = 5
 DEFAULT_MAX_FEEDBACK_ITERS = 2
-DEFAULT_TOTAL_TIMEOUT = 900.0
+DEFAULT_TOTAL_TIMEOUT = 1200.0  # Phase B1 D4 — bumped from 900 to align with task-level cap
 """Total wall-time budget per task across all feedback iterations.
 A2 D5 bumped this from 240→900: D4 saw 2/5 tasks tripping
 total_timeout=600 because a 30-claim verifier round-trip can take
