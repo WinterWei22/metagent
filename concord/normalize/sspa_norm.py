@@ -101,30 +101,18 @@ def _parse_da_metabolites(cell: Any) -> list[str]:
 def _build_metabolites_hit(
     da_metabolites: list[str], chebi_lookup: Any | None,
 ) -> tuple[CompoundRef, ...]:
-    """Convert ChEBI numeric strs → tuple[CompoundRef, ...] (v0.3 schema).
+    """Convert sspa ORA ChEBI numeric strs → tuple[CompoundRef, ...] (v0.3).
 
-    Requires ``chebi_lookup`` to fetch InChIKey (CompoundRef.inchikey is mandatory
-    per v0.3 validator). If chebi_lookup is None or lookup misses, the compound
-    is skipped — vacuous metabolites_hit is caught by EnrichmentResult validator.
+    W4 D2:routed through shared ``concord.reconcile.id_resolve``;sspa's case
+    is source_namespace="CHEBI"(ChEBI numeric IDs from DA_Metabolites_ID).
     """
     if not da_metabolites or chebi_lookup is None:
         return ()
-    out: list[CompoundRef] = []
-    for chebi_num in da_metabolites:
-        # sspa stores ChEBI numeric without prefix; ChebiLookup accepts both
-        rec = chebi_lookup.get_compound(chebi_num)
-        if rec is None or not rec.inchikey:
-            continue
-        try:
-            out.append(CompoundRef(
-                primary_id=rec.primary_id,
-                inchikey=rec.inchikey,
-                display_name=rec.name,
-                chebi_id=rec.primary_id,
-            ))
-        except ValueError as e:  # validator reject
-            logger.warning("CompoundRef rejected for ChEBI %s: %s", chebi_num, e)
-    return tuple(out)
+    from concord.reconcile.id_resolve import resolve_ids_to_compound_refs
+    resolved, _unresolved = resolve_ids_to_compound_refs(
+        da_metabolites, source_namespace="CHEBI", chebi_lookup=chebi_lookup,
+    )
+    return tuple(resolved)
 
 
 def _extract_top_pathways_from_ora(

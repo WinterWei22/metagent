@@ -125,3 +125,84 @@ def test_peak_record_validator_mz():
 def test_peak_record_validator_pvalue():
     with pytest.raises(ValueError, match="p_value"):
         PeakRecord(mz=180.06, p_value=1.5)
+
+
+# ---------------------------------------------------------------------------
+# W4 D2: normalize_mummichog_output integration test
+# ---------------------------------------------------------------------------
+
+
+def test_normalize_mummichog_populates_hits(synthetic_peaks):
+    """End-to-end:run_mummichog → normalize_mummichog_output → v0.3
+    EnrichmentResult with metabolites_hit ≥ 1 CHEBI primary id.
+
+    Requires ChebiLookup sqlite present(skipped automatically by pytestmark).
+    """
+    from concord.lookup.chebi import ChebiLookup
+    from concord.normalize.mummichog_norm import normalize_mummichog_output
+    from concord.schema.enrichment import (
+        COMPOUND_NAMESPACES,
+        EnrichmentResult,
+        PATHWAY_NAMESPACES,
+    )
+
+    chebi_db = WORKTREE / "data" / "concord" / "chebi.sqlite"
+    if not chebi_db.exists():
+        pytest.skip("ChEBI sqlite missing — run W3 ETL first")
+    chebi = ChebiLookup(db_path=chebi_db)
+
+    raw = run_mummichog(synthetic_peaks, mode="positive", permutations=20)
+    er = normalize_mummichog_output(raw, top_n=10, chebi_lookup=chebi)
+    assert isinstance(er, EnrichmentResult)
+    assert er.schema_version == "concordmet_v0.3"
+    assert len(er.pathways) >= 1
+    # Pathway namespace
+    for p in er.pathways:
+        ns = p.pathway_id.split(":", 1)[0]
+        assert ns in PATHWAY_NAMESPACES, p.pathway_id
+        # Mummichog uses KEGG: namespace
+        assert ns == "KEGG", f"expected KEGG: but got {ns}:"
+
+    # metabolites_hit populated (W4 D2 wire)
+    total_hits = sum(len(p.metabolites_hit) for p in er.pathways)
+    assert total_hits > 0, "mummichog metabolites_hit empty — id_resolve broken?"
+
+    # ≥1 hit should be ChEBI-resolved (KEGG→ChEBI via id_resolve)
+    chebi_hits = sum(1 for p in er.pathways for m in p.metabolites_hit
+                     if m.primary_id.startswith("CHEBI:"))
+    assert chebi_hits > 0, (
+        f"No CHEBI:-prefixed primary_id among {total_hits} hits — "
+        f"KEGG→ChEBI lookup failing"
+    )
+    # All primary_ids in whitelist
+    for p in er.pathways:
+        for m in p.metabolites_hit:
+            ns = m.primary_id.split(":", 1)[0]
+            assert ns in COMPOUND_NAMESPACES, m.primary_id
+
+
+def test_normalize_mummichog_chebi_hit_rate_sanity(synthetic_peaks):
+    """W4 D2 spec sanity: ≥ 50% of compound refs route through ChEBI primary.
+
+    Stop condition trip: < 30% suggests W3 ETL missed KEGG xrefs.
+    """
+    from concord.lookup.chebi import ChebiLookup
+    from concord.normalize.mummichog_norm import normalize_mummichog_output
+
+    chebi_db = WORKTREE / "data" / "concord" / "chebi.sqlite"
+    if not chebi_db.exists():
+        pytest.skip("ChEBI sqlite missing")
+    chebi = ChebiLookup(db_path=chebi_db)
+
+    raw = run_mummichog(synthetic_peaks, mode="positive", permutations=20)
+    er = normalize_mummichog_output(raw, top_n=10, chebi_lookup=chebi)
+    total = sum(len(p.metabolites_hit) for p in er.pathways)
+    chebi_n = sum(1 for p in er.pathways for m in p.metabolites_hit
+                  if m.primary_id.startswith("CHEBI:"))
+    if total == 0:
+        pytest.skip("mummichog returned 0 hits — cannot evaluate rate")
+    rate = chebi_n / total
+    assert rate >= 0.30, (
+        f"ChEBI primary rate {rate:.1%} ({chebi_n}/{total}) is below "
+        f"30% stop condition — W3 ChEBI ETL KEGG xref may be incomplete"
+    )

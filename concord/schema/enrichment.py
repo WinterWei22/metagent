@@ -111,6 +111,18 @@ def _check_namespaced(value: str, whitelist: frozenset[str], field: str) -> None
 
 
 @dataclass(frozen=True)
+class UnresolvedId:
+    """One external ID that ``id_resolve.resolve_ids_to_compound_refs`` could
+    not turn into a v0.3 CompoundRef.
+
+    See ``concord.reconcile.id_resolve`` for the resolution algorithm + reasons.
+    """
+    raw_id: str
+    source_namespace: str
+    reason: str   # Literal["xref_miss", "inchikey_miss", "invalid_format"]
+
+
+@dataclass(frozen=True)
 class CompoundRef:
     """Structured reference to one metabolite hit in a pathway.
 
