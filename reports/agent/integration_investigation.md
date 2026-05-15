@@ -778,6 +778,35 @@ _Investigation 期间所有 scope 外但应问的问题归这里。_
   我倾向 (a) 先 spike,失败则 (b)。**不能自决**因为依赖 Sprint 时间预算。
 - **W 影响**:不阻塞 §1 / §5 / §6 / §7;阻塞 §2.2、§4(W4)、§8(若 §8 toy 想跑 mummichog method)。
 
+### Q-03 status update — 2026-05-15 Session 2 实测进展
+
+**Stage 1(15:31)**:`conda create -n concord_r r-base=4.4 -c conda-forge` ✅ R 4.4.3 "Trophy Case" 起来,绕过原 GLIBCXX 问题(原 base env libstdc++ 冲突)。
+
+**Stage 2(15:31 - 16:11)**:`BiocManager::install(...)` 27 包 batch — **40 min timeout (exit 143)**,只装上 limma / graph / plyr / Matrix(137 total)。fgsea / KEGGgraph / FELLA / igraph / KEGGREST 全失败,输出全 buffer 看不到错。
+
+**Stage 3(16:20 - 16:28)**:retry-2 individual install — igraph 单装失败,**root cause 揭露**:
+```
+/home/weiwentao/miniconda3/include/bfd.h:35:2: error: 
+  #error config.h must be included before this header
+vendor/cigraph/vendor/glpk/api/prob.h:103:7: error: unknown type name 'BFD'
+```
+**根因**:igraph 的 GLPK vendor 编译时,`x86_64-conda-linux-gnu-cc` 的 include path 优先级是 `/home/weiwentao/miniconda3/include/`(base env binutils-dev `bfd.h`)→ `concord_r/include/`(R headers)。base env 的 `bfd.h` 要求先 include `config.h`,但 GLPK 没 include,**编译失败**。
+
+**Stage 4(16:30+,retry-3 进行中)**:**改 conda binary 路径**,不走 CRAN source 编译:
+```
+conda install -n concord_r -c conda-forge -c bioconda --yes \
+  r-igraph bioconductor-fella bioconductor-fgsea \
+  bioconductor-kegggraph bioconductor-keggrest
+```
+预期 conda 直接装 binary,跳过 source compile,绕开 bfd.h 冲突。后台跑中。
+
+**时间预算**:Q-03 已用 ~1h,余 ~3h(time-box 4h)。
+
+**escalation 触发条件(retry-3 fail)**:
+- 自动登记 R-NEW-14 → "本机 R env 无法装 native-source 复杂依赖" 终态
+- 走用户指定 3 选项(Docker R / Tier-A 缩到 3 工具去 MetaboAnalystR / 延一周搭 R env)
+- **不再 deep-debug**,4h 警戒线之前 escalate
+
 ### Q-03 — 本机 R 环境 broken(GLIBCXX_3.4.30)
 - **背景**:`R --version` 报错 `/lib/x86_64-linux-gnu/libstdc++.so.6: version GLIBCXX_3.4.30 not found`。典型的 miniconda libstdc++ 和系统 libstdc++ 版本错配。
 - **影响**:**直接 BLOCK §2.3 / §2.4** — MetaboAnalystR subprocess + FELLA rpy2 都跑不起来,Tier A 工具调研中两个最重的项目无法进行;§4 W5 集成顺序无法 finalize。
