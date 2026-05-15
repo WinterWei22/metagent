@@ -12,8 +12,8 @@
 
 | Section | Title | Budget | Status |
 |---|---|---|---|
-| §0 | 竞品 Repo 实际状态 | 0.5d | In progress |
-| §1 | Codebase Reality Check | 0.5d | In progress |
+| §0 | 竞品 Repo 实际状态 | 0.5d | **Done(待人工验证 Q-01)** |
+| §1 | Codebase Reality Check | 0.5d | **Mostly done(§1.1 pytest 结果待)** |
 | §2 | 10 候选工具系统调研 | 2d | Pending (后续 session) |
 | §3 | 统一 EnrichmentResult Schema | 0.5d | Pending |
 | §4 | Tier A 工具集成计划 | 1d | Pending |
@@ -205,13 +205,40 @@ for c in claims:
 
 _后续 session,2 天预算。包含 hands-on 真装真跑 + FELLA rpy2 K=10 并发 spike。_
 
-### 2.1 py-sspa — TBD
-### 2.2 mummichog v3 (强制 hands-on) — TBD
-### 2.3 MetaboAnalystR 4 (subprocess) — TBD
-### 2.4 FELLA (rpy2 并发 spike 强制做) — TBD
-### 2.5 MetaNetX MNXref 4.5 — TBD
-### 2.6 RDKit InChIKey reconciler — TBD
-### 2.7 Tier B/C 工具速记 — TBD
+### 2.0 环境预侦察(本 session,§1 顺带做的)
+
+```
+Python: 3.13.11  (miniconda)
+✓ rdkit  2025.09.6   (§2.6 跳过 install)
+✗ sspa               (待装,§2.1 hands-on)
+✗ mummichog          (待装,§2.2 hands-on — ⚠️ Py3.13 兼容性高风险)
+✗ rpy2               (待装,§2.4 hands-on — ⚠️ R broken,见下)
+✗ metanetx_sdk       (待装,§2.5)
+✗ sqlalchemy         (待装,DB ETL 用)
+✗ requests_cache     (待装,REST 缓存用)
+
+R: /home/weiwentao/miniconda3/bin/R
+   ⚠️ BROKEN: `R --version` 失败,libstdc++ GLIBCXX_3.4.30 not found
+   (路径冲突:/lib/x86_64-linux-gnu/libstdc++.so.6 缺新版 GLIBCXX,
+    但 miniconda 的 libicuuc.so.75 需要它)
+```
+
+**这两个发现直接影响 §2 计划**:
+- **mummichog Py3.13 兼容性高风险**:历史 mummichog 只支持 Py3.7-3.9。§2.2 hands-on 大概率直接撞 stop condition #1(完全装不上),需立刻报告 + 等用户决定切 R 端。**但 R 端也坏了**(见下)→ Stop condition 升级:**需要先修 R 环境或考虑 Python 重写 mummichog 算法(也是 fallback path)**。已登记 Q-02。
+- **R 环境 broken**:`GLIBCXX_3.4.30 not found` 是典型的 conda libstdc++ 和系统 libstdc++ 版本冲突。这同时影响:
+  - §2.3 MetaboAnalystR 4 subprocess(R 跑不起来 → 直接 stop)
+  - §2.4 FELLA rpy2 K=10 spike(R 跑不起来 → rpy2 也跑不起来)
+  - §2.2 mummichog R-fallback path 也不可用
+  - **任何 R-based 工具集成在本机当前状态都无法 hands-on**
+  - 已登记 Q-03,提交用户决定:修 R / 切别的服务器 / 直接放弃 R 端工具
+
+### 2.1 py-sspa — Pending (hands-on §2 session)
+### 2.2 mummichog v3 (强制 hands-on) — Pending,⚠️ 高风险见 §2.0
+### 2.3 MetaboAnalystR 4 (subprocess) — **BLOCKED on R env**,见 Q-03
+### 2.4 FELLA (rpy2 并发 spike) — **BLOCKED on R env**,见 Q-03
+### 2.5 MetaNetX MNXref 4.5 — Pending
+### 2.6 RDKit InChIKey reconciler — rdkit 已装,只需 30-line toy 即可,Pending
+### 2.7 Tier B/C 工具速记 — Pending
 - PathIntegrate / IMPaLA / PIUMet / NetGSA / fgsea / clusterProfiler / MetExplore / OmicsNet
 
 ---
@@ -278,8 +305,27 @@ _Investigation 期间所有 scope 外但应问的问题归这里。_
 - **我的建议**:由用户(或下次 session 人工)到 bioRxiv 搜索关键词 "MS4MS metabolomics" / "MSAgent mass spectrometry",定位真实 DOI;若 bioRxiv 无 → 转 ChemRxiv / medRxiv / arXiv 检索。**不能自决**,因为 fetch 重复尝试可能再次幻觉。
 - **W 影响**:不阻塞 §2 / §8。最迟在 W2 report 时解决。
 
-### Q-02 (placeholder) — TBD
-- 后续 Investigation section 中如发现其他 scope 外问题继续追加。
+### Q-02 — mummichog Python 3.13 兼容性 + R-fallback 双不可用
+- **背景**:本机 Python 是 3.13.11,而 mummichog 历史只支持 Py3.7-3.9(setup.py 通常 pin)。同时本机 R 环境 broken(见 Q-03),所以"切 R 端"的 fallback 也不可用。
+- **影响**:§2.2 hands-on 很可能完全失败,触发 stop condition #1;§4 集成顺序(W4 mummichog)需要 fallback 决策。
+- **我的建议**:三选一,用户拍板:
+  (a) 跑一个独立 conda env 装 Py3.9 + mummichog 验证(工程量 1-2h,但可能仍失败)
+  (b) 直接放弃 mummichog,改用 sspa 自带的 mummichog-like 实现(若有)或 Python-port `pyMummichog`(实测可用性未知)
+  (c) Python 自己重写 mummichog 核心算法(权威老算法,~500 LOC,2-3 天工程)
+  我倾向 (a) 先 spike,失败则 (b)。**不能自决**因为依赖 Sprint 时间预算。
+- **W 影响**:不阻塞 §1 / §5 / §6 / §7;阻塞 §2.2、§4(W4)、§8(若 §8 toy 想跑 mummichog method)。
+
+### Q-03 — 本机 R 环境 broken(GLIBCXX_3.4.30)
+- **背景**:`R --version` 报错 `/lib/x86_64-linux-gnu/libstdc++.so.6: version GLIBCXX_3.4.30 not found`。典型的 miniconda libstdc++ 和系统 libstdc++ 版本错配。
+- **影响**:**直接 BLOCK §2.3 / §2.4** — MetaboAnalystR subprocess + FELLA rpy2 都跑不起来,Tier A 工具调研中两个最重的项目无法进行;§4 W5 集成顺序无法 finalize。
+- **我的建议**:三选一:
+  (a) 修本机 R:`conda install -c conda-forge libstdcxx-ng` 或 `conda update -c conda-forge --all`,然后重试 R(预计 30 分钟;失败可能性高,因为 path 冲突看着复杂)
+  (b) 切到另一台服务器跑 §2.3 / §2.4(若用户有备用环境)
+  (c) **放弃 R 端工具,纯 Python 路径**:这意味着 ConcordMet **不集成 FELLA / MetaboAnalystR**。需要重新评估 §4 Tier A 列表 + 用户原文档的 4-axis 是否还成立(其中"网络拓扑 axis" 主要靠 FELLA;若去掉需找替代工具如 PIUMet 或 OmicsNet)。
+  我倾向 (a) 先 spike;失败转 (c)。**不能自决**,(c) 改变 Sprint 主线。
+- **W 影响**:**阻塞 §2.3 / §2.4 / §4(W5)/ §8(若想跑 FELLA-based PA)**。属于 Investigation 最重 blocker。
+
+### Q-04 (placeholder) — TBD
 
 ---
 
@@ -307,6 +353,38 @@ Mean cross-method Jaccard < 0.4   → Gate 1 PASS
 _基于 §0-§8 实证产出,后续 session。_
 
 Gantt-style 表 / markdown checklist,带 wall-time 估计 + 依赖关系。
+
+---
+
+## Session Log
+
+### Session 1 — 2026-05-15
+**Owner:** Claude (Opus 4.7)
+**Time:** ~30 min wall
+**Done:**
+- ✅ 建 worktree `metagent_day1_v5_investigation` @ tag `MetAgent-v1-0514`,在新分支 `feature/investigation-concord` 上
+- ✅ 报告骨架 9 sections + Stop Conditions + Status Dashboard
+- ✅ §0 竞品 4 repo recon(子代理并行)
+- ✅ §1.2 - §1.5 (codebase tools + verifier layers + dispatcher routing + 5 个偏差)
+- ✅ §2.0 环境预侦察(Python 3.13, rdkit ✓,其余 ✗,R broken)
+- ✅ §7 登记 Q-01 / Q-02 / Q-03 三个 open question
+
+**Pending(本 session 没收尾的):**
+- ⏳ §1.1 pytest 结果(后台 7+ min 还在跑;后续 session 接收完成通知后填)
+
+**Blockers for next session(§2 hands-on)**:
+- 🔴 **Q-03 R env broken** — §2.3 / §2.4 完全 BLOCKED,需用户先决定修 R / 换服务器 / 放弃 R 工具
+- 🔴 **Q-02 Py3.13 vs mummichog** — §2.2 大概率失败,需用户决定 fallback 路径
+- 🟡 **Q-01 MS4MS/MSAgent URL** — 不阻塞 §2,但 W2 report 前需修
+
+**Commits:**
+- `7786512 docs(investigation): scaffold integration report + §0 §1 first pass`(+ 后续 commit 见 git log)
+
+**Next session 建议**:
+1. 等用户对 Q-02 / Q-03 拍板(否则 §2 卡死)
+2. §2.5 MetaNetX + §2.6 RDKit InChIKey reconciler(纯 Python,Q-02/03 不阻塞)
+3. §1.1 pytest 结果回填
+4. 开始 §3 schema 草案(基于已知工具输出格式)
 
 ---
 
