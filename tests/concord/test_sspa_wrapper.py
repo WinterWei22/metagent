@@ -223,3 +223,77 @@ def test_normalize_handles_empty_raw():
     er = normalize_sspa_output(empty_result, top_n=10)
     assert isinstance(er, EnrichmentResult)
     assert len(er.pathways) == 0
+
+
+# ---------------------------------------------------------------------------
+# W3 hotfix regression (2026-05-16):metabolites_hit must be populated by
+# real sspa.sspa_ora pipeline. Earlier unit tests passed because they did
+# NOT go through producer→validator end-to-end;they constructed pathway_df
+# manually and never exercised the DA_Metabolites_ID column.
+# ---------------------------------------------------------------------------
+
+
+def test_sspa_ora_populates_metabolites_hit_regression(toy_refs, chebi):
+    """REGRESSION:running real sspa.sspa_ora() through the wrapper +
+    normalizer must yield non-empty ``metabolites_hit`` on at least one
+    pathway. Asserted: primary_id starts with ``CHEBI:`` per Q05-NEW-5.
+
+    This case caught the bug where Check 2 (post-W3 sanity) reported
+    ``n_compound_refs = 0`` despite ``n_pathways = 10``.
+    """
+    raw_result = run_sspa(
+        compound_refs=toy_refs, method="ora", pathway_db="reactome",
+    )
+    er = normalize_sspa_output(raw_result, top_n=10, chebi_lookup=chebi)
+    assert isinstance(er, EnrichmentResult)
+    assert len(er.pathways) > 0, "no pathways at all — too small toy?"
+    total_hits = sum(len(p.metabolites_hit) for p in er.pathways)
+    assert total_hits > 0, (
+        f"metabolites_hit empty across all {len(er.pathways)} pathways. "
+        f"Patch 1 (sspa_norm wire DA_Metabolites_ID) is broken."
+    )
+    # CHEBI: namespace assertion on at least the top-hit pathway with refs
+    found_chebi = False
+    for p in er.pathways:
+        for m in p.metabolites_hit:
+            if m.primary_id.startswith("CHEBI:"):
+                found_chebi = True
+                # Spot-check structural integrity
+                assert m.inchikey, f"CompoundRef without inchikey: {m}"
+                assert m.chebi_id, f"CompoundRef without chebi_id: {m}"
+                break
+        if found_chebi:
+            break
+    assert found_chebi, (
+        f"No CHEBI:-prefixed primary_id found across {total_hits} metabolites_hit"
+    )
+
+
+def test_enrichment_result_validator_rejects_vacuous(toy_refs, chebi):
+    """REGRESSION:Patch 2 validator must reject n_pathways>0 with 0 refs.
+
+    Pre-W3-hotfix this passed silently (vacuous all() over empty list).
+    """
+    from concord.schema.enrichment import (
+        EnrichmentMethod,
+        PathwayDB,
+        PathwayHit,
+        ScoreType,
+    )
+    bad_hit = PathwayHit(
+        pathway_id="REACT:R-HSA-71387",
+        pathway_name="x",
+        pathway_id_native="R-HSA-71387",
+        pathway_db=PathwayDB.REACTOME,
+        score=0.01, score_type=ScoreType.P_VALUE, rank=0,
+        metabolites_hit=(),  # <— vacuous
+    )
+    with pytest.raises(ValueError, match="structurally vacuous"):
+        EnrichmentResult(
+            method=EnrichmentMethod.ORA_SSPA,
+            pathway_db=PathwayDB.REACTOME,
+            pathways=(bad_hit,),
+            parameters={},
+            tool_version="x", db_release="x",
+            n_input=1, n_input_resolved=1, wall_time_sec=0.1,
+        )

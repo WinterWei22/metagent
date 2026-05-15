@@ -84,17 +84,63 @@ _DB_MAP: dict[str, PathwayDB] = {
 # ---------------------------------------------------------------------------
 
 
+def _parse_da_metabolites(cell: Any) -> list[str]:
+    """Parse sspa ORA ``DA_Metabolites_ID`` cell → list of ChEBI numeric strs.
+
+    sspa stores hits as a single comma-separated string (e.g. "17234, 16467").
+    Empty cells / NaN → empty list. Surrounding whitespace stripped.
+    """
+    if cell is None or (isinstance(cell, float) and pd.isna(cell)):
+        return []
+    s = str(cell).strip()
+    if not s:
+        return []
+    return [tok.strip() for tok in s.split(",") if tok.strip()]
+
+
+def _build_metabolites_hit(
+    da_metabolites: list[str], chebi_lookup: Any | None,
+) -> tuple[CompoundRef, ...]:
+    """Convert ChEBI numeric strs → tuple[CompoundRef, ...] (v0.3 schema).
+
+    Requires ``chebi_lookup`` to fetch InChIKey (CompoundRef.inchikey is mandatory
+    per v0.3 validator). If chebi_lookup is None or lookup misses, the compound
+    is skipped — vacuous metabolites_hit is caught by EnrichmentResult validator.
+    """
+    if not da_metabolites or chebi_lookup is None:
+        return ()
+    out: list[CompoundRef] = []
+    for chebi_num in da_metabolites:
+        # sspa stores ChEBI numeric without prefix; ChebiLookup accepts both
+        rec = chebi_lookup.get_compound(chebi_num)
+        if rec is None or not rec.inchikey:
+            continue
+        try:
+            out.append(CompoundRef(
+                primary_id=rec.primary_id,
+                inchikey=rec.inchikey,
+                display_name=rec.name,
+                chebi_id=rec.primary_id,
+            ))
+        except ValueError as e:  # validator reject
+            logger.warning("CompoundRef rejected for ChEBI %s: %s", chebi_num, e)
+    return tuple(out)
+
+
 def _extract_top_pathways_from_ora(
     raw: pd.DataFrame, *, top_n: int, chebi_lookup: Any | None,
 ) -> list[PathwayHit]:
-    """sspa ORA output → list[PathwayHit].
+    """sspa ORA output → list[PathwayHit] with populated metabolites_hit.
 
-    sspa ORA columns typically include:
-      ID, Pathway_name, Hits, Coverage, P-value, P-adjust, etc.
+    sspa ORA columns(per sspa.sspa_ora.over_representation_analysis,verified
+    2026-05-16): ``ID, Pathway_name, Hits, Coverage, P-value, P-adjust,
+    DA_Metabolites_ID``. The last column is a comma-separated list of compound
+    IDs that JOIN'd between the user's DA compound set and pathway membership —
+    this is exactly the ``metabolites_hit`` we need(internal JOIN,not a
+    cross-namespace lookup).
     """
     if raw is None or raw.empty:
         return []
-    # Sort by P-value ascending if present
     sort_col = "P-value" if "P-value" in raw.columns else (
         "p_value" if "p_value" in raw.columns else None
     )
@@ -106,32 +152,62 @@ def _extract_top_pathways_from_ora(
         pname = str(row.get("Pathway_name", row.get("pathway_name", raw_pid)))
         pval = float(row.get(sort_col, 1.0)) if sort_col else 1.0
         fdr = float(row.get("P-adjust", row.get("fdr", pval)))
-        aux = {}
+
+        # Parse Hits / Coverage which sspa stores as "k/N" strings; keep float
+        # for legacy aux_scores compat
+        aux: dict[str, float] = {}
         for k in ("Coverage", "Hits"):
             if k in row and pd.notna(row[k]):
-                try:
-                    aux[k.lower()] = float(row[k])
-                except (TypeError, ValueError):
-                    pass
+                v = row[k]
+                if isinstance(v, str) and "/" in v:
+                    try:
+                        num, den = v.split("/", 1)
+                        aux[k.lower()] = float(num) / max(float(den), 1.0)
+                        aux[f"{k.lower()}_raw"] = v   # keep raw "k/N"
+                    except (TypeError, ValueError):
+                        pass
+                else:
+                    try:
+                        aux[k.lower()] = float(v)
+                    except (TypeError, ValueError):
+                        pass
 
-        metabolites_hit: tuple[CompoundRef, ...] = ()
-        # sspa ORA result may not expose per-pathway metabolite hits.
-        # For now leave empty;Sprint W4 will wire pathway membership via
-        # pathway_df row interrogation.
+        # Patch 1 (W3 hotfix 2026-05-16): wire metabolites_hit from
+        # DA_Metabolites_ID column via ChebiLookup → CompoundRef
+        da_ids = _parse_da_metabolites(row.get("DA_Metabolites_ID"))
+        metabolites_hit = _build_metabolites_hit(da_ids, chebi_lookup)
+
+        # n_metabolites_in_pathway = "Coverage" denominator (pathway size)
+        # n_metabolites_input = "Hits" numerator (DA ∩ pathway)
+        n_path = 0
+        n_in = 0
+        cov_raw = aux.get("coverage_raw")
+        hits_raw = aux.get("hits_raw")
+        if isinstance(cov_raw, str) and "/" in cov_raw:
+            try:
+                n_path = int(cov_raw.split("/", 1)[1])
+            except (TypeError, ValueError):
+                pass
+        if isinstance(hits_raw, str) and "/" in hits_raw:
+            try:
+                n_in = int(hits_raw.split("/", 1)[0])
+            except (TypeError, ValueError):
+                pass
 
         try:
             hits.append(PathwayHit(
                 pathway_id=pid_ns,
                 pathway_name=pname,
                 pathway_id_native=raw_pid,
-                pathway_db=PathwayDB.REACTOME,  # caller passes correct one in EnrichmentResult.pathway_db
+                pathway_db=PathwayDB.REACTOME,
                 score=fdr if not pd.isna(fdr) else pval,
                 score_type=ScoreType.FDR if not pd.isna(fdr) else ScoreType.P_VALUE,
                 rank=rank,
                 metabolites_hit=metabolites_hit,
-                n_metabolites_in_pathway=int(aux.get("coverage", 0)),
-                n_metabolites_input=int(aux.get("hits", 0)),
-                auxiliary_scores=aux,
+                n_metabolites_in_pathway=n_path,
+                n_metabolites_input=n_in,
+                auxiliary_scores={k: v for k, v in aux.items()
+                                  if isinstance(v, (int, float))},
             ))
         except ValueError as e:
             logger.warning("PathwayHit validator rejected %r: %s", raw_pid, e)
@@ -188,12 +264,26 @@ def normalize_sspa_output(
     Args:
         sspa_result: dict from concord.wrappers.sspa_wrapper.run_sspa()
         top_n: how many pathway hits to keep
-        chebi_lookup: optional ChebiLookup for KEGG → ChEBI reverse lookup
-            (relevant when sspa returns KEGG cpd in pathway data)
+        chebi_lookup: ChebiLookup for ChEBI→CompoundRef enrichment. If None,
+            auto-constructed from default DB path. **Required for ORA path** —
+            sspa ORA's DA_Metabolites_ID column needs ChebiLookup to fetch
+            InChIKey + display name for each CompoundRef.
 
     Returns:
         EnrichmentResult v0.3 (schema_version="concordmet_v0.3", chebi_canonicalized=True)
     """
+    # Auto-construct ChebiLookup if absent. ORA path needs it for metabolites_hit.
+    if chebi_lookup is None:
+        try:
+            from concord.lookup.chebi import ChebiLookup
+            chebi_lookup = ChebiLookup()
+        except (FileNotFoundError, ImportError) as e:
+            logger.warning(
+                "normalize_sspa_output: could not auto-construct ChebiLookup (%s); "
+                "metabolites_hit will be empty",
+                e,
+            )
+            chebi_lookup = None
     method_raw = sspa_result.get("method", "ora")
     method = _METHOD_MAP.get(method_raw, EnrichmentMethod.ORA_SSPA)
     pathway_db = _DB_MAP.get(sspa_result.get("pathway_db", "reactome"),

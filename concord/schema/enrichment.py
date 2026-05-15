@@ -214,6 +214,25 @@ class EnrichmentResult:
     chebi_canonicalized: bool = False     # Q-05:输入 metabolite 是否已 normalize 到 ChEBI 主键
     notes: str = ""                       # 任何工具/方法特殊说明
 
+    def __post_init__(self) -> None:
+        """Validator(W3 hotfix 2026-05-16):reject n_pathways>0 with 0 hits.
+
+        Sanity-check Check 2 暴露:空 metabolites_hit 通过 all() vacuously True
+        是 second-class bug。这条 invariant 强制 producer 必须 wire metabolites_hit
+        当 there are any pathways。若 pathways 真为空(input compounds 全 miss
+        pathway DB universe),pathways=() 也合法,只是不能 N pathways + 0 refs 同存。
+        """
+        if self.pathways:
+            n_refs = sum(len(p.metabolites_hit) for p in self.pathways)
+            if n_refs == 0:
+                raise ValueError(
+                    f"EnrichmentResult has {len(self.pathways)} pathways but 0 "
+                    f"compound hits across all of them — this is structurally "
+                    f"vacuous; either pathways should be empty or metabolites_hit "
+                    f"must be populated. "
+                    f"(method={self.method.value}, db={self.pathway_db.value})"
+                )
+
 
 # ---------------------------------------------------------------------------
 # 4 个 normalizer 签名(W3 才实现,这里只是 stub)
