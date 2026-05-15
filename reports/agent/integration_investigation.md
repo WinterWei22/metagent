@@ -629,33 +629,56 @@ Gantt-style 表 / markdown checklist,带 wall-time 估计 + 依赖关系。
 
 ## Session Log
 
-### Session 1 — 2026-05-15
+### Session 1 — 2026-05-15(scaffold + §0 + §1 + §2.0 + Q-blocker discovery)
 **Owner:** Claude (Opus 4.7)
 **Time:** ~30 min wall
 **Done:**
-- ✅ 建 worktree `metagent_day1_v5_investigation` @ tag `MetAgent-v1-0514`,在新分支 `feature/investigation-concord` 上
+- ✅ 建 worktree `metagent_day1_v5_investigation` @ tag `MetAgent-v1-0514`,新分支 `feature/investigation-concord`
 - ✅ 报告骨架 9 sections + Stop Conditions + Status Dashboard
-- ✅ §0 竞品 4 repo recon(子代理并行)
-- ✅ §1.2 - §1.5 (codebase tools + verifier layers + dispatcher routing + 5 个偏差)
-- ✅ §2.0 环境预侦察(Python 3.13, rdkit ✓,其余 ✗,R broken)
-- ✅ §7 登记 Q-01 / Q-02 / Q-03 三个 open question
+- ✅ §0 竞品 4 repo recon(子代理 + 后续 Q-01 修正)
+- ✅ §1.1 - §1.5 (pytest baseline 988/2/10 + tools + verifier layers + dispatcher routing + 5 个偏差)
+- ✅ §2.0 环境预侦察(发现 Q-02 Py3.13 vs mummichog + Q-03 R env broken)
+- ✅ §7 登记 Q-01 / Q-02 / Q-03
 
-**Pending(本 session 没收尾的):**
-- ⏳ §1.1 pytest 结果(后台 7+ min 还在跑;后续 session 接收完成通知后填)
+**Commits:** `7786512` → `1670c4b` → `4495352`
 
-**Blockers for next session(§2 hands-on)**:
-- 🔴 **Q-03 R env broken** — §2.3 / §2.4 完全 BLOCKED,需用户先决定修 R / 换服务器 / 放弃 R 工具
-- 🔴 **Q-02 Py3.13 vs mummichog** — §2.2 大概率失败,需用户决定 fallback 路径
-- 🟡 **Q-01 MS4MS/MSAgent URL** — 不阻塞 §2,但 W2 report 前需修
+### Session 2 — 2026-05-15(Q-resolve sprint + §2.1/§2.2/§2.5/§2.6/§3/§4/§6)
+**Owner:** Claude (Opus 4.7)
+**Time:** ~40 min wall(并行 conda install + curl + report writing)
+**Done:**
+- ✅ **Q-01 RESOLVED** — bioRxiv 2026 新 DOI 前缀 `10.64898/`,MS4MS / MSAgent 均真实(WebSearch 二次核实)
+- ✅ **Q-02 RESOLVED** — `conda mummichog_py310 (Py3.10)` + `pip install mummichog` → v2.7.0(PyPI 上无 v3)
+  - Toy 13s wall,7995 features → KEGG cpd-based pathway TSV
+  - 发现 R-NEW-04(v3 不存在)+ R-NEW-08(pathway_name 不是 KEGG mapID)
+- ✅ **§2.1 sspa 1.0.4** — import + load_example_data + process_reactome 通
+  - 同 conda env,装时 `pkg_resources` + `tqdm` 缺失(R-NEW-11)
+  - 24 个 API,主用 sspa_ora / sspa_ssGSEA / process_reactome
+  - R-NEW-12: ChEBI ID convention(与 mummichog KEGG cpd 不同)
+- ✅ **§2.5 MetaNetX(部分)** — MNXref 4.5(2025-08-13)endpoint 可达,REST API 挂(500),flat-file 路径可行;`chem_xref.tsv` ⏳ 仍在下载(已 380+ MB,比预期 50× 大)
+- ✅ **§2.6 RDKit InChIKey reconciler** — toy script 跑通,13 SMILES / 6 化合物,**D-Glucose 开链 vs 环状 false-split**(Q-04 + R-NEW-07)
+- ✅ **§3 EnrichmentResult schema 草案** — 228 行 dataclass + 4 normalizer 签名 + 8 schema gap
+- ✅ **§4 release pinning 5/11**:MetaNetX 4.5 / mummichog 2.7.0 / R 4.4.3 / RDKit 2025.09.6 / HMDB v5.0
+- ✅ **§6 风险登记** — 10 原 R + 13 R-NEW(其中 R3/R4 已 mitigated,R8 待 §8)
+- ✅ **§1.5 5 处偏差**全部分类:**5 DD / 0 AB / 0 MF**(无需 Q-04 升级)
+- ✅ **§7** 新登记 Q-04(InChIKey 糖类 ring-chain reconcile)
 
-**Commits:**
-- `7786512 docs(investigation): scaffold integration report + §0 §1 first pass`(+ 后续 commit 见 git log)
+**In progress(本 session 收尾时还跑着的):**
+- ⏳ **§2.5 chem_xref.tsv** curl(15 min timeout,400+ MB 还在下)
+- ⏳ **Q-03 BiocManager** install(R 4.4.3 env 跑 27 个 Bioc deps,output 缓冲不可见,~30-60 min wall)
+- 📜 Monitor `bn3vpuoqa` 等 curl 进程退出
 
-**Next session 建议**:
-1. 等用户对 Q-02 / Q-03 拍板(否则 §2 卡死)
-2. §2.5 MetaNetX + §2.6 RDKit InChIKey reconciler(纯 Python,Q-02/03 不阻塞)
-3. §1.1 pytest 结果回填
-4. 开始 §3 schema 草案(基于已知工具输出格式)
+**Blockers for next session(§2.3 / §2.4 / §8):**
+- ⏳ Q-03 BiocManager result(本 session 内 / 下次 session 接收通知后填)
+- ⏳ §2.5 chem_xref.tsv 下载完成后跑 `metanetx_coverage_probe.py` 出覆盖率矩阵
+
+**Commits 本 session**: `98b630f`(Q-01/Q-02/§2.6/§3/§1.5)→ `d30e27c`(§3 body + coverage probe + 误 commit 大文件)→ `1c34481`(gitignore fix)→ `efa05f5`(§4 partial)→ `b100875`(§6 + §2.1)→ 后续
+
+**Next session 入口**:
+1. 接 Q-03 BiocManager result,完成 §2.3 MetaboAnalystR + §2.4 FELLA(若成功)/ pivot 决策(若失败)
+2. chem_xref.tsv 下载完后跑 §2.5 coverage probe(`python data/investigation/scripts/metanetx_coverage_probe.py`)
+3. §5 pathway crosswalk(Reactome ↔ KEGG)— 用 sspa.process_reactome 输出 + KEGG sqlite 比对
+4. §8 W1 Gate 1 toy 数据 — 选 5-10 task × RaMP + sspa(可加 mummichog),算 Jaccard,出 Fig 3 雏形
+5. §9 W3-W4 daily plan,基于 §0-§8 实证 finalize
 
 ---
 
