@@ -1,24 +1,24 @@
-"""§3 EnrichmentResult schema — Q-05 PIVOT v0.2(双主键架构).
+"""§3 EnrichmentResult schema — v0.3(Q05-NEW-4/5 namespace pivot).
 
-设计原则(2026-05-15 Q-05 拍板后更新):
-1. 覆盖所有 Tier-A 工具的真实输出(sspa, mummichog, FELLA, RaMP ORA)
-2. **双主键架构**:
-   - Compound 层:**ChEBI ID** 主键(100% 覆盖,见 §2.5)
-   - Pathway 层:**Reactome stable ID**(R-HSA-XXX)主键
-   - Reporting:**KEGG ID**(`hsa00XXX` / `C00XXX`)用于 paper figure/table
-   - Fallback ground truth:**InChIKey**(结构哈希,做立体/互变冲突解决)
-3. metabolites_hit 不再是 `list[str]`,改成 `list[CompoundRef]` 结构化引用
-4. score_type 显式枚举
-5. auxiliary_scores: dict 给每工具特定 metric
-6. parameters 记录 cutoff / db release,保 reproducibility
-7. tautomer_canonicalized 字段保留(Q-04 处置改成 ChEBI is_a hierarchy 向上爬,见 §6)
-
-normalizer 只签名,**body 是 NotImplementedError**(Sprint W3 才实现)。
+设计原则(2026-05-15 Q05-NEW-4/5 拍板后):
+1. 覆盖所有 Tier-A 工具(sspa, mummichog, FELLA, RaMP ORA, MetaboAnalystR via Docker)
+2. **统一 namespace-prefixed primary key 架构**(MIRIAM / identifiers.org 标准):
+   - Compound:`primary_id: str` = `"<NS>:<id>"`,NS ∈ {CHEBI, LIPIDMAPS, HMDB, KEGG, INCHIKEY}
+   - Pathway:`pathway_id: str` = `"<NS>:<id>"`,NS ∈ {REACT, KEGG, WP, SMPDB, METACYC}
+3. **所有外部 DB ID 字段 optional**,InChIKey 作 ground truth 兜底必填
+4. **primary_id resolution rule**(CompoundRef):chebi → lipidmaps → hmdb → kegg → inchikey 第一个非空填
+5. metabolites_hit: `tuple[CompoundRef, ...]`(v0.2 已立)
+6. score_type 显式枚举;auxiliary_scores: dict;parameters/tool_version/db_release/wall_time;
+   tautomer_canonicalized + chebi_canonicalized 字段
 
 CHANGELOG:
-  v0.1 (Session 2 早期) — InChIKey-only metabolites_hit
-  v0.2 (Q-05 pivot) — CompoundRef 结构化;PathwayHit.pathway_id=Reactome,新增 kegg_id;
-                       metabolites_hit: tuple[CompoundRef, ...]
+  v0.1 (Session 2 早期)      — InChIKey-only metabolites_hit
+  v0.2 (Q-05 pivot)           — CompoundRef + 双主键 PathwayHit + kegg_id field
+  v0.3 (Q05-NEW-4/5 namespace pivot, 2026-05-15)
+                              — pathway_id / primary_id 改成 namespace-prefixed
+                                ("REACT:R-HSA-XXX" / "CHEBI:NNNN" / "LIPIDMAPS:LMxxxx"
+                                / "INCHIKEY:XXX...");消除 canonical_source 字段;
+                                external ID 字段全 optional;__post_init__ validator
 """
 from __future__ import annotations
 
@@ -72,7 +72,41 @@ class ScoreType(str, Enum):
 
 
 # ---------------------------------------------------------------------------
-# Compound-level reference(Q-05 pivot: 双主键架构,ChEBI 主)
+# Namespace whitelists(MIRIAM / identifiers.org 子集,v0.3 Q05-NEW-4/5 拍板)
+# ---------------------------------------------------------------------------
+
+COMPOUND_NAMESPACES = frozenset({
+    "CHEBI",       # CHEBI:17234 → D-Glucose,~165k entries,100% cross-DB lingua franca
+    "LIPIDMAPS",   # LIPIDMAPS:LMFA01030001,长尾 lipid 无 ChEBI 时用
+    "HMDB",        # HMDB:HMDB0000122,代谢组主源
+    "KEGG",        # KEGG:C00031,经典 metabolomics DB
+    "INCHIKEY",    # INCHIKEY:WQZGKKKJIJFFOK-...,结构兜底,RDKit 算的出来必非空
+})
+
+PATHWAY_NAMESPACES = frozenset({
+    "REACT",       # REACT:R-HSA-71387,Reactome stable ID
+    "KEGG",        # KEGG:hsa00010,KEGG human pathway
+    "WP",          # WP:WP167,WikiPathways
+    "SMPDB",       # SMPDB:SMP0000456
+    "METACYC",     # METACYC:GLYCOLYSIS
+})
+
+
+def _check_namespaced(value: str, whitelist: frozenset[str], field: str) -> None:
+    """Validator helper for namespace-prefixed IDs."""
+    if not value:
+        raise ValueError(f"{field} must be non-empty namespaced ID")
+    if ":" not in value:
+        raise ValueError(f"{field} must be 'NS:id' form, got {value!r}")
+    ns = value.split(":", 1)[0]
+    if ns not in whitelist:
+        raise ValueError(
+            f"{field} namespace {ns!r} not in whitelist {sorted(whitelist)}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Compound-level reference(v0.3: namespace-prefixed primary_id + soft ChEBI)
 # ---------------------------------------------------------------------------
 
 
@@ -80,44 +114,79 @@ class ScoreType(str, Enum):
 class CompoundRef:
     """Structured reference to one metabolite hit in a pathway.
 
-    Q-05 决策(2026-05-15):ChEBI 是 100% 覆盖的 lingua franca,作为 compound 主键。
-    InChIKey 作为结构 ground truth fallback(用于 stereo/tautomer 冲突解决)。
-
-    chebi_id 是必填;若工具输出没给 ChEBI(如 mummichog 给 KEGG cpd),
-    normalizer 需先做 KEGG cpd → ChEBI 反查(via §5 crosswalk)再构 CompoundRef。
+    v0.3 (Q05-NEW-5 拍板):primary_id 永远 namespaced 形式,resolution rule:
+    chebi → lipidmaps → hmdb → kegg → inchikey 第一个非空填。
+    InChIKey 总能从 SMILES/InChI 算出来(RDKit),所以 primary_id 永远非空。
     """
-    chebi_id: str                       # CHEBI:NNNNN(主键,100% 覆盖)
-    inchikey: str = ""                  # 27-char full InChIKey(结构 ground truth)
+    primary_id: str                     # "<NS>:<id>" 必填(resolved via priority)
+    inchikey: str                       # 27-char full InChIKey,必填(结构 ground truth)
     display_name: str = ""              # ChEBI primary name 或 HMDB synonym
 
-    # 跨库 secondary ID(reporting / fallback;normalizer 可选填)
-    kegg_compound_id: str = ""          # C00031 等
-    hmdb_id: str = ""                   # HMDB0000122 等
-    pubchem_cid: str = ""               # PubChem CID
-    metanetx_id: str = ""               # MNXM...
+    # 跨库 secondary ID — 全 optional(None 表示该 DB 无映射)
+    chebi_id: str | None = None         # 例: "CHEBI:17234"(注意:已含 NS 前缀,与 primary_id 一致)
+    lipidmaps_id: str | None = None     # 例: "LIPIDMAPS:LMFA01030001"
+    hmdb_id: str | None = None          # 例: "HMDB:HMDB0000122"
+    kegg_compound_id: str | None = None # 例: "KEGG:C00031"
+    pubchem_cid: str | None = None      # PubChem CID(无 namespace,纯数字)
+    metanetx_id: str | None = None      # MNXM...
+
+    def __post_init__(self) -> None:
+        _check_namespaced(self.primary_id, COMPOUND_NAMESPACES, "primary_id")
+        if not self.inchikey:
+            raise ValueError("CompoundRef.inchikey 必填(结构 ground truth)")
+
+
+def resolve_primary_id(
+    *,
+    chebi_id: str | None = None,
+    lipidmaps_id: str | None = None,
+    hmdb_id: str | None = None,
+    kegg_compound_id: str | None = None,
+    inchikey: str = "",
+) -> str:
+    """Resolution rule(Q05-NEW-5):按优先级第一个非空者作为 primary_id。
+
+    输入字段可以是 namespaced("CHEBI:17234")或裸 ID("17234"),
+    本函数确保返回值是 namespaced。
+    InChIKey 兜底假设 W3 RDKit reconciler 已从 SMILES 算出。
+    """
+    def _ensure_ns(value: str, ns: str) -> str:
+        return value if value.startswith(f"{ns}:") else f"{ns}:{value}"
+
+    if chebi_id:
+        return _ensure_ns(chebi_id, "CHEBI")
+    if lipidmaps_id:
+        return _ensure_ns(lipidmaps_id, "LIPIDMAPS")
+    if hmdb_id:
+        return _ensure_ns(hmdb_id, "HMDB")
+    if kegg_compound_id:
+        return _ensure_ns(kegg_compound_id, "KEGG")
+    if inchikey:
+        return f"INCHIKEY:{inchikey}"
+    raise ValueError("resolve_primary_id: 所有字段空,无法构 primary_id")
 
 
 # ---------------------------------------------------------------------------
-# Per-pathway hit (Q-05 v0.2: Reactome 主键 + KEGG reporting fallback)
+# Per-pathway hit (v0.3: namespace-prefixed pathway_id)
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True)
 class PathwayHit:
-    pathway_id: str                     # **Reactome stable ID 主键** (R-HSA-XXX)
-    pathway_name: str                   # Reactome primary name
-    kegg_id: str | None                 # KEGG mapID (hsa00XXX) — reporting / fallback
-    pathway_id_native: str              # 工具实际输出的 ID(KEGG map00010 / human_mfn name / etc.)
-    pathway_db: PathwayDB               # 来源 DB(reactome / kegg / wikipathways / metacyc / ...)
+    pathway_id: str                     # "<NS>:<id>" 必填,NS ∈ PATHWAY_NAMESPACES
+    pathway_name: str
+    pathway_id_native: str              # 工具实际输出(KEGG map00010 / human_mfn name 等)
+    pathway_db: PathwayDB               # source DB
     score: float
     score_type: ScoreType
-    rank: int                           # 0-based, 工具自报(若工具没排名则 by score)
-    metabolites_hit: tuple[CompoundRef, ...]  # 结构化引用 list(Q-05 改:从 InChIKey str → CompoundRef)
-    n_metabolites_in_pathway: int = 0   # pathway 内总数(ORA 需要)
-    n_metabolites_input: int = 0        # query 输入总数(ORA 需要)
-
-    # 工具特定附加 score(EASE / NES / RWR activity / ...)
+    rank: int
+    metabolites_hit: tuple[CompoundRef, ...]
+    n_metabolites_in_pathway: int = 0
+    n_metabolites_input: int = 0
     auxiliary_scores: dict[str, float] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        _check_namespaced(self.pathway_id, PATHWAY_NAMESPACES, "pathway_id")
 
 
 # ---------------------------------------------------------------------------
@@ -140,7 +209,7 @@ class EnrichmentResult:
     wall_time_sec: float                 # 实测调用 wall time(单点)
 
     # ConcordMet schema metadata
-    schema_version: str = "concordmet_v0.2"
+    schema_version: str = "concordmet_v0.3"
     tautomer_canonicalized: bool = False  # 见 §2.6 Q-04;输入 metabolite 是否过了 ChEBI is_a 上爬 / RDKit canonicalizer
     chebi_canonicalized: bool = False     # Q-05:输入 metabolite 是否已 normalize 到 ChEBI 主键
     notes: str = ""                       # 任何工具/方法特殊说明
@@ -201,7 +270,7 @@ def normalize_mummichog_output(
 
 
 def normalize_fella_output(
-    fella_raw: Any,                      # rpy2 调用返回的 R list / data.frame
+    fella_raw: Any,                      # Docker R subprocess JSON output(v0.3 Q-03 (A) 路径)
     *,
     method: EnrichmentMethod,            # FELLA_RWR / FELLA_DIFFUSION
     parameters: dict[str, Any],
@@ -211,18 +280,22 @@ def normalize_fella_output(
     n_input_resolved: int,
     wall_time_sec: float,
 ) -> EnrichmentResult:
-    """Normalize FELLA output.
+    """Normalize FELLA output (v0.3: Docker subprocess path).
+
+    Q-03 (A) Docker 决策 → fella_raw 是 `docker exec` 返回的 JSON(序列化 R data.frame),
+    不是 rpy2 直接对象。Docker entrypoint.R 负责 R-side 序列化。
 
     FELLA 输出 hierarchical(KEGG pathway → module → enzyme → reaction → compound),
-    我们只取 pathway-level node;module/enzyme/reaction 作为 auxiliary_scores 存。
+    只取 pathway-level node;module/enzyme/reaction 作为 auxiliary_scores 存。
 
     Known gaps:
-      - FELLA 的 score 是 random-walk activity,**不是** p-value;需 ScoreType=RWR_SCORE
-      - FELLA 内部用 KEGG cpd ID,需 §5 crosswalk 转 Reactome
-      - FELLA 跨 5 层 graph,n_metabolites_in_pathway 含义需明确(只算 compound 层)
-      - rpy2 K=10 并发 spike 失败时此 normalizer 不会被调用(见 Q-03 escalation)
+      - FELLA 的 score 是 random-walk activity,**不是** p-value;ScoreType=RWR_SCORE
+      - FELLA 内部用 KEGG cpd / KEGG pathway ID → pathway_id 走 KEGG: namespace
+        (不强行转 Reactome,namespace pivot 后不需要)
+      - FELLA 跨 5 层 graph,n_metabolites_in_pathway 只算 compound 层
+      - Docker subprocess startup ~2-3s,acceptable
     """
-    raise NotImplementedError("normalize_fella_output — W3 实现")
+    raise NotImplementedError("normalize_fella_output — W5 Docker 路径实现")
 
 
 def normalize_ramp_output(
@@ -259,42 +332,60 @@ SCHEMA_GAPS_FOR_W3 = [
     # gap, severity, resolution_plan
     ("sspa 输出多 score 列何时升 primary",            "medium", "W3 D1: 看 sspa 实测列再定"),
     ("FELLA 跨 5 层 graph 的 n_metabolites_in_pathway 定义", "low", "只取 compound 层"),
-    ("mummichog 输出无 ChEBI ID(只 KEGG cpd 或 human_mfn name),需 KEGG→ChEBI 反查",  "high",  "W3 D2:走 §5 crosswalk(ChEBI ↔ KEGG via ChEBI database_accession.tsv)"),
-    ("mummichog 反查失败时 CompoundRef.chebi_id 必填规则",  "high", "W3 D2 fallback:若 KEGG→ChEBI miss,用 InChIKey 反查 ChEBI(via ChEBI structures.tsv);全 miss 则该 metabolite 不进 metabolites_hit"),
-    ("pathway_id (Reactome) 跨 KEGG/Reactome/WikiPathways 不统一",  "RESOLVED-Q05", "§5 crosswalk:工具原 pathway_id → ChEBI2Reactome.txt 反查 Reactome stable ID;失败则 pathway_id=空字符串,kegg_id 作为唯一标识"),
+    ("mummichog 输出无 ChEBI ID(只 KEGG cpd 或 human_mfn name),需 KEGG→ChEBI 反查",  "high",  "W3 D2:走 §5 crosswalk;mummichog normalizer 走 resolve_primary_id() 拿 namespaced primary_id;ChEBI miss 时 fallback KEGG: namespace"),
+    ("mummichog 反查全 miss 时 metabolites_hit 处理",  "medium", "Q05-NEW-5 解后改:resolve_primary_id() InChIKey 兜底永远非空,所以 metabolites_hit 不会丢 entry,只是 primary_id namespace 退化到 INCHIKEY:"),
+    ("pathway_id 跨 KEGG/Reactome/WikiPathways 不统一",  "RESOLVED-Q05-NEW-4", "v0.3:pathway_id 改 namespace-prefixed,5 NS whitelist(REACT/KEGG/WP/SMPDB/METACYC);__post_init__ validator 强制"),
     ("score_type=COMPOSITE 谁负责生成",                 "high",  "Sprint W6+ ConcordMet aggregator,Investigation 不实现"),
     ("auxiliary_scores 的 float-only 限制(EASE 是 float OK,但若工具输出 list of nodes?)", "low", "W3 D3 看 FELLA 实输出"),
-    ("schema_version 升级策略",                         "low",  "已 bump v0.1 → v0.2(Q-05 pivot)"),
+    ("schema_version 升级策略",                         "low",  "已 bump v0.1 → v0.2 → v0.3"),
     ("tautomer_canonicalized=False 时是否拒绝下游 reconciliation",  "medium", "W3 决定;Q-05 后默认要求 chebi_canonicalized=True,tautomer 是 optional"),
-    ("CompoundRef.chebi_id 强制必填 → 没 ChEBI ID 的 metabolite(如 unmapped LIPID MAPS)怎么处理",   "Q05-NEW-high",  "三选一:(a) 不进 metabolites_hit;(b) chebi_id=`UNMAPPED:LMxxxxx`;(c) 加新字段 unmapped_external_refs。W3 D2 拍。"),
-    ("Reactome pathway 12% compound 覆盖 → 若 pathway 来自 KEGG/MetaCyc/WikiPathways 而无 Reactome 对应,pathway_id 怎么填",  "Q05-NEW-high",  "三选一:(a) pathway_id=空字符串,kegg_id 主显示;(b) pathway_id=`UNMAPPED:KEGG:hsa00010`;(c) 加新字段 canonical_pathway_db。W3 D1 拍。"),
+    ("CompoundRef chebi_id 强制必填 → unmapped lipid",   "RESOLVED-Q05-NEW-5",  "v0.3:chebi_id 改 optional;新 primary_id 字段 namespace-prefixed,resolve_primary_id() 按 chebi→lipidmaps→hmdb→kegg→inchikey 优先级填;InChIKey 兜底永远非空"),
+    ("Reactome compound 12% 覆盖 → KEGG-only pathway 怎么填 pathway_id",  "RESOLVED-Q05-NEW-4",  "v0.3:pathway_id 改 namespace-prefixed;Reactome miss → KEGG:hsa00010 / WP:WP167 / SMPDB:SMP0000456 / METACYC:GLYCOLYSIS。validator 强制 NS ∈ whitelist"),
 ]
 
 
 if __name__ == "__main__":
-    # Schema sanity:确保 v0.2 dataclass 可实例化(CompoundRef + PathwayHit + EnrichmentResult)
+    # Schema sanity v0.3:namespace-prefixed primary keys + validators 工作
     glucose_ref = CompoundRef(
-        chebi_id="CHEBI:17234",
+        primary_id=resolve_primary_id(chebi_id="CHEBI:17234", inchikey="WQZGKKKJIJFFOK-GASJEMHNSA-N"),
         inchikey="WQZGKKKJIJFFOK-GASJEMHNSA-N",
         display_name="D-glucose",
-        kegg_compound_id="C00031",
-        hmdb_id="HMDB0000122",
+        chebi_id="CHEBI:17234",
+        kegg_compound_id="KEGG:C00031",
+        hmdb_id="HMDB:HMDB0000122",
         pubchem_cid="5793",
         metanetx_id="MNXM41",
     )
+    # 长尾 lipid 无 ChEBI 的 case(Q05-NEW-5 关键 use case)
+    unmapped_lipid = CompoundRef(
+        primary_id=resolve_primary_id(lipidmaps_id="LIPIDMAPS:LMFA01030001", inchikey="ABCDE-FGHIJ-KLMNO-P"),
+        inchikey="ABCDE-FGHIJ-KLMNO-P",
+        display_name="palmitic acid (long-tail no ChEBI)",
+        lipidmaps_id="LIPIDMAPS:LMFA01030001",
+    )
     hit = PathwayHit(
-        pathway_id="R-HSA-71387",                 # Reactome stable ID 主键
+        pathway_id="REACT:R-HSA-71387",           # namespace-prefixed pathway_id
         pathway_name="Glycolysis",
-        kegg_id="hsa00010",                       # reporting fallback
-        pathway_id_native="map00010",             # mummichog/sspa 实际输出
+        pathway_id_native="map00010",             # mummichog/sspa 原 native
         pathway_db=PathwayDB.REACTOME,
         score=1e-5,
         score_type=ScoreType.P_VALUE,
         rank=0,
-        metabolites_hit=(glucose_ref,),
+        metabolites_hit=(glucose_ref, unmapped_lipid),
         n_metabolites_in_pathway=20,
         n_metabolites_input=15,
         auxiliary_scores={"ease": 2.3, "n_hit": 8.0},
+    )
+    # 验证 Reactome miss 时用 KEGG namespace (Q05-NEW-4 关键 use case)
+    kegg_only_hit = PathwayHit(
+        pathway_id="KEGG:hsa00190",               # Reactome miss → KEGG namespace
+        pathway_name="Oxidative phosphorylation",
+        pathway_id_native="hsa00190",
+        pathway_db=PathwayDB.KEGG,
+        score=0.002,
+        score_type=ScoreType.P_VALUE,
+        rank=1,
+        metabolites_hit=(glucose_ref,),
     )
     res = EnrichmentResult(
         method=EnrichmentMethod.MUMMICHOG,
@@ -310,11 +401,29 @@ if __name__ == "__main__":
         chebi_canonicalized=True,
         notes="toy",
     )
-    print(f"CompoundRef OK: {glucose_ref.chebi_id} ({glucose_ref.display_name}, KEGG {glucose_ref.kegg_compound_id})")
-    print(f"PathwayHit OK: {hit.pathway_id} ({hit.pathway_name}, KEGG {hit.kegg_id})  "
-          f"score={hit.score} ({hit.score_type.value})  metabolites_hit={len(hit.metabolites_hit)}")
+    print(f"CompoundRef OK (CHEBI): primary={glucose_ref.primary_id}  name={glucose_ref.display_name}")
+    print(f"CompoundRef OK (LIPIDMAPS fallback): primary={unmapped_lipid.primary_id}  name={unmapped_lipid.display_name}")
+    print(f"PathwayHit OK (REACT): {hit.pathway_id} ({hit.pathway_name})  "
+          f"score={hit.score} ({hit.score_type.value})  n_metabolites_hit={len(hit.metabolites_hit)}")
+    print(f"PathwayHit OK (KEGG fallback): {kegg_only_hit.pathway_id} ({kegg_only_hit.pathway_name})")
     print(f"EnrichmentResult OK: {res.method.value} on {res.pathway_db.value} "
           f"({len(res.pathways)} hits, {res.wall_time_sec}s, schema={res.schema_version})")
+    # Validator sanity:无 namespace 的 ID 必须 reject
+    try:
+        bad = PathwayHit(
+            pathway_id="R-HSA-71387",  # missing "REACT:" prefix → 必须 raise
+            pathway_name="x", pathway_id_native="x", pathway_db=PathwayDB.REACTOME,
+            score=0.1, score_type=ScoreType.P_VALUE, rank=0,
+            metabolites_hit=(glucose_ref,),
+        )
+        print("⚠️ Validator MISSED — unnamespaced pathway_id accepted")
+    except ValueError as e:
+        print(f"Validator OK (rejects unnamespaced pathway_id): {e}")
+    try:
+        bad = CompoundRef(primary_id="17234", inchikey="x")  # missing CHEBI: prefix
+        print("⚠️ Validator MISSED — unnamespaced primary_id accepted")
+    except ValueError as e:
+        print(f"Validator OK (rejects unnamespaced primary_id): {e}")
     print(f"\nSchema gaps to revisit in W3: {len(SCHEMA_GAPS_FOR_W3)} items")
     for gap, sev, plan in SCHEMA_GAPS_FOR_W3:
         print(f"  [{sev:<6s}] {gap}")
