@@ -299,7 +299,30 @@ python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
 **§2.2 状态**: **DONE**。可作为 ConcordMet 的 m/z-driven enrichment 工具,**不需要 R 端 fallback**。Q-02 RESOLVED。
 ### 2.3 MetaboAnalystR 4 (subprocess) — **BLOCKED on R env**,见 Q-03
 ### 2.4 FELLA (rpy2 并发 spike) — **BLOCKED on R env**,见 Q-03
-### 2.5 MetaNetX MNXref 4.5 — Pending
+### 2.5 MetaNetX MNXref — ✅ Endpoint 可达,⏳ 覆盖矩阵计算中
+
+**Release 实测**(2026-05-15):
+- **当前 release**:**MNXref 4.5,date 2025-08-13**(从 `chem_xref.tsv` 头部注释抓取)
+- **License**:CC-BY 4.0(可用)
+- **URL**:`https://www.metanetx.org/cgi-bin/mnxget/mnxref/<file>`
+
+**Endpoint 可达性测试**:
+
+| Endpoint | Status | 用途 |
+|---|---|---|
+| FTP root `/cgi-bin/mnxget/mnxref/` | ✅ 200 | listing |
+| `chem_xref.tsv`(cross-ref core) | ✅ 200 | 跨库 ID 映射核心表 |
+| `chem_prop.tsv`(化学属性) | ✅ 200 | mass / formula / InChIKey |
+| `reac_xref.tsv`(反应 cross-ref) | ✅ 200 | reaction-level reconcile(W6+) |
+| REST API `/cgi-bin/mnxweb/api` | ❌ **500 Internal Server Error** | 不可用,改走 flat-file |
+
+**§4 影响**:**REST API 挂了,只能走 flat-file 路径**(下载 TSV + 本地 sqlite ETL)。这是 Reactome / KEGG 之外的另一个 source-availability flag,§4 release pinning 表需要登记。
+
+**首批 100 行 chem_xref 抽样**(2025-08-13 release 头部样本)显示 cross-ref source 包括(频次降序):**reactome、reactomeM、chebi、SLM(SwissLipids)、hmdb、CHEBI、seedM、vmhM、biggM、keggC、seed.compound、mnx、metacyc.compound、metacycM、vmhmetabolite、bigg.metabolite、kegg.compound、sabiork.compound、sabiorkM**。覆盖 ConcordMet 关心的所有 Tier-1 数据库(reactome / chebi / hmdb / kegg / metacyc / bigg / swisslipids)。
+
+**全量 covergage 矩阵(50-100 metabolite × 7 source)**:⏳ chem_xref.tsv 全量下载中(curl 后台,timeout 15 min);下载完后用 `data/investigation/scripts/metanetx_coverage_probe.py`(W3 写)做随机抽样统计。
+
+**§2.5 状态**: **Endpoint 可达 + release 4.5 (2025-08-13) 确认**;覆盖率矩阵后续 session 完成(curl 完成后注入 sqlite + 抽样)。
 ### 2.6 RDKit InChIKey reconciler — ✅ Toy DONE
 
 **Script**: `data/investigation/scripts/rdkit_inchikey_toy.py`(46 行,含 fixture + cluster + collision/split check)
@@ -329,11 +352,76 @@ python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
 
 ---
 
-## §3 — 统一 EnrichmentResult Schema
+## §3 — 统一 EnrichmentResult Schema — ✅ 草案 DONE
 
-_依赖 §2 实测输出。后续 session。_
+**Script:** `data/investigation/scripts/enrichment_result_schema_draft.py`(228 行,含 dataclass + enums + 4 normalizer stubs + gap list + sanity check)
 
-最终 schema(Python dataclass)+ 4 个 normalizer 签名 + 已知映射 gap 列表。
+### 3.1 Schema 核心(dataclass + enums)
+
+**`EnrichmentResult`**(method-level):
+- `method: EnrichmentMethod`(10 个枚举值,覆盖 sspa 4 个方法 / mummichog / FELLA 2 个 / MetaboAnalystR 2 个 / RaMP ORA)
+- `pathway_db: PathwayDB`(7 个枚举值:KEGG / Reactome / WikiPathways / MetaCyc / HMDB / SMPDB / MERGED)
+- `pathways: tuple[PathwayHit, ...]`
+- `parameters: dict[str, Any]`(cutoff / db_release / permutation / seed)
+- `tool_version`、`db_release`、`n_input`、`n_input_resolved`、`wall_time_sec` — traceability
+- `schema_version: str = "concordmet_v0.1"`
+- `tautomer_canonicalized: bool = False` — 落地 §2.6 Q-04 ring-chain 标准化
+- `notes: str`
+
+**`PathwayHit`**(per-pathway):
+- `pathway_id: str` — canonical(Reactome stable ID 主键,见 §5)
+- `pathway_id_native: str` — 工具实际输出(KEGG mapID 或 human_mfn 内部 name)
+- `pathway_db: PathwayDB`、`pathway_name: str`
+- `score: float` + `score_type: ScoreType`(9 个枚举值:P_VALUE / FDR / ES / NES / SS_ACTIVITY / RWR_SCORE / DIFFUSION_SCORE / EASE / COMPOSITE)
+- `rank: int`(工具自报或 by-score)
+- `metabolites_hit: tuple[str, ...]` — **full InChIKey(27 字符)**,frozen for hashing
+- `metabolites_hit_block14: tuple[str, ...]` — block14(供跨库 cluster joins)
+- `n_metabolites_in_pathway: int`、`n_metabolites_input: int`(ORA 需要)
+- `auxiliary_scores: dict[str, float]` — 留给每工具特定 metric(EASE / NES / RWR activity / ...)
+
+### 3.2 Sanity 测试
+
+```
+$ python data/investigation/scripts/enrichment_result_schema_draft.py
+PathwayHit OK: R-HSA-71387 score=1e-05 (p_value)
+EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s)
+```
+✅ dataclass 可实例化,enums 互不冲突。
+
+### 3.3 4 Normalizer 签名(W3 实现 body)
+
+| Function | 输入 | 关键 gap |
+|---|---|---|
+| `normalize_sspa_output()` | sspa DataFrame + method enum + inchikey_lookup | 多 score 列何时升 primary;ChEBI/KEGG ID → InChIKey 反查 |
+| `normalize_mummichog_output()` | mummichog TSV + mz_to_inchikey(候选反查) | m/z → 候选 compound 多对多,EASE 存 auxiliary;**实测确认输出含 pathway_name 但不含 KEGG mapID** |
+| `normalize_fella_output()` | rpy2 调用返回的 R data.frame | RWR score 不是 p-value;5 层 graph 只取 compound 层;**依赖 Q-03 R 修通** |
+| `normalize_ramp_output()` | RaMP-DB EnrichmentReport pydantic | 字段重命名 + InChIKey 反查(RaMP 内部用 RaMP source-ID) |
+
+(Tier-B `normalize_metaboanalystr_output()`、`normalize_pathintegrate_output()` 等 W4+)
+
+### 3.4 已知 Schema Gaps(W3 需 revisit)
+
+| Severity | Gap | W3 计划 |
+|---|---|---|
+| HIGH | mummichog `mz_to_inchikey` 失败时 metabolites_hit 留空 | W3 D2 fallback:留 None + auxiliary 备注 |
+| HIGH | Pathway ID 跨 KEGG/Reactome/WikiPathways 不统一 | 见 §5 crosswalk,Reactome 主键 + KEGG fallback |
+| HIGH | `score_type=COMPOSITE` 谁生成 | Sprint W6+ ConcordMet aggregator,Investigation 不实现 |
+| MEDIUM | sspa 多 score 列升 primary 规则 | W3 D1 看 sspa 实测列再定 |
+| MEDIUM | `tautomer_canonicalized=False` 时是否拒绝下游 reconciliation | W3 决定;若严格则 ETL 期 reject |
+| LOW | FELLA 跨 5 层 graph 的 `n_metabolites_in_pathway` 定义 | 只取 compound 层 |
+| LOW | `auxiliary_scores` float-only 限制(若工具输出 list?) | W3 D3 看 FELLA 实输出 |
+| LOW | `schema_version` 升级策略 | 任一字段变 → bump v0.1 → v0.2 |
+
+### 3.5 mummichog 实测反馈 §3 新增 gap
+
+**Investigation 期间** 跑了 mummichog toy,**发现 §3 原草案漏了 pathway_id_native 的处理**:
+- mummichog 输出 `pathway` 字段是 human_mfn 内部 name(`"Alanine and Aspartate Metabolism"`),不是 KEGG mapID,也不是 stable ID
+- 这意味着 `pathway_id_native` 字段对 mummichog 来说就是这个 name 字符串本身
+- W3 实现 `normalize_mummichog_output()` 时需要:**(a) 把 human_mfn name → 内部 ID 映射表**(查 `mummichog/JSON_metabolicModels.py`),**或 (b) 把 name 作为 pathway_id_native 接受,§5 crosswalk 用 fuzzy-match 转 Reactome**。倾向 (a),(b) fuzzy-match 风险高。
+
+### 3.6 §3 状态
+
+**Schema 草案 DONE**(W2 review 用),W3 实现 normalizer body 时若实测出更多 gap 再 bump 到 v0.2。
 
 ---
 
