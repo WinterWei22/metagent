@@ -15,7 +15,7 @@
 | §0 | 竞品 Repo 实际状态 | 0.5d | **Done(待人工验证 Q-01)** |
 | §1 | Codebase Reality Check | 0.5d | **Done(988/2/10,2 fail 非阻塞)** |
 | §2 | 10 候选工具系统调研 | 2d | Pending (后续 session) |
-| §2 | 10 候选工具系统调研 | 2d | **partial(2.0/2.2/2.5/2.6 done;2.1/2.3/2.4 pending)** |
+| §2 | 10 候选工具系统调研 | 2d | **8/10 (2.0/2.1/2.2/2.5/2.6 done;2.3/2.4 ESCALATE Q-03;2.7 Tier-B/C pending)** |
 | §3 | 统一 EnrichmentResult Schema | 0.5d | **Done(草案 v0.1,W3 实现 normalizer body)** |
 | §4 | Tier A 工具集成计划 | 1d | partial(release 数据陆续到位) |
 | §5 | Pathway ID Crosswalk 策略 | 0.5d | Pending |
@@ -326,8 +326,8 @@ python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
 4. **mummichog 的 m/z → 候选 compound 多对多映射**(EmpiricalCompound):一个 m/z 可能映 5+ 个 KEGG cpd,这是 §3 schema gap 中已登记的 "mummichog 反查 mz_to_inchikey 失败时 metabolites_hit 留空" 的根因。W3 实现 normalizer 时需 fallback 策略。
 
 **§2.2 状态**: **DONE**。可作为 ConcordMet 的 m/z-driven enrichment 工具,**不需要 R 端 fallback**。Q-02 RESOLVED。
-### 2.3 MetaboAnalystR 4 (subprocess) — **BLOCKED on R env**,见 Q-03
-### 2.4 FELLA (rpy2 并发 spike) — **BLOCKED on R env**,见 Q-03
+### 2.3 MetaboAnalystR 4 (subprocess) — ❌ **ESCALATE**(Q-03 1h22min @ 3 retry 失败,根因 bfd.h 冲突,见 Q-03 Stage 5)
+### 2.4 FELLA (rpy2 并发 spike) — ❌ **ESCALATE**(同上;Python rpy2 也未尝试,因 R 端 dep 装不上)
 ### 2.5 MetaNetX MNXref — ✅ Endpoint 可达,⏳ 覆盖矩阵计算中
 
 **Release 实测**(2026-05-15):
@@ -744,6 +744,7 @@ _整合 R1-R10(用户原文档)+ 评审 + Investigation 新发现 R-NEW-X。_
 | R-NEW-11 | **sspa 1.0.4 upstream packaging gap**(`pkg_resources` 依赖未声明 + tqdm 隐式依赖)| 已发生 | 低 | conda env 内 pin `setuptools<80` + `tqdm` 显式装 | §2.1 实测 → workaround verified |
 | R-NEW-12 | **sspa metabolite ID 用 ChEBI,与 mummichog KEGG cpd 不同** | 已发生 | 中 | `normalize_sspa_output()` 加 ChEBI→InChIKey 反查(走 §2.5 MetaNetX chem_xref) | §2.1 实测;W3 落地 |
 | R-NEW-13 | **sspa 内部 Reactome release 与 §4 锁定版本可能不一致** | 中 | 低 | W3 D1 查 sspa source 确认;不一致则用 custom GMT 走 `sspa.process_gmt` | §2.1 提出 |
+| **R-NEW-14** | **本机 conda base env 污染 R native-source 编译路径** | 已发生 | 高 | base `/home/weiwentao/miniconda3/include/bfd.h` 优先于 concord_r env headers → igraph/glpk 编译失败。3 retry 模式各异均 timeout。Q-03 escalate 触发 | §2.4 实测 / Q-03 root cause |
 
 ### 6.3 风险总览
 
@@ -792,20 +793,25 @@ vendor/cigraph/vendor/glpk/api/prob.h:103:7: error: unknown type name 'BFD'
 ```
 **根因**:igraph 的 GLPK vendor 编译时,`x86_64-conda-linux-gnu-cc` 的 include path 优先级是 `/home/weiwentao/miniconda3/include/`(base env binutils-dev `bfd.h`)→ `concord_r/include/`(R headers)。base env 的 `bfd.h` 要求先 include `config.h`,但 GLPK 没 include,**编译失败**。
 
-**Stage 4(16:30+,retry-3 进行中)**:**改 conda binary 路径**,不走 CRAN source 编译:
-```
-conda install -n concord_r -c conda-forge -c bioconda --yes \
-  r-igraph bioconductor-fella bioconductor-fgsea \
-  bioconductor-kegggraph bioconductor-keggrest
-```
-预期 conda 直接装 binary,跳过 source compile,绕开 bfd.h 冲突。后台跑中。
+**Stage 4(16:33 - 16:53)**:`conda install -n concord_r -c conda-forge -c bioconda r-igraph bioconductor-fella ...` — **20 min timeout (exit 143)**。conda solver 静默挂起,无 diagnostic 输出。猜测:bioconda + conda-forge + 现有 137 R 包 → SAT 解空间过大;或镜像延迟。
 
-**时间预算**:Q-03 已用 ~1h,余 ~3h(time-box 4h)。
+**Stage 5 — ESCALATE(2026-05-15 16:53)**:
+- Q-03 总耗时:**~1h 22 min**(15:31 - 16:53)
+- 3 retry 模式各异均失败:batch CRAN(40min timeout)/ individual CRAN(bfd.h 编译冲突)/ conda binary(solver 超时)
+- **Root cause 明确**:本机 base conda env `/home/weiwentao/miniconda3/include/` 污染 concord_r env 的 C/C++ include path → `bfd.h` 头文件冲突阻断 igraph / glpk vendor 编译。这是 conda env 隔离 design issue,不是 R 本身问题
+- **R-NEW-14 登记**(见 §6):本机当前 conda env 状态下 R native-source 复杂依赖装不上
 
-**escalation 触发条件(retry-3 fail)**:
-- 自动登记 R-NEW-14 → "本机 R env 无法装 native-source 复杂依赖" 终态
-- 走用户指定 3 选项(Docker R / Tier-A 缩到 3 工具去 MetaboAnalystR / 延一周搭 R env)
-- **不再 deep-debug**,4h 警戒线之前 escalate
+**触发用户决策**:按用户原 spec 3 选项,本 session 不自决,请用户拍板:
+- **(A) Docker R 镜像兜底** — `docker pull bioconductor/bioconductor_docker:devel`(含全 BiocManager 预装),subprocess 通过 docker exec 调用。Sprint 工程量 +1d(W3 加 1 dockerfile + 调用 wrapper)。**Paper 政治正确性保留**(MetaboAnalystR + FELLA 都可用)。
+- **(B) 跳 MetaboAnalystR + FELLA,Tier-A 缩成 3 工具(sspa + mummichog + RaMP)** — 全 Python 路径,工程最干净,但 ConcordMet 4-axis 原计划"网络拓扑 axis 靠 FELLA"丢失。**Paper 政治正确性受损**(竞品用 FELLA 我们用 Python RWR?)。Sprint 时间表不变。
+- **(C) 延一周搭专门 R env** — 在新 conda env 把 base 完全隔离开(`conda create --override-channels` 或换 mamba),完全重装。**Sprint W2 加 1 周**,但保留 R 工具。
+
+**我的初步倾向(不算自决)**:
+- 短期 Sprint 1:走 (B),立刻能开工
+- 中期(W6-W12):并行做 (A) Docker — Docker 镜像搭好后 W6 引入 FELLA / MetaboAnalystR,paper-grade ready
+- (C) 延一周 R env 不推荐,因为重新搭可能再撞类似 base env 冲突,unbounded risk
+
+**Sprint 1 不阻塞**:(B) 路径下 W3-W5 全部纯 Python,Q-05 双主键 + ChEBI ETL + sspa + mummichog + RaMP + RDKit 都已 verify,可启动。FELLA 集成移到 W6+(用 (A) Docker 时)。
 
 ### Q-03 — 本机 R 环境 broken(GLIBCXX_3.4.30)
 - **背景**:`R --version` 报错 `/lib/x86_64-linux-gnu/libstdc++.so.6: version GLIBCXX_3.4.30 not found`。典型的 miniconda libstdc++ 和系统 libstdc++ 版本错配。
