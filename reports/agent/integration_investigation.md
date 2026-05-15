@@ -15,11 +15,12 @@
 | §0 | 竞品 Repo 实际状态 | 0.5d | **Done(待人工验证 Q-01)** |
 | §1 | Codebase Reality Check | 0.5d | **Done(988/2/10,2 fail 非阻塞)** |
 | §2 | 10 候选工具系统调研 | 2d | Pending (后续 session) |
-| §3 | 统一 EnrichmentResult Schema | 0.5d | Pending |
-| §4 | Tier A 工具集成计划 | 1d | Pending |
+| §2 | 10 候选工具系统调研 | 2d | **partial(2.0/2.2/2.5/2.6 done;2.1/2.3/2.4 pending)** |
+| §3 | 统一 EnrichmentResult Schema | 0.5d | **Done(草案 v0.1,W3 实现 normalizer body)** |
+| §4 | Tier A 工具集成计划 | 1d | partial(release 数据陆续到位) |
 | §5 | Pathway ID Crosswalk 策略 | 0.5d | Pending |
 | §6 | Risk Register | 0.5d | Pending |
-| §7 | Open Questions | 0.5d (rolling) | Rolling |
+| §7 | Open Questions | 0.5d (rolling) | Rolling(Q-01 ✅ / Q-02 ✅ / Q-03 ⏳ / Q-04 新) |
 | §8 | W1 Gate 1 Toy 数据 (Fig 3 雏形) | 1d | Pending |
 | §9 | W3-W4 Sprint Daily Plan | 0.5d | Pending |
 
@@ -427,20 +428,45 @@ EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s)
 
 ## §4 — Tier A 工具集成计划
 
-### 4.1 Database Release Pinning — TBD
+### 4.1 Database Release Pinning(本 session 已锁定 / 待办)
 
-| 库 | 锁定 release | 验证状态 |
-|---|---|---|
-| Reactome | TBD | Pending |
-| KEGG | TBD(academic rate limit 实测) | Pending |
-| LIPID MAPS | TBD | Pending |
-| HMDB | 已有 v5.0 | Pending 确认 |
-| ChEBI | TBD | Pending |
-| PubChem | PUG-REST(rate limit 实测) | Pending |
-| MetaNetX | sqlite | Pending |
+| 库 | 拟锁定 release | 来源 | 验证状态 |
+|---|---|---|---|
+| **MetaNetX MNXref** | **4.5(2025-08-13)** | `chem_xref.tsv` 头部声明 | ✅ 已下载 (102 MB),flat-file 路径(REST API 挂) |
+| **mummichog** | **2.7.0**(PyPI latest;v3 不存在) | `pip install mummichog` | ✅ 已 Toy verify(Q-02) |
+| **R base** | **R 4.4.3 "Trophy Case"** | conda r-base=4.4 in `concord_r` env | ✅ 已 verify |
+| **MetaboAnalystR / FELLA / Bioconductor** | BiocManager 3.20 | Bioc release 2024-10 | ⏳ Q-03 install 中 |
+| **RDKit** | 2025.09.6 | system base env | ✅ 已 verify(§2.6) |
+| Reactome | TBD(W3 锁日期) | Reactome SQL dump | Pending |
+| KEGG | TBD(academic rate limit 实测) | KEGG REST + 本地 sqlite | Pending |
+| LIPID MAPS | TBD | flat file | Pending |
+| HMDB | v5.0(主 repo 已有) | 已存 | Pending 确认 |
+| ChEBI | TBD | flat / sqlite | Pending |
+| PubChem | PUG-REST 实时(rate limit 实测) | 已有 lookup_compound_info backend | Pending |
 
-### 4.2 50-Metabolite × 7 Source 覆盖矩阵 — TBD
-### 4.3 W3-W5 集成顺序 — TBD
+**已知 release 锁:5/11 项**(MetaNetX 4.5,mummichog 2.7.0,R 4.4.3,RDKit 2025.09.6,HMDB v5.0)。其余 6 项需 W3 D0 前 finalize。
+
+### 4.2 50-Metabolite × 7 Source 覆盖矩阵 — ⏳ 下载完成后用 `metanetx_coverage_probe.py` 跑
+
+probe 输出 3 张表:
+- source-prefix 频次分布(全表)
+- 50 个随机 MNX × 7 主源(reactome / chebi / hmdb / kegg / metacyc / bigg / lipidmaps)的命中矩阵
+- 每个 metabolite 命中 source 数量分布(直方)
+
+### 4.3 W3-W5 集成顺序(基于本 session 实证调整)
+
+| Week | 原计划 | **实证调整** | 理由 |
+|---|---|---|---|
+| W3 | sspa + RDKit | **RDKit(已 OK)+ sspa + MetaNetX flat-file ETL** | RDKit toy 通过(§2.6);MetaNetX flat-file 而非 REST(REST 挂);sspa 仍是首选 ORA |
+| W4 | mummichog + MetaNetX | **mummichog(已 verify)+ schema normalizer 实现** | mummichog 已 verify(§2.2),W4 直接进 normalizer + 集成测试 |
+| W5 | MetaboAnalystR + FELLA | **MetaboAnalystR + FELLA(若 Q-03 通)/ Python RWR fallback** | 取决于 Q-03 escalation,见 §7 |
+
+**Pivot 预案(Q-03 fail)**:
+- (a) Tier-A 缩到 3 工具:sspa + mummichog + FELLA(Python RWR 重写,~2-3 周)
+- (b) Tier-A 缩到 3 工具:sspa + mummichog + MetaboAnalystR(若仅 FELLA 失败,MetaboAnalystR 仍通)
+- (c) Docker R 镜像 escalation(W3 加 1 周搭 docker,paper 政治正确性保留)
+
+(详细 daily plan 见 §9)
 
 ---
 
