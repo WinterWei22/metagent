@@ -13,7 +13,7 @@
 | Section | Title | Budget | Status |
 |---|---|---|---|
 | §0 | 竞品 Repo 实际状态 | 0.5d | **Done(待人工验证 Q-01)** |
-| §1 | Codebase Reality Check | 0.5d | **Mostly done(§1.1 pytest 结果待)** |
+| §1 | Codebase Reality Check | 0.5d | **Done(988/2/10,2 fail 非阻塞)** |
 | §2 | 10 候选工具系统调研 | 2d | Pending (后续 session) |
 | §3 | 统一 EnrichmentResult Schema | 0.5d | Pending |
 | §4 | Tier A 工具集成计划 | 1d | Pending |
@@ -105,13 +105,19 @@ _不靠记忆,实际跑 pytest + tree + grep,产出 3 张表 + "偏差"段。_
 ### 1.1 Pytest 现状
 
 **Command:** `pytest tests/ -q --ignore=tests/test_ui --ignore=tests/integration`
-**Collected:** 607 tests(`--co` 计数)
-**Result:** TBD — 后台运行中(pid 2106656,Python 3.13)。
+**Wall time:** 11 min 42 s(Python 3.13.11,本机 conda)
+**Result:** **988 passed / 2 failed / 10 skipped** — 基本健康,2 个 fail 都是环境依赖(非代码 bug)。
+
+**2 个 failure(均在 `tests/tool_tests/test_library_search.py`,均为 GNPS 库搜索测试):**
+1. `TestFallbackPath::test_missing_gnps_env_raises_library_unavailable` — 测"缺 GNPS env 应抛 LibraryUnavailable",但本机环境状态未对齐 fixture 预期
+2. `test_integration_full_gnps_pool_finds_known_compound` — 集成测,需要真 GNPS 库 pool
+
+**判定:这 2 个 fail 不阻塞 Investigation**(GNPS library search 不在 ConcordMet enrichment / reconciliation 主线工具集);但后续 §2 hands-on 期间若需触碰 library_search 路径需先修。已登记为 §6 R-NEW-01 风险候选。
 
 **Known pre-existing skip / ignore(tag MetAgent-v1-0514):**
 - `tests/test_ui/test_panel_verifier.py` → 缺 `gradio` 模块(UI 测试,collect 阶段直接报 `ModuleNotFoundError: No module named 'gradio'`,B1 D2 已 ignore)
 - `tests/integration/` → 需要 minimax key / 外部服务,常规 CI 跳过
-- 收集到的 PytestUnknownMarkWarning:`integration`、`requires_minimax_key` 两个 mark 未注册(pyproject 未在 tag 状态登记)
+- 收集到的 PytestUnknownMarkWarning:`integration`、`requires_minimax_key`、`requires_sirius` 三个 mark 未注册(pyproject 未在 tag 状态登记;非阻塞,但 §6 风险候选 R-NEW-02 记一笔)。
 
 ### 1.2 当前 5 个 Agent Tool 入口
 
