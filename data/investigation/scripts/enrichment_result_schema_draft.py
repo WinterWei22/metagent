@@ -1,16 +1,24 @@
-"""§3 EnrichmentResult schema 草案(Investigation 阶段,**不实现 normalizer body**).
+"""§3 EnrichmentResult schema — Q-05 PIVOT v0.2(双主键架构).
 
-设计原则:
+设计原则(2026-05-15 Q-05 拍板后更新):
 1. 覆盖所有 Tier-A 工具的真实输出(sspa, mummichog, FELLA, RaMP ORA)
-2. score_type 显式枚举,避免后续 4-axis aggregation 时 misread
-3. metabolites_hit 使用 **InChIKey full(27 字符)** 作为 internal ID,block14 单独存
-4. 留 auxiliary_scores: dict 给每工具特定 metric(EASE / NES / RWR activity / ...)
-5. parameters 记录调用时的 cutoff / db release,保 reproducibility
-6. tautomer_canonicalized 字段从 §2.6 Q-04 落地
+2. **双主键架构**:
+   - Compound 层:**ChEBI ID** 主键(100% 覆盖,见 §2.5)
+   - Pathway 层:**Reactome stable ID**(R-HSA-XXX)主键
+   - Reporting:**KEGG ID**(`hsa00XXX` / `C00XXX`)用于 paper figure/table
+   - Fallback ground truth:**InChIKey**(结构哈希,做立体/互变冲突解决)
+3. metabolites_hit 不再是 `list[str]`,改成 `list[CompoundRef]` 结构化引用
+4. score_type 显式枚举
+5. auxiliary_scores: dict 给每工具特定 metric
+6. parameters 记录 cutoff / db release,保 reproducibility
+7. tautomer_canonicalized 字段保留(Q-04 处置改成 ChEBI is_a hierarchy 向上爬,见 §6)
 
 normalizer 只签名,**body 是 NotImplementedError**(Sprint W3 才实现)。
 
-NOTE: 这是 **Investigation 草案**,Sprint W3 实现时可能修改字段名 / 加 schema_version。
+CHANGELOG:
+  v0.1 (Session 2 早期) — InChIKey-only metabolites_hit
+  v0.2 (Q-05 pivot) — CompoundRef 结构化;PathwayHit.pathway_id=Reactome,新增 kegg_id;
+                       metabolites_hit: tuple[CompoundRef, ...]
 """
 from __future__ import annotations
 
@@ -64,21 +72,47 @@ class ScoreType(str, Enum):
 
 
 # ---------------------------------------------------------------------------
-# Per-pathway hit
+# Compound-level reference(Q-05 pivot: 双主键架构,ChEBI 主)
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class CompoundRef:
+    """Structured reference to one metabolite hit in a pathway.
+
+    Q-05 决策(2026-05-15):ChEBI 是 100% 覆盖的 lingua franca,作为 compound 主键。
+    InChIKey 作为结构 ground truth fallback(用于 stereo/tautomer 冲突解决)。
+
+    chebi_id 是必填;若工具输出没给 ChEBI(如 mummichog 给 KEGG cpd),
+    normalizer 需先做 KEGG cpd → ChEBI 反查(via §5 crosswalk)再构 CompoundRef。
+    """
+    chebi_id: str                       # CHEBI:NNNNN(主键,100% 覆盖)
+    inchikey: str = ""                  # 27-char full InChIKey(结构 ground truth)
+    display_name: str = ""              # ChEBI primary name 或 HMDB synonym
+
+    # 跨库 secondary ID(reporting / fallback;normalizer 可选填)
+    kegg_compound_id: str = ""          # C00031 等
+    hmdb_id: str = ""                   # HMDB0000122 等
+    pubchem_cid: str = ""               # PubChem CID
+    metanetx_id: str = ""               # MNXM...
+
+
+# ---------------------------------------------------------------------------
+# Per-pathway hit (Q-05 v0.2: Reactome 主键 + KEGG reporting fallback)
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True)
 class PathwayHit:
-    pathway_id: str                     # canonical ID (Reactome stable ID 主键, see §5)
-    pathway_id_native: str              # 工具实际输出的 ID(KEGG map00010 等)
-    pathway_db: PathwayDB
-    pathway_name: str
+    pathway_id: str                     # **Reactome stable ID 主键** (R-HSA-XXX)
+    pathway_name: str                   # Reactome primary name
+    kegg_id: str | None                 # KEGG mapID (hsa00XXX) — reporting / fallback
+    pathway_id_native: str              # 工具实际输出的 ID(KEGG map00010 / human_mfn name / etc.)
+    pathway_db: PathwayDB               # 来源 DB(reactome / kegg / wikipathways / metacyc / ...)
     score: float
     score_type: ScoreType
     rank: int                           # 0-based, 工具自报(若工具没排名则 by score)
-    metabolites_hit: tuple[str, ...]    # full InChIKey list(27 字符,frozen for hashing)
-    metabolites_hit_block14: tuple[str, ...] = ()  # block14 for cluster joins
+    metabolites_hit: tuple[CompoundRef, ...]  # 结构化引用 list(Q-05 改:从 InChIKey str → CompoundRef)
     n_metabolites_in_pathway: int = 0   # pathway 内总数(ORA 需要)
     n_metabolites_input: int = 0        # query 输入总数(ORA 需要)
 
@@ -106,8 +140,9 @@ class EnrichmentResult:
     wall_time_sec: float                 # 实测调用 wall time(单点)
 
     # ConcordMet schema metadata
-    schema_version: str = "concordmet_v0.1"
-    tautomer_canonicalized: bool = False  # 见 §2.6 Q-04;输入 metabolite 是否过了 tautomer canonicalizer
+    schema_version: str = "concordmet_v0.2"
+    tautomer_canonicalized: bool = False  # 见 §2.6 Q-04;输入 metabolite 是否过了 ChEBI is_a 上爬 / RDKit canonicalizer
+    chebi_canonicalized: bool = False     # Q-05:输入 metabolite 是否已 normalize 到 ChEBI 主键
     notes: str = ""                       # 任何工具/方法特殊说明
 
 
@@ -224,26 +259,39 @@ SCHEMA_GAPS_FOR_W3 = [
     # gap, severity, resolution_plan
     ("sspa 输出多 score 列何时升 primary",            "medium", "W3 D1: 看 sspa 实测列再定"),
     ("FELLA 跨 5 层 graph 的 n_metabolites_in_pathway 定义", "low", "只取 compound 层"),
-    ("mummichog 反查 mz_to_inchikey 失败时 metabolites_hit 留空",  "high",  "W3 D2 设 fallback: 留 None + auxiliary_scores 备注"),
-    ("Pathway ID 跨 KEGG/Reactome/WikiPathways 不统一",  "high", "见 §5 crosswalk,Reactome 主键 + KEGG fallback"),
+    ("mummichog 输出无 ChEBI ID(只 KEGG cpd 或 human_mfn name),需 KEGG→ChEBI 反查",  "high",  "W3 D2:走 §5 crosswalk(ChEBI ↔ KEGG via ChEBI database_accession.tsv)"),
+    ("mummichog 反查失败时 CompoundRef.chebi_id 必填规则",  "high", "W3 D2 fallback:若 KEGG→ChEBI miss,用 InChIKey 反查 ChEBI(via ChEBI structures.tsv);全 miss 则该 metabolite 不进 metabolites_hit"),
+    ("pathway_id (Reactome) 跨 KEGG/Reactome/WikiPathways 不统一",  "RESOLVED-Q05", "§5 crosswalk:工具原 pathway_id → ChEBI2Reactome.txt 反查 Reactome stable ID;失败则 pathway_id=空字符串,kegg_id 作为唯一标识"),
     ("score_type=COMPOSITE 谁负责生成",                 "high",  "Sprint W6+ ConcordMet aggregator,Investigation 不实现"),
     ("auxiliary_scores 的 float-only 限制(EASE 是 float OK,但若工具输出 list of nodes?)", "low", "W3 D3 看 FELLA 实输出"),
-    ("schema_version 升级策略",                         "low",  "W3 W4 任一字段变 → bump v0.1 → v0.2"),
-    ("tautomer_canonicalized=False 时是否拒绝下游 reconciliation",  "medium", "W3 决定;若严格要求 canon,则 ETL 期 reject"),
+    ("schema_version 升级策略",                         "low",  "已 bump v0.1 → v0.2(Q-05 pivot)"),
+    ("tautomer_canonicalized=False 时是否拒绝下游 reconciliation",  "medium", "W3 决定;Q-05 后默认要求 chebi_canonicalized=True,tautomer 是 optional"),
+    ("CompoundRef.chebi_id 强制必填 → 没 ChEBI ID 的 metabolite(如 unmapped LIPID MAPS)怎么处理",   "Q05-NEW-high",  "三选一:(a) 不进 metabolites_hit;(b) chebi_id=`UNMAPPED:LMxxxxx`;(c) 加新字段 unmapped_external_refs。W3 D2 拍。"),
+    ("Reactome pathway 12% compound 覆盖 → 若 pathway 来自 KEGG/MetaCyc/WikiPathways 而无 Reactome 对应,pathway_id 怎么填",  "Q05-NEW-high",  "三选一:(a) pathway_id=空字符串,kegg_id 主显示;(b) pathway_id=`UNMAPPED:KEGG:hsa00010`;(c) 加新字段 canonical_pathway_db。W3 D1 拍。"),
 ]
 
 
 if __name__ == "__main__":
-    # Schema sanity:确保 dataclass 可实例化(空 PathwayHit + EnrichmentResult)
+    # Schema sanity:确保 v0.2 dataclass 可实例化(CompoundRef + PathwayHit + EnrichmentResult)
+    glucose_ref = CompoundRef(
+        chebi_id="CHEBI:17234",
+        inchikey="WQZGKKKJIJFFOK-GASJEMHNSA-N",
+        display_name="D-glucose",
+        kegg_compound_id="C00031",
+        hmdb_id="HMDB0000122",
+        pubchem_cid="5793",
+        metanetx_id="MNXM41",
+    )
     hit = PathwayHit(
-        pathway_id="R-HSA-71387",
-        pathway_id_native="map00010",
-        pathway_db=PathwayDB.REACTOME,
+        pathway_id="R-HSA-71387",                 # Reactome stable ID 主键
         pathway_name="Glycolysis",
+        kegg_id="hsa00010",                       # reporting fallback
+        pathway_id_native="map00010",             # mummichog/sspa 实际输出
+        pathway_db=PathwayDB.REACTOME,
         score=1e-5,
         score_type=ScoreType.P_VALUE,
         rank=0,
-        metabolites_hit=("WQZGKKKJIJFFOK-GASJEMHNSA-N",),
+        metabolites_hit=(glucose_ref,),
         n_metabolites_in_pathway=20,
         n_metabolites_input=15,
         auxiliary_scores={"ease": 2.3, "n_hit": 8.0},
@@ -253,17 +301,20 @@ if __name__ == "__main__":
         pathway_db=PathwayDB.KEGG,
         pathways=(hit,),
         parameters={"cutoff": 0.05, "permutations": 1000},
-        tool_version="mummichog-3.0.0",
+        tool_version="mummichog-2.7.0",
         db_release="kegg_2025-03",
         n_input=120,
         n_input_resolved=98,
         wall_time_sec=14.2,
         tautomer_canonicalized=False,
+        chebi_canonicalized=True,
         notes="toy",
     )
-    print(f"PathwayHit OK: {hit.pathway_id} score={hit.score} ({hit.score_type.value})")
+    print(f"CompoundRef OK: {glucose_ref.chebi_id} ({glucose_ref.display_name}, KEGG {glucose_ref.kegg_compound_id})")
+    print(f"PathwayHit OK: {hit.pathway_id} ({hit.pathway_name}, KEGG {hit.kegg_id})  "
+          f"score={hit.score} ({hit.score_type.value})  metabolites_hit={len(hit.metabolites_hit)}")
     print(f"EnrichmentResult OK: {res.method.value} on {res.pathway_db.value} "
-          f"({len(res.pathways)} hits, {res.wall_time_sec}s)")
+          f"({len(res.pathways)} hits, {res.wall_time_sec}s, schema={res.schema_version})")
     print(f"\nSchema gaps to revisit in W3: {len(SCHEMA_GAPS_FOR_W3)} items")
     for gap, sev, plan in SCHEMA_GAPS_FOR_W3:
         print(f"  [{sev:<6s}] {gap}")

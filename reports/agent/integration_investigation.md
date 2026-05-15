@@ -415,41 +415,46 @@ python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
 
 ---
 
-## §3 — 统一 EnrichmentResult Schema — ✅ 草案 DONE
+## §3 — 统一 EnrichmentResult Schema — ✅ **v0.2 双主键架构(Q-05 pivot)**
 
 **Script:** `data/investigation/scripts/enrichment_result_schema_draft.py`(228 行,含 dataclass + enums + 4 normalizer stubs + gap list + sanity check)
 
-### 3.1 Schema 核心(dataclass + enums)
+### 3.1 Schema 核心(v0.2,Q-05 pivot 后)
+
+**`CompoundRef`** ← **新增**(Q-05):结构化 metabolite 引用,替代原 `list[str]`(InChIKey-only):
+- `chebi_id: str` — **CHEBI:NNNNN 主键,必填**(100% 覆盖)
+- `inchikey: str = ""` — 27-char full InChIKey(结构 ground truth fallback)
+- `display_name: str = ""` — ChEBI primary name / HMDB synonym
+- `kegg_compound_id: str = ""`、`hmdb_id: str = ""`、`pubchem_cid: str = ""`、`metanetx_id: str = ""` — 跨库 secondary IDs(reporting / fallback,normalizer 可选填)
+
+**`PathwayHit`**(per-pathway,v0.2 改动):
+- **`pathway_id: str` — Reactome stable ID 主键(R-HSA-XXX)** ← Q-05
+- **`kegg_id: str | None` — KEGG mapID(hsa00XXX),reporting / fallback** ← Q-05 新增
+- `pathway_name: str` — Reactome primary name
+- `pathway_id_native: str` — 工具实际输出(KEGG mapID / human_mfn name 等)
+- `pathway_db: PathwayDB`
+- `score: float` + `score_type: ScoreType`(9 个枚举值)
+- `rank: int`
+- **`metabolites_hit: tuple[CompoundRef, ...]` ← Q-05 改:从 `tuple[str, ...]` → `tuple[CompoundRef, ...]`**
+- `n_metabolites_in_pathway: int`、`n_metabolites_input: int`
+- `auxiliary_scores: dict[str, float]`
 
 **`EnrichmentResult`**(method-level):
-- `method: EnrichmentMethod`(10 个枚举值,覆盖 sspa 4 个方法 / mummichog / FELLA 2 个 / MetaboAnalystR 2 个 / RaMP ORA)
-- `pathway_db: PathwayDB`(7 个枚举值:KEGG / Reactome / WikiPathways / MetaCyc / HMDB / SMPDB / MERGED)
-- `pathways: tuple[PathwayHit, ...]`
-- `parameters: dict[str, Any]`(cutoff / db_release / permutation / seed)
-- `tool_version`、`db_release`、`n_input`、`n_input_resolved`、`wall_time_sec` — traceability
-- `schema_version: str = "concordmet_v0.1"`
-- `tautomer_canonicalized: bool = False` — 落地 §2.6 Q-04 ring-chain 标准化
+- `method: EnrichmentMethod`(10 枚举值)、`pathway_db: PathwayDB`(7 枚举值)、`pathways: tuple[PathwayHit, ...]`、`parameters`、`tool_version`、`db_release`、`n_input`、`n_input_resolved`、`wall_time_sec`
+- **`schema_version: str = "concordmet_v0.2"`** ← Q-05 bump
+- `tautomer_canonicalized: bool = False` — Q-04(改用 ChEBI is_a 上爬,见 §6)
+- **`chebi_canonicalized: bool = False`** ← Q-05 新增(输入 metabolite 是否已 normalize 到 ChEBI 主键)
 - `notes: str`
 
-**`PathwayHit`**(per-pathway):
-- `pathway_id: str` — canonical(Reactome stable ID 主键,见 §5)
-- `pathway_id_native: str` — 工具实际输出(KEGG mapID 或 human_mfn 内部 name)
-- `pathway_db: PathwayDB`、`pathway_name: str`
-- `score: float` + `score_type: ScoreType`(9 个枚举值:P_VALUE / FDR / ES / NES / SS_ACTIVITY / RWR_SCORE / DIFFUSION_SCORE / EASE / COMPOSITE)
-- `rank: int`(工具自报或 by-score)
-- `metabolites_hit: tuple[str, ...]` — **full InChIKey(27 字符)**,frozen for hashing
-- `metabolites_hit_block14: tuple[str, ...]` — block14(供跨库 cluster joins)
-- `n_metabolites_in_pathway: int`、`n_metabolites_input: int`(ORA 需要)
-- `auxiliary_scores: dict[str, float]` — 留给每工具特定 metric(EASE / NES / RWR activity / ...)
-
-### 3.2 Sanity 测试
+### 3.2 Sanity 测试(v0.2)
 
 ```
 $ python data/investigation/scripts/enrichment_result_schema_draft.py
-PathwayHit OK: R-HSA-71387 score=1e-05 (p_value)
-EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s)
+CompoundRef OK: CHEBI:17234 (D-glucose, KEGG C00031)
+PathwayHit OK: R-HSA-71387 (Glycolysis, KEGG hsa00010)  score=1e-05 (p_value)  metabolites_hit=1
+EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s, schema=concordmet_v0.2)
 ```
-✅ dataclass 可实例化,enums 互不冲突。
+✅ v0.2 dataclass 可实例化,双主键 + CompoundRef 互不冲突。
 
 ### 3.3 4 Normalizer 签名(W3 实现 body)
 
@@ -462,18 +467,30 @@ EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s)
 
 (Tier-B `normalize_metaboanalystr_output()`、`normalize_pathintegrate_output()` 等 W4+)
 
-### 3.4 已知 Schema Gaps(W3 需 revisit)
+### 3.4 已知 Schema Gaps(11 个,W3 需 revisit)
 
-| Severity | Gap | W3 计划 |
-|---|---|---|
-| HIGH | mummichog `mz_to_inchikey` 失败时 metabolites_hit 留空 | W3 D2 fallback:留 None + auxiliary 备注 |
-| HIGH | Pathway ID 跨 KEGG/Reactome/WikiPathways 不统一 | 见 §5 crosswalk,Reactome 主键 + KEGG fallback |
-| HIGH | `score_type=COMPOSITE` 谁生成 | Sprint W6+ ConcordMet aggregator,Investigation 不实现 |
-| MEDIUM | sspa 多 score 列升 primary 规则 | W3 D1 看 sspa 实测列再定 |
-| MEDIUM | `tautomer_canonicalized=False` 时是否拒绝下游 reconciliation | W3 决定;若严格则 ETL 期 reject |
-| LOW | FELLA 跨 5 层 graph 的 `n_metabolites_in_pathway` 定义 | 只取 compound 层 |
-| LOW | `auxiliary_scores` float-only 限制(若工具输出 list?) | W3 D3 看 FELLA 实输出 |
-| LOW | `schema_version` 升级策略 | 任一字段变 → bump v0.1 → v0.2 |
+| # | Severity | Gap | W3 计划 / Sprint 1 影响 |
+|---|---|---|---|
+| 1 | HIGH | mummichog 输出无 ChEBI ID(只 KEGG cpd 或 human_mfn name),需 KEGG→ChEBI 反查 | W3 D2:走 §5 crosswalk(ChEBI database_accession.tsv);**会影响 Sprint 1 W3** |
+| 2 | HIGH | mummichog 反查失败时 CompoundRef.chebi_id 必填规则 | W3 D2 fallback:KEGG→ChEBI miss → InChIKey 反查 ChEBI structures.tsv;全 miss 则不进 metabolites_hit。**会影响 Sprint 1 W3** |
+| 3 | HIGH | `score_type=COMPOSITE` 谁生成 | Sprint **W6+** ConcordMet aggregator,**Investigation 不实现 / Sprint 1 不影响** |
+| 4 | **Q05-NEW HIGH** | CompoundRef.chebi_id 强制必填 → 没 ChEBI ID 的 metabolite(如 unmapped LIPID MAPS 长尾)怎么处理 | 三选一(a)不进 metabolites_hit / (b)`chebi_id=UNMAPPED:LMxxxxx` / (c)加新字段 unmapped_external_refs。**W3 D2 拍,影响 Sprint 1 W3** |
+| 5 | **Q05-NEW HIGH** | Reactome pathway 12% compound 覆盖 → 若 pathway 来自 KEGG/MetaCyc 而无 Reactome 对应,pathway_id 怎么填 | 三选一(a)`pathway_id=""`,kegg_id 主显示 / (b)`pathway_id=UNMAPPED:KEGG:hsa00010` / (c)加 canonical_pathway_db 字段。**W3 D1 拍,影响 Sprint 1 W3-W4** |
+| 6 | MEDIUM | sspa 多 score 列升 primary 规则 | W3 D1 看 sspa 实测列再定;**会影响 Sprint 1 W3** |
+| 7 | MEDIUM | `tautomer_canonicalized=False` 时是否拒绝下游 reconciliation | Q-05 后默认要求 `chebi_canonicalized=True`,tautomer 是 optional;**Sprint 1 不影响** |
+| 8 | RESOLVED-Q05 | Pathway ID 跨 KEGG/Reactome/WikiPathways 不统一 | §5 crosswalk:工具原 pathway → ChEBI2Reactome.txt 反查 Reactome stable ID;失败 → 见 #5 fallback |
+| 9 | LOW | FELLA 跨 5 层 graph 的 `n_metabolites_in_pathway` 定义 | 只取 compound 层;**Sprint 1 不影响** |
+| 10 | LOW | `auxiliary_scores` float-only 限制 | W3 D3 看 FELLA 实输出;**Sprint 1 不影响** |
+| 11 | LOW | `schema_version` 升级策略 | 已 bump v0.1 → v0.2(Q-05 pivot);**Sprint 1 不影响** |
+
+**Sprint 1 影响汇总**:
+- **HIGH-1 / HIGH-2 (mummichog ChEBI 反查)**:落 W3 D2 ChEBI ETL 中处理。**不阻塞 Sprint 1 启动**(有 fallback 方案),但 normalizer 实现细节需要 W3 D1 拍板。
+- **Q05-NEW-HIGH-4 (chebi_id 必填规则)**:**需要 W3 D0 拍板**(W2 review 后),否则 W3 normalizer 无法实现。**建议 (a) 不进 metabolites_hit**——简单 + 默认丢弃无法 reconcile 的长尾 lipid。
+- **Q05-NEW-HIGH-5 (Reactome miss 时 pathway_id 填法)**:**需要 W3 D0 拍板**。**建议 (a) `pathway_id=""`,kegg_id 主显示**——保留信息但不假装是 Reactome ID。
+- **HIGH-3 (composite score)**:**Sprint 1 不阻塞**(W6+ 才做)
+- 其余 6 gap:Sprint 1 不阻塞。
+
+**Q05-NEW-4 / Q05-NEW-5 是 Sprint 1 启动前必须决定的 2 个 sub-Q-05 子问题**。
 
 ### 3.5 mummichog 实测反馈 §3 新增 gap
 
@@ -484,29 +501,69 @@ EnrichmentResult OK: mummichog on kegg (1 hits, 14.2s)
 
 ### 3.6 §3 状态
 
-**Schema 草案 DONE**(W2 review 用),W3 实现 normalizer body 时若实测出更多 gap 再 bump 到 v0.2。
+**Schema v0.2 DONE**(W2 review 用)。**Q05-NEW-4 / Q05-NEW-5 必须 W3 D0 拍板**,否则 normalizer 写不出来。其余 9 gap W3 实现期解决。
 
 ---
 
 ## §4 — Tier A 工具集成计划
 
-### 4.1 Database Release Pinning(本 session 已锁定 / 待办)
+### 4.1 Database Release Pinning(Q-05 后)
 
 | 库 | 拟锁定 release | 来源 | 验证状态 |
 |---|---|---|---|
-| **MetaNetX MNXref** | **4.5(2025-08-13)** | `chem_xref.tsv` 头部声明 | ✅ 已下载 (102 MB),flat-file 路径(REST API 挂) |
-| **mummichog** | **2.7.0**(PyPI latest;v3 不存在) | `pip install mummichog` | ✅ 已 Toy verify(Q-02) |
+| **ChEBI(compound 主键)** | **rel251(2026-04-01)** | `archive/rel251/flat_files/*.tsv.gz` | ✅ **已下载 6 文件(26 MB)+ schema 摸清** |
+| **Reactome ChEBI xref(pathway 主键)** | **2026-03-23 release** | `ChEBI2Reactome.txt`(14.4 MB)+ `_All_Levels.txt`(37.5 MB)| ✅ 已下载;113k 行(含 42k Human-only)|
+| **MetaNetX MNXref**(crosswalk validator,降级) | **4.5(2025-08-13)** | `chem_xref.tsv` 头部 | ✅ Partial(580 MB);Q-05 后不再主键 source |
+| **mummichog** | **2.7.0**(PyPI latest;v3 不存在) | `pip install mummichog` | ✅ Toy verify(Q-02) |
 | **R base** | **R 4.4.3 "Trophy Case"** | conda r-base=4.4 in `concord_r` env | ✅ 已 verify |
-| **MetaboAnalystR / FELLA / Bioconductor** | BiocManager 3.20 | Bioc release 2024-10 | ⏳ Q-03 install 中 |
-| **RDKit** | 2025.09.6 | system base env | ✅ 已 verify(§2.6) |
-| Reactome | TBD(W3 锁日期) | Reactome SQL dump | Pending |
-| KEGG | TBD(academic rate limit 实测) | KEGG REST + 本地 sqlite | Pending |
-| LIPID MAPS | TBD | flat file | Pending |
-| HMDB | v5.0(主 repo 已有) | 已存 | Pending 确认 |
-| ChEBI | TBD | flat / sqlite | Pending |
-| PubChem | PUG-REST 实时(rate limit 实测) | 已有 lookup_compound_info backend | Pending |
+| **Bioconductor** | BiocManager 3.20 | Bioc release 2024-10 | ⏳ 部分 install(limma ✓,fgsea/KEGGgraph/FELLA retry-2 中)|
+| **RDKit** | 2025.09.6 | system base env | ✅ verify(§2.6) |
+| **sspa** | 1.0.4(PyPI)+ setuptools<80 + tqdm pin | `mummichog_py310` env | ✅ verify(§2.1) |
+| KEGG | TBD(academic rate limit 实测) | 主用 ChEBI xref(45=KEGG_CPD),KEGG REST 只查 pathway | W3 D1 测 |
+| LIPID MAPS | TBD | ChEBI xref(50=LIPID MAPS)+ 直接下载 | W3 D2 |
+| HMDB | v5.0(主 repo 已有) | 已存(主用 ChEBI xref 35=HMDB) | Pending 确认 |
+| PubChem | PUG-REST 实时 | 已有 lookup_compound_info backend(也可走 ChEBI xref 68) | Pending |
 
-**已知 release 锁:5/11 项**(MetaNetX 4.5,mummichog 2.7.0,R 4.4.3,RDKit 2025.09.6,HMDB v5.0)。其余 6 项需 W3 D0 前 finalize。
+**已知 release 锁:**Q-05 pivot 后新增 **ChEBI rel251 + Reactome 2026-03-23**,**共 8/12 项已锁**。
+
+### 4.1.1 ChEBI sqlite ETL 路径(Q-05 实施 spec)
+
+**文件清单(rel251,实测 sizes)**:
+
+| File | Compressed | Uncompressed est. | 用途 | Schema(已抓)|
+|---|---|---|---|---|
+| `compounds.tsv.gz` | 6.3 MB | ~30 MB | compound 主表 | `id, name, status_id, source, parent_id, merge_type, chebi_accession, definition, ascii_name, stars, modified_on, release_date` |
+| `database_accession.tsv.gz` | 3.6 MB | ~22 MB | 跨库 xref | `id, compound_id, accession_number, type, status_id, source_id` |
+| `names.tsv.gz` | 8.3 MB | ~50 MB | 同义词 | TBD |
+| `relation.tsv.gz` | 2.4 MB | ~14 MB | is_a / tautomer hierarchy(供 Q-04 上爬) | TBD |
+| `secondary_ids.tsv.gz` | 0.1 MB | ~0.5 MB | merged ChEBI ID 历史 | TBD |
+| `chemical_data.tsv.gz` | 4.6 MB | ~28 MB | mass / formula | TBD |
+| `structures.tsv.gz` | **85 MB** | ~500 MB | SMILES / InChI / InChIKey(W3 加索引)| TBD,W3 下载 + ETL |
+| `source.tsv.gz` | 3.7 KB | ~30 KB | **source_id → DB name 字典**(45=KEGG, 35=HMDB, 50=LIPIDMAPS, 54=MetaCyc, 68=PubChem, 72=Reactome, 79=SwissLipids) | ✅ 已抓 |
+
+**ChEBI 跨库覆盖率实测**(164,814 compounds 有 ≥1 xref):
+
+| Source ID | DB | n compounds | % |
+|---|---|---|---|
+| 45 | **KEGG COMPOUND** | **28,948** | 17.5% |
+| 35 | HMDB | 19,931 | 12.1% |
+| 50 | LIPID MAPS | 12,663 | 7.7% |
+| 54 | MetaCyc | 7,144 | 4.3% |
+| 46 | KEGG DRUG | 5,371 | 3.3% |
+| 72 | Reactome(in-ChEBI xref) | TBD | TBD |
+
+(Reactome 直接走 `ChEBI2Reactome.txt` 113k 行,42k Human-only,更权威)
+
+**ETL 顺序(W3 D1-D3)**:
+1. **W3 D1**:`compounds.tsv` → `compound` 主表;`source.tsv` → 字典(内存);`secondary_ids.tsv` → 升级 obsolete ID
+2. **W3 D2**:`database_accession.tsv` → `compound_xref`(filter source_id ∈ {35, 45, 50, 54, 68, 72, 79})
+3. **W3 D3**:`structures.tsv`(85 MB,需先下载)→ `compound.inchikey` / `smiles` / `inchikey_block14`;`relation.tsv` → `compound.parent_chebi_id`(Q-04 fix)
+4. **W3 D4**:`ChEBI2Reactome_All_Levels.txt` → `pathway` + `pathway_compound`(filter species='Homo sapiens',42k 行)
+
+**预估总 wall time:0.5-1 个工作日**(符合用户原估)。
+**Sqlite file size 预估**:索引后 ~200-300 MB(主要是 structures InChI/InChIKey)。
+
+### 4.2 50-Metabolite × 7 Source 覆盖矩阵 — ✅ 见 §2.5(partial chem_xref 已跑)
 
 ### 4.2 50-Metabolite × 7 Source 覆盖矩阵 — ⏳ 下载完成后用 `metanetx_coverage_probe.py` 跑
 
@@ -515,24 +572,30 @@ probe 输出 3 张表:
 - 50 个随机 MNX × 7 主源(reactome / chebi / hmdb / kegg / metacyc / bigg / lipidmaps)的命中矩阵
 - 每个 metabolite 命中 source 数量分布(直方)
 
-### 4.3 W3-W5 集成顺序(基于本 session 实证调整)
+### 4.3 W3-W5 集成顺序(Q-05 pivot 后)
 
-| Week | 原计划 | **实证调整** | 理由 |
-|---|---|---|---|
-| W3 | sspa + RDKit | **RDKit(已 OK)+ sspa + MetaNetX flat-file ETL** | RDKit toy 通过(§2.6);MetaNetX flat-file 而非 REST(REST 挂);sspa 仍是首选 ORA |
-| W4 | mummichog + MetaNetX | **mummichog(已 verify)+ schema normalizer 实现** | mummichog 已 verify(§2.2),W4 直接进 normalizer + 集成测试 |
-| W5 | MetaboAnalystR + FELLA | **MetaboAnalystR + FELLA(若 Q-03 通)/ Python RWR fallback** | 取决于 Q-03 escalation,见 §7 |
+| Week | Q-05 后计划 | 理由 |
+|---|---|---|
+| **W3** | **(1) sspa(已 verify) + (2) RDKit InChIKey reconciler(已 verify) + (3) ChEBI sqlite ETL(新增,Q-05 主键)** | ChEBI 是 compound 层主键,必须在 W3 W4 normalizer 之前 ETL 完;MetaNetX 不再是主键 source,降级 W4 |
+| **W4** | mummichog(已 verify)+ schema normalizer 实现 + **MetaNetX 作为 crosswalk validator**(不是主键 source) | mummichog 已 verify(§2.2),normalizer 需要 ChEBI(W3 ETL 产物)做 KEGG cpd → ChEBI 反查;MetaNetX 用作 cross-source verification |
+| **W5** | MetaboAnalystR + FELLA(若 Q-03 retry 通) / Python RWR fallback | 取决于 Q-03 escalation 终态;Investigation 中 FELLA deps 部分 install 失败,正在 retry-2 |
 
-**Pivot 预案(Q-03 fail)**:
+**Q-05 ETL 顺序逻辑**:
+- ChEBI sqlite ETL 必须最早(W3 D1-D3,因为 mummichog normalizer 必须有 ChEBI→KEGG mapping)
+- Reactome ChEBI2Reactome.txt 也 W3 W4(pathway 主键)
+- MetaNetX 从"主键 source"降级到"crosswalk validator"(仍下载 + ETL,但工程优先级降一档)
+
+**Pivot 预案(Q-03 retry-2 fail)**:
 - (a) Tier-A 缩到 3 工具:sspa + mummichog + FELLA(Python RWR 重写,~2-3 周)
-- (b) Tier-A 缩到 3 工具:sspa + mummichog + MetaboAnalystR(若仅 FELLA 失败,MetaboAnalystR 仍通)
-- (c) Docker R 镜像 escalation(W3 加 1 周搭 docker,paper 政治正确性保留)
+- (b) Tier-A 缩到 3 工具:sspa + mummichog + MetaboAnalystR(若仅 FELLA 失败)
+- (c) Docker R 镜像 escalation(W3 加 1 周搭 docker)
+- **(d) NEW: 接受 R 部分 install,改 FELLA-only(不要 MetaboAnalystR)** — limma/plyr/Matrix 已通,可能 fgsea/KEGGgraph 第二轮通,FELLA 直接 install。retry-2 后看
 
 (详细 daily plan 见 §9)
 
 ---
 
-## §5 — Pathway ID Crosswalk 策略 — ⚠️ §2.5 实证推翻原决策
+## §5 — Pathway ID Crosswalk 策略 — ✅ **Q-05 pivot 后定稿**
 
 **用户原决策**:Internal storage Reactome ID 主键;reporting KEGG ID;crosswalk Reactome ↔ KEGG;Reactome 缺失则 canonical_source=kegg。
 
@@ -542,25 +605,106 @@ probe 输出 3 张表:
 - **HMDB 82%、KEGG 58%、MetaCyc 66%**
 - **Reactome 在 pathway 层覆盖良好,但在 compound 层很弱** — 这是 Reactome 设计意图:metabolites 是 pathway participants,不是 first-class entity
 
-### 5.1 修订主键决策候选(Q-05 登记)
+### 5.1 双主键架构(Q-05 已拍板 2026-05-15)
 
-| 方案 | 主键 | Pathway report ID | 优点 | 缺点 |
-|---|---|---|---|---|
-| **A (原计划)** | Reactome stable ID | KEGG mapID | reporting 友好 | **跨库 compound 88% miss** |
-| **B (推荐 — Pivot)** | **ChEBI(compound)+ Reactome stable ID(pathway)** | KEGG mapID | compound 100%,pathway reporting 不变 | 引入 compound 层 / pathway 层双主键的复杂度 |
-| C | KEGG cpd ID(compound)+ KEGG mapID(pathway) | KEGG mapID | 简单,1 个 namespace | 跨库 compound 只 58%;KEGG REST rate-limit |
-| D | InChIKey(compound)+ Reactome stable ID(pathway) | KEGG mapID | InChIKey 算法可重生 | 不是 DB ID,与 lookup 工具不兼容 |
+| 层 | 主键 | Reporting | Fallback ground truth |
+|---|---|---|---|
+| **Compound** | **ChEBI ID**(CHEBI:NNNNN)| KEGG cpd ID(C00031 等)+ HMDB ID | InChIKey(27-char,结构哈希)|
+| **Pathway** | **Reactome stable ID**(R-HSA-XXX)| KEGG mapID(hsa00010 等)| — |
+| 结构层 | InChIKey | — | (cross-stereo/tautomer 冲突时仲裁)|
 
-我**倾向 B**(双主键,compound 用 ChEBI;pathway 用 Reactome stable ID;report 用 KEGG mapID via crosswalk)。**不能自决**因为这是 W2 review 的核心架构决策。
+**决策理由(实证)**:
+- §2.5 MetaNetX 实测:**ChEBI 100% 覆盖跨库 metabolite**(50 ≥3-source 抽样,seed=42);Reactome 仅 12%
+- Reactome 自带 `ChEBI2Reactome.txt`(2026-03-23 release),compound→pathway xref 是 in-house 维护,**比第三方 crosswalk 更权威**
+- ChEBI 是 EBI canonical chemical entity,**Reactome 自己内部也用它做 reference**
 
-### 5.2 Reactome ↔ KEGG mapping 覆盖率 — Pending W3 D1
+### 5.2 三路 Crosswalk 策略
 
-(MetaNetX `reac_xref.tsv` 跨 Reactome / KEGG / metacyc 的 reaction-level mapping;pathway-level 需用 Reactome 自带的 `Pathway2Reactome.txt` 或 KEGG hsa→Reactome xref)
+**主路径**(Q-05 决策):
+```
+ChEBI → Reactome
+  ↓ via Reactome 自带 ChEBI2Reactome.txt(2026-03-23,~750KB 文件;_All_Levels 37MB)
+  → 直接 reactome_id mapping,无需 fuzzy match
+```
 
-### 5.3 Fallback 占比(50 个常见 pathway 抽样)— Pending W3 D1
-### 5.4 Crosswalk Table Schema — Pending §5.1 决策
+**Fallback 路径**:
+```
+ChEBI → KEGG cpd
+  ↓ via ChEBI database_accession.tsv(rel251,3.5MB;source_id=45 → KEGG COMPOUND)
+  → 实测 source 分布:MANUAL_X_REF 212k / CITATION 120k / CAS 40k / REGISTRY 27k
+  → KEGG/MetaCyc/LIPID MAPS 都在 MANUAL_X_REF 桶里
+```
 
-(取决于 §5.1 拍板:若选 B,需要两张 table:`compound_xref(ChEBI ↔ MNX ↔ KEGG ↔ HMDB ↔ ...)`+ `pathway_xref(Reactome ↔ KEGG mapID ↔ WikiPathways)`)
+**结构辅助**(冲突解决):
+```
+ChEBI → InChIKey
+  ↓ via ChEBI structures.tsv.gz(rel251,85MB,含 SMILES/InChI/InChIKey)
+  → 用于 stereo/tautomer 边界 case 仲裁
+```
+
+### 5.3 ChEBI 内部 ID hierarchy 用于 Q-04 糖类 false-split
+
+ChEBI 用 `is_a` / `is_tautomer_of` / `has_role` 关系(`relation.tsv.gz` 2.4MB)做 compound hierarchy。
+- D-Glucose(CHEBI:17234)是 hexose(CHEBI:18133)的 child
+- α-D-Glucopyranose / β-D-Glucopyranose 都是 D-Glucose 的 child(或 tautomer 关系)
+- **Q-04 解法**:输入 InChIKey block14 false-split 时,**向上爬 ChEBI is_a 1-2 层**,寻找共同 parent → reconcile 到 parent ChEBI(D-Glucose 而非 α-D-Glucopyranose)
+- 实施代码:W3 RDKit + ChEBI sqlite 集成时落地,~30 LOC SQL JOIN + parent walk
+
+### 5.4 Crosswalk Table Schema(W3 ETL 实施 spec)
+
+```
+-- 主表(W3 D1-D3 ETL)
+TABLE compound (
+    chebi_id          TEXT PRIMARY KEY,    -- CHEBI:NNNNN
+    chebi_name        TEXT NOT NULL,        -- ChEBI primary name
+    parent_chebi_id   TEXT,                 -- is_a hierarchy(可空,顶层 nil)
+    inchikey          TEXT,                 -- 27-char(可空,无结构则空)
+    inchikey_block14  TEXT,                 -- 第一段 14 字符(供 cluster join)
+    smiles            TEXT,                 -- canonical SMILES
+    formula           TEXT,
+    monoisotopic_mass REAL,
+    chebi_status      INTEGER               -- 1=CHECKED, 3=THREE_STAR 等(过滤 obsolete)
+);
+CREATE INDEX idx_compound_block14 ON compound(inchikey_block14);
+CREATE INDEX idx_compound_parent ON compound(parent_chebi_id);
+
+-- 跨库 ID 映射(W3 D2-D3 ETL)
+TABLE compound_xref (
+    chebi_id       TEXT NOT NULL,
+    source         TEXT NOT NULL,   -- 'kegg' / 'hmdb' / 'metacyc' / 'lipidmaps' / 'pubchem' / 'metanetx' / 'cas'
+    external_id    TEXT NOT NULL,
+    xref_type      TEXT,            -- ChEBI 原始 type: MANUAL_X_REF / CITATION
+    PRIMARY KEY (chebi_id, source, external_id),
+    FOREIGN KEY (chebi_id) REFERENCES compound(chebi_id)
+);
+CREATE INDEX idx_xref_external ON compound_xref(source, external_id);
+-- 反查例:WHERE source='kegg' AND external_id='C00031' → chebi_id='CHEBI:17234'
+
+-- Pathway 主键 + KEGG reporting fallback(W3 D3 ETL,Reactome 自带 xref 注入)
+TABLE pathway (
+    reactome_id   TEXT PRIMARY KEY,    -- R-HSA-XXX
+    pathway_name  TEXT NOT NULL,
+    species       TEXT NOT NULL,        -- 'Homo sapiens' 等
+    kegg_id       TEXT,                 -- hsa00010 等(可空)
+    wikipathway_id TEXT                 -- WPxxxxx(可空,W4 扩)
+);
+
+-- pathway × compound 隶属(Reactome's ChEBI2Reactome_All_Levels.txt 注入,W3 D3)
+TABLE pathway_compound (
+    reactome_id  TEXT NOT NULL,
+    chebi_id     TEXT NOT NULL,
+    evidence_code TEXT,                -- Reactome 提供的 'IEA'/'TAS' 等
+    PRIMARY KEY (reactome_id, chebi_id)
+);
+```
+
+**Schema 简化点**:`ChEBI2Reactome.txt` 是 Reactome 自带、已 curated,**不需要 ConcordMet 自己算 crosswalk**——这是 Q-05 pivot 后的关键简化。原 §5"自己算 Reactome↔KEGG 单向 mapping"被消除。
+
+**ChEBI sqlite ETL 工程量(W3 D1-D3)**:
+- 6 个 ChEBI TSV.gz(~26 MB compressed,~150 MB uncompressed)+ 2 个 Reactome TSV(~40 MB)
+- ETL Python 脚本 ~200 LOC(每个 TSV → table,加索引)
+- 加 hierarchy 爬取(parent_chebi_id 物化)~50 LOC
+- 预估 wall time:**0.5-1 个工作日**,符合用户原估
 
 ---
 
@@ -593,7 +737,7 @@ _整合 R1-R10(用户原文档)+ 评审 + Investigation 新发现 R-NEW-X。_
 | R-NEW-04 | **mummichog v3 不存在,只有 v2.7.0** | 已发生 | 中 | 接受 v2.7.0(经典实现);若 paper 想引 v3 需找 Shuzhao Li GitHub-only fork | §2.2 实测 |
 | R-NEW-05 | **Python 3.13 + Bioconductor wheel 不齐** | 已确认 | 中 | mummichog 隔离到 Py3.10;主 repo 不动 | §2.0 实测 |
 | R-NEW-06 | **MetaNetX REST API 500 Internal Server Error** | 已确认 | 中 | 改 flat-file 路径(chem_xref.tsv 等)+ 本地 sqlite ETL | §2.5 实测 |
-| R-NEW-07 | **InChIKey block14 无法 reconcile 开链↔环状糖类** | 已确认 | 中 | §3 schema 留 `tautomer_canonicalized` 字段;W3 加 ring-chain canonicalizer | §2.6 实测 → Q-04 |
+| R-NEW-07 | **InChIKey block14 无法 reconcile 开链↔环状糖类** | 已确认 | 中 | **Q-05 后改方案**:用 ChEBI `is_a` hierarchy(relation.tsv)向上爬 1-2 层,把 α/β/D-glucopyranose 归到 parent ChEBI(D-Glucose, CHEBI:17234)— `compound.parent_chebi_id` 物化到 sqlite,SQL JOIN 一次解决;InChIKey 降为冲突仲裁 fallback。W3 RDKit + ChEBI sqlite 集成时落地 | §2.6 实测 → Q-04 → Q-05 改 spec |
 | R-NEW-08 | **mummichog pathway_name 不是 KEGG mapID**(human_mfn 内部命名)| 已确认 | 中 | W3 实现 `normalize_mummichog_output()` 时加 name → mapID 映射表(查 mummichog/JSON_metabolicModels.py)或 fuzzy-match | §2.2 实测 |
 | R-NEW-09 | **Q-03 BiocManager install wall time 不确定**(可能 30-60 min)| 已发生 | 低 | Time-box 4h 内必收;超期 escalate(见 Q-03 三选项) | §2.3/§2.4 setup |
 | R-NEW-10 | **Bioconductor 3.20 与 R 4.4.3 兼容性未验证**(理论上 Bioc 3.20 对应 R 4.4) | 中 | 中 | Q-03 BiocManager install 跑通即 verify;若失败需降到 Bioc 3.19 | Pending Q-03 |
@@ -681,11 +825,52 @@ Mean cross-method Jaccard < 0.4   → Gate 1 PASS
 
 ---
 
-## §9 — W3-W4 Sprint Daily Plan
+## §9 — W3-W4 Sprint Daily Plan(Q-05 pivot 后)
 
-_基于 §0-§8 实证产出,后续 session。_
+### W3 Daily Plan(5 工作日,ChEBI + Reactome + sspa + RDKit + normalizer 框架)
 
-Gantt-style 表 / markdown checklist,带 wall-time 估计 + 依赖关系。
+| Day | 任务 | Wall-time | 依赖 | 输出 |
+|---|---|---|---|---|
+| W3 D0 | **拍板 Q05-NEW-4 / Q05-NEW-5**(§3.4 schema gap #4 / #5);W2 review 同时进行 | 半天 | W2 review | 2 个 schema gap 决策 |
+| W3 D1 | ChEBI sqlite ETL part 1:`compounds.tsv` → `compound` 表;`source.tsv` 字典;`secondary_ids.tsv`;script `concordmet/etl/chebi_etl.py` | 0.5d | rel251 已下载 | sqlite `compound` 表 ~165k rows |
+| W3 D2 | ChEBI sqlite ETL part 2:`database_accession.tsv` → `compound_xref`(filter source_id ∈ {35, 45, 50, 54, 68, 72, 79});实施 KEGG→ChEBI 反查 SQL 函数 | 0.5d | D1 | `compound_xref` 表 ~140k rows;`resolve_kegg_to_chebi()` 函数 |
+| W3 D3 | (a)下 `structures.tsv.gz` 85 MB,ETL 到 `compound.inchikey / smiles / inchikey_block14`;(b)`relation.tsv` → `compound.parent_chebi_id`(Q-04 上爬 fix);(c)Reactome ChEBI2Reactome_All_Levels.txt → `pathway` + `pathway_compound` | 1d | D2 + structures.tsv 下载 | 完整 sqlite ~250 MB;Q-04 fix verified |
+| W3 D4 | sspa wrapper:封装 `sspa_ora` / `sspa_ssGSEA` 调用,输出 → ChEBI ID;normalize 到 EnrichmentResult v0.2 | 1d | D2 ChEBI ETL | `normalize_sspa_output()` 实现 + 单测 |
+| W3 D5 | RDKit InChIKey reconciler 集成到 lookup_compound_info pipeline + Q-04 上爬 SQL 调用 | 1d | D3 | RDKit + ChEBI 整合工具 |
+| **W3 hedge** | GPT-4o wire-up + W3 buffer | 0.5d | — | LLM client 就绪 |
+
+**W3 总 wall-time:5d 工作量 + 0.5d hedge = 5.5d**,正好覆盖 1 周(5 工作日)。
+
+### W4 Daily Plan(预览,具体待 W2 review 后 finalize)
+
+| Day | 任务 | 依赖 |
+|---|---|---|
+| W4 D1 | mummichog wrapper + `normalize_mummichog_output()` | W3 ChEBI ETL |
+| W4 D2 | MetaNetX sqlite ETL(降级为 crosswalk validator) | W3 ChEBI |
+| W4 D3 | RaMP `normalize_ramp_output()`(改 输入到 ChEBI 主键) | W3 |
+| W4 D4 | 集成 §8 Gate 1 toy:5-10 task × {RaMP, sspa, mummichog} × {RDKit, ChEBI} → Jaccard matrix | W4 D1-D3 |
+| W4 D5 | W4 buffer + W4 hedge |  |
+
+### W5 Plan(取决于 Q-03 retry-2)
+
+- **Q-03 通过**:W5 D1-D3 MetaboAnalystR PerformPSEA wrapper;D4-D5 FELLA rpy2 K=10 spike + normalize
+- **Q-03 fail(部分)**:W5 改 FELLA-only;若 FELLA 仍装不上 → 走 §4.3 pivot (d) 三选一
+
+### W3-W5 累计依赖图
+
+```
+W3 D0 (拍板) ──┬─→ W3 D1-D3 ChEBI ETL ──┬─→ W3 D4 sspa wrapper
+               │                          └─→ W3 D5 RDKit + ChEBI 整合
+               └─→ W3 hedge GPT-4o
+                                          ↓
+                            W4 D1 mummichog wrapper ─→ W4 D4 Gate 1 toy
+                            W4 D2 MetaNetX validator ──┤
+                            W4 D3 RaMP normalize ──────┘
+                                          ↓
+                            W5 D1-D5 MetaboAnalystR / FELLA(取决于 Q-03)
+```
+
+**Critical path**:W3 D0 拍板 → ChEBI ETL D1-D3 → 所有 normalizer。任何 D0 决策延迟 → 整体后移。
 
 ---
 
