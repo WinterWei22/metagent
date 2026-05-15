@@ -71,6 +71,8 @@ You MUST output a single JSON object (no prose around it, no markdown fences). S
 
 The ``narrative_text`` and ``claims`` MUST be consistent: every concrete assertion in ``narrative_text`` should appear as one ``claims[]`` entry, and no ``claims[]`` entry should reference content absent from ``narrative_text``.
 
+``claim_text`` is REQUIRED on every claim entry. It must be the verbatim sentence as it would appear in ``narrative_text``. Do NOT omit ``claim_text`` even if the structured fields (``subject`` / ``pathway_name`` / etc.) seem to convey the same information — the verifier needs both for banned-phrase scanning. A claim entry without ``claim_text`` is rejected and counted as dropped.
+
 The caller will pass ``response_format={"type": "json_object"}`` to the LLM. Producing non-JSON output is a hard failure.
 """
 

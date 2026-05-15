@@ -95,6 +95,8 @@ After your revisions, output the final revised JSON object as a single assistant
 }}
 ```
 
+``claim_text`` is REQUIRED on every claim entry. It must be the verbatim sentence as it would appear in ``narrative_text``. Do NOT omit ``claim_text`` even if the structured fields (``subject`` / ``pathway_name`` / etc.) seem to convey the same information — the verifier needs both for banned-phrase scanning. A claim entry without ``claim_text`` is rejected and counted as dropped.
+
 Original narrative text (revise this — do not rewrite from scratch):
 
 {original_narrative_text}

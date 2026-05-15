@@ -75,7 +75,11 @@ These mark a sentence as outside the 4 shapes. Do NOT write them anywhere — ne
 }
 ```
 
-The ``narrative_text`` and ``claims`` MUST agree: every concrete assertion in ``narrative_text`` appears as one ``claims[]`` entry, and no ``claims[]`` entry references content absent from ``narrative_text``. Output `4-12` claim entries. The caller passes ``response_format={"type": "json_object"}``; non-JSON output is a hard failure.
+The ``narrative_text`` and ``claims`` MUST agree: every concrete assertion in ``narrative_text`` appears as one ``claims[]`` entry, and no ``claims[]`` entry references content absent from ``narrative_text``. Output `4-12` claim entries.
+
+``claim_text`` is REQUIRED on every claim entry. It must be the verbatim sentence as it would appear in ``narrative_text``. Do NOT omit ``claim_text`` even if the structured fields (``subject`` / ``pathway_name`` / ``enzyme_or_reaction`` / ``term_id`` / etc.) seem to convey the same information — the verifier needs both for banned-phrase scanning. A claim entry without ``claim_text`` is rejected and counted as dropped.
+
+The caller passes ``response_format={"type": "json_object"}``; non-JSON output is a hard failure.
 
 # Decision rule — when to stop calling tools
 
