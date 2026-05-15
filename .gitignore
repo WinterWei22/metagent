@@ -35,3 +35,7 @@ results/
 # NPC-classified derived pools (regeneratable; many MB each)
 data/processed/*_npc_classified*.jsonl
 data/processed/.npclassifier_*_checkpoint.json
+
+# Investigation: MetaNetX bulk downloads (regenerate via curl, see §2.5)
+data/investigation/metanetx_cache/*.tsv
+data/investigation/metanetx_cache/*.tsv.gz
