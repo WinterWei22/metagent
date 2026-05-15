@@ -43,6 +43,7 @@ from typing import Any, Callable, NamedTuple
 from common import llm_client
 from evaluation.sub6.persist import TaskPersister
 from evaluation.sub6.prompts_agent import build_react_messages
+from evaluation.sub6.run_sub6b_react import _is_valid_json_payload
 from tools.agent_tools import TOOL_DEFINITIONS_OPENAI, dispatch, reset_call_cache
 from verifier.schemas import ClaimVerdict, VerifiedClaim
 
@@ -453,6 +454,9 @@ def _react_loop(
 
     # Finalise pass when the loop exited without a narrative.
     force_finalised = False
+    inner_retry_used = False
+    if not hasattr(_react_loop, "_last_inner_retry"):
+        _react_loop._last_inner_retry = False
     needs_finalise = (
         err is None
         and not narrative
@@ -480,6 +484,41 @@ def _react_loop(
             )
             narrative = (final_msg.get("content") or "").strip()
             messages.append(_echo_assistant(final_msg))
+            # Phase B1 D5 hotfix — Inner retry for Mode A (empty /
+            # unparseable finalise). Same shape as
+            # ``run_sub6b_react.run_sub6b_react``: budget=1/task, retries
+            # only the finalise turn (not the ReAct loop). The feedback
+            # runner has its own ``_react_loop`` and was therefore not
+            # covered by the D4 inner-retry wire-up; the production D5
+            # smoke surfaced 13 EMPTY_SYSTEM_FAILURE on seed 0 because
+            # of this gap.
+            if not _is_valid_json_payload(narrative):
+                inner_retry_used = True
+                _react_loop._last_inner_retry = True
+                logger.info(
+                    "Feedback ReAct finalise empty/unparseable for %s "
+                    "— inner retry (budget=1)",
+                    trace_id,
+                )
+                try:
+                    final_msg = finalise_chat_fn(
+                        messages,
+                        tools=TOOL_DEFINITIONS_OPENAI,
+                        tool_choice="none",
+                        temperature=temperature,
+                        model=model,
+                        provider=provider,
+                        trace_id=trace_id,
+                        caller=f"{caller}_finalise_retry",
+                        response_format={"type": "json_object"},
+                    )
+                    narrative = (final_msg.get("content") or "").strip()
+                    messages.append(_echo_assistant(final_msg))
+                except Exception as exc:
+                    logger.warning(
+                        "Feedback ReAct finalise inner retry failed for "
+                        "%s: %s", trace_id, exc,
+                    )
             if timed_out:
                 err = "timeout_fallback_used"
             elif not narrative:

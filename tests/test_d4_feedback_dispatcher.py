@@ -420,6 +420,66 @@ def test_task_total_timeout_returns_empty_no_raise(
 
 
 # ---------------------------------------------------------------------------
+# 7b. D5 hotfix: feedback runner _react_loop also fires the inner retry
+# ---------------------------------------------------------------------------
+
+
+def test_feedback_react_loop_fires_inner_retry_on_empty_finalise(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Phase B1 D5 surfaced 13 EMPTY_SYSTEM_FAILURE / seed-0 because the
+    D4 inner-retry only landed in ``run_sub6b_react.run_sub6b_react``
+    and the feedback runner uses its own ``_react_loop``. This test
+    locks the hotfix: with empty react + empty finalise, the feedback
+    runner's ``_react_loop`` must issue ONE retry of the finalise
+    turn and then propagate ``empty_narrative_after_finalise``."""
+    from evaluation.sub6 import run_sub6b_react_feedback as fr
+
+    finalise_calls: list[dict] = []
+
+    def _empty_finalise(*args: Any, **kwargs: Any) -> dict:
+        finalise_calls.append(kwargs)
+        return {"role": "assistant", "content": "", "tool_calls": []}
+
+    def _react_with_tool_then_empty(*args: Any, **kwargs: Any) -> dict:
+        # Make turn 1 emit a tool_call so the loop progresses; later
+        # turns emit empty content so the loop sets narrative=""
+        # and the finalise pass triggers. We just always return empty
+        # tool_calls to keep this simple — the loop exits on turn 1
+        # with empty narrative, the finalise pass fires, then the
+        # retry fires.
+        return {"role": "assistant", "content": "", "tool_calls": []}
+
+    # Sentinel for "this run actually flipped the inner-retry tripwire"
+    # — the helper writes it on the function attribute.
+    if hasattr(fr._react_loop, "_last_inner_retry"):
+        fr._react_loop._last_inner_retry = False
+
+    narrative, _tool_log, n_turns, _tc, force_fin, err, _msgs = fr._react_loop(
+        messages=[{"role": "user", "content": "start"}],
+        chat_with_tools_fn=_react_with_tool_then_empty,
+        finalise_chat_fn=_empty_finalise,
+        model="MiniMax-M2.7",
+        provider="minimax",
+        temperature=0.0,
+        max_turns=2,
+        deadline=__import__("time").perf_counter() + 30.0,
+        trace_id="test_d5_hotfix",
+        caller="test_d5_hotfix",
+    )
+    # Finalise pass + 1 inner retry → exactly 2 finalise_chat_fn calls
+    assert len(finalise_calls) == 2, (
+        f"Expected 1 finalise + 1 inner retry; got {len(finalise_calls)} "
+        f"finalise_chat_fn calls. Hotfix not wired."
+    )
+    assert err == "empty_narrative_after_finalise"
+    assert narrative == ""
+    assert force_fin is True
+    # Tripwire attribute set by the hotfix logic
+    assert getattr(fr._react_loop, "_last_inner_retry", False) is True
+
+
+# ---------------------------------------------------------------------------
 # 8. Mode B does NOT count grammar-dropped claims toward quality
 # ---------------------------------------------------------------------------
 
