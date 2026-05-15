@@ -1,0 +1,33 @@
+{
+  "n_compounds": 110,
+  "n_pairs": 158,
+  "by_source_pair": {
+    "chebi__hmdb": {
+      "n_pairs": 109,
+      "raw_block14_match_pct": 96.3302752293578,
+      "raw_full_match_pct": 69.72477064220183,
+      "reconciled_block14_match_pct": 96.3302752293578,
+      "reconciled_full_match_pct": 95.41284403669725
+    },
+    "chebi__lipidmaps": {
+      "n_pairs": 24,
+      "raw_block14_match_pct": 95.83333333333334,
+      "raw_full_match_pct": 50.0,
+      "reconciled_block14_match_pct": 95.83333333333334,
+      "reconciled_full_match_pct": 91.66666666666666
+    },
+    "hmdb__lipidmaps": {
+      "n_pairs": 25,
+      "raw_block14_match_pct": 100.0,
+      "raw_full_match_pct": 88.0,
+      "reconciled_block14_match_pct": 100.0,
+      "reconciled_full_match_pct": 100.0
+    }
+  },
+  "aggregate": {
+    "raw_block14_match_pct": 96.83544303797468,
+    "raw_full_match_pct": 69.62025316455697,
+    "reconciled_block14_match_pct": 96.83544303797468,
+    "reconciled_full_match_pct": 95.56962025316456
+  }
+}
