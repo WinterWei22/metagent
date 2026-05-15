@@ -356,6 +356,73 @@ def test_validate_drops_non_dict_input() -> None:
 
 
 # ---------------------------------------------------------------------------
+# B1 D2 hotfix (Anomaly #2): context-aware skip for tool-roundtrip regex
+# ---------------------------------------------------------------------------
+
+
+def test_validate_kegg_reaction_id_grounded_in_enzyme_field_passes() -> None:
+    """``metabolite_pathway_link`` with the same R-id in both
+    ``claim_text`` and ``enzyme_or_reaction`` is the intended shape; it
+    must NOT trip BANNED_TOOL_ROUNDTRIP_PATTERNS r'\\bR\\d{5}\\b'."""
+    r = validate({
+        "grammar": "metabolite_pathway_link",
+        "claim_text": "Dehydroepiandrosterone participates in steroid hormone biosynthesis via R00521",
+        "subject": "Dehydroepiandrosterone",
+        "pathway_name": "Steroid hormone biosynthesis",
+        "enzyme_or_reaction": "R00521",
+    })
+    assert r.is_valid, (
+        f"R-id grounded in enzyme_or_reaction must pass; got "
+        f"drop_reason={r.drop_reason!r}"
+    )
+
+
+def test_validate_kegg_reaction_id_NOT_grounded_still_drops() -> None:
+    """If the R-id appears in claim_text but the enzyme field names
+    something else (or is absent), the original BANNED_TOOL_ROUNDTRIP
+    behaviour must still fire."""
+    r = validate({
+        "grammar": "metabolite_pathway_link",
+        "claim_text": "Cysteine has KEGG reaction R00521",
+        "subject": "Cysteine",
+        "pathway_name": "Cysteine metabolism",
+        "enzyme_or_reaction": "cystathionine beta-synthase",
+    })
+    assert not r.is_valid
+    assert "tool-roundtrip" in (r.drop_reason or "")
+
+
+def test_validate_map_id_grounded_in_pathway_name_passes() -> None:
+    """KEGG ``mapNNNNN`` IDs appearing in both ``claim_text`` and
+    ``pathway_name`` (as part of the human-readable name) must pass —
+    this is the canonical Sub-6 narrative shape."""
+    r = validate({
+        "grammar": "pathway_membership",
+        "claim_text": "Galactose is a member of map00052",
+        "subject": "Galactose",
+        "pathway_name": "Galactose metabolism (map00052)",
+    })
+    assert r.is_valid, (
+        f"map-id grounded in pathway_name must pass; got "
+        f"drop_reason={r.drop_reason!r}"
+    )
+
+
+def test_validate_molecular_formula_NOT_grounded_drops() -> None:
+    """Hill-notation formula ``C5H11NO2S`` does not belong in any
+    grammar v2 structured field — appearance in claim_text is a
+    classic tool-roundtrip and must still be banned."""
+    r = validate({
+        "grammar": "pathway_membership",
+        "claim_text": "L-Methionine has molecular formula C5H11NO2S",
+        "subject": "L-Methionine",
+        "pathway_name": "Cysteine and methionine metabolism",
+    })
+    assert not r.is_valid
+    assert "tool-roundtrip" in (r.drop_reason or "")
+
+
+# ---------------------------------------------------------------------------
 # Regression: D0 issue #1 — drives / driving must NOT be banned
 # ---------------------------------------------------------------------------
 

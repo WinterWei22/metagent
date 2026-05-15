@@ -394,11 +394,79 @@ def _find_banned_substring(text: str) -> tuple[str, str] | None:
     return None
 
 
-def _find_banned_regex(text: str) -> str | None:
-    """Return the first BANNED_TOOL_ROUNDTRIP_PATTERNS regex that matches
-    ``text`` (case-sensitive — KEGG IDs are literal), or ``None``."""
+_GROUNDABLE_STR_FIELDS: tuple[str, ...] = (
+    "subject", "pathway_name", "term_id", "term_name", "enzyme_or_reaction",
+)
+_GROUNDABLE_LIST_FIELDS: tuple[str, ...] = (
+    "metabolite_set", "signal_compound_ids",
+)
+
+
+def _is_token_grounded_in_structured_fields(
+    token: str, claim_obj: dict,
+) -> bool:
+    """True iff ``token`` appears verbatim in any structured grammar
+    field of the same claim.
+
+    Phase B1 D2 hotfix (Anomaly #2): a banned tool-roundtrip regex hit
+    inside ``claim_text`` is a legitimate citation if the same string
+    is also being declared as ``enzyme_or_reaction`` (R-id),
+    ``term_id`` (map ID, WP ID, SMP ID), ``pathway_name`` (KEGG hsa ID
+    bracketed in the human-readable name), or as an element of
+    ``metabolite_set`` / ``signal_compound_ids`` (KEGG compound IDs in
+    the input set).
+
+    Substring match is intentional: claims often write
+    ``"map00052"`` in claim_text and ``"Galactose metabolism (map00052)"``
+    in pathway_name. Reverse grounding (token contains a structured
+    field) is NOT honoured — a structured field cannot legitimise a
+    longer ID token in claim_text.
+
+    NOT applied to BANNED_HEDGES / DIRECTIONAL / ABSTRACT / META —
+    those are phrasing / concept bans that grounding does not
+    legitimise (e.g. ``"upstream"`` showing up in a pathway_name does
+    not make the directional language acceptable).
+    """
+    if not isinstance(claim_obj, dict):
+        return False
+    for k in _GROUNDABLE_STR_FIELDS:
+        v = claim_obj.get(k)
+        if isinstance(v, str) and token in v:
+            return True
+    for k in _GROUNDABLE_LIST_FIELDS:
+        items = claim_obj.get(k) or []
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if isinstance(item, str) and token in item:
+                return True
+    return False
+
+
+def _find_banned_regex(text: str, claim_obj: dict | None = None) -> str | None:
+    """Return the first BANNED_TOOL_ROUNDTRIP_PATTERNS regex that
+    triggers an actionable ban for ``text``, or ``None``.
+
+    Phase B1 D2 hotfix: when ``claim_obj`` is supplied, a regex hit is
+    suppressed if the matched token literally appears in any
+    structured grammar field on the same claim
+    (see :func:`_is_token_grounded_in_structured_fields`). The check is
+    iterative — a single regex may produce multiple hits, only one of
+    which needs to be ungrounded for the ban to fire.
+    """
     for pattern in BANNED_TOOL_ROUNDTRIP_PATTERNS:
-        if re.search(pattern, text):
+        if claim_obj is None:
+            if re.search(pattern, text):
+                return pattern
+            continue
+        # Iterate matches; ban only if at least one match is NOT grounded.
+        ungrounded_hit = False
+        for m in re.finditer(pattern, text):
+            token = m.group(0)
+            if not _is_token_grounded_in_structured_fields(token, claim_obj):
+                ungrounded_hit = True
+                break
+        if ungrounded_hit:
             return pattern
     return None
 
@@ -493,7 +561,11 @@ def validate(claim_obj: dict) -> ValidationResult:
             drop_reason=f"banned {cat} phrase: {term!r}",
         )
 
-    regex_hit = _find_banned_regex(text)
+    # The regex check is context-aware: a tool-roundtrip token that
+    # literally appears in a structured field (enzyme_or_reaction,
+    # term_id, pathway_name, etc.) is a legitimate citation, not a
+    # roundtrip. See :func:`_find_banned_regex` for the full rule.
+    regex_hit = _find_banned_regex(text, claim_obj=claim_obj)
     if regex_hit is not None:
         return ValidationResult(
             is_valid=False,
