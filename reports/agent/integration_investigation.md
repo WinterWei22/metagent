@@ -261,7 +261,35 @@ R: /home/weiwentao/miniconda3/bin/R
   - **任何 R-based 工具集成在本机当前状态都无法 hands-on**
   - 已登记 Q-03,提交用户决定:修 R / 切别的服务器 / 直接放弃 R 端工具
 
-### 2.1 py-sspa — Pending (hands-on §2 session)
+### 2.1 py-sspa — ✅ Import + load_example_data + process_reactome 通
+
+**Env**: `conda env mummichog_py310`(同 Q-02 env,Py 3.10.18)
+**Install**: `pip install sspa` → **sspa 1.0.4**(deps: gseapy 1.2.1, pandas 2.3.3, scikit-learn 1.7.2, statsmodels 0.14.6, scipy 1.15.3, requests, tqdm)
+
+**安装 caveat**(已解决):
+1. **`pkg_resources` 缺失**(setuptools ≥ 81 不再 bundle)→ 降到 `setuptools<80`(79.0.1 通)
+2. **`tqdm` 缺失**(sspa `download_pathways` 隐式依赖,未在 setup.py 声明)→ `pip install tqdm`
+**这两条进 §6 R-NEW-11**(sspa upstream packaging gap)。
+
+**API 暴露(24 个 attr)**:
+- 方法:`sspa_ora`(hypergeometric ORA)、`sspa_gsea`(preranked GSEA)、`sspa_ssGSEA`、`sspa_KPCA` / `sspa_kpca`(kernel PCA)、`sspa_SVD`、`sspa_ssClustPA`、`sspa_zscore`、`sspa_cluster`、`t_tests`
+- 数据:`load_example_data`、`download_KEGG`、`download_reactome`、`process_reactome`、`process_kegg`、`process_pathbank`、`process_gmt`
+- 工具:`identifier_conversion`、`map_identifiers`、`utils`
+
+**Toy 验证**:
+```python
+df = sspa.load_example_data(omicstype='metabolomics', processed=True)
+# shape: (263, 335) — 263 sample × 335 metabolite ChEBI IDs
+rh = sspa.process_reactome(organism='Homo sapiens')
+# shape: (2243, 1479) — 2243 Reactome pathways × 1479 metabolites
+```
+
+**ConcordMet schema 影响 / 实证更新 §3**:
+1. **sspa metabolite ID 用 ChEBI**(列名是 ChEBI 数字 ID),与 mummichog 用 KEGG cpd 不同。**`normalize_sspa_output()` 需要 ChEBI → InChIKey 反查**(可走 §2.5 MetaNetX chem_xref 表)。
+2. **sspa 自带 download_reactome / process_reactome**,不需要我们手写 Reactome ETL。但 release 是 sspa 内部 hardcode 的,需要查 sspa source(W3 D1 任务)以确认 Reactome release 与我们 §4 锁定的版本一致。如果不一致需要支持 sspa 接受 custom GMT。
+3. **sspa.process_reactome 返回 pathway × metabolite 矩阵**(boolean / score),不是 list-of-PathwayHit。`normalize_sspa_output()` 需要先跑 sspa 的 enrichment 方法(`sspa_ora` / `sspa_ssGSEA`),拿 output dataframe(每行=pathway,每列=score),再 normalize。
+
+**§2.1 状态**: **Import + toy DONE**(完整 ORA 端到端 W3 D1 跑)。可 ConcordMet 主路径用。
 ### 2.2 mummichog — ✅ TOY PASS(注意:**v3 不存在,PyPI 装 v2.7.0**)
 
 **重要更正**:用户原计划写 "mummichog v3" 但 **PyPI 上 latest 是 mummichog 2.7.0**(Shuzhao Li 经典实现)。v3 可能指会议 talk / GitHub-only fork,不是 PyPI 包。**Investigation 用 v2.7.0**。
@@ -482,16 +510,52 @@ probe 输出 3 张表:
 
 ## §6 — Risk Register
 
-_整合 R1-R10 + 评审 R8/R9/R10 + Investigation 新发现。_
+_整合 R1-R10(用户原文档)+ 评审 + Investigation 新发现 R-NEW-X。_
 
-| Risk | 概率 | Impact | 缓解 | Verification |
-|---|---|---|---|---|
-| R1: 同方向被抢先 | 高 | 高 | 早 preprint | (无法 verify) |
-| R2: LLM 幻觉超出 verifier 兜底 | 中 | 中 | LLM 只协调,工具确定性 | B1 D5 部分缓解 |
-| R8: Motivation 不成立 | 中 | 高 | W1 Gate 1 | §8 toy data 验证 |
-| R9: Reconciliation 没用 | 中 | 高 | W6 Gate 2 + pivot | W6 才能 verify |
-| R10: 竞品无 code | 高 | 中 | 引用 + cannot-reproduce 声明 | §0 验证 |
-| TBD R3-R7 + R-NEW-X | | | | |
+### 6.1 原 R1-R10(从用户战略 doc + 评审材料)
+
+| ID | Risk | 概率 | Impact | 缓解 | Verification 状态 |
+|---|---|---|---|---|---|
+| R1 | 同方向被抢先 | 高 | 高 | 早 preprint | 不可 verify(外部) |
+| R2 | LLM 幻觉超出 verifier 兜底 | 中 | 中 | LLM 只协调,工具确定性 | B1 D5 部分缓解(主 repo) |
+| R3 | 工具集成 schema 不一致 | 中 | 高 | §3 统一 EnrichmentResult schema | **§3 已草案 ✅** |
+| R4 | 跨库 ID reconciliation 漏 | 中 | 中 | RDKit InChIKey + MetaNetX | **§2.5 / §2.6 部分验证 ✅** |
+| R5 | KEGG academic API rate-limit | 中 | 中 | 本地 sqlite cache | KEGG REST 未实测,W3 D1 测 |
+| R6 | Reactome 缺失 pathway → KEGG fallback | 中 | 低 | §5 crosswalk fallback | Pending §5 |
+| R7 | Sprint 时间表 overrun | 高 | 中 | Time-box + escalation | Investigation 已用 Q-02/03 演练 ✅ |
+| R8 | Motivation 不成立(reconciliation 无价值) | 中 | 高 | W1 Gate 1 toy 数据 | **Pending §8(下次 session)** |
+| R9 | Reconciliation 没用 | 中 | 高 | W6 Gate 2 + W6 pivot | W6 才能 verify |
+| R10 | 竞品无 code → 无法 head-to-head | 高 | 中 | 引用 + cannot-reproduce 声明;不 fork | **§0 已验证:** MetaboT/GeneAgent public(可 head-to-head),MS4MS/MSAgent paper-only(声明 cannot-reproduce) |
+
+### 6.2 Investigation 期间新发现 R-NEW-X
+
+| ID | Risk | 概率 | Impact | 缓解 | 触发 |
+|---|---|---|---|---|---|
+| R-NEW-01 | `test_library_search` GNPS env 测试失败 | 已发生 | 低 | GNPS 不在 ConcordMet 主线工具集,不阻塞 | §1.1 pytest 实测 |
+| R-NEW-02 | Pytest mark 未注册(`integration` / `requires_minimax_key` / `requires_sirius`) | 已发生 | 极低 | 装饰性 warning,无功能影响;Sprint W3 顺手注册 | §1.1 pytest 实测 |
+| R-NEW-03 | **R env broken (GLIBCXX_3.4.30)** | 已发生 | 高 | conda r-base=4.4 隔离 env(`concord_r`)已 verify | §2.0 实测 → 已修复 |
+| R-NEW-04 | **mummichog v3 不存在,只有 v2.7.0** | 已发生 | 中 | 接受 v2.7.0(经典实现);若 paper 想引 v3 需找 Shuzhao Li GitHub-only fork | §2.2 实测 |
+| R-NEW-05 | **Python 3.13 + Bioconductor wheel 不齐** | 已确认 | 中 | mummichog 隔离到 Py3.10;主 repo 不动 | §2.0 实测 |
+| R-NEW-06 | **MetaNetX REST API 500 Internal Server Error** | 已确认 | 中 | 改 flat-file 路径(chem_xref.tsv 等)+ 本地 sqlite ETL | §2.5 实测 |
+| R-NEW-07 | **InChIKey block14 无法 reconcile 开链↔环状糖类** | 已确认 | 中 | §3 schema 留 `tautomer_canonicalized` 字段;W3 加 ring-chain canonicalizer | §2.6 实测 → Q-04 |
+| R-NEW-08 | **mummichog pathway_name 不是 KEGG mapID**(human_mfn 内部命名)| 已确认 | 中 | W3 实现 `normalize_mummichog_output()` 时加 name → mapID 映射表(查 mummichog/JSON_metabolicModels.py)或 fuzzy-match | §2.2 实测 |
+| R-NEW-09 | **Q-03 BiocManager install wall time 不确定**(可能 30-60 min)| 已发生 | 低 | Time-box 4h 内必收;超期 escalate(见 Q-03 三选项) | §2.3/§2.4 setup |
+| R-NEW-10 | **Bioconductor 3.20 与 R 4.4.3 兼容性未验证**(理论上 Bioc 3.20 对应 R 4.4) | 中 | 中 | Q-03 BiocManager install 跑通即 verify;若失败需降到 Bioc 3.19 | Pending Q-03 |
+| R-NEW-11 | **sspa 1.0.4 upstream packaging gap**(`pkg_resources` 依赖未声明 + tqdm 隐式依赖)| 已发生 | 低 | conda env 内 pin `setuptools<80` + `tqdm` 显式装 | §2.1 实测 → workaround verified |
+| R-NEW-12 | **sspa metabolite ID 用 ChEBI,与 mummichog KEGG cpd 不同** | 已发生 | 中 | `normalize_sspa_output()` 加 ChEBI→InChIKey 反查(走 §2.5 MetaNetX chem_xref) | §2.1 实测;W3 落地 |
+| R-NEW-13 | **sspa 内部 Reactome release 与 §4 锁定版本可能不一致** | 中 | 低 | W3 D1 查 sspa source 确认;不一致则用 custom GMT 走 `sspa.process_gmt` | §2.1 提出 |
+
+### 6.3 风险总览
+
+- **R3 / R4 (集成层 risk)**: **已通过 §3 + §2.5 + §2.6 缓解** ✅
+- **R5 / R6 (KEGG / Reactome)**: 待 W3 D1 实测
+- **R8 (motivation)**: §8 toy 数据是最关键 verification 点 — **W2 review 必须看到 §8 Fig 3 Jaccard 数据**
+- **R10 (竞品)**: §0 ✅
+- **R-NEW-03 / R-NEW-04 / R-NEW-05 / R-NEW-06**: 都已通过 Investigation 找到 workaround,不阻塞 Sprint 1 启动
+- **R-NEW-07 / R-NEW-08**: schema-level workaround 在 §3 / §4 已 documented,W3 实施期落地
+- **R-NEW-09 / R-NEW-10**: 取决于本 session Q-03 BiocManager install 结果
+
+**没有 risk 升级为 stop-Sprint 级别**,假设 Q-03 BiocManager 4h 内通。若 fail → R-NEW-11(待登记)+ §4 pivot 路径已写明。
 
 ---
 
