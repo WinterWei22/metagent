@@ -1087,6 +1087,34 @@ W3 D0 (拍板) ──┬─→ W3 D1-D3 ChEBI ETL ──┬─→ W3 D4 sspa wra
 
 **Commits:** `7786512` → `1670c4b` → `4495352`
 
+### Session 3 — 2026-05-15(§8 Gate 1 GREEN + Dockerfile starter)
+**Owner:** Claude (Opus 4.7)
+**Time:** ~2 hours wall
+**Done:**
+- ✅ **§8 Gate 1 toy pipeline 完整跑通**(`data/investigation/scripts/gate1_toy.py` 340 LOC)
+  - 10 task,3 PA(RaMP / sspa / mummichog),2 ID(HMDB-direct / RDKit)
+  - **mean off-diagonal Jaccard = 0.049 → GATE 1 GREEN**
+  - Wall 89.2 sec(用户预算 6h,实际 < 1.5 min)
+- ✅ Bug fix:sspa pathway_df 单元格 int 类型 → R-NEW-15(15 min 诊断 + 1-line 修复)
+- ✅ §6 risk register +2 R-NEW(R-NEW-15 sspa int,R-NEW-16 ID disagreement = 0 是 benchmark artifact)
+- ✅ **Q-03 (A) Docker 工程化提前完成**(W4 background 任务提前):
+  - `data/investigation/docker_r/Dockerfile`(FROM `bioconductor/bioconductor_docker:RELEASE_3_19` + MetaboAnalystR + FELLA)
+  - `data/investigation/docker_r/entrypoint.R`(stdin JSON → method dispatch → stdout JSON;含 `--self-test` flag + 4 method stub:fella_rwr / fella_diffusion / metaboanalystr_psea / metaboanalystr_msea)
+  - `data/investigation/docker_r/docker_r_wrapper.py`(Python subprocess API,`call_r()` / `self_test()` / `check_image_built()`;W5 D3 可扩展 K=10 ThreadPoolExecutor 并发 spike)
+  - Wrapper smoke-test 通(image 未 build,正确报告 build 指令)
+
+**No stop conditions 触发**;Session 3 出口完成。
+
+**Commits 本 session**:`1e2923a`(§8 GREEN)→ 后续(Dockerfile + wrapper)
+
+**Sprint W2 review 入口**:
+- ✅ docs/integration_investigation.md §8 完整
+- ✅ Fig 3 雏形(jaccard_matrix.png + 2 CSV)
+- ✅ Gate 1 颜色 = **GREEN**
+- → 用户做 W2 review → 决定 **Sprint W3 launch**(默认推荐 GREEN 触发)
+
+---
+
 ### Session 2 — 2026-05-15(Q-resolve sprint + Q-05/Q-03/Q05-NEW-4/Q05-NEW-5 全部 RESOLVED)
 **Owner:** Claude (Opus 4.7)
 **Time:** ~40 min wall(并行 conda install + curl + report writing)
