@@ -1,0 +1,102 @@
+{
+  "n_tasks_unique": 22,
+  "n_tasks_target": 30,
+  "seeds": [
+    42,
+    41,
+    40
+  ],
+  "task_ids": [
+    "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+    "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+    "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+    "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed1"
+  ],
+  "batch_membership": {
+    "42": [
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed6"
+    ],
+    "41": [
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed3"
+    ],
+    "40": [
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+      "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed1",
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed3"
+    ]
+  },
+  "methods": [
+    "ramp",
+    "sspa",
+    "mummichog"
+  ],
+  "aggregate_jaccard": {
+    "ramp__ramp": 1.0,
+    "ramp__sspa": 0.09998670919723551,
+    "ramp__mummichog": 0.02485380116959064,
+    "sspa__ramp": 0.09998670919723551,
+    "sspa__sspa": 1.0,
+    "sspa__mummichog": 0.011961722488038277,
+    "mummichog__ramp": 0.02485380116959064,
+    "mummichog__sspa": 0.011961722488038277,
+    "mummichog__mummichog": 1.0
+  },
+  "mean_off_diagonal_jaccard": 0.04560074428495481,
+  "n_failures_per_method": {
+    "ramp": 0,
+    "sspa": 0,
+    "mummichog": 0
+  },
+  "id_disagreement_real": {
+    "n_metabolites_total": 198,
+    "n_hmdb_lookup_found": 198,
+    "n_hmdb_lookup_miss": 0,
+    "n_disagree_block14_hmdb_real_vs_rdkit_bench": 0,
+    "n_disagree_block14_hmdb_real_vs_benchmark_field": 0
+  },
+  "gate1_verdict": "STRONG GREEN",
+  "wall_time_sec": 197.95975065231323
+}

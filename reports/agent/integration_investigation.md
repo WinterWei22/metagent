@@ -21,7 +21,7 @@
 | §5 | Pathway ID Crosswalk 策略 | 0.5d | **Done(3 路 crosswalk + 4 表 namespaced schema)** |
 | §6 | Risk Register | 0.5d | **Done(10 原 R + 14 R-NEW)** |
 | §7 | Open Questions | 0.5d (rolling) | **Rolling(Q-01 ✅ / Q-02 ✅ / Q-03 ✅ (A) Docker / Q-04 ✅ via ChEBI is_a / Q-05 ✅ / Q05-NEW-4 ✅ / Q05-NEW-5 ✅)** |
-| §8 | W1 Gate 1 Toy 数据 (Fig 3 雏形) | 1d | **✅ GREEN(mean Jaccard 0.049,wall 89s)** |
+| §8 | W1 Gate 1 Toy 数据 (Fig 3 雏形) | 1d | **✅ STRONG GREEN(N=30,mean Jaccard 0.0456,batch σ < 0.005)** |
 | §9 | W3-W4-W5 Sprint Daily Plan | 0.5d | **Done(W3 5 days + W4 5 days w/ Docker hedge + W5 5 days)** |
 
 **Total budget:** 7 working days wall-time. Each section gates the next where dependencies exist (e.g. §3 depends on §2 hands-on data).
@@ -799,7 +799,7 @@ _整合 R1-R10(用户原文档)+ 评审 + Investigation 新发现 R-NEW-X。_
 | R-NEW-13 | **sspa 内部 Reactome release 与 §4 锁定版本可能不一致** | 中 | 低 | W3 D1 查 sspa source 确认;不一致则用 custom GMT 走 `sspa.process_gmt` | §2.1 提出 |
 | **R-NEW-14** | **本机 conda base env 污染 R native-source 编译路径** | 已发生 | 高 | base `/home/weiwentao/miniconda3/include/bfd.h` 优先于 concord_r env headers → igraph/glpk 编译失败。3 retry 模式各异均 timeout。Q-03 escalate 触发 | §2.4 实测 / Q-03 root cause |
 | **R-NEW-15** | **sspa pathway_df 单元格是 int 而非 str(ChEBI numeric)** | 已发生 | 低 | gate1_toy.py 第一版 `isinstance(v, str)` 过滤错过所有 compound → sspa 10/10 task 返回空。修后 `str(int(v))` 一致化 OK。**Sprint W3 D4 normalize_sspa_output() 实现需注意 dtype 一致性** | §8.2 实测 |
-| **R-NEW-16** | **Benchmark v3 inchikey 是从 smiles 用 RDKit 预算的,不是真 HMDB sqlite query** | 已发生 | 中 | §8 ID disagreement = 0.0% 是 benchmark artifact,不能 generalize 到 production 跨库一致性。**Sprint W3 D5 需 wire 真 HMDB sqlite InChIKey** 才能给可信数据;不阻塞 Gate 1 判定(Gate 1 看 PA Jaccard) | §8.5 实测 |
+| **R-NEW-16** | ~~Benchmark v3 inchikey 是从 smiles 用 RDKit 预算的~~ → **重 frame 2026-05-15**:benchmark.inchikey 实际是 HMDB sqlite 官方 InChIKey copy(Session 4 实测);跨源真 disagreement 在 charge/stereo 层(block14 跨源 5.5% disagree;full InChIKey 跨源 59% disagree) | 已重 frame | 中 | **W3 RDKit MolStandardize.charge.Uncharger 处理 charge-state mismatch**;**W3 D5 加 ChEBI structures.tsv + KEGG REST cross-source InChIKey 完整测试**;block14 reconciliation 主路径 robust | §8.9 实测 |
 
 ### 6.3 风险总览
 
@@ -928,7 +928,29 @@ vendor/cigraph/vendor/glpk/api/prob.h:103:7: error: unknown type name 'BFD'
 
 ---
 
-## §8 — W1 Gate 1 Toy 数据 (Fig 3 雏形) — ✅ **GATE 1 GREEN**
+## §8 — W1 Gate 1 Toy 数据 (Fig 3 雏形) — ✅ **GATE 1 STRONG GREEN(N=30)**
+
+**Session 4 update(2026-05-15)**:N=30 扩展跑通,**verdict 升级到 STRONG GREEN**(mean Jaccard 0.0456,batch variance σ < 0.005)。R-NEW-16 partial fix 跑了 real HMDB sqlite + RaMP chem_props 跨源数据,有**真正的跨源 disagreement 信号**(charge/stereo layer)。详见 §8.9 / §8.10。
+
+### 8.0 N=30 verdict 升级(Session 4)
+
+| Metric | N=10 (Session 3) | **N=30 / unique=22 (Session 4)** | Δ |
+|---|---|---|---|
+| mean off-diagonal Jaccard | 0.049 | **0.0456** | -0.003(stable)|
+| ramp × sspa | 0.121 | 0.100 | -0.021 |
+| ramp × mummichog | 0.022 | 0.025 | +0.003 |
+| sspa × mummichog | 0.005 | 0.012 | +0.007 |
+| Wall time | 89.2s | 198.0s | 2.2× |
+| Verdict | GREEN | **STRONG GREEN** | ↑ tier |
+
+**Per-batch stability**(σ 极小,sample-size 足够):
+- seed=42: 0.0493
+- seed=41: 0.0461
+- seed=40: 0.0403
+
+**Tasks unique** = 22(target 30,3 batches × 10 - 8 overlap;buckets 重复抽样导致)。Sprint 1 启动 motivation 进一步 confirmed。
+
+---
 
 **Run @ 2026-05-15 18:57 UTC+8,wall 89.2 sec(预算 6h)**
 **Output**: `data/investigation/fig3_toy/{jaccard_matrix.png, jaccard_data.csv, id_disagreement.csv, summary.json}`
@@ -1005,13 +1027,74 @@ RED       :  J > 0.6
 
 **Reconciliation motivation 成立**:3 个 PA 方法在 top-10 pathway 列表上几乎不重叠(off-diagonal 0.005-0.121),证明跨方法 disagreement 是 metabolomics enrichment 的真实问题。**继续 ConcordMet 主线 → W2 review 进 Sprint W3**。
 
+### 8.9 R-NEW-16 partial fix — Real HMDB sqlite + RaMP cross-source
+
+**Session 4 跑了 3 个互补的 ID disagreement test**(`data/investigation/scripts/gate1_toy_n30.py` + 后续 RaMP chem_props 查询):
+
+**Test A — Real HMDB sqlite vs benchmark.inchikey field(198 metabolite)**:
+- HMDB sqlite lookup hit rate:**198/198 = 100%**
+- Full 27-char InChIKey 一致率:**198/198 = 100%**
+- Block 2 (stereo layer) 一致率:**100%**
+- → benchmark v3 的 `inchikey` field **不是 RDKit 算的(我 Session 3 误判),而是直接 copy 自 HMDB sqlite 的官方 InChIKey**。
+
+**Test B — Real HMDB sqlite vs RDKit-from-bench-SMILES**:
+- Block14 一致率:**198/198 = 100%**
+- → benchmark 的 `smiles` 是 HMDB-canonical SMILES,RDKit 重新算 InChIKey 与 HMDB-stored 100% 一致(因为 InChI 算法标准化,同 connectivity 产同 hash)
+
+**Test C — 真正的跨源 disagreement(RaMP chem_props,3 source: hmdb + chebi + lipidmaps)**:
+
+| Metric | Result |
+|---|---|
+| N unique HMDB IDs with cross-source data | 109 / 198(55%)|
+| **Block14 (connectivity)** 跨源 disagree | **6 / 110 = 5.5%** |
+| **Full InChIKey (含 charge + stereo)** 跨源 disagree | **65 / 110 = 59.1%** |
+
+**Pairwise cross-source disagreement(full InChIKey)**:
+| Source pair | Disagree |
+|---|---|
+| chebi vs hmdb | 2 / 109 = 1.8% |
+| chebi vs lipidmaps | 1 / 24 = 4.2% |
+| hmdb vs lipidmaps | 2 / 25 = 8.0% |
+
+**Disagreement 模式分析**(看 examples):
+- **大头是 charge state**:`...UHFFFAOYSA-N`(neutral)vs `...UHFFFAOYSA-M`(charged anion)。同一分子的不同 protonation state。block14 一致。
+- **少数是 stereo layer**:`FEMXZDUTFRTWPE-DZSWIPIPSA-N`(full stereo)vs `FEMXZDUTFRTWPE-UHFFFAOYSA-N`(stereo 缺失)。block14 一致。
+- **极少数是 connectivity 不同**(block14 differ):6/110,可能是 salt form 包含 vs 不含 counter-ion,或者 polymorphic 注册。
+
+**R-NEW-16 重新 frame**:
+- Block14(connectivity hash)跨源是 stable 的 — **ConcordMet compound 层 reconciliation 用 block14 是 robust 的**(5.5% 长尾边缘 case 需 W3 处理)
+- Full InChIKey 跨源 59% disagree — **ConcordMet 若要保 stereo+charge 精度,需 full InChIKey + 额外 charge normalization**(用 RDKit `MolStandardize.charge.Uncharger`)
+- **R-NEW-16 不再是 "0% disagreement is artifact" 顾虑**(原 frame 是错的):block14 跨源真的极一致,这是 InChI 算法设计意图
+
+**W3 D5 完整 fix 范围**(Session 4 不做):
+- 加 ChEBI rel251 structures.tsv InChIKey 进入比较
+- 加 KEGG REST `kegg get cpd:Cxxxxx mol`(慢,academic rate-limit)的 RDKit-derived InChIKey
+- 比较"文献 reported InChIKey"(从 paper supplementary tables 抓)— 这是 W3 D5 真正最难的部分,涉及解析 PDFs/spreadsheets
+- 测 charge/stereo normalization 策略对 ConcordMet 4-axis aggregation 的影响
+
+**Output 文件**:
+- `data/investigation/fig3_toy/id_disagreement_real.csv`(198 行,Test A+B 数据 + augmented block2/full agreement columns)
+- `data/investigation/fig3_toy/id_disagreement_cross_source.csv`(371 行,Test C 数据)
+
+### 8.10 N=30 产物清单(Session 4 commit)
+
+```
+data/investigation/scripts/gate1_toy_n30.py          (N=30 扩展 pipeline)
+data/investigation/fig3_toy/
+  ├── jaccard_matrix_n30.png        (gitignored)
+  ├── jaccard_data_n30.csv          (198 rows, per-task × method-pair)
+  ├── id_disagreement_real.csv      (198 rows, real HMDB-published vs RDKit)
+  ├── id_disagreement_cross_source.csv (371 rows, hmdb/chebi/lipidmaps RaMP chem_props)
+  └── summary_n30.json
+```
+
 ### 8.8 Caveats(W2 review 需注意)
 
 1. **Pathway name 匹配算法**:lowercase + 移除停用词 + sort token + 完全匹配。这是较"严格"的匹配,会低估真实 Jaccard。若用更宽松匹配(token Jaccard > 0.6 视为同 pathway),数字会上升。**但即使宽松匹配,off-diagonal 也很难超过 0.4 阈值**(因为不同 DB 命名风格差异大,例 RaMP 用 "Phase II - Conjugation of compounds" vs Reactome 简洁 "Phase II Conjugation")。
 2. **mummichog 的输入是合成 m/z + p-val**(255 features:10 diff M+H + 250 random background)。这与典型 LC-MS 真实数据规模不同,真实数据 1000-10000 features 时 mummichog 的 stat 可能有差异。但对 Gate 1 question(方法不一致是否成立)结果稳健。
 3. **sspa 的 ORA 走 synthetic 2-class 5+5 sample matrix**(case rows 给 differential metabolite 高表达,ctrl 全均匀)。这是 sspa 的设计用法(它本来就是 sample-based 工具),不算 hacky。Sprint W3 实施 normalizer 时仍这么做。
-4. **ID disagreement = 0% 是 benchmark 构造的 artifact**(见 §8.5 caveat),W3 D5 需要 wire 真 HMDB sqlite InChIKey 才能给可信 cross-source 数据。这不影响 Gate 1 判定(Gate 1 看跨方法 Jaccard,不看 ID 一致性)。
-5. **10 task 是小样本**。如果 W2 review 想要更高 confidence,可扩 N=30 ~ 60 task(全 benchmark 跑完只需 ~5 min wall;用户 spec 5-10 task 是默认范围)。
+4. **ID disagreement(R-NEW-16 重 frame)**:Session 4 跑了真 HMDB sqlite + RaMP cross-source,详见 §8.9。Key takeaway:**block14 跨源 5.5% disagree(robust),full InChIKey 跨源 59% disagree(主要是 charge/stereo)**。ConcordMet 用 block14 做 compound reconciliation 是合理的。
+5. ~~**10 task 是小样本**~~ Session 4 已扩到 **N=30 / unique=22**,batch variance σ < 0.005,数字非常稳定。
 
 ---
 
@@ -1086,6 +1169,35 @@ W3 D0 (拍板) ──┬─→ W3 D1-D3 ChEBI ETL ──┬─→ W3 D4 sspa wra
 - ✅ §7 登记 Q-01 / Q-02 / Q-03
 
 **Commits:** `7786512` → `1670c4b` → `4495352`
+
+### Session 4 — 2026-05-15(§8 N=30 STRONG GREEN + R-NEW-16 重 frame)
+**Owner:** Claude (Opus 4.7)
+**Time:** ~25 min wall
+**Done:**
+- ✅ **§8 N=30 扩展跑通**(`data/investigation/scripts/gate1_toy_n30.py`)
+  - 3 batch(seeds 42/41/40),unique=22 tasks(8 重复)
+  - mean off-diagonal Jaccard **0.0456**(N=10 时 0.049)
+  - Per-batch:0.0493 / 0.0461 / 0.0403(σ < 0.005,极稳)
+  - **Verdict 升级 STRONG GREEN**(< 0.2 阈值)
+  - Wall 198s,no stop condition 触发
+- ✅ **R-NEW-16 重 frame**(原 frame 错):
+  - benchmark.inchikey 不是 RDKit 算的,是 HMDB sqlite 官方 InChIKey copy(test A 100% verify)
+  - Block14 跨源 5.5% disagree(InChI 算法设计意图,跨源 robust)
+  - Full InChIKey 跨源 59% disagree — 主要是 charge state / stereo layer(salt-form mismatch)
+  - **ConcordMet compound 层用 block14 是 robust 的**;若要精确 stereo+charge,W3 加 RDKit MolStandardize.charge.Uncharger
+- ✅ **Real HMDB sqlite + RaMP chem_props cross-source query** wired
+- ✅ §8 报告 += 8.0(N=30 升级)+ 8.9(R-NEW-16 partial fix)+ 8.10(N=30 产物清单)
+- ✅ Status Dashboard:§8 → STRONG GREEN
+
+**Commits 本 session**:本 commit(N=30 + cross-source + report)
+
+**Sprint W3 D5 落 W3 完整 fix 范围**(Session 4 不做,见 R-NEW-16 更新):
+- ChEBI structures.tsv InChIKey(85 MB 文件 W3 D3 下载后加入)
+- KEGG REST cpd `MOL` file → RDKit InChIKey
+- "文献 reported InChIKey"(paper supplementary 抓)
+- Charge/stereo normalization 策略选型
+
+---
 
 ### Session 3 — 2026-05-15(§8 Gate 1 GREEN + Dockerfile starter)
 **Owner:** Claude (Opus 4.7)
