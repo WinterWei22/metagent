@@ -1,0 +1,37 @@
+{
+  "n_tasks": 10,
+  "task_ids": [
+    "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+    "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed6"
+  ],
+  "methods": [
+    "ramp",
+    "sspa",
+    "mummichog"
+  ],
+  "aggregate_jaccard": {
+    "ramp__ramp": 1.0,
+    "ramp__sspa": 0.12081699346405231,
+    "ramp__mummichog": 0.021929824561403508,
+    "sspa__ramp": 0.12081699346405231,
+    "sspa__sspa": 1.0,
+    "sspa__mummichog": 0.005263157894736842,
+    "mummichog__ramp": 0.021929824561403508,
+    "mummichog__sspa": 0.005263157894736842,
+    "mummichog__mummichog": 1.0
+  },
+  "mean_off_diagonal_jaccard": 0.04933665864006421,
+  "id_disagreement_rate_block14": 0.0,
+  "n_metabolites_total": 83,
+  "n_metabolites_disagree_block14": 0,
+  "gate1_verdict": "GREEN",
+  "wall_time_sec": 89.24563550949097
+}

@@ -43,3 +43,6 @@ data/investigation/chebi_cache/*.tsv
 data/investigation/chebi_cache/*.tsv.gz
 data/investigation/reactome_cache/*.txt
 data/investigation/reactome_cache/*.txt.gz
+
+# Investigation: Fig 3 toy PNG (regeneratable via gate1_toy.py; CSVs commit OK)
+data/investigation/fig3_toy/*.png

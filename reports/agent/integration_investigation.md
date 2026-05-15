@@ -21,7 +21,7 @@
 | §5 | Pathway ID Crosswalk 策略 | 0.5d | **Done(3 路 crosswalk + 4 表 namespaced schema)** |
 | §6 | Risk Register | 0.5d | **Done(10 原 R + 14 R-NEW)** |
 | §7 | Open Questions | 0.5d (rolling) | **Rolling(Q-01 ✅ / Q-02 ✅ / Q-03 ✅ (A) Docker / Q-04 ✅ via ChEBI is_a / Q-05 ✅ / Q05-NEW-4 ✅ / Q05-NEW-5 ✅)** |
-| §8 | W1 Gate 1 Toy 数据 (Fig 3 雏形) | 1d | Pending(Session 3 最高优先级)|
+| §8 | W1 Gate 1 Toy 数据 (Fig 3 雏形) | 1d | **✅ GREEN(mean Jaccard 0.049,wall 89s)** |
 | §9 | W3-W4-W5 Sprint Daily Plan | 0.5d | **Done(W3 5 days + W4 5 days w/ Docker hedge + W5 5 days)** |
 
 **Total budget:** 7 working days wall-time. Each section gates the next where dependencies exist (e.g. §3 depends on §2 hands-on data).
@@ -798,6 +798,8 @@ _整合 R1-R10(用户原文档)+ 评审 + Investigation 新发现 R-NEW-X。_
 | R-NEW-12 | **sspa metabolite ID 用 ChEBI,与 mummichog KEGG cpd 不同** | 已发生 | 中 | `normalize_sspa_output()` 加 ChEBI→InChIKey 反查(走 §2.5 MetaNetX chem_xref) | §2.1 实测;W3 落地 |
 | R-NEW-13 | **sspa 内部 Reactome release 与 §4 锁定版本可能不一致** | 中 | 低 | W3 D1 查 sspa source 确认;不一致则用 custom GMT 走 `sspa.process_gmt` | §2.1 提出 |
 | **R-NEW-14** | **本机 conda base env 污染 R native-source 编译路径** | 已发生 | 高 | base `/home/weiwentao/miniconda3/include/bfd.h` 优先于 concord_r env headers → igraph/glpk 编译失败。3 retry 模式各异均 timeout。Q-03 escalate 触发 | §2.4 实测 / Q-03 root cause |
+| **R-NEW-15** | **sspa pathway_df 单元格是 int 而非 str(ChEBI numeric)** | 已发生 | 低 | gate1_toy.py 第一版 `isinstance(v, str)` 过滤错过所有 compound → sspa 10/10 task 返回空。修后 `str(int(v))` 一致化 OK。**Sprint W3 D4 normalize_sspa_output() 实现需注意 dtype 一致性** | §8.2 实测 |
+| **R-NEW-16** | **Benchmark v3 inchikey 是从 smiles 用 RDKit 预算的,不是真 HMDB sqlite query** | 已发生 | 中 | §8 ID disagreement = 0.0% 是 benchmark artifact,不能 generalize 到 production 跨库一致性。**Sprint W3 D5 需 wire 真 HMDB sqlite InChIKey** 才能给可信数据;不阻塞 Gate 1 判定(Gate 1 看 PA Jaccard) | §8.5 实测 |
 
 ### 6.3 风险总览
 
@@ -926,22 +928,90 @@ vendor/cigraph/vendor/glpk/api/prob.h:103:7: error: unknown type name 'BFD'
 
 ---
 
-## §8 — W1 Gate 1 Toy 数据 (Fig 3 雏形)
+## §8 — W1 Gate 1 Toy 数据 (Fig 3 雏形) — ✅ **GATE 1 GREEN**
 
-_最关键产出。决定 W1 Gate 1 PASS / BORDERLINE / FAIL。1 天预算,后续 session。_
+**Run @ 2026-05-15 18:57 UTC+8,wall 89.2 sec(预算 6h)**
+**Output**: `data/investigation/fig3_toy/{jaccard_matrix.png, jaccard_data.csv, id_disagreement.csv, summary.json}`
+**Script**: `data/investigation/scripts/gate1_toy.py`
 
-### 8.1 Task 选样 — TBD(5-10 task,from `data/benchmark/sub6/sub6b_mammalian_tasks_v3.jsonl`)
-### 8.2 PA 方法 ≥ 2 — TBD(RaMP ORA + sspa ssGSEA + 可选 mummichog)
-### 8.3 ID 方法 ≥ 2 — TBD(HMDB direct + RDKit InChIKey)
-### 8.4 跨方法 Jaccard / 跨库 disagreement — TBD
-### 8.5 Gate 1 判定 — TBD
-### 8.6 Fig 3 雏形(`data/investigation/fig3_toy/jaccard_matrix.png` + CSV)— TBD
+### 8.1 Task 选样(10 task,2 per bucket × 5 buckets,seed=42)
+
+避开 `RAMP_P_000052855`(D2/D3/D4 已用)。Bucket diversity:
+
+| Bucket | Tasks |
+|---|---|
+| lipid_metabolism | RAMP_P_000000421_seed2,lm_pathway_WP167_seed5 |
+| central_metabolism | RAMP_P_000000398_seed5,RAMP_P_000000141_seed8 |
+| amino_acid_metabolism | RAMP_P_000050021_seed9,RAMP_P_000000398_seed8 |
+| nucleotide_metabolism | RAMP_P_000000016_seed1,RAMP_P_000050099_seed6 |
+| other | RAMP_P_000050021_seed3,RAMP_P_000050021_seed6 |
+
+Tasks 平均 metabolite 数:8.3(7-10 范围),共 83 metabolite。
+
+### 8.2 PA 方法 × 3
+
+| Method | Backend | Input format | Pathway DB |
+|---|---|---|---|
+| **ramp** | `tools.benchmark.sub6.ramp_enrichment.compute_enrichment` (hypergeometric ORA) | HMDB ID list | RaMP-DB(merged KEGG+Reactome+WikiPath+SMPDB) |
+| **sspa** | `sspa.sspa_ora` 1.0.4 with synthetic 5-case + 5-ctrl matrix | ChEBI ID list(via KEGG→ChEBI via ChEBI rel251 database_accession.tsv) | Reactome Homo sapiens(2243 × 1479 sspa.process_reactome 输出) |
+| **mummichog** | `python -m mummichog.main` 2.7.0 | synthetic m/z table(M+H+ adduct + 250 background random m/z + p-val) | human_mfn(mummichog 内建) |
+
+**实施 fixes 期间发现的 1 bug**:sspa pathway_df 单元格是 **int**(`30616` 等 ChEBI numeric),而我代码原 `isinstance(v, str)` 过滤错过所有。修后 sspa 10/10 task 都返回 top-10。详见 §6 R-NEW-15。
+
+### 8.3 ID Mapper × 2
+
+| Mapper | Source |
+|---|---|
+| **hmdb_direct** | benchmark v3 metabolite.inchikey field(预算 SMILES via RDKit pre-computed) |
+| **rdkit** | session 3 实时 `rdkit.Chem.inchi.InchiToInchiKey(MolToInchi(MolFromSmiles))` |
+
+### 8.4 跨方法 Jaccard 矩阵(normalized pathway name match,top-10)
+
+| | ramp | sspa | mummichog |
+|---|---|---|---|
+| **ramp** | 1.000 | 0.121 | 0.022 |
+| **sspa** | 0.121 | 1.000 | 0.005 |
+| **mummichog** | 0.022 | 0.005 | 1.000 |
+
+**Mean off-diagonal Jaccard:0.049**(over 3 pairwise comparisons × 10 tasks)
+
+跨方法不一致**极高**:
+- ramp ↔ sspa(都是 ORA 但不同 DB):**87.9% disagreement on top-10**
+- ramp ↔ mummichog(ORA vs m/z fisher,不同 DB):**97.8% disagreement**
+- sspa ↔ mummichog(完全不同 stat + DB):**99.5% disagreement**
+
+### 8.5 ID mapper disagreement(metabolite-level block14 mismatch)
+
+| metric | value |
+|---|---|
+| n_metabolites_total | 83 |
+| n_disagree_block14 | **0**(0.0%) |
+
+⚠️ **Caveat**:benchmark v3 的 `inchikey` field 本来就是从 `smiles` field 用 RDKit 算出来的(`scripts/benchmark/...` 预处理时种 plant)。所以 hmdb_direct vs rdkit 实质上都走的同一条 RDKit 路径,**这条 disagreement = 0 不能 generalize 到 production 时跨库 InChIKey 一致性**。**Sprint W3 需要换"真 HMDB sqlite InChIKey"** 才能给出有意义的跨源一致性数据。已登记 §6 R-NEW-16。
+
+### 8.6 Fig 3 雏形
+
+`data/investigation/fig3_toy/jaccard_matrix.png` — 3×3 viridis heatmap,off-diagonal 全部 < 0.13(深紫色)。CSV:`jaccard_data.csv` 90 行(per-task × method-pair Jaccard),`id_disagreement.csv` 83 行(per-metabolite block14 比较)。
+
+### 8.7 Gate 1 判定:**🟢 GREEN**
 
 ```
-Mean cross-method Jaccard < 0.4   → Gate 1 PASS
-                       0.4 - 0.6  → Gate 1 BORDERLINE
-                          > 0.6   → Gate 1 FAIL → W1 pivot
+Mean cross-method Jaccard = 0.049
+
+GREEN     :  J < 0.4         ← 当前  ✓
+BORDERLINE:  0.4 ≤ J ≤ 0.6
+RED       :  J > 0.6
 ```
+
+**Reconciliation motivation 成立**:3 个 PA 方法在 top-10 pathway 列表上几乎不重叠(off-diagonal 0.005-0.121),证明跨方法 disagreement 是 metabolomics enrichment 的真实问题。**继续 ConcordMet 主线 → W2 review 进 Sprint W3**。
+
+### 8.8 Caveats(W2 review 需注意)
+
+1. **Pathway name 匹配算法**:lowercase + 移除停用词 + sort token + 完全匹配。这是较"严格"的匹配,会低估真实 Jaccard。若用更宽松匹配(token Jaccard > 0.6 视为同 pathway),数字会上升。**但即使宽松匹配,off-diagonal 也很难超过 0.4 阈值**(因为不同 DB 命名风格差异大,例 RaMP 用 "Phase II - Conjugation of compounds" vs Reactome 简洁 "Phase II Conjugation")。
+2. **mummichog 的输入是合成 m/z + p-val**(255 features:10 diff M+H + 250 random background)。这与典型 LC-MS 真实数据规模不同,真实数据 1000-10000 features 时 mummichog 的 stat 可能有差异。但对 Gate 1 question(方法不一致是否成立)结果稳健。
+3. **sspa 的 ORA 走 synthetic 2-class 5+5 sample matrix**(case rows 给 differential metabolite 高表达,ctrl 全均匀)。这是 sspa 的设计用法(它本来就是 sample-based 工具),不算 hacky。Sprint W3 实施 normalizer 时仍这么做。
+4. **ID disagreement = 0% 是 benchmark 构造的 artifact**(见 §8.5 caveat),W3 D5 需要 wire 真 HMDB sqlite InChIKey 才能给可信 cross-source 数据。这不影响 Gate 1 判定(Gate 1 看跨方法 Jaccard,不看 ID 一致性)。
+5. **10 task 是小样本**。如果 W2 review 想要更高 confidence,可扩 N=30 ~ 60 task(全 benchmark 跑完只需 ~5 min wall;用户 spec 5-10 task 是默认范围)。
 
 ---
 
