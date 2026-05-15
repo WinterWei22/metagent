@@ -298,6 +298,35 @@ def _verify_per_claim(
             # creates those entries. If it ever happens (LLM fallback
             # returned consistency_claim), default-route to Layer A.
             out.append(layer_a.verify_grounded(c, source_report))
+        elif c.claim_type == ClaimType.OTHER:
+            # Phase B1 D3 — abstract single-compound regulatory
+            # statements (Polyamines regulate protein synthesis, etc.)
+            # are routed here instead of being silently absorbed by
+            # BIOLOGICAL. Honest verdict is UNVERIFIABLE_V0; Stage 4
+            # rewriter will not try to "fix" them.
+            out.append(
+                VerifiedClaim(
+                    claim_id=c.claim_id,
+                    claim_text=c.claim_text,
+                    claim_type=c.claim_type,
+                    claim_subtype=c.claim_subtype,
+                    subject=c.subject,
+                    subject_kind=c.subject_kind,
+                    candidate_ref=c.candidate_ref,
+                    verdict=ClaimVerdict.UNVERIFIABLE_V0,
+                    evidence=(
+                        "Claim classified as OTHER (abstract single-"
+                        "compound regulation / mechanism with no specific "
+                        "pathway or enzyme endpoint). v1 used to absorb "
+                        "these into BIOLOGICAL; B1 D3 keeps them "
+                        "explicitly unverifiable to avoid misleading "
+                        "UNSUPPORTED verdicts."
+                    ),
+                    extracted_fields=c.extracted_fields,
+                    verifier_layer="other_fallback",
+                    trace_summary="OTHER claim — no verifier route",
+                )
+            )
         else:  # pragma: no cover — exhaustive
             raise AssertionError(f"unhandled claim_type {c.claim_type}")
     return out

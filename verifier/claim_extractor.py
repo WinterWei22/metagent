@@ -196,9 +196,16 @@ def _to_extracted_claim(claim_obj: dict) -> ExtractedClaim:
     Only called *after* :func:`verifier.grammar.validate` returned
     ``is_valid=True``, so every field required by the grammar shape is
     present.
+
+    Phase B1 D3: also stamps ``ExtractedClaim.grammar`` with the v2
+    grammar enum so the downstream classifier can route directly via
+    ``route_v2_claim`` without re-inferring the type.
     """
+    from verifier.grammar import ClaimGrammar
+
     text = claim_obj["claim_text"].strip()
-    grammar = claim_obj["grammar"]
+    grammar_str = claim_obj["grammar"]
+    grammar_enum = ClaimGrammar(grammar_str)
 
     # Populate the downstream-visible extracted_fields. Pathway name and
     # subject are the two fields the Sub-6 verifier layers actually
@@ -216,8 +223,9 @@ def _to_extracted_claim(claim_obj: dict) -> ExtractedClaim:
         claim_text=text,
         normalized_text=normalized,
         subject=subject.strip() if isinstance(subject, str) and subject.strip() else None,
-        claim_subtype=_GRAMMAR_TO_SUBTYPE.get(grammar, ClaimSubtype.UNKNOWN),
+        claim_subtype=_GRAMMAR_TO_SUBTYPE.get(grammar_str, ClaimSubtype.UNKNOWN),
         extracted_fields=ClaimExtractedFields(**fields_kwargs) if fields_kwargs else ClaimExtractedFields(),
+        grammar=grammar_enum,
     )
 
 

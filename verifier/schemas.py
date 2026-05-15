@@ -37,6 +37,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from verifier.grammar import ClaimGrammar
+
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -103,6 +105,25 @@ class ClaimType(str, Enum):
     Sub-6 source reports, to the dedicated Sub-6 biological subroute).
     No separate ClaimType is added for 6c — see Sub-6 verifier session
     decision Q1(b)."""
+
+    OTHER = "other_claim"
+    """Phase B1 D3 — explicit catch-all for sentences that the v1
+    classifier used to absorb into BIOLOGICAL by anti-pattern
+    (single-compound abstract sentences like "Polyamines regulate
+    protein synthesis"). Routing these to OTHER rather than BIOLOGICAL
+    avoids two confusions:
+
+    1. Layer C / Sub-6 biological then attempts a real RaMP membership
+       lookup against an unverifiable subject and emits an UNSUPPORTED
+       verdict that misleads downstream metric.
+    2. The Stage 4 rewriter sees the UNSUPPORTED and rewrites — masking
+       the source-side failure mode.
+
+    OTHER is intentionally routed to ``UNVERIFIABLE_V0`` by both
+    dispatchers (sub-6 ``else`` already, spectrum needs a one-line
+    branch). The v2 grammar path NEVER produces OTHER (every grammar
+    shape maps to one of the four routable types); OTHER is exclusive
+    to the v1 legacy classifier path kept for ablation."""
 
 
 class ClaimVerdict(str, Enum):
@@ -492,6 +513,17 @@ class ExtractedClaim(BaseModel):
         default_factory=ClaimProvenance,
         description="Extraction/parser provenance for audit and metrics.",
     )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 D2/D3 — when the extractor consumed a v2 grammar "
+            "JSON payload, the LLM's ``grammar`` field is preserved here "
+            "so the classifier can route directly via "
+            "``route_v2_claim`` without inferring the type. ``None`` for "
+            "v1 legacy free-text extractions, which still go through the "
+            "rule + LLM classifier."
+        ),
+    )
 
 
 class ClassifiedClaim(BaseModel):
@@ -556,6 +588,14 @@ class ClassifiedClaim(BaseModel):
     provenance: ClaimProvenance = Field(
         default_factory=ClaimProvenance,
         description="Extraction/classification provenance for audit and metrics.",
+    )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 D3 — preserved from the source ``ExtractedClaim``."
+            " Allows downstream auditing to see which v2 grammar shape "
+            "produced this routed claim."
+        ),
     )
 
 

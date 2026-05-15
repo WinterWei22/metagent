@@ -29,11 +29,42 @@ from typing import Literal
 
 from common.llm_client import chat
 from verifier.claim_fields import infer_claim_subtype, normalize_claim_text, parse_claim_fields
+from verifier.grammar import ClaimGrammar
 from verifier.prompts import classify_ambiguous as prompts
 from verifier.schemas import ClaimType, ClassifiedClaim, ExtractedClaim
 
 
 CALLER = "verifier.stage2.classify_ambiguous"
+
+
+# ---------------------------------------------------------------------------
+# Phase B1 D3 — v2 grammar → v1 ClaimType routing table
+# ---------------------------------------------------------------------------
+# The dispatcher in ``verifier/agent.py`` still keys off ``ClaimType``;
+# Phase D3 deliberately does NOT touch the dispatcher (that lands in D4).
+# The classifier collapses the 9-class type-inference problem into a
+# pure mapping when the extractor already attached a grammar field. The
+# legacy v1 free-text path (``ExtractedClaim.grammar is None``) keeps
+# its rule + LLM pipeline unchanged.
+
+_V2_GRAMMAR_TO_LEGACY_ROUTE: dict[ClaimGrammar, ClaimType] = {
+    ClaimGrammar.PATHWAY_MEMBERSHIP:      ClaimType.BIOLOGICAL,        # Sub-6 → layer 6c
+    ClaimGrammar.METABOLITE_PATHWAY_LINK: ClaimType.BIOLOGICAL,        # Sub-6 → layer 6c (strict)
+    ClaimGrammar.PATHWAY_ENRICHMENT:      ClaimType.SET_ENRICHMENT,    # Sub-6 → layer 6a
+    ClaimGrammar.DRIVER_METABOLITE:       ClaimType.DRIVER_METABOLITE, # Sub-6 → layer 6b
+}
+
+
+def route_v2_claim(grammar: ClaimGrammar) -> ClaimType:
+    """Map a v2 grammar shape to the v1 ``ClaimType`` the dispatcher uses.
+
+    The mapping is total (every ``ClaimGrammar`` value has a route) and
+    deterministic. Looking up a grammar value not in the table raises
+    ``KeyError`` — that would mean a new grammar shape was added to
+    ``verifier.grammar`` without updating this table, which should be a
+    test failure.
+    """
+    return _V2_GRAMMAR_TO_LEGACY_ROUTE[grammar]
 
 
 # ---------------------------------------------------------------------------
@@ -243,6 +274,17 @@ def classify_claims(
     ambiguous_indices: list[int] = []
 
     for i, c in enumerate(claims):
+        # Phase B1 D3 — v2 grammar path: grammar field is set by the
+        # extractor's JSON schema-validation route, no rule/LLM needed.
+        # ``classifier_source="rule"`` is reused (the v2 mapping IS a
+        # deterministic table lookup); a separate "v2_grammar" tag would
+        # require widening the Literal. Provenance keeps the audit trail
+        # via ``ExtractedClaim.grammar``.
+        if c.grammar is not None:
+            decisions.append(route_v2_claim(c.grammar))
+            sources.append("rule")
+            continue
+
         decided = _rule_classify(c.claim_text)
         decisions.append(decided)
         if decided is None:
@@ -294,6 +336,7 @@ def classify_claims(
                 provenance=c.provenance.model_copy(
                     update={"classifier_source": sources[i]}
                 ),
+                grammar=c.grammar,  # Phase B1 D3 passthrough
             )
         )
     return classified, llm_calls
@@ -432,6 +475,9 @@ _TYPE_LITERALS = {
     "set_enrichment": ClaimType.SET_ENRICHMENT,
     "driver_metabolite": ClaimType.DRIVER_METABOLITE,
     "pathway_relationship": ClaimType.PATHWAY_RELATIONSHIP,
+    # Phase B1 D3 — explicit catch-all (replaces silent BIOLOGICAL absorption)
+    "other_claim": ClaimType.OTHER,
+    "other": ClaimType.OTHER,
 }
 
 
