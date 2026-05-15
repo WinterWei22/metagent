@@ -349,9 +349,43 @@ python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
 
 **首批 100 行 chem_xref 抽样**(2025-08-13 release 头部样本)显示 cross-ref source 包括(频次降序):**reactome、reactomeM、chebi、SLM(SwissLipids)、hmdb、CHEBI、seedM、vmhM、biggM、keggC、seed.compound、mnx、metacyc.compound、metacycM、vmhmetabolite、bigg.metabolite、kegg.compound、sabiork.compound、sabiorkM**。覆盖 ConcordMet 关心的所有 Tier-1 数据库(reactome / chebi / hmdb / kegg / metacyc / bigg / swisslipids)。
 
-**全量 covergage 矩阵(50-100 metabolite × 7 source)**:⏳ chem_xref.tsv 全量下载中(curl 后台,timeout 15 min);下载完后用 `data/investigation/scripts/metanetx_coverage_probe.py`(W3 写)做随机抽样统计。
+**覆盖率矩阵(实测,partial file 580 MB / unknown total)**:
 
-**§2.5 状态**: **Endpoint 可达 + release 4.5 (2025-08-13) 确认**;覆盖率矩阵后续 session 完成(curl 完成后注入 sqlite + 抽样)。
+下载因 15-min timeout 终止于 580 MB;**实测发现 chem_xref.tsv 远比预期大(无 Content-Length,streaming;估计 1+ GB 全量)**。但 partial file 包含 **3.12M 行 / 1.04M unique MNX entities**,统计样本足够大。
+
+**Pass 1:50 个完全随机 MNX(种子=42)** — 几乎全部是 lipid-only(47/50 只有 1 source),严重偏向 SwissLipids/LipidMaps。这是 **partial download artifact**(SLM entries 按字典序排在文件末尾,正好在我们停下的位置),不是 ConcordMet 真实情况。
+
+**Pass 2:**过滤到 ≥3 distinct primary sources 的 MNX(real cross-DB candidates):
+
+| n-distinct-sources | count | 占总 MNX % |
+|---|---|---|
+| 1 | 961,056 | **92.8%**(主要 lipid-only 或 reaction-only) |
+| 2 | 56,604 | 5.5% |
+| 3 | 12,823 | 1.2% |
+| 4 | 3,430 | 0.33% |
+| 5 | 1,217 | 0.12% |
+| 6 | 737 | 0.07% |
+| **7(全 cover)** | **255** | 0.025% |
+
+**50 个 ≥3-source MNX 抽样的源覆盖率**(real cross-DB 子集):
+
+| Source | Cover % | 评论 |
+|---|---|---|
+| **chebi** | **100.0%** | **lingua franca,所有跨库 metabolite 都有 ChEBI ID** |
+| hmdb | 82.0% | metabolomics 主源,覆盖良好 |
+| metacyc | 66.0% | |
+| kegg | 58.0% | |
+| **lipidmaps** | **50.0%** | 偏 partial-file 还可能更高(全量预计 ~60-65%) |
+| bigg | 18.0% | 偏 metabolic-model focused,人不常用 |
+| **reactome** | **12.0%** ⚠️ | **远低于预期** — 见 §5 / Q-05 |
+
+**关键发现(改 §5 主键决策)**:**Reactome 在跨库 metabolite 上只覆盖 12%**。这与用户原文档"Reactome stable ID 主键 + KEGG fallback"假设矛盾。**ChEBI 才是真正的 lingua franca**(100% 覆盖)。已登记 **Q-05**,§5 主键策略需重审。
+
+**§2.5 状态**:
+- ✅ Endpoint + release 4.5 (2025-08-13) 确认
+- ✅ Partial coverage matrix done(580 MB / 估 1+ GB)
+- ⚠️ 全量下载需后续 session(curl 30-min timeout 或 chunked download);**partial 已足够支持 §5 主键决策反思**
+- ✅ source coverage 数据驱动 Q-05 决策点
 ### 2.6 RDKit InChIKey reconciler — ✅ Toy DONE
 
 **Script**: `data/investigation/scripts/rdkit_inchikey_toy.py`(46 行,含 fixture + cluster + collision/split check)
@@ -498,13 +532,35 @@ probe 输出 3 张表:
 
 ---
 
-## §5 — Pathway ID Crosswalk 策略
+## §5 — Pathway ID Crosswalk 策略 — ⚠️ §2.5 实证推翻原决策
 
-**已拍板**:Internal storage Reactome ID 主键;reporting KEGG ID;crosswalk Reactome ↔ KEGG;Reactome 缺失则 canonical_source=kegg。
+**用户原决策**:Internal storage Reactome ID 主键;reporting KEGG ID;crosswalk Reactome ↔ KEGG;Reactome 缺失则 canonical_source=kegg。
 
-### 5.1 Reactome ↔ KEGG 覆盖率 — TBD
-### 5.2 Fallback 占比(50 个常见 pathway 抽样)— TBD
-### 5.3 Crosswalk Table Schema — TBD
+**§2.5 实测推翻(2026-05-15)**:
+- **Reactome 在跨库 metabolite 上只覆盖 12%**(MetaNetX 4.5 chem_xref 中,50 个 ≥3-source 候选)
+- **ChEBI 100% 覆盖**(所有跨库 metabolite 都有 ChEBI ID,MetaNetX 自己也用 ChEBI 作 chem_prop.tsv 主键)
+- **HMDB 82%、KEGG 58%、MetaCyc 66%**
+- **Reactome 在 pathway 层覆盖良好,但在 compound 层很弱** — 这是 Reactome 设计意图:metabolites 是 pathway participants,不是 first-class entity
+
+### 5.1 修订主键决策候选(Q-05 登记)
+
+| 方案 | 主键 | Pathway report ID | 优点 | 缺点 |
+|---|---|---|---|---|
+| **A (原计划)** | Reactome stable ID | KEGG mapID | reporting 友好 | **跨库 compound 88% miss** |
+| **B (推荐 — Pivot)** | **ChEBI(compound)+ Reactome stable ID(pathway)** | KEGG mapID | compound 100%,pathway reporting 不变 | 引入 compound 层 / pathway 层双主键的复杂度 |
+| C | KEGG cpd ID(compound)+ KEGG mapID(pathway) | KEGG mapID | 简单,1 个 namespace | 跨库 compound 只 58%;KEGG REST rate-limit |
+| D | InChIKey(compound)+ Reactome stable ID(pathway) | KEGG mapID | InChIKey 算法可重生 | 不是 DB ID,与 lookup 工具不兼容 |
+
+我**倾向 B**(双主键,compound 用 ChEBI;pathway 用 Reactome stable ID;report 用 KEGG mapID via crosswalk)。**不能自决**因为这是 W2 review 的核心架构决策。
+
+### 5.2 Reactome ↔ KEGG mapping 覆盖率 — Pending W3 D1
+
+(MetaNetX `reac_xref.tsv` 跨 Reactome / KEGG / metacyc 的 reaction-level mapping;pathway-level 需用 Reactome 自带的 `Pathway2Reactome.txt` 或 KEGG hsa→Reactome xref)
+
+### 5.3 Fallback 占比(50 个常见 pathway 抽样)— Pending W3 D1
+### 5.4 Crosswalk Table Schema — Pending §5.1 决策
+
+(取决于 §5.1 拍板:若选 B,需要两张 table:`compound_xref(ChEBI ↔ MNX ↔ KEGG ↔ HMDB ↔ ...)`+ `pathway_xref(Reactome ↔ KEGG mapID ↔ WikiPathways)`)
 
 ---
 
@@ -587,6 +643,12 @@ _Investigation 期间所有 scope 外但应问的问题归这里。_
   (c) **放弃 R 端工具,纯 Python 路径**:这意味着 ConcordMet **不集成 FELLA / MetaboAnalystR**。需要重新评估 §4 Tier A 列表 + 用户原文档的 4-axis 是否还成立(其中"网络拓扑 axis" 主要靠 FELLA;若去掉需找替代工具如 PIUMet 或 OmicsNet)。
   我倾向 (a) 先 spike;失败转 (c)。**不能自决**,(c) 改变 Sprint 主线。
 - **W 影响**:**阻塞 §2.3 / §2.4 / §4(W5)/ §8(若想跑 FELLA-based PA)**。属于 Investigation 最重 blocker。
+
+### Q-05 — **Reactome compound-level 覆盖率只有 12%,推翻原"Reactome 主键"决策**
+- **背景**:§2.5 MetaNetX chem_xref 实测显示,Reactome 在跨库 metabolite 上覆盖率仅 12%(50 random ≥3-source MNX);ChEBI 100%,HMDB 82%,KEGG 58%,MetaCyc 66%。
+- **影响**:用户原文档"Reactome stable ID 主键 + Reactome 缺失则 KEGG fallback"对 pathway 层有效,但对 compound 层 88% 走 fallback,导致系统复杂度爆炸 + 数据完整性丢失。
+- **我的建议**:**Pivot 到方案 B(compound 层 ChEBI 主键 + pathway 层 Reactome stable ID)**。reporting 仍用 KEGG mapID,但内部 compound key 改用 ChEBI(MetaNetX 自己也是这么做的,chem_prop.tsv 以 ChEBI 为主键)。**不能自决** —— W2 architecture 决策。
+- **W 影响**:阻塞 §3 schema 的 PathwayHit.metabolites_hit 字段定义(目前是 InChIKey,可保留;但 compound xref table 设计依赖 §5.1)、§4 数据库 ETL 顺序、§5 全部、§9 W3 集成顺序。
 
 ### Q-04 — InChIKey block14 不能 reconcile 开链 ↔ 环状 同分异构(糖类等)
 - **背景**:§2.6 toy 实测 D-Glucose 开链 Fischer SMILES (`OCC(O)C(O)C(O)C(O)C=O` → block14 `GZCGUPFRVQAUEE`)与环状 SMILES(α/β,block14 `WQZGKKKJIJFFOK`)落到不同 block。这是 InChI 设计意图(C-O connectivity 不同 → 不同 connectivity hash),不是 RDKit bug。
