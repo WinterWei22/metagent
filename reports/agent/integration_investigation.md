@@ -41,7 +41,9 @@
 
 _Read-only recon (no clone / no install). 子代理(Explore agent)用 gh CLI + WebFetch 调研 GitHub + 论文摘要,数据 freeze 于 2026-05-15。_
 
-> ⚠️ **可信度警告**:子代理报告中 MS4MS / MSAgent 的 bioRxiv URL 前缀为 `10.64898/...`,但 bioRxiv 标准 DOI 前缀是 `10.1101/...`。这两个链接 **疑似 fetch 模型幻觉**,Investigation §6 / §7 需人工验证(可能项目压根不在 bioRxiv,而在 medRxiv / ChemRxiv / arXiv,或论文识别错误)。MetaboT 和 GeneAgent 的链接通过 GitHub repo 路径交叉验证可信。
+> ✅ **2026-05-15 二次核实**:WebSearch 在 biorxiv.org 域内**直接命中** MS4MS 和 MSAgent 两篇,关键词描述与子代理摘要互洽。
+>
+> **重要发现**:bioRxiv 在 2026 年起对新提交 paper **新增了 `10.64898/` DOI 前缀**(原 `10.1101/` 仍用于 2025 及以前)。搜索结果显示 6+ 篇 2026 年 bioRxiv 新 paper 都是 `10.64898` 前缀。**Investigation 启动时(前个 session)误判为幻觉**,实际两篇 paper 均真实存在。Q-01 已 RESOLVED。
 
 ### 0.1 MetaboT (Bekbergenova et al., ISMB 2025)
 - **Paper / preprint**: arxiv.org/abs/2510.01724
@@ -55,7 +57,7 @@ _Read-only recon (no clone / no install). 子代理(Explore agent)用 gh CLI + W
 - 给 ConcordMet 的借鉴:多智能体架构(入口→验证→监督→KG→查询生成)的分层设计;通过外部知识库(Wikidata / ChEMBL / NPClassifier)做实体解析消除幻觉,这与 ConcordMet 的 reconciliation 思路接近
 
 ### 0.2 MS4MS (Guo et al., bioRxiv 2025-12)
-- **Paper**:URL 待人工验证(⚠️ 子代理给的 `biorxiv.org/content/10.64898/2025.12.02.691830v2` 疑似幻觉)
+- **Paper**:https://www.biorxiv.org/content/10.64898/2025.12.02.691830v2.full ✅(WebSearch 2026-05-15 二次核实命中)
 - **Repo**:**未公开**(论文仅报告模型部署在 8× NVIDIA 4090,无 code 链接)
 - 状态:**paper-only**
 - 装环境难度:不可推测(无公开代码)
@@ -65,7 +67,7 @@ _Read-only recon (no clone / no install). 子代理(Explore agent)用 gh CLI + W
 - 给 ConcordMet 的借鉴:4-agent 分工(谱处理 → 分子式预测 → 小分子识别 → 报告);GPU 部署架构
 
 ### 0.3 MSAgent (Li et al., bioRxiv 2026-04)
-- **Paper**:URL 待人工验证(⚠️ 子代理给的 `biorxiv.org/content/10.64898/2026.04.22.720103v1.full` 疑似幻觉)
+- **Paper**:https://www.biorxiv.org/content/10.64898/2026.04.22.720103v1.full ✅(WebSearch 2026-05-15 二次核实命中)
 - **Repo**:**未公开**
 - 状态:**paper-only**
 - 装环境难度:不可推测
@@ -94,7 +96,9 @@ _Read-only recon (no clone / no install). 子代理(Explore agent)用 gh CLI + W
 | MSAgent | 未公开 | Y(若日后开源) | Evidence grounding + 95% ranking-stability 指标 |
 | GeneAgent | public(NCBI 出品) | N(域不同) | **核心:四步自校验 + 大规模 N=1000+ 评估范式** |
 
-**Open question for §7**:MS4MS / MSAgent 的 bioRxiv DOI 子代理报告疑似幻觉,需人工到 bioRxiv 搜索原始论文(关键词 "MS4MS metabolomics" / "MSAgent mass spectrometry")并修正 §0.2 / §0.3 URL。在 §7 已登记 Q-01。
+**Q-01 状态:RESOLVED**(2026-05-15 WebSearch 二次核实)。
+- 两篇 bioRxiv paper 均真实存在;新 DOI 前缀 `10.64898/` 是 bioRxiv 2026 年新增。
+- ChemCrow (Bran et al.) 未在 §0 列出 —— 用户提示其 chemistry-broad 偏离 metabolomics scope,**作为 honorable mention** 不必扩 §0 调研。若 §6 risk register 提到"竞品宽度"维度可补一句"+ ChemCrow (chemistry-broad, 非 metabolomics-narrow)"。
 
 ---
 
@@ -188,22 +192,40 @@ for c in claims:
 - 同一个 `Layer F (peak_mechanistic)` 被两条 dispatch 路径共用(main + Sub-6)。
 - `tag MetAgent-v1-0514` 早于 D3 commit `01a858b`(classifier 9→4 collapse),所以 claim grammar 还是 v1 9-class。
 
-### 1.5 和我之前理解的偏差
+### 1.5 和我之前理解的偏差(逐条分类)
 
-对比 codebase 实际结构 vs Investigation 启动前(从用户文档 + 评审材料推断的)mental model:
+对比 codebase 实际结构 vs Investigation 启动前(从用户文档 + 评审材料推断的)mental model。每条标:
+- **DD** = Documentation Drift(我之前理解偏差但代码 OK,无需改代码)
+- **AB** = Actual Bug(代码确实有问题)
+- **MF** = Missing Feature(我以为有但没有)
 
-1. **"10 层 verifier" 不是单 dispatcher 的 10-way 分支**
-   实际是 2 个 dispatcher × 5 个 ClaimType elif 分支 = 10 个 layer file。`verify()` 主线 5 分支(GROUNDED / FACTUAL / BIOLOGICAL / LITERATURE / PEAK_MECHANISTIC,+ CONSISTENCY 兜底到 grounded),`verify_sub6()` 5 分支(SET_ENRICHMENT / DRIVER_METABOLITE / PATHWAY_RELATIONSHIP / BIOLOGICAL / PEAK_MECHANISTIC,+ UNVERIFIABLE_V0 declared-limitation 兜底)。这意味着 ConcordMet 集成 enrichment 工具(§2 / §3)主要落在 **Sub-6 `SET_ENRICHMENT` 分支**,不会扰动主线 5 个 layer。
-2. **Layer D (consistency) 不在 dispatch 链里**
-   `verifier/layers/consistency.py` 在 `verify()` 调用之外作为 separate stage 跑(docstring "Layer D runs separately")。需要查 `verifier/__init__.py` 或 runner 入口确认 Layer D 何时触发(§2 之前不影响,但写 §3 schema 时若考虑 cross-claim consistency 验证需要回看)。
-3. **`Layer F (peak_mechanistic)` 被两条 dispatch 路径共用**
-   `layer_f.verify_peak_mechanistic` 同时在 main(L251)和 Sub-6(L486)被调用。改 Layer F 需要双侧测试。
-4. **5 个 agent tool 的数据源 mix**
-   一个真正"REST 调用"(search_literature → PubMed/Europe PMC,有 RateLimitError);两个本地 sqlite(query_kegg_path / query_ramp_enrichment + query_pathway_membership 走 RaMP);一个聚合元数据后端(lookup_compound_info,具体 backend 待 §4 拆 `tools.metabolite_info`)。**ConcordMet 集成 sspa / mummichog / FELLA 都会落到"新增本地工具"层,不需要新建 REST integration framework**,这降低了 §2 估时。
-5. **tag MetAgent-v1-0514 早于 D3 collapse**
-   tag freeze 在 9-class claim grammar 状态。B1 D3(commit `01a858b`)做的 9→4 collapse 不在 Investigation worktree 里。**§8 Gate 1 toy 用 9-class extractor 也成立**(toy 不依赖最新 grammar);但 §9 W3-W4 sprint 实施时若 B1 已合并到 main,需对齐到 4-class grammar。
+---
 
-(更多偏差会在 §2 / §3 hands-on 时追加。)
+**[DD] D1 — "10 层 verifier" 不是单 dispatcher 的 10-way 分支**
+实际是 2 个 dispatcher × 5 个 ClaimType elif 分支 = 10 个 layer file。`verify()` 主线 5 分支(GROUNDED / FACTUAL / BIOLOGICAL / LITERATURE / PEAK_MECHANISTIC,+ CONSISTENCY 兜底到 grounded),`verify_sub6()` 5 分支(SET_ENRICHMENT / DRIVER_METABOLITE / PATHWAY_RELATIONSHIP / BIOLOGICAL / PEAK_MECHANISTIC,+ UNVERIFIABLE_V0 declared-limitation 兜底)。代码意图清晰,只是我的 mental model 没分主线/Sub-6 两条 dispatch。
+**ConcordMet 影响**:enrichment 工具集成主要落在 Sub-6 `SET_ENRICHMENT` 分支,**不扰动主线 5 layer**。降低了集成 risk。
+
+**[DD] D2 — Layer D (consistency) 不在 dispatch 链里**
+`verifier/layers/consistency.py` 在 `verify()` 调用之外作为 separate stage 跑(docstring "Layer D runs separately")。代码 OK,只是我以为它在 dispatch 链里。
+**ConcordMet 影响**:写 §3 schema 时若想给 ConcordMet 加 cross-method consistency 验证,需要回看 Layer D 是怎么 wire 进 runner 的(单独 stage 而非 dispatch entry)。
+
+**[DD] D3 — `Layer F (peak_mechanistic)` 被两条 dispatch 路径共用**
+`layer_f.verify_peak_mechanistic` 同时在 main(agent.py:251)和 Sub-6(agent.py:486)被调用。代码 OK(intentional shared layer),只是我以为只在主线。
+**ConcordMet 影响**:若 ConcordMet 后续修改 Layer F(疑似需要修改 cross-validation 逻辑,因为引入更多 enrichment 工具),**需要双侧测试**——不能只测 main dispatch。
+
+**[DD] D4 — 5 个 agent tool 数据源 mix(2 sqlite + 1 sqlite-wrapper + 1 REST + 1 元数据 backend)**
+一个真正"REST 调用"(search_literature → PubMed/Europe PMC,有 RateLimitError);两个本地 sqlite(query_kegg_path 自管 sqlite + query_ramp_enrichment 走 RaMP-DB sqlite);一个 sqlite-wrapper(query_pathway_membership 走 RaMP);一个聚合元数据后端(lookup_compound_info,backend 待 §4 拆 `tools.metabolite_info`)。代码 OK,只是我之前没看具体每个 tool 的 backend。
+**ConcordMet 影响**:**关键发现** — sspa / mummichog / FELLA 都会落到"新增本地工具"层,**不需要新建 REST integration framework**,降低了 §2 估时;但 PubChem PUG-REST 在 lookup_compound_info backend 里仍是单点(§4 rate-limit 实测对象之一)。
+
+**[DD] D5 — tag MetAgent-v1-0514 早于 D3 classifier collapse**
+tag freeze 在 9-class claim grammar 状态。B1 D3 commit `01a858b` 做的 9→4 collapse 不在 Investigation worktree。代码 OK(tag 是干净基线,intentional),只是需要注意时间线:
+- **§8 Gate 1 toy** 在 9-class grammar 下也成立(toy 不依赖最新 grammar)
+- **§9 W3-W4 sprint 实施时** 若 B1 已合并到 main,需对齐到 4-class grammar
+- **集成测试** 不能在 worktree 跑 B1 后期 fixture(版本不匹配)
+
+---
+
+**汇总:5 条全是 DD,0 AB,0 MF。** 无需登记 Q-04;§7 不新增条目。如 §2 hands-on 期间发现真 bug,届时补登 Q-04。
 
 ---
 
@@ -239,11 +261,69 @@ R: /home/weiwentao/miniconda3/bin/R
   - 已登记 Q-03,提交用户决定:修 R / 切别的服务器 / 直接放弃 R 端工具
 
 ### 2.1 py-sspa — Pending (hands-on §2 session)
-### 2.2 mummichog v3 (强制 hands-on) — Pending,⚠️ 高风险见 §2.0
+### 2.2 mummichog — ✅ TOY PASS(注意:**v3 不存在,PyPI 装 v2.7.0**)
+
+**重要更正**:用户原计划写 "mummichog v3" 但 **PyPI 上 latest 是 mummichog 2.7.0**(Shuzhao Li 经典实现)。v3 可能指会议 talk / GitHub-only fork,不是 PyPI 包。**Investigation 用 v2.7.0**。
+
+**Env**: `conda env mummichog_py310`(Python 3.10.18,via `conda create -n mummichog_py310 python=3.10`)
+**Install**: `pip install mummichog` → `mummichog-2.7.0`(deps: numpy 2.2.6, scipy 1.15.3, networkx 3.4.2, matplotlib 3.10.9, xlsxwriter, ...)
+
+**Toy 命令**(built-in test data,7995 features):
+```
+python -m mummichog.main -f tests/testdata0710.txt -o toy_out -m positive -p 50
+```
+- Wall time: **~13 sec**(包含 pathway + modular analysis + 50 permutations × 2)
+- 输出目录:`<timestamp>.toy_out/{tables,figures,js,result.html}`
+- 关键文件:
+  - `tables/mcg_pathwayanalysis_toy_out.tsv` ← **primary table**:`pathway | overlap_size | pathway_size | p-value | overlap_EmpiricalCompounds | overlap_features(id+name)`
+  - `tables/mcg_modularanalysis_toy_out.tsv` ← network modules
+  - `tables/ListOfEmpiricalCompounds.tsv` ← m/z → 候选 KEGG cpd ID 映射(EID)
+  - `tables/exported_Compounds.json` ← 同上 JSON 格式
+  - `figures/plot_pathwayModel_toy_out.pdf` ← bubble plot
+
+**Top 5 pathways(toy data,positive mode)**:
+| Pathway | overlap | size | p-value |
+|---|---|---|---|
+| Alanine and Aspartate Metabolism | 8 | 20 | 0.0035 |
+| Aspartate and asparagine metabolism | 19 | 72 | 0.0042 |
+| Arginine and Proline Metabolism | 12 | 40 | 0.0064 |
+| Aminosugars metabolism | 7 | 20 | 0.0173 |
+| Hexose phosphorylation | 5 | 12 | 0.0185 |
+
+**ConcordMet schema 影响**(已反馈 §3):
+1. **KEGG cpd ID 是主 compound key**(C00020, C00362 等),需 §5 crosswalk 转 Reactome
+2. **Pathway name 是 human_mfn 内部命名**(非 KEGG map / Reactome stable ID)→ schema 需 `pathway_id_native: str` + `pathway_name: str`,**不能假设可解析为 KEGG mapID**。这是 §3 schema gap 新发现,已加 §3 schema 末尾 `SCHEMA_GAPS_FOR_W3` 列表。
+3. **网络模型** human_mfn 是默认;支持 worm + user-supplied JSON。ConcordMet 集成时需声明用哪个 release 的 human_mfn(无显式版本号,需查 `mummichog/JSON_metabolicModels.py`)。
+4. **mummichog 的 m/z → 候选 compound 多对多映射**(EmpiricalCompound):一个 m/z 可能映 5+ 个 KEGG cpd,这是 §3 schema gap 中已登记的 "mummichog 反查 mz_to_inchikey 失败时 metabolites_hit 留空" 的根因。W3 实现 normalizer 时需 fallback 策略。
+
+**§2.2 状态**: **DONE**。可作为 ConcordMet 的 m/z-driven enrichment 工具,**不需要 R 端 fallback**。Q-02 RESOLVED。
 ### 2.3 MetaboAnalystR 4 (subprocess) — **BLOCKED on R env**,见 Q-03
 ### 2.4 FELLA (rpy2 并发 spike) — **BLOCKED on R env**,见 Q-03
 ### 2.5 MetaNetX MNXref 4.5 — Pending
-### 2.6 RDKit InChIKey reconciler — rdkit 已装,只需 30-line toy 即可,Pending
+### 2.6 RDKit InChIKey reconciler — ✅ Toy DONE
+
+**Script**: `data/investigation/scripts/rdkit_inchikey_toy.py`(46 行,含 fixture + cluster + collision/split check)
+**Backend**: rdkit 2025.09.6 + `rdkit.Chem.inchi.MolToInchi` → `InchiToInchiKey`
+**Block14**: InChIKey 第一段 14 字符(connectivity / skeleton hash,忽略立体 + 同位素)
+
+**Fixture(13 SMILES,6 化合物)+ 跑结果**:
+
+| Compound | n SMILES | n distinct block14 | 状态 |
+|---|---|---|---|
+| D-Glucose | 4 | **2** | ⚠️ **FALSE-SPLIT** — 开链 Fischer (`GZCGUPFRVQAUEE`) vs 环状 (`WQZGKKKJIJFFOK`) 不同 block |
+| Lactic acid | 3 | 1 (`JVTAAEKCZFNVCJ`) | ✅ L / D / racemic 立体异构正常聚类(差异在 layer 2-3) |
+| Caffeine | 2 | 1 (`RYYVLZVUVIJVGH`) | ✅ uppercase/lowercase aromatic SMILES 正常聚类 |
+| Glycine | 2 | 1 (`DHMQDGOQFOQNFH`) | ✅ 不同原子顺序正常聚类 |
+| Adenine | 2 | 1 (`GFFGJBXGBJISGV`) | ✅ N7H / N9H tautomer 正常聚类(RDKit 默认 InChI standard tautomer 折叠) |
+| (cluster GZCGUPFRVQAUEE) | 1 | 1 | 单一 block,无 collision |
+
+**关键发现 / Limitations**:
+1. **InChIKey block14 不能 reconcile 开链 ↔ 环状 同分异构**。D-Glucose 的 Fischer 开链 SMILES 与环状 alpha/beta SMILES 在 InChI 层面被认作 *constitutional isomer*(C-O 键连接不同),block14 不同。这是 InChI 设计意图(connectivity matters),不是 RDKit bug。
+2. **mild tautomer(prototropic on heteroaromatic ring)、立体异构、原子顺序差异** 都正常聚类,符合 ConcordMet reconciliation 预期需求。
+3. **暗示 ConcordMet 集成时**:对糖类、其他多环 ↔ 开链平衡的代谢物,**block14 单层不够**——需要补一个 "tautomer / ring-chain canonicalizer"(可用 RDKit `Chem.MolStandardize.tautomer.TautomerEnumerator`)或对开链糖直接做 cyclization 标准化。Q-04(新)登记。
+4. **InChIKey 的 second layer (stereo) 信息丢失** 在我们 use case 里是 feature(L/D/racemic lactic acid 都按"乳酸"聚类),不是 bug。但若 ConcordMet 后续需要区分 enantiomer 生物活性,要用 full InChIKey 而非 block14。
+
+**§2.6 状态**: **DONE**。reconciler 可直接用于 ConcordMet,但需在 §3 schema 留 `tautomer_canonicalized: bool` 字段并在 §4 计划中加一步 ring-chain 预标准化。
 ### 2.7 Tier B/C 工具速记 — Pending
 - PathIntegrate / IMPaLA / PIUMet / NetGSA / fgsea / clusterProfiler / MetExplore / OmicsNet
 
@@ -305,11 +385,10 @@ _整合 R1-R10 + 评审 R8/R9/R10 + Investigation 新发现。_
 
 _Investigation 期间所有 scope 外但应问的问题归这里。_
 
-### Q-01 — MS4MS / MSAgent bioRxiv URL 真实性校验
-- **背景**:§0 子代理回报的 MS4MS 和 MSAgent bioRxiv 链接 DOI 前缀均为 `10.64898/...`,但 bioRxiv 标准前缀是 `10.1101/...`。两者可能是 WebFetch fetch 模型在 abstract page 上幻觉生成的。
-- **影响**:不解决会让 §6 risk register R10(竞品无 code)缺少准确引用;§9 W3-W4 Sprint plan 也无法引用对方 benchmark 做 head-to-head。
-- **我的建议**:由用户(或下次 session 人工)到 bioRxiv 搜索关键词 "MS4MS metabolomics" / "MSAgent mass spectrometry",定位真实 DOI;若 bioRxiv 无 → 转 ChemRxiv / medRxiv / arXiv 检索。**不能自决**,因为 fetch 重复尝试可能再次幻觉。
-- **W 影响**:不阻塞 §2 / §8。最迟在 W2 report 时解决。
+### Q-01 — MS4MS / MSAgent bioRxiv URL 真实性校验 — ✅ RESOLVED 2026-05-15
+- **背景**:Investigation 启动时 §0 子代理回报 `10.64898/...` DOI 前缀,prev session 误判为 fetch 幻觉。
+- **解决**:本 session WebSearch 在 `biorxiv.org` 域内**直接命中** MS4MS 和 MSAgent 两篇,描述互洽。**bioRxiv 在 2026 年起对新提交 paper 启用新 DOI 前缀 `10.64898/`,老 paper 仍用 `10.1101/`**。两篇 paper 均真实存在,§0.2 / §0.3 URL 已更新为 verified。
+- **Lesson learned**:不要仅凭 DOI 前缀 pattern 判定 URL 真假;DOI registry(bioRxiv 现有 10.1101 + 10.64898 两个 prefix)是 evolving。
 
 ### Q-02 — mummichog Python 3.13 兼容性 + R-fallback 双不可用
 - **背景**:本机 Python 是 3.13.11,而 mummichog 历史只支持 Py3.7-3.9(setup.py 通常 pin)。同时本机 R 环境 broken(见 Q-03),所以"切 R 端"的 fallback 也不可用。
@@ -331,7 +410,15 @@ _Investigation 期间所有 scope 外但应问的问题归这里。_
   我倾向 (a) 先 spike;失败转 (c)。**不能自决**,(c) 改变 Sprint 主线。
 - **W 影响**:**阻塞 §2.3 / §2.4 / §4(W5)/ §8(若想跑 FELLA-based PA)**。属于 Investigation 最重 blocker。
 
-### Q-04 (placeholder) — TBD
+### Q-04 — InChIKey block14 不能 reconcile 开链 ↔ 环状 同分异构(糖类等)
+- **背景**:§2.6 toy 实测 D-Glucose 开链 Fischer SMILES (`OCC(O)C(O)C(O)C(O)C=O` → block14 `GZCGUPFRVQAUEE`)与环状 SMILES(α/β,block14 `WQZGKKKJIJFFOK`)落到不同 block。这是 InChI 设计意图(C-O connectivity 不同 → 不同 connectivity hash),不是 RDKit bug。
+- **影响**:ConcordMet 跨库 reconciliation 对单糖、双糖、其他多环 ↔ 开链平衡分子可能 false-split。受影响代谢物估计 < 5%(HMDB 中糖类约 ~200 / total 220k),但 metabolomics 数据集中糖类占比通常 5-15%(因为生物丰度高 + LC-MS 易检测)。
+- **我的建议**:三选一:
+  (a) **加 RDKit `MolStandardize.tautomer.TautomerEnumerator` 预标准化**,把开链糖统一到环状代表(工程量 ~50 LOC,W3 集成阶段加);**推荐**。
+  (b) 对受影响化合物用 **HMDB / PubChem cross-ref 表** 补 reconcile(已有 lookup_compound_info backend 可做,但慢)。
+  (c) 接受 false-split,在 §6 risk register 记一笔"糖类 ID reconciliation 局限"。
+  我**倾向 (a)**,因为工程成本可控且符合 ConcordMet 主线。**不能自决**因为这会影响 §3 schema(需加 `tautomer_canonicalized: bool` 字段)+ §9 W3 plan 时长。
+- **W 影响**:不阻塞 §2 / §3 / §8 toy;若不在 W3 处理,W4 集成会反复出现糖类 mis-merge bug 报告。
 
 ---
 
