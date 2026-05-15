@@ -1,33 +1,38 @@
 {
+  "metric": "compound-level (Patch A 2026-05-16): denom = unique HMDB compounds, numerator = compounds with \u22652 distinct stored InChIKey across sources",
   "n_compounds": 110,
-  "n_pairs": 158,
+  "n_pair_records": 158,
+  "n_safeguard_block14_changed": 5,
+  "n_safeguard_stereo_dropped": 20,
   "by_source_pair": {
     "chebi__hmdb": {
-      "n_pairs": 109,
-      "raw_block14_match_pct": 96.3302752293578,
-      "raw_full_match_pct": 69.72477064220183,
-      "reconciled_block14_match_pct": 96.3302752293578,
-      "reconciled_full_match_pct": 95.41284403669725
+      "n_compounds": 109,
+      "raw_full_disagreement_pct": 53.211009174311926,
+      "reconciled_full_disagreement_pct": 5.504587155963303,
+      "raw_block14_disagreement_pct": 5.504587155963303,
+      "reconciled_block14_disagreement_pct": 5.504587155963303
     },
     "chebi__lipidmaps": {
-      "n_pairs": 24,
-      "raw_block14_match_pct": 95.83333333333334,
-      "raw_full_match_pct": 50.0,
-      "reconciled_block14_match_pct": 95.83333333333334,
-      "reconciled_full_match_pct": 91.66666666666666
+      "n_compounds": 24,
+      "raw_full_disagreement_pct": 75.0,
+      "reconciled_full_disagreement_pct": 4.166666666666667,
+      "raw_block14_disagreement_pct": 4.166666666666667,
+      "reconciled_block14_disagreement_pct": 4.166666666666667
     },
     "hmdb__lipidmaps": {
-      "n_pairs": 25,
-      "raw_block14_match_pct": 100.0,
-      "raw_full_match_pct": 88.0,
-      "reconciled_block14_match_pct": 100.0,
-      "reconciled_full_match_pct": 100.0
+      "n_compounds": 25,
+      "raw_full_disagreement_pct": 40.0,
+      "reconciled_full_disagreement_pct": 4.0,
+      "raw_block14_disagreement_pct": 4.0,
+      "reconciled_block14_disagreement_pct": 4.0
     }
   },
-  "aggregate": {
-    "raw_block14_match_pct": 96.83544303797468,
-    "raw_full_match_pct": 69.62025316455697,
-    "reconciled_block14_match_pct": 96.83544303797468,
-    "reconciled_full_match_pct": 95.56962025316456
-  }
+  "aggregate_compound_level": {
+    "raw_full_disagreement_pct": 59.09090909090909,
+    "raw_block14_disagreement_pct": 5.454545454545454,
+    "reconciled_full_disagreement_pct": 5.454545454545454,
+    "reconciled_block14_disagreement_pct": 5.454545454545454
+  },
+  "caveat": "Reconciled values are an upper-bound estimate; only HMDB SMILES is canonicalized, with the assumption that same-block14 cross-source pairs would canonicalize identically. Per-source canonicalization is W5 follow-up.",
+  "safeguards_note": "Patch B2 safeguards (block14_changed, stereo_dropped) reject tautomer canonicalization output if (1) connectivity layer changes or (2) stereo info silently dropped."
 }

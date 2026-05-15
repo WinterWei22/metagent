@@ -1,4 +1,4 @@
-panel,method_a,method_b,mean_jaccard,std_jaccard,source_pair,n_pairs,raw_block14_disagreement_pct,raw_full_disagreement_pct,reconciled_block14_disagreement_pct,reconciled_full_disagreement_pct
+panel,method_a,method_b,mean_jaccard,std_jaccard,source_pair,n_compounds,raw_block14_disagreement_pct,raw_full_disagreement_pct,reconciled_block14_disagreement_pct,reconciled_full_disagreement_pct
 A,ramp,ramp,1.0,0.0,,,,,,
 A,ramp,sspa,0.09998670919723551,0.09266701507832259,,,,,,
 A,ramp,mummichog,0.024853801169590625,0.027882009955540576,,,,,,
@@ -8,6 +8,6 @@ A,sspa,mummichog,0.011961722488038272,0.022575369854152018,,,,,,
 A,mummichog,ramp,0.024853801169590625,0.027882009955540576,,,,,,
 A,mummichog,sspa,0.011961722488038272,0.022575369854152018,,,,,,
 A,mummichog,mummichog,1.0,0.0,,,,,,
-B,,,,,chebi__hmdb,109.0,3.6697247706422047,30.275229357798167,3.6697247706422047,4.587155963302749
-B,,,,,chebi__lipidmaps,24.0,4.166666666666657,50.0,4.166666666666657,8.333333333333343
-B,,,,,hmdb__lipidmaps,25.0,0.0,12.0,0.0,0.0
+B,,,,,chebi__hmdb,109.0,5.504587155963303,53.211009174311926,5.504587155963303,5.504587155963303
+B,,,,,chebi__lipidmaps,24.0,4.166666666666667,75.0,4.166666666666667,4.166666666666667
+B,,,,,hmdb__lipidmaps,25.0,4.0,40.0,4.0,4.0

@@ -91,3 +91,62 @@ def test_reconcile_already_neutral_no_change():
     # (tautomer enumerator may still pick a different canonical form,
     # but charge-only path shouldn't trigger any layer change)
     assert "charge" not in rec.layers_changed
+
+
+# ---------------------------------------------------------------------------
+# Patch B2 safeguards (W4 sanity fix 2026-05-16) — added after manual Q4c found:
+#   - glucose ring-open: tautomer enumerator changes block14 (wrong reconciliation)
+#   - L-arginine: tautomer enumerator drops stereo info (silent stereo loss)
+# Safeguards reject those artifacts; final reconciled InChIKey stays pre-tautomer.
+# ---------------------------------------------------------------------------
+
+
+def test_glucose_ring_open_safeguard_block14_changed():
+    """Glucose open-chain Fischer SMILES: tautomer enumerator switches block14
+    GZCGUPFRVQAUEE → DWJZKGYQNOQQEZ. Safeguard 1 must reject + keep block14 stable.
+    """
+    smi = "OC[C@H](O)[C@@H](O)[C@H](O)[C@H](O)C=O"   # open-chain glucose
+    rec = reconcile_inchikey_layer(smi, layer="both")
+    assert rec.original_inchikey is not None
+    assert rec.reconciled_inchikey is not None
+    # Original and reconciled MUST share block14
+    orig_blk = rec.original_inchikey.split("-")[0]
+    new_blk = rec.reconciled_inchikey.split("-")[0]
+    assert orig_blk == new_blk, (
+        f"block14 changed despite safeguard: {orig_blk} → {new_blk}"
+    )
+    # Safeguard 1 must have fired
+    assert "block14_changed" in rec.safeguards_triggered, (
+        f"Safeguard 1 didn't trigger for glucose ring-open; safeguards="
+        f"{rec.safeguards_triggered}"
+    )
+    # Reconciled InChIKey must equal original (tautomer step rejected)
+    assert rec.reconciled_inchikey == rec.original_inchikey
+    # tautomer layer must NOT be in layers_changed (rejected)
+    assert "tautomer" not in rec.layers_changed
+
+
+def test_l_arginine_safeguard_stereo_dropped():
+    """L-arginine (with full stereo BYPYZUCNSA): tautomer enumerator drops stereo
+    to UHFFFAOYSA. Safeguard 2 must reject + preserve stereo layer.
+    """
+    smi = "N[C@@H](CCCNC(=N)N)C(=O)O"   # L-arginine, with stereo
+    rec = reconcile_inchikey_layer(smi, layer="both")
+    assert rec.original_inchikey is not None
+    assert rec.reconciled_inchikey is not None
+    # Original stereo block must be preserved
+    orig_stereo = rec.original_inchikey.split("-")[1]
+    new_stereo = rec.reconciled_inchikey.split("-")[1]
+    assert orig_stereo == new_stereo, (
+        f"stereo silently dropped despite safeguard: {orig_stereo} → {new_stereo}"
+    )
+    # The orig should be BYPYZUCNSA-prefixed (full stereo), not UHFFFAOYSA
+    assert not orig_stereo.startswith("UHFFFAOYSA"), (
+        "fixture broken: L-arginine input should have full stereo info"
+    )
+    # Safeguard 2 must have fired
+    assert "stereo_dropped" in rec.safeguards_triggered, (
+        f"Safeguard 2 didn't trigger; safeguards={rec.safeguards_triggered}"
+    )
+    # Reconciled stays at pre-tautomer state
+    assert "tautomer" not in rec.layers_changed

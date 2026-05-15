@@ -22,8 +22,38 @@ class ReconciledStructure:
     original_inchikey: str | None
     reconciled_inchikey: str | None
     reconciled_smiles: str | None
-    changed: bool                       # True iff InChIKey shifted
-    layers_changed: tuple[str, ...]     # ("charge",) / ("tautomer",) / ("charge", "tautomer")
+    changed: bool                          # True iff InChIKey shifted
+    layers_changed: tuple[str, ...]        # ("charge",) / ("tautomer",) / ("charge", "tautomer")
+    safeguards_triggered: tuple[str, ...] = ()  # subset of ("block14_changed", "stereo_dropped")
+
+
+# ---------------------------------------------------------------------------
+# InChIKey layer helpers
+# ---------------------------------------------------------------------------
+
+
+_NO_STEREO_LAYER2 = "UHFFFAOYSA"   # canonical block 2 when no stereo is defined
+
+
+def _block14(inchikey: str | None) -> str:
+    return (inchikey or "").split("-")[0]
+
+
+def _block_stereo(inchikey: str | None) -> str:
+    """Return block 2 of InChIKey (10-char stereo+isotope+protonation hash).
+
+    InChIKey format: BLK14(14)-STEREO(10)-CHARGE(1)
+    """
+    if not inchikey:
+        return ""
+    parts = inchikey.split("-")
+    return parts[1] if len(parts) >= 2 else ""
+
+
+def _has_stereo(inchikey: str | None) -> bool:
+    """True if the InChIKey appears to encode stereo (block2 != UHFFFAOYSA)."""
+    blk2 = _block_stereo(inchikey)
+    return bool(blk2) and not blk2.startswith(_NO_STEREO_LAYER2)
 
 
 def _smiles_to_mol(smiles: str):
@@ -102,8 +132,11 @@ def reconcile_inchikey_layer(
     orig_ik = _mol_to_inchikey(mol)
     rec_smi = smiles
     layers: list[str] = []
+    safeguards: list[str] = []
     # InChIKey-based change detection avoids false positives from canonical
     # SMILES rewrites that don't change the underlying chemistry
+
+    # Step 1: Uncharger (always safe — strips ionization,never changes connectivity)
     if layer in ("charge", "both"):
         unc = uncharge_compound(rec_smi)
         if unc is not None:
@@ -112,14 +145,35 @@ def reconcile_inchikey_layer(
             if unc_ik and pre_ik and unc_ik != pre_ik:
                 layers.append("charge")
             rec_smi = unc
+
+    # Step 2: Tautomer canonicalizer (with safeguards — Patch B2 W4 sanity fix)
+    # Two known artifacts in RDKit TautomerEnumerator on real metabolites:
+    #   1. Connectivity change: e.g. glucose open-chain → different block14
+    #      (enumerator pulls toward unrelated tautomer)
+    #   2. Stereo silently dropped: e.g. L-arginine BYPYZUCNSA → UHFFFAOYSA
+    # Reject the tautomer step output if either artifact is detected;
+    # final reconciled InChIKey stays at the pre-tautomer state.
     if layer in ("tautomer", "both"):
         tau = canonicalize_tautomer(rec_smi)
         if tau is not None:
             tau_ik = _mol_to_inchikey(_smiles_to_mol(tau))
             pre_ik = _mol_to_inchikey(_smiles_to_mol(rec_smi))
-            if tau_ik and pre_ik and tau_ik != pre_ik:
-                layers.append("tautomer")
-            rec_smi = tau
+            accept = True
+            if tau_ik and pre_ik:
+                # Safeguard 1: connectivity (block14) must be preserved
+                if _block14(tau_ik) != _block14(pre_ik):
+                    safeguards.append("block14_changed")
+                    accept = False
+                # Safeguard 2: stereo not silently lost (orig had stereo, new doesn't)
+                if _has_stereo(pre_ik) and not _has_stereo(tau_ik):
+                    safeguards.append("stereo_dropped")
+                    accept = False
+            if accept:
+                if tau_ik and pre_ik and tau_ik != pre_ik:
+                    layers.append("tautomer")
+                rec_smi = tau
+            # if not accepted, rec_smi stays at pre-tautomer SMILES
+
     rec_mol = _smiles_to_mol(rec_smi) if rec_smi else None
     rec_ik = _mol_to_inchikey(rec_mol)
     return ReconciledStructure(
@@ -127,4 +181,5 @@ def reconcile_inchikey_layer(
         reconciled_smiles=rec_smi,
         changed=(orig_ik != rec_ik and rec_ik is not None),
         layers_changed=tuple(layers),
+        safeguards_triggered=tuple(safeguards),
     )

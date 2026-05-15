@@ -4,11 +4,15 @@ reconciliation lift (W4 D5).
 Panel A: PA method × method Jaccard heatmap (N=22 unique tasks from Session 4,
          identical to v1 preliminary).
 
-Panel B: Cross-source InChIKey disagreement two-layer + reconciliation lift.
+Panel B (Patch A + B2 W4 sanity fix 2026-05-16): Cross-source InChIKey
+         disagreement using **compound-level metric** (Session 4-compatible:
+         denom = unique HMDB compounds, numerator = compounds with ≥2 distinct
+         stored full InChIKeys across sources).
          Per source-pair (chebi-hmdb / chebi-lipidmaps / hmdb-lipidmaps):
             4 bars: block14 raw / block14 reconciled / full raw / full reconciled
-         Disagreement % = 100 - match %.
-         Annotation: 'reconciliation halves full-layer disagreement' style.
+         Reconciliation uses RDKit Uncharger + tautomer canonicalizer with
+         Patch B2 safeguards (reject if tautomer step changes block14 or drops
+         stereo). Reconciled values are an upper-bound estimate (HMDB SMILES only).
 
 Reads:
     data/investigation/fig3_toy/jaccard_data_n30.csv (Session 4 — Panel A)
@@ -92,13 +96,14 @@ def plot_panel_a(ax, M, S, n_tasks):
 
 
 def plot_panel_b(ax, uncharger: dict):
+    """Compound-level disagreement bars (Patch A 2026-05-16)."""
     pairs_raw = uncharger["by_source_pair"]
-    pair_keys = list(pairs_raw.keys())  # e.g. "chebi__hmdb"
+    pair_keys = list(pairs_raw.keys())
     n_pairs = len(pair_keys)
     x = np.arange(n_pairs)
     width = 0.18
 
-    raw_b14_dis = []     # disagreement = 100 - match
+    raw_b14_dis = []
     rec_b14_dis = []
     raw_full_dis = []
     rec_full_dis = []
@@ -106,11 +111,11 @@ def plot_panel_b(ax, uncharger: dict):
     labels = []
     for k in pair_keys:
         p = pairs_raw[k]
-        raw_b14_dis.append(100 - p["raw_block14_match_pct"])
-        rec_b14_dis.append(100 - p["reconciled_block14_match_pct"])
-        raw_full_dis.append(100 - p["raw_full_match_pct"])
-        rec_full_dis.append(100 - p["reconciled_full_match_pct"])
-        n_per_pair.append(p["n_pairs"])
+        raw_b14_dis.append(p["raw_block14_disagreement_pct"])
+        rec_b14_dis.append(p["reconciled_block14_disagreement_pct"])
+        raw_full_dis.append(p["raw_full_disagreement_pct"])
+        rec_full_dis.append(p["reconciled_full_disagreement_pct"])
+        n_per_pair.append(p["n_compounds"])
         a, b = k.split("__")
         labels.append(f"{a}\nvs {b}")
 
@@ -124,11 +129,11 @@ def plot_panel_b(ax, uncharger: dict):
                        label="full reconciled", color="0.1", edgecolor="black", linewidth=0.5)
 
     ax.set_xticks(x); ax.set_xticklabels(labels)
-    ax.set_ylabel("% compound-pairs with disagreement")
-    ax.set_ylim(0, max(60, max(raw_full_dis) * 1.15) if raw_full_dis else 60)
+    ax.set_ylabel("% compounds with cross-source disagreement")
+    ax.set_ylim(0, max(80, max(raw_full_dis) * 1.15) if raw_full_dis else 80)
     ax.set_title(
-        "B. Cross-source InChIKey disagreement\n"
-        "raw vs RDKit Uncharger reconciliation",
+        "B. Cross-source InChIKey disagreement (compound-level)\n"
+        "raw vs RDKit Uncharger + safeguarded tautomer canonicalization",
         loc="left",
     )
     ax.legend(loc="upper right", frameon=False, ncol=2)
@@ -137,12 +142,17 @@ def plot_panel_b(ax, uncharger: dict):
                 f"n={n}", ha="center", va="bottom", fontsize=6.5)
 
     # Aggregate annotation
-    agg = uncharger["aggregate"]
-    raw_full = 100 - agg["raw_full_match_pct"]
-    rec_full = 100 - agg["reconciled_full_match_pct"]
+    agg = uncharger["aggregate_compound_level"]
+    raw_full = agg["raw_full_disagreement_pct"]
+    rec_full = agg["reconciled_full_disagreement_pct"]
+    lift = (raw_full - rec_full) / max(raw_full, 1e-9) * 100
+    sg = uncharger.get("n_safeguard_block14_changed", 0) + \
+         uncharger.get("n_safeguard_stereo_dropped", 0)
     ax.text(0.02, 0.95,
-            f"aggregate full-layer disagreement:\n"
-            f"  raw → reconciled  =  {raw_full:.0f}% → {rec_full:.0f}%",
+            f"compound-level full-layer disagreement:\n"
+            f"  raw → reconciled = {raw_full:.1f}% → {rec_full:.1f}%\n"
+            f"  relative reduction: {lift:.0f}%\n"
+            f"  safeguards rejected: {sg} compounds",
             transform=ax.transAxes, fontsize=7, va="top",
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="0.6", lw=0.5))
 
@@ -171,11 +181,12 @@ def main() -> int:
             })
     for pair_key, p in uncharger["by_source_pair"].items():
         plot_data.append({
-            "panel": "B", "source_pair": pair_key, "n_pairs": p["n_pairs"],
-            "raw_block14_disagreement_pct": 100 - p["raw_block14_match_pct"],
-            "raw_full_disagreement_pct": 100 - p["raw_full_match_pct"],
-            "reconciled_block14_disagreement_pct": 100 - p["reconciled_block14_match_pct"],
-            "reconciled_full_disagreement_pct": 100 - p["reconciled_full_match_pct"],
+            "panel": "B", "source_pair": pair_key,
+            "n_compounds": p["n_compounds"],
+            "raw_block14_disagreement_pct": p["raw_block14_disagreement_pct"],
+            "raw_full_disagreement_pct": p["raw_full_disagreement_pct"],
+            "reconciled_block14_disagreement_pct": p["reconciled_block14_disagreement_pct"],
+            "reconciled_full_disagreement_pct": p["reconciled_full_disagreement_pct"],
         })
     pd.DataFrame(plot_data).to_csv(OUTPUT_DIR / "fig3_v2_data.csv", index=False)
     print(f"  fig3_v2_data.csv  ({len(plot_data)} rows)")
@@ -187,13 +198,21 @@ def main() -> int:
     plot_panel_a(ax_a, M, S, n_tasks)
     plot_panel_b(ax_b, uncharger)
 
-    agg = uncharger["aggregate"]
+    agg = uncharger["aggregate_compound_level"]
+    raw_dis = agg["raw_full_disagreement_pct"]
+    rec_dis = agg["reconciled_full_disagreement_pct"]
+    n_safe = uncharger.get("n_safeguard_block14_changed", 0) + \
+             uncharger.get("n_safeguard_stereo_dropped", 0)
     fig.suptitle(
-        "Fig. 3 (v2, refined). PA-method disagreement (Panel A) motivates ConcordMet "
-        f"reconciliation; cross-source InChIKey disagreement (Panel B) is reduced "
-        f"{100 - agg['raw_full_match_pct']:.0f}% → {100 - agg['reconciled_full_match_pct']:.0f}% "
-        "(full-layer aggregate) by RDKit Uncharger + tautomer canonicalization.",
-        fontsize=8, y=1.04,
+        "Fig. 3 (v2, refined). Panel A: PA-method disagreement (mean off-diagonal "
+        f"Jaccard {np.nanmean([M[i,j] for i in range(3) for j in range(3) if i!=j]):.3f},"
+        f" N={n_tasks} tasks) motivates ConcordMet reconciliation. Panel B: "
+        f"cross-source InChIKey disagreement (compound-level metric, n={uncharger['n_compounds']}) "
+        f"reduces {raw_dis:.1f}% → {rec_dis:.1f}% by RDKit Uncharger + safeguarded tautomer "
+        f"canonicalization ({n_safe} compounds had tautomer step rejected by safeguards). "
+        f"Reconciled is an upper-bound estimate (only HMDB SMILES canonicalized; "
+        f"per-source canonicalization is W5 follow-up).",
+        fontsize=7, y=1.06,
     )
     plt.tight_layout()
     png = OUTPUT_DIR / "fig3_v2_refined.png"
@@ -209,9 +228,12 @@ def main() -> int:
                     if i != j and not np.isnan(M[i, j])]
     mean_cross = float(np.mean(cross_means)) if cross_means else float("nan")
     print(f"  Panel A mean off-diagonal Jaccard: {mean_cross:.4f}")
-    print(f"  Panel B reconciliation lift:")
-    print(f"    aggregate full-layer disagreement: "
-          f"{100-agg['raw_full_match_pct']:.1f}% → {100-agg['reconciled_full_match_pct']:.1f}%")
+    print(f"  Panel B reconciliation lift (compound-level, n={uncharger['n_compounds']}):")
+    print(f"    full disagreement:    {raw_dis:.1f}% → {rec_dis:.1f}% "
+          f"(relative reduction {((raw_dis - rec_dis) / max(raw_dis, 1e-9) * 100):.0f}%)")
+    print(f"    block14 disagreement: {agg['raw_block14_disagreement_pct']:.1f}% → "
+          f"{agg['reconciled_block14_disagreement_pct']:.1f}%")
+    print(f"    safeguards rejected: {n_safe} compounds")
     print("→ Fig 3 v2 refined DONE")
     return 0
 
