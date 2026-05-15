@@ -46,3 +46,6 @@ data/investigation/reactome_cache/*.txt.gz
 
 # Investigation: Fig 3 toy PNG (regeneratable via gate1_toy.py; CSVs commit OK)
 data/investigation/fig3_toy/*.png
+
+# Sprint W3: ChEBI sqlite (regenerate via `python -m concord.etl.chebi_etl --with-isa`)
+data/concord/chebi.sqlite
