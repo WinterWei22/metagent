@@ -176,6 +176,13 @@ def grade_narrative_file(
                 claim_dicts = [_claim_to_dict(c) for c in claims]
                 warnings = list(getattr(ver, "warnings", []) or [])
                 llm_calls = getattr(ver, "llm_calls", None)
+                # Phase B1 D4: surface task_outcome + dropped count to the
+                # JSONL so the aggregator can bucket per-outcome and so
+                # the audit trail records what the LLM emitted.
+                task_outcome_val = getattr(
+                    getattr(ver, "task_outcome", None), "value", "normal"
+                )
+                dropped_count = len(getattr(ver, "dropped_claims", []) or [])
             except Exception as exc:
                 logging.getLogger(__name__).exception(
                     "verify_sub6 crashed on %s", tid
@@ -185,6 +192,8 @@ def grade_narrative_file(
                 claim_dicts = []
                 warnings = []
                 llm_calls = None
+                task_outcome_val = "empty_system_failure"
+                dropped_count = 0
             elapsed = time.perf_counter() - t0
             out_rec = {
                 "task_id": tid,
@@ -193,6 +202,8 @@ def grade_narrative_file(
                 "verifier_llm_calls": llm_calls,
                 "warnings": warnings,
                 "error": err,
+                "task_outcome": task_outcome_val,
+                "dropped_by_grammar": dropped_count,
                 **summary,
                 "claims": claim_dicts,
             }

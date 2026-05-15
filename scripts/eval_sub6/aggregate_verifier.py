@@ -48,6 +48,17 @@ _CLAIM_TYPE_KEYS = (
     "set_enrichment", "driver_metabolite", "pathway_relationship",
     "biological_claim", "grounded_claim", "factual_claim",
     "literature_claim", "peak_mechanistic", "consistency",
+    "other_claim",  # Phase B1 D3 — abstract single-compound catch-all
+)
+
+# Phase B1 D4: TaskOutcome buckets. Records without a task_outcome
+# field default to ``normal`` so legacy verdict files (pre-D4) replay
+# bit-identical.
+_TASK_OUTCOME_KEYS = (
+    "normal",
+    "empty_honest_refusal",
+    "empty_system_failure",
+    "empty_unknown",
 )
 
 
@@ -85,18 +96,38 @@ def main() -> None:
 
     rows_csv: list[dict] = []
 
+    # Phase B1 D4: per-TaskOutcome bookkeeping.
+    outcome_counter: Counter = Counter()
+    # Aggregate verdict counters restricted to NORMAL tasks (the
+    # ratios computed off these are the metric users want to read).
+    agg_total_normal: Counter = Counter()
+    total_claims_normal = 0
+    dropped_total = 0
+    dropped_total_normal = 0
+
     for r in verdicts:
         tid = r["task_id"]
         verdicts_total = r.get("verdicts_total") or {}
         verdicts_by_type = r.get("verdicts_by_type") or {}
+        # Default missing task_outcome to "normal" so legacy verdict
+        # files replay bit-identical to pre-D4 behaviour.
+        outcome = (r.get("task_outcome") or "normal").lower()
+        outcome_counter[outcome] += 1
+        dropped_in_task = int(r.get("dropped_by_grammar") or 0)
+        dropped_total += dropped_in_task
         for v, cnt in verdicts_total.items():
             agg_total[v] += cnt
             total_claims += cnt
+            if outcome == "normal":
+                agg_total_normal[v] += cnt
+                total_claims_normal += cnt
         for ct, vmap in verdicts_by_type.items():
             agg_by_type.setdefault(ct, Counter())
             for v, cnt in vmap.items():
                 agg_by_type[ct][v] += cnt
                 total_claims_by_type[ct] += cnt
+        if outcome == "normal":
+            dropped_total_normal += dropped_in_task
         # Headline-friendly bool flags.
         se_supp = (verdicts_by_type.get("set_enrichment", {}) or {}).get("supported", 0) > 0
         dm_contra = (verdicts_by_type.get("driver_metabolite", {}) or {}).get("contradicted", 0) > 0
@@ -109,6 +140,8 @@ def main() -> None:
         rows_csv.append({
             "task_id": tid,
             "track": r.get("track"),
+            "task_outcome": outcome,
+            "dropped_by_grammar": dropped_in_task,
             "n_claims": sum(verdicts_total.values()) if verdicts_total else 0,
             "supported": verdicts_total.get("supported", 0),
             "unsupported": verdicts_total.get("unsupported", 0),
@@ -125,6 +158,7 @@ def main() -> None:
     # CSV.
     csv_cols = [
         "task_id", "track",
+        "task_outcome", "dropped_by_grammar",
         "n_claims",
         "supported", "unsupported", "contradicted", "unverifiable_v0",
         "set_enrichment_supported_any",
@@ -142,6 +176,15 @@ def main() -> None:
     def _verdict_rate(v: str) -> float:
         return (agg_total.get(v, 0) / total_claims) if total_claims else 0.0
 
+    def _normal_verdict_rate(v: str) -> float:
+        # Phase B1 D4: ratios users actually read should be over the
+        # NORMAL-task denominator only, otherwise empty-refusal /
+        # system-failure tasks pollute the headline.
+        return (
+            agg_total_normal.get(v, 0) / total_claims_normal
+            if total_claims_normal else 0.0
+        )
+
     summary = {
         "track": args.track,
         "n_tasks": n,
@@ -151,6 +194,19 @@ def main() -> None:
         "verifier_llm_calls_total": verifier_llm_calls_total,
         "verdicts_total": {k: agg_total.get(k, 0) for k in _VERDICT_KEYS},
         "verdict_rates": {k: _verdict_rate(k) for k in _VERDICT_KEYS},
+        # Phase B1 D4 — outcome-bucketed counters + NORMAL-only ratios.
+        "task_outcome_counts": {
+            k: outcome_counter.get(k, 0) for k in _TASK_OUTCOME_KEYS
+        },
+        "n_normal_tasks": outcome_counter.get("normal", 0),
+        "verdicts_total_normal": {
+            k: agg_total_normal.get(k, 0) for k in _VERDICT_KEYS
+        },
+        "verdict_rates_normal": {
+            k: _normal_verdict_rate(k) for k in _VERDICT_KEYS
+        },
+        "dropped_by_grammar_total": dropped_total,
+        "dropped_by_grammar_normal": dropped_total_normal,
         "claims_by_type": {k: total_claims_by_type.get(k, 0) for k in _CLAIM_TYPE_KEYS},
         "verdicts_by_type": {
             k: {v: agg_by_type.get(k, Counter()).get(v, 0) for v in _VERDICT_KEYS}
@@ -170,13 +226,37 @@ def main() -> None:
     md.append(f"- **total claims**: {total_claims}")
     md.append(f"- **verifier LLM calls (total)**: {verifier_llm_calls_total}")
     md.append("")
-    md.append("## Aggregate verdict counts")
+    md.append("## Task outcome distribution (Phase B1 D4)")
+    md.append("")
+    md.append("| outcome | n_tasks |")
+    md.append("|---|---:|")
+    for k in _TASK_OUTCOME_KEYS:
+        md.append(f"| {k} | {outcome_counter.get(k, 0)} |")
+    md.append("")
+    md.append(
+        f"**dropped_by_grammar (across all tasks):** {dropped_total} "
+        f"(NORMAL tasks: {dropped_total_normal})"
+    )
+    md.append("")
+    md.append("## Aggregate verdict counts (all tasks — for reference)")
     md.append("")
     md.append("| Verdict | Count | Rate |")
     md.append("|---|---:|---:|")
     for v in _VERDICT_KEYS:
         cnt = agg_total.get(v, 0)
         rate = _verdict_rate(v)
+        md.append(f"| {v} | {cnt} | {rate:.2%} |")
+    md.append("")
+    md.append("## Aggregate verdict counts — NORMAL tasks only (B1 headline)")
+    md.append("")
+    md.append("These are the ratios that pollute-free of LLM honest refusal /")
+    md.append("system failures and should be the headline numbers.")
+    md.append("")
+    md.append("| Verdict | Count | Rate (over NORMAL claims) |")
+    md.append("|---|---:|---:|")
+    for v in _VERDICT_KEYS:
+        cnt = agg_total_normal.get(v, 0)
+        rate = _normal_verdict_rate(v)
         md.append(f"| {v} | {cnt} | {rate:.2%} |")
     md.append("")
     md.append("## Verdicts by claim type")

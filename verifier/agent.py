@@ -30,9 +30,12 @@ Caller-side, the typical pattern is::
 """
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime, timezone
 from typing import Any, Callable, Literal
+
+logger = logging.getLogger(__name__)
 
 from schemas import LiteratureSearchResponse
 from schemas.molecule import MetaboliteInfoResponse
@@ -60,9 +63,40 @@ from verifier.schemas import (
     ClaimVerdict,
     ClassifiedClaim,
     DroppedClaim,
+    TaskOutcome,
     VerifiedClaim,
     VerifiedIdentification,
 )
+from verifier.task_outcome import detect_task_outcome
+
+
+# Phase B1 D4 — v2 grammar should only ever route to one of these
+# ClaimType values via verifier.claim_classifier.route_v2_claim. Any
+# other ClaimType arriving with ``grammar is not None`` means the
+# extractor / classifier silently produced a v1 type for a v2-grammar
+# claim — log it loudly so the smoke can flag the regression.
+_V2_EXPECTED_TYPES = frozenset({
+    ClaimType.BIOLOGICAL,
+    ClaimType.SET_ENRICHMENT,
+    ClaimType.DRIVER_METABOLITE,
+})
+
+
+def _maybe_warn_v1_legacy_in_v2_path(c: ClassifiedClaim, *, where: str) -> None:
+    """Emit one ``logger.warning`` when a claim that was extracted via
+    the v2 grammar path lands on a ClaimType the dispatcher expects to
+    see only from the v1 legacy path.
+
+    ``where`` is a short tag (e.g. ``'sub6'`` / ``'spectrum'``) for the
+    log line so D5 audit can filter on it. The warning carries
+    ``claim_id`` so the trace_id grep is fast.
+    """
+    if c.grammar is not None and c.claim_type not in _V2_EXPECTED_TYPES:
+        logger.warning(
+            "v1 legacy claim_type %s in v2 grammar path (%s); "
+            "claim_id=%s grammar=%s",
+            c.claim_type.value, where, c.claim_id, c.grammar.value,
+        )
 
 
 Fetcher = Callable[[str], MetaboliteInfoResponse]
@@ -272,6 +306,9 @@ def _verify_per_claim(
     """Dispatch each claim to its layer (A/B/C/E/F). Layer D runs separately."""
     out: list[VerifiedClaim] = []
     for c in classified:
+        # Phase B1 D4 — log when a v2-grammar claim arrives with an
+        # unexpected v1 type (smoke stop condition).
+        _maybe_warn_v1_legacy_in_v2_path(c, where="spectrum")
         candidate_ref = resolve_candidate_ref(c, source_report)
         if candidate_ref is not None:
             c = c.model_copy(update={"candidate_ref": candidate_ref})
@@ -399,6 +436,12 @@ def _final(
         claims_v2=claims_v2,
         dropped_by_grammar=len(dropped),
     )
+    # Phase B1 D4: bucket the run for D5 aggregation.
+    outcome = detect_task_outcome(
+        llm_output=llm_output,
+        verified_claims=claims_v2 or claims_v1,
+        dropped_claims=dropped,
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -408,6 +451,7 @@ def _final(
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
         dropped_claims=dropped,
+        task_outcome=outcome,
         overall_verdict=_aggregate_verdict(claims_v2),
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -430,6 +474,14 @@ def _failed(
         claims_v1=[], claims_v2=[],
         dropped_by_grammar=len(dropped),
     )
+    # Phase B1 D4: even on the failed path the outcome detector runs;
+    # it disambiguates "extractor parse failed" (system) vs "extractor
+    # got [] honest-refusal narrative".
+    outcome = detect_task_outcome(
+        llm_output=llm_output,
+        verified_claims=[],
+        dropped_claims=dropped,
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -439,6 +491,7 @@ def _failed(
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
         dropped_claims=dropped,
+        task_outcome=outcome,
         overall_verdict="failed",
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -544,6 +597,9 @@ def _verify_per_claim_sub6(
 
     out: list[VerifiedClaim] = []
     for c in classified:
+        # Phase B1 D4 — log when a v2-grammar claim arrives with an
+        # unexpected v1 type (smoke stop condition).
+        _maybe_warn_v1_legacy_in_v2_path(c, where="sub6")
         if c.claim_type == ClaimType.SET_ENRICHMENT:
             out.append(verify_set_enrichment(c, source_report))
         elif c.claim_type == ClaimType.DRIVER_METABOLITE:
@@ -576,7 +632,10 @@ def _verify_per_claim_sub6(
             out.append(layer_f.verify_peak_mechanistic(c, source_report))
         else:
             # Spectrum-centric layers cannot consume SubsixSourceReport;
-            # surface as UNVERIFIABLE_V0 with explicit reasoning.
+            # surface as UNVERIFIABLE_V0 with explicit reasoning. Phase
+            # B1 D4 keeps this v1-legacy fallback alive but
+            # ``_maybe_warn_v1_legacy_in_v2_path`` above logs whenever a
+            # v2 claim lands here so the ablation can audit drift.
             out.append(
                 VerifiedClaim(
                     claim_id=c.claim_id,

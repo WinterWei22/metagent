@@ -126,6 +126,47 @@ class ClaimType(str, Enum):
     to the v1 legacy classifier path kept for ablation."""
 
 
+class TaskOutcome(str, Enum):
+    """Task-level outcome, distinct from claim-level verdicts.
+
+    Introduced in Phase B1 D4 so D5 aggregate can separate the four
+    cases that all currently look like "0 supported" in the per-claim
+    metric: (i) the LLM honestly refused to fabricate claims because
+    its tools failed; (ii) the run died on the LLM side (empty content,
+    JSON parse failure); (iii) the run produced an empty claim list
+    with no obvious refusal signal; (iv) normal completion.
+
+    The existing claim-level verdicts (supported / unsupported /
+    contradicted / unverifiable_v0) are unchanged; ``task_outcome`` is
+    a separate, peer-rank annotation for the task-as-a-whole.
+    """
+
+    NORMAL = "normal"
+    """LLM produced one or more claim objects (some of which may have
+    been dropped by grammar). The task ran end-to-end and the
+    supported / dropped / unverifiable counts are meaningful."""
+
+    EMPTY_HONEST_REFUSAL = "empty_honest_refusal"
+    """LLM emitted valid JSON with ``claims:[]`` AND the
+    ``narrative_text`` contains an explicit refusal signal (tool
+    failures named, "no enrichment results obtained", etc.). This is
+    the LLM doing the right thing in the absence of grounding —
+    Phase B1 D2 T=0.0 seed-2 mode B. NOT a system failure; should be
+    surfaced separately in D5 aggregate so it does not pollute
+    NORMAL-task ratios."""
+
+    EMPTY_SYSTEM_FAILURE = "empty_system_failure"
+    """LLM produced empty content, the JSON parse failed, or the
+    schema lacked a ``claims`` field. Phase B1 D2 T=0.7 mode A. The
+    inner retry in the runner has already had its single attempt; if
+    we still got here, treat as a system-side failure."""
+
+    EMPTY_UNKNOWN = "empty_unknown"
+    """LLM emitted valid JSON with ``claims:[]`` but no refusal signal.
+    Theoretically should not happen in production; flagged for manual
+    inspection in D5 aggregate."""
+
+
 class ClaimVerdict(str, Enum):
     """The outcome of running a claim through its layer.
 
@@ -849,6 +890,17 @@ class VerifiedIdentification(BaseModel):
             "scored. Surfaced so feedback hints (D4) can quote them back "
             "to the LLM and so the audit trail records what the LLM "
             "actually emitted before grammar filtering."
+        ),
+    )
+    task_outcome: TaskOutcome = Field(
+        default=TaskOutcome.NORMAL,
+        description=(
+            "Phase B1 D4: peer-rank task-level outcome. Default NORMAL "
+            "keeps every legacy verdict-replay bit-identical. Set by "
+            "``verifier/task_outcome.py:detect_task_outcome``. D5 "
+            "aggregator buckets per-task numbers by this field so LLM "
+            "honest refusal does not pollute the NORMAL-task ratio "
+            "denominators."
         ),
     )
     overall_verdict: Literal[
