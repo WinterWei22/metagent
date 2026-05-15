@@ -1,0 +1,11 @@
+{
+  "summary": {
+    "n_total": 88,
+    "n_consistent": 80,
+    "n_inconsistent": 7,
+    "n_uncoverable": 1,
+    "n_critical_conflicts": 0,
+    "n_warning_conflicts": 7
+  },
+  "critical_conflict_rate_pct": 0.0
+}
