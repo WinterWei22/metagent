@@ -103,6 +103,140 @@ Artifacts:
 
 ---
 
+## D2 — Single-method baseline on Tier-A (2026-05-17)
+
+RaMP top-10 vs Cooke ground-truth pathway name (`concord.analyze.pathway_match.pathway_name_overlap` token-set Jaccard ≥ 0.5):
+
+| Cohort | N | hit | hit_rate | wall_total |
+|--------|---:|---:|---------:|-----------:|
+| PRIMARY | 51 | 12 | **23.5 %** | 12.1 s |
+| SENS_A  | 19 | 7 | **36.8 %** | 1.8 s |
+| SENS_B  | 12 | 3 | **25.0 %** | 0.1 s |
+
+All three cohorts fall in the autonomous-mode green band (10-50 %).
+
+**Hotfix**: SENS_B initial run produced hit_rate 0 % because `etl_cooke_tasks(gem="recon2")` left `perturbation_pathway_name` literally as the column header `subsystemN` — the simulatedPA repo *does* ship `data/Recon2.2/r_input/pathway_dict.tsv` (100 entries) but the initial D1.2 ETL only wired up the Human1 dict. Wired the Recon2 dict in `cooke_etl._recon2_perturbation_label` via a lazy global; re-ETL re-runs cleanly with bio names like "Starch and sucrose metabolism".
+
+---
+
+## D3 — 5-axis run on Tier-A (2026-05-17)
+
+K=10 ThreadPoolExecutor concurrency across all (task, method) pairs in a cohort. 410 wrapper calls total (82 tasks × 5 methods).
+
+| Cohort | N | wall | failures by method |
+|--------|---:|-----:|---|
+| PRIMARY | 51 | 434 s | 0 / 0 / 0 / 0 / 0 |
+| SENS_A  | 19 | 196 s | 0 / 0 / 0 / 0 / 0 |
+| SENS_B  | 12 | 105 s | 0 / **1** mummichog / 0 / 0 / 0 |
+
+SENS_B mummichog single-task failure (1/12 = 8.3 %) is well below the 30 % systematic-failure stop floor. Cause: one Recon2.2 SENS_B task had only 2 differential compounds with masses below mummichog's filter; logged as a transient cohort-data interaction, not a wrapper regression.
+
+---
+
+## D4 — Gate-2 verdict (2026-05-17)
+
+### PRIMARY (Human1, z=1.0, N=51) — verdict **RED**
+
+```
+Metric 1 (paradigm-aware supported %):
+  Cond A (Level 1, ORA-only support of GT):  9.8%
+  Cond B (Level 4+5, cross-paradigm support): 3.9%
+  Delta:                                      -5.9pp
+  Metric 1: FAIL
+
+Metric 2 (precision/recall vs Cooke GT, name-fuzzy):
+  Cond A (RaMP only)  precision@10:  23.5%  CI95=(13.7%, 37.3%)
+  Cond B (consensus)  precision@10:   3.9%  CI95=( 0.0%,  9.8%)
+  Delta precision:                  -19.6pp
+  Delta recall:                     -19.6pp
+  Sign test (per-task delta_precision): p=0.002 (+/-: 0/10)
+  Metric 2: FAIL
+
+  PRIMARY verdict: RED
+```
+
+### SENS_A (Human1, z=2.0, N=19) — verdict **YELLOW**
+
+```
+Metric 1: Cond A 5.3% / Cond B 10.5% / Δ +5.3pp / PASS
+Metric 2: Cond A precision 36.8% / Cond B 10.5% / Δ -26.3pp / sign p=0.062 / FAIL
+  SENS_A verdict: YELLOW
+```
+
+### SENS_B (Recon2.2, z=1.0, N=12) — verdict **YELLOW**
+
+```
+Metric 1: Cond A 8.3% / Cond B 16.7% / Δ +8.3pp / PASS
+Metric 2: Cond A precision 25.0% / Cond B 16.7% / Δ -8.3pp / sign p=1.000 / FAIL
+  SENS_B verdict: YELLOW
+```
+
+### Overall: **YELLOW (mixed, contains RED) — 1 RED / 2 YELLOW**
+
+### 5×5 Jaccard buckets (Panel A data, name-overlap)
+
+| Cohort | ora×ora | ora×mz | ora×net | mz×net |
+|--------|--------:|-------:|--------:|-------:|
+| PRIMARY | 0.061 | 0.004 | 0.000 | 0.000 |
+| SENS_A  | 0.057 | 0.006 | 0.000 | 0.000 |
+| SENS_B  | 0.090 | 0.003 | 0.000 | 0.000 |
+
+ora×ora (0.06-0.09) is much higher than ora×mz / ora×net / mz×net (≤0.01) — the paradigm-driven cross-method disagreement re-established in W5 D5 holds at the *pathway-name* level on Cooke too.
+
+### Interpretation of the RED PRIMARY verdict
+
+The cross-paradigm consensus path (Level 4+5 only) requires that ≥ 2 paradigms independently rank the same pathway name in their respective top-10. With the across-paradigm Jaccard mean of 0.004 - 0.006, the **intersection of any ORA tool's top-10 with mummichog's top-10 or FELLA's top-10 is nearly empty**. The consensus filter therefore reduces precision rather than improving it — RaMP-only catches the right ground truth pathway ~24 % of the time, but the cross-paradigm filter throws away ~83 % of those hits because mummichog / FELLA don't agree at the *pathway-name* layer.
+
+This is the **same finding** as W5 D5 sanity Check 2: cross-paradigm disagreement at the pathway-id / pathway-name layer is largely paradigm-driven, *not* a sign of disagreement at the biological level (compound-level Jaccard was 0.38 cross-namespace). The strict consensus rule "intersect across paradigms" weaponises that paradigm-driven disagreement against itself.
+
+**Paper narrative (per Fig 3 v3 caption RED branch):** "Cross-paradigm consensus does not yield ground-truth-anchored lift; reconciliation contribution is qualitative (within-paradigm consistency, panel A; compound-level reconciliation, panel B) rather than precision-driven."
+
+W7 has the option to (i) replace the strict consensus rule with a softer score (e.g. paradigm-weighted union, voting), or (ii) report the result as-is and reframe the paper around reconciliation depth rather than ground-truth precision. The W6 spec explicitly says **do not retune for GREEN** — verdict is reported faithfully.
+
+---
+
+## D5 — Fig 3 v3 + closure (2026-05-17)
+
+Artifacts under `data/concord/fig3_v3/`:
+- `fig3_v3.png` (387 kB, 300 DPI)
+- `fig3_v3.pdf` (32 kB vector)
+- `fig3_v3_data.csv` (per-cohort numbers)
+- `fig3_v3_caption.md` (140 word caption, RED-narrative branch)
+
+Panel A: 5×5 paradigm-bucket Jaccard heatmap on PRIMARY cohort.
+Panel B: W4 v2 charge/tautomer reconciliation bar (carry-forward).
+Panel C: Gate-2 precision lift bars (RaMP baseline vs cross-paradigm), grayscale baseline + verdict color for consensus (PRIMARY red, SENS_A/B yellow).
+
+### Wieder email status (W6 D5)
+
+`docs/concord/wieder_outreach.md` exists from W5 H. Per W6 prompt + autonomous mode rule 4, **email is HELD unconditionally** — even if Gate-2 verdict had been GREEN, the spec says "永远不要实发,无条件 hold". Decision: keep `HELD` flag in the doc header; user reviews after W7 launch.
+
+### Background G (per-source canonicalization)
+
+Skipped this run; the W4 v2 number 59.1 % → 5.5 % is the upper-bound estimate cited in Fig 3 v3 Panel B caveat. G will be done in W7 if user keeps the Panel B per-source breakout as a paper figure.
+
+---
+
+## Test coverage at W6 end
+
+- 115 tests at W6 D1 close
+- +18 W6 D4/D5 tests (`test_w6_analyze.py`)
+- **133 total, 133 PASS** — meets the spec floor of ≥ 130.
+
+---
+
+## Anomalies Logged (autonomous-mode 🟡)
+
+1. **PRIMARY RED Gate-2 verdict** — cross-paradigm consensus *reduces* precision against Cooke ground truth. Sign-test p = 0.002 (significant negative lift on per-task basis). Diagnosed: strict Level-4+ intersection is too restrictive when paradigm-driven pathway-name disagreement is the dominant signal (W5 D5 finding re-confirmed). Paper narrative pivot needed if reviewers expect ground-truth-anchored quantitative lift; the within-paradigm + compound-level reconciliation framing (panels A + B) survives intact.
+
+2. **SENS_A Metric 1 PASS but Metric 2 FAIL** — paradigm support % does shift up under strict consensus (5.3% → 10.5%) but the *precision* hits don't follow. Suggests Metric 1 picks up "support" that doesn't correspond to top-10 rank agreement.
+
+3. **SENS_B mummichog 1/12 task failed** — Recon2.2 SENS_B task with 2 mass-filtered compounds; mummichog had no significant features. Below systematic-failure stop floor (30 %).
+
+4. **OQ-7 → OQ-8 promoted**: mummichog model.json has no KEGG hsa cross-reference; pathway-name-level Jaccard between mummichog and ORA tools = 0.004 (essentially zero). Most paradigm-cross overlap therefore happens only at the compound layer (W5 D5 finding) not the pathway-name layer. The W6 D4 strict-intersection consensus over-penalises this expected structural difference.
+
+---
+
 ## Open Questions (rolling)
 
 - **OQ-1 (W5 carry-fwd):** Per-source canonicalization for Fig 3 caveat. Not started; W6 background-G slot still open.

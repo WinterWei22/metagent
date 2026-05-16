@@ -1,0 +1,4 @@
+cohort,n_tasks,verdict,m1_cond_a,m1_cond_b,m1_delta_pp,m2_cond_a_prec,m2_cond_b_prec,m2_delta_prec_pp,m2_sign_p
+primary,51,RED,0.0980,0.0392,-5.88,0.2353,0.0392,-19.61,0.0020
+sens_a,19,YELLOW,0.0526,0.1053,5.26,0.3684,0.1053,-26.32,0.0625
+sens_b,12,YELLOW,0.0833,0.1667,8.33,0.2500,0.1667,-8.33,1.0000

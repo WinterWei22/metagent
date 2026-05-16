@@ -1,0 +1,1129 @@
+{
+  "primary": {
+    "n_tasks": 51,
+    "metric_1": {
+      "n_tasks": 51,
+      "level_counts": {
+        "0": 22,
+        "1": 5,
+        "2": 15,
+        "3": 7,
+        "4": 2,
+        "5": 0
+      },
+      "cond_a_supported_pct": 0.09803921568627451,
+      "cond_b_supported_pct": 0.0392156862745098,
+      "delta_pp": -5.88235294117647,
+      "metric_1_pass": false
+    },
+    "metric_2": {
+      "n_tasks": 51,
+      "cond_a": {
+        "mean_precision": 0.23529411764705882,
+        "mean_recall": 0.23529411764705882,
+        "precision_ci95": [
+          0.13725490196078433,
+          0.37254901960784315
+        ],
+        "recall_ci95": [
+          0.11764705882352941,
+          0.35294117647058826
+        ]
+      },
+      "cond_b": {
+        "mean_precision": 0.0392156862745098,
+        "mean_recall": 0.0392156862745098,
+        "precision_ci95": [
+          0.0,
+          0.09803921568627451
+        ],
+        "recall_ci95": [
+          0.0,
+          0.09803921568627451
+        ]
+      },
+      "delta_precision_mean": -0.19607843137254902,
+      "delta_recall_mean": -0.19607843137254902,
+      "sign_test_pos": 0,
+      "sign_test_neg": 10,
+      "sign_test_n_eff": 10,
+      "sign_test_p": 0.001953125,
+      "metric_2_pass": false,
+      "per_task_deltas": [
+        {
+          "task_id": "cooke_human1_group3",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group8",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group9",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group11",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group26",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group28",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group32",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group40",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group45",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group47",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group48",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group52",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group62",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group63",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group65",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group69",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group71",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group83",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group87",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group88",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group101",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group102",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group105",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group110",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group121",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group129",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group82",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group103",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group104",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group68",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group116",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group122",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group31",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group99",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group86",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group93",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group2",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group7",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group23",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group22",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group27",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group54",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group80",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group123",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group108",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group138",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group4",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group43",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group25",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group133",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group119",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        }
+      ]
+    },
+    "verdict": "RED",
+    "jaccard_5x5": {
+      "pair_mean": {
+        "sspa_ora_vs_ramp": 0.17114649331458653,
+        "sspa_ora_vs_PSEA": 0.0,
+        "sspa_ora_vs_mummichog": 0.0041279669762641896,
+        "sspa_ora_vs_FELLA": 0.0,
+        "ramp_vs_PSEA": 0.0,
+        "ramp_vs_mummichog": 0.008492010495288587,
+        "ramp_vs_FELLA": 0.0,
+        "PSEA_vs_mummichog": 0.0,
+        "PSEA_vs_FELLA": 0.0,
+        "mummichog_vs_FELLA": 0.0
+      },
+      "paradigm_bucket_mean": {
+        "ora_ora": 0.061468106753830375,
+        "ora_mz": 0.004206659157184258,
+        "ora_net": 0.0,
+        "mz_net": 0.0
+      }
+    }
+  },
+  "sens_a": {
+    "n_tasks": 19,
+    "metric_1": {
+      "n_tasks": 19,
+      "level_counts": {
+        "0": 6,
+        "1": 1,
+        "2": 8,
+        "3": 2,
+        "4": 2,
+        "5": 0
+      },
+      "cond_a_supported_pct": 0.05263157894736842,
+      "cond_b_supported_pct": 0.10526315789473684,
+      "delta_pp": 5.263157894736842,
+      "metric_1_pass": true
+    },
+    "metric_2": {
+      "n_tasks": 19,
+      "cond_a": {
+        "mean_precision": 0.3684210526315789,
+        "mean_recall": 0.3684210526315789,
+        "precision_ci95": [
+          0.15789473684210525,
+          0.5789473684210527
+        ],
+        "recall_ci95": [
+          0.15789473684210525,
+          0.5789473684210527
+        ]
+      },
+      "cond_b": {
+        "mean_precision": 0.10526315789473684,
+        "mean_recall": 0.10526315789473684,
+        "precision_ci95": [
+          0.0,
+          0.2631578947368421
+        ],
+        "recall_ci95": [
+          0.0,
+          0.2631578947368421
+        ]
+      },
+      "delta_precision_mean": -0.2631578947368421,
+      "delta_recall_mean": -0.2631578947368421,
+      "sign_test_pos": 0,
+      "sign_test_neg": 5,
+      "sign_test_n_eff": 5,
+      "sign_test_p": 0.0625,
+      "metric_2_pass": false,
+      "per_task_deltas": [
+        {
+          "task_id": "cooke_human1_group3",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group8",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group9",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group26",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group45",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group63",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group71",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group87",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group101",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group102",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group110",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group129",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group103",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group116",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group122",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group2",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group7",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_human1_group138",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_human1_group43",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        }
+      ]
+    },
+    "verdict": "YELLOW",
+    "jaccard_5x5": {
+      "pair_mean": {
+        "sspa_ora_vs_ramp": 0.1702602715210667,
+        "sspa_ora_vs_PSEA": 0.0,
+        "sspa_ora_vs_mummichog": 0.008310249307479223,
+        "sspa_ora_vs_FELLA": 0.0,
+        "ramp_vs_PSEA": 0.0,
+        "ramp_vs_mummichog": 0.008464142813173283,
+        "ramp_vs_FELLA": 0.0,
+        "PSEA_vs_mummichog": 0.0,
+        "PSEA_vs_FELLA": 0.0,
+        "mummichog_vs_FELLA": 0.0
+      },
+      "paradigm_bucket_mean": {
+        "ora_ora": 0.05675342384035557,
+        "ora_mz": 0.005591464040217503,
+        "ora_net": 0.0,
+        "mz_net": 0.0
+      }
+    }
+  },
+  "sens_b": {
+    "n_tasks": 12,
+    "metric_1": {
+      "n_tasks": 12,
+      "level_counts": {
+        "0": 7,
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 2,
+        "5": 0
+      },
+      "cond_a_supported_pct": 0.08333333333333333,
+      "cond_b_supported_pct": 0.16666666666666666,
+      "delta_pp": 8.333333333333332,
+      "metric_1_pass": true
+    },
+    "metric_2": {
+      "n_tasks": 12,
+      "cond_a": {
+        "mean_precision": 0.25,
+        "mean_recall": 0.25,
+        "precision_ci95": [
+          0.0,
+          0.5
+        ],
+        "recall_ci95": [
+          0.0,
+          0.5
+        ]
+      },
+      "cond_b": {
+        "mean_precision": 0.16666666666666666,
+        "mean_recall": 0.16666666666666666,
+        "precision_ci95": [
+          0.0,
+          0.4166666666666667
+        ],
+        "recall_ci95": [
+          0.0,
+          0.4166666666666667
+        ]
+      },
+      "delta_precision_mean": -0.08333333333333334,
+      "delta_recall_mean": -0.08333333333333334,
+      "sign_test_pos": 0,
+      "sign_test_neg": 1,
+      "sign_test_n_eff": 1,
+      "sign_test_p": 1.0,
+      "metric_2_pass": false,
+      "per_task_deltas": [
+        {
+          "task_id": "cooke_recon2_subsystem45",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem69",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem17",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem30",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem10",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem42",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem78",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem63",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem14",
+          "a_hit": true,
+          "b_hit": true,
+          "a_precision": 1.0,
+          "b_precision": 1.0,
+          "a_recall": 1.0,
+          "b_recall": 1.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem4",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem46",
+          "a_hit": true,
+          "b_hit": false,
+          "a_precision": 1.0,
+          "b_precision": 0.0,
+          "a_recall": 1.0,
+          "b_recall": 0.0,
+          "delta_precision": -1.0,
+          "delta_recall": -1.0
+        },
+        {
+          "task_id": "cooke_recon2_subsystem23",
+          "a_hit": false,
+          "b_hit": false,
+          "a_precision": 0.0,
+          "b_precision": 0.0,
+          "a_recall": 0.0,
+          "b_recall": 0.0,
+          "delta_precision": 0.0,
+          "delta_recall": 0.0
+        }
+      ]
+    },
+    "verdict": "YELLOW",
+    "jaccard_5x5": {
+      "pair_mean": {
+        "sspa_ora_vs_ramp": 0.23931623931623927,
+        "sspa_ora_vs_PSEA": 0.0,
+        "sspa_ora_vs_mummichog": 0.0,
+        "sspa_ora_vs_FELLA": 0.0,
+        "ramp_vs_PSEA": 0.0,
+        "ramp_vs_mummichog": 0.008771929824561403,
+        "ramp_vs_FELLA": 0.0,
+        "PSEA_vs_mummichog": 0.0,
+        "PSEA_vs_FELLA": 0.0,
+        "mummichog_vs_FELLA": 0.0
+      },
+      "paradigm_bucket_mean": {
+        "ora_ora": 0.08974358974358973,
+        "ora_mz": 0.003007518796992481,
+        "ora_net": 0.0,
+        "mz_net": 0.0
+      }
+    }
+  }
+}

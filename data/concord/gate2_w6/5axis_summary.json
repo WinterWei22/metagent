@@ -1,0 +1,41 @@
+{
+  "primary": {
+    "cohort": "primary",
+    "n_tasks": 51,
+    "wall_sec": 434.24105525016785,
+    "fail_count": {
+      "sspa_ora": 0,
+      "mummichog": 0,
+      "ramp": 0,
+      "PSEA": 0,
+      "FELLA": 0
+    },
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/5axis_results_primary.jsonl"
+  },
+  "sens_a": {
+    "cohort": "sens_a",
+    "n_tasks": 19,
+    "wall_sec": 196.11798310279846,
+    "fail_count": {
+      "sspa_ora": 0,
+      "mummichog": 0,
+      "ramp": 0,
+      "PSEA": 0,
+      "FELLA": 0
+    },
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/5axis_results_sens_a.jsonl"
+  },
+  "sens_b": {
+    "cohort": "sens_b",
+    "n_tasks": 12,
+    "wall_sec": 104.98114252090454,
+    "fail_count": {
+      "sspa_ora": 0,
+      "mummichog": 1,
+      "ramp": 0,
+      "PSEA": 0,
+      "FELLA": 0
+    },
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/5axis_results_sens_b.jsonl"
+  }
+}
