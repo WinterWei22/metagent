@@ -127,19 +127,7 @@ def test_refs_to_chebi_numeric_handles_mixed():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(
-    "method",
-    [
-        "ora",
-        pytest.param("ssgsea", marks=pytest.mark.xfail(
-            reason="R-NEW-17 sspa-gseapy ssGSEA integration: gseapy reports "
-                   "'no gene sets passed filtering' even though pathway_df is "
-                   "normalized to str cells. Suspect gseapy data orientation "
-                   "convention mismatch. ORA path works; W4 D1 follow-up.",
-            strict=True,
-        )),
-    ],
-)
+@pytest.mark.parametrize("method", ["ora", "ssgsea"])
 def test_run_sspa_happy_path(toy_refs, method):
     """Reactome path, 2 methods. Verify wrapper returns expected dict structure."""
     result = run_sspa(
@@ -189,10 +177,6 @@ def test_normalize_to_v03_namespace_format(toy_refs):
         assert hit.pathway_id_native, "native pathway_id missing"
 
 
-@pytest.mark.xfail(
-    reason="Depends on ssGSEA run path (R-NEW-17); see test_run_sspa_happy_path",
-    strict=True,
-)
 def test_normalize_ssgsea_method(toy_refs):
     """ssGSEA method also normalizes correctly to v0.3."""
     raw_result = run_sspa(

@@ -231,9 +231,28 @@ def run_sspa(
                             DA_cutoff=da_cutoff, DA_testtype=da_testtype)
         raw = ora.over_representation_analysis()
     elif method == "ssgsea":
-        model = sspa.sspa_ssGSEA(pathway_df, min_entity=2)
-        model.fit(mat)
-        raw = model.transform(mat)
+        # R-NEW-17 fix (W5 background F): bypass sspa.sspa_ssGSEA because it
+        # passes ``mat.T`` directly to gseapy.ssgsea, but gseapy._check_data
+        # calls ``set_index(keys=exprs.columns[0])`` — which treats the first
+        # *column* as gene identifiers and silently replaces the compound-ID
+        # index with the first sample's float values, producing
+        # "no gene sets passed filtering". Workaround: reset_index() so
+        # compound IDs land in column 0 where gseapy expects them.
+        import gseapy
+        from sspa import utils as _sspa_utils
+        pathway_dict = _sspa_utils.pathwaydf_to_dict(pathway_df)
+        ssgsea_res = gseapy.ssgsea(
+            data=mat.T.reset_index(),
+            gene_sets=pathway_dict,
+            min_size=2,
+            outdir=None,
+            sample_norm_method="rank",
+            no_plot=True,
+        )
+        # Mirror sspa.sspa_ssGSEA.transform output shape: pathways × samples
+        # (rows = samples, cols = pathways).
+        scores = ssgsea_res.res2d.pivot(index="Term", columns="Name", values="NES").T
+        raw = pd.DataFrame(scores, index=mat.index).astype(float)
     elif method == "gsva":
         model = sspa.sspa_gsva(pathway_df, min_entity=2) \
             if hasattr(sspa, "sspa_gsva") else None
@@ -263,6 +282,11 @@ def run_sspa(
         "wall_time_sec": wall,
         "tool_version": getattr(sspa, "__version__", "sspa-1.0.4"),
         "db_release": f"{pathway_db}_unspecified",  # W3 best-effort; W4 pin
+        # ssGSEA / KPCA / GSVA / zscore normalizers need these to populate
+        # metabolites_hit via pathway-membership ∩ input intersection;
+        # ORA's normalizer ignores them (uses DA_Metabolites_ID column instead).
+        "_pathway_df": pathway_df,
+        "_input_chebi_numeric": diff_chebi,
         "parameters": {
             "da_cutoff": da_cutoff,
             "da_testtype": da_testtype,

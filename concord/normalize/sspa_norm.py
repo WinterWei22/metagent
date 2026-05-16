@@ -204,12 +204,22 @@ def _extract_top_pathways_from_ora(
 
 
 def _extract_top_pathways_from_ssgsea(
-    raw: pd.DataFrame, *, top_n: int,
+    raw: pd.DataFrame,
+    *,
+    top_n: int,
+    pathway_df: pd.DataFrame | None = None,
+    input_chebi_numeric: list[str] | None = None,
+    chebi_lookup: Any | None = None,
 ) -> list[PathwayHit]:
     """sspa ssGSEA / KPCA / GSVA / zscore output: rows=samples, cols=pathways.
 
     For Gate 1-style aggregate top-N, we mean-diff case-vs-ctrl (case rows
     in upper half of mat by convention)→ rank pathways by Δ.
+
+    When ``pathway_df`` + ``input_chebi_numeric`` are provided, metabolites_hit
+    is populated as ``input ∩ pathway_members`` for each top pathway (resolved
+    via id_resolve), so the EnrichmentResult vacuous-pathways validator
+    (added in W3 hotfix) does not reject the score-based methods.
     """
     if raw is None or raw.empty:
         return []
@@ -218,21 +228,72 @@ def _extract_top_pathways_from_ssgsea(
     half = n_sample // 2
     case_mean = raw.iloc[:half].mean(axis=0)
     ctrl_mean = raw.iloc[half:].mean(axis=0)
-    diff = (case_mean - ctrl_mean).sort_values(ascending=False).head(top_n)
+    diff = (case_mean - ctrl_mean).sort_values(ascending=False)
+
+    # Pre-compute each-pathway member set (as ChEBI numeric strings)
+    pathway_members: dict[str, set[str]] = {}
+    input_set: set[str] = set()
+    if pathway_df is not None and input_chebi_numeric:
+        input_set = {str(c) for c in input_chebi_numeric}
+        for pid, row in pathway_df.iterrows():
+            members = set()
+            for col, val in row.items():
+                if col == "Pathway_name":
+                    continue
+                if pd.isna(val):
+                    continue
+                s = str(val).strip()
+                if s:
+                    members.add(s)
+            pathway_members[str(pid)] = members
+
+    # Filter to pathways that share at least one compound with the input set
+    # (ssGSEA's continuous scores are agnostic to the input set; ORA-style
+    # "hit" semantics demand input∩pathway > 0 for the pathway to be
+    # interpretable as an enrichment hit). If no such filtering data is
+    # available, fall back to raw top-N by case-ctrl Δ.
+    if input_set and pathway_members:
+        filtered_pids = [
+            pid for pid in diff.index
+            if str(pid) in pathway_members and (pathway_members[str(pid)] & input_set)
+        ]
+        diff = diff.loc[filtered_pids].head(top_n)
+    else:
+        diff = diff.head(top_n)
+
+    from concord.reconcile.id_resolve import resolve_ids_to_compound_refs
 
     hits = []
     for rank, (pid, score) in enumerate(diff.items()):
-        pid_ns = _namespace_pathway_id(str(pid))
+        pid_str = str(pid)
+        pid_ns = _namespace_pathway_id(pid_str)
+
+        metabolites_hit: tuple = ()
+        n_path = 0
+        n_in = 0
+        if pid_str in pathway_members:
+            members = pathway_members[pid_str]
+            n_path = len(members)
+            intersect = sorted(members & input_set)
+            n_in = len(intersect)
+            if intersect:
+                resolved, _ = resolve_ids_to_compound_refs(
+                    intersect, source_namespace="CHEBI", chebi_lookup=chebi_lookup,
+                )
+                metabolites_hit = tuple(resolved)
+
         try:
             hits.append(PathwayHit(
                 pathway_id=pid_ns,
-                pathway_name=str(pid),  # ssGSEA doesn't always include name
-                pathway_id_native=str(pid),
+                pathway_name=pid_str,  # ssGSEA doesn't always include name
+                pathway_id_native=pid_str,
                 pathway_db=PathwayDB.REACTOME,
                 score=float(score),
                 score_type=ScoreType.SS_ACTIVITY,
                 rank=rank,
-                metabolites_hit=(),
+                metabolites_hit=metabolites_hit,
+                n_metabolites_in_pathway=n_path,
+                n_metabolites_input=n_in,
                 auxiliary_scores={},
             ))
         except ValueError as e:
@@ -283,7 +344,12 @@ def normalize_sspa_output(
             raw, top_n=top_n, chebi_lookup=chebi_lookup,
         )
     else:
-        hits = _extract_top_pathways_from_ssgsea(raw, top_n=top_n)
+        hits = _extract_top_pathways_from_ssgsea(
+            raw, top_n=top_n,
+            pathway_df=sspa_result.get("_pathway_df"),
+            input_chebi_numeric=sspa_result.get("_input_chebi_numeric"),
+            chebi_lookup=chebi_lookup,
+        )
 
     # Patch each hit's pathway_db to match result-level value
     hits_patched = tuple(
