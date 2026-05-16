@@ -24,12 +24,13 @@ LABEL release="0.1-investigation"
 
 # Install MetaboAnalystR + FELLA + supporting deps
 # (BiocManager pre-installed in bioconductor_docker base image)
-# NOTE (W5 D1 hotfix 2026-05-16): MetaboAnalystR depends on a chain of
-# Bioconductor packages (pcaMethods, Biobase, RBGL, edgeR, impute, siggenes,
-# and CRAN's crmn which in turn needs pcaMethods + Biobase). Previous build
-# omitted these → devtools::install_github silently logged ERROR and
-# MetaboAnalystR install failed despite the "DONE" cat fence. Adding the
-# full transitive Bioconductor dep set up-front so devtools sees them.
+# NOTE (W5 D1 hotfix 2026-05-16, attempt 2): MetaboAnalystR 4.x has a
+# very large transitive dep set spanning CRAN + Bioconductor. v1 of this
+# hotfix added the most-visible missing Bioc deps (pcaMethods etc.) but
+# the build still failed on qs2 (lazy-loading), so this layer now uses
+# MetaboAnalystR's *official* metanr_packages() list (verbatim from
+# xia-lab/MetaboAnalystR README) plus qs2. BiocManager::install accepts
+# CRAN package names too, so a single call covers both repositories.
 RUN R -e ' \
     options(repos = c(CRAN = "https://cloud.r-project.org")); \
     install.packages("optparse", quiet=TRUE); \
@@ -37,9 +38,19 @@ RUN R -e ' \
     BiocManager::install(c( \
         "fgsea", "limma", "KEGGREST", "graph", "KEGGgraph", \
         "FELLA", "igraph", \
-        "pcaMethods", "Biobase", "RBGL", "edgeR", "impute", "siggenes" \
+        "BiocParallel", "MSnbase", "multtest", "RBGL", "edgeR", "devtools", \
+        "crmn", "httr", "RJSONIO", "ggplot2", "RColorBrewer", "xtable", \
+        "som", "scales", "Cairo", "gplots", "ROCR", "caret", "randomForest", \
+        "data.table", "car", "XML", "plotly", "cluster", "entropy", \
+        "ALDEx2", "Rcpp", "RcppParallel", "stringr", "tibble", \
+        "preprocessCore", "plotrix", "reshape", "reshape2", "caTools", \
+        "metap", "Rserve", "fitdistrplus", "gridExtra", "htmlTable", \
+        "Hmisc", "plyr", "pls", "pheatmap", "Rgraphviz", "glasso", "huge", \
+        "ppcor", "dplyr", "siggenes", "fingerprint", "ChemmineR", \
+        "rsm", "corpcor", "ellipse", "impute", "Biobase", "viridis", \
+        "kableExtra", "DT", "robustbase", "htmlwidgets", "pcaMethods", \
+        "qs2", "qs" \
     ), ask=FALSE, update=FALSE, quiet=FALSE); \
-    install.packages("crmn", quiet=TRUE); \
     cat("CORE_DEPS_DONE\n")'
 
 # MetaboAnalystR 完整 install(深度依赖大,~30 min build wall time)
