@@ -62,12 +62,33 @@ Once image online → D1 self-test → D2 FELLA prewarm → D3 K=10 concurrent s
 
 ---
 
+## 4.5 · Memory Budget (D3 K=10 spike prerequisite)
+
+Captured 2026-05-16 14:40 immediately before the K=10 concurrent docker-exec spike per user instruction #6.
+
+| Layer | Value | Notes |
+|-------|-------|-------|
+| System total RAM | 251 GiB | host |
+| System available | 165 GiB | (free + buffers + cache reclaimable) |
+| Swap configured | 7.6 GiB | 1.5 GiB used |
+| Persistent container baseline RSS | 6 MiB | idle (PID 1 = `sleep infinity`) |
+| Per-call PSEA peak RSS estimate | ~800 MiB | R process + MetaboAnalystR lib + cached pathway DB |
+| Per-call FELLA peak RSS estimate | ~1.2 GiB | R process + diffusion.matrix.RData (~387 MiB) + KEGG graph |
+| Worst-case per-call ~ | **1.2 GiB** | dominated by FELLA |
+| K=10 concurrent worst-case ~ | **12 GiB** | 10 × FELLA-style calls |
+| Headroom vs available | **165 / 12 = 13.7×** | well over the 2× safety threshold |
+
+**Auto-rating: GREEN.** K=10 stays well within the 165 GiB headroom and ≪ the 2× safety-margin trigger; no amendment to K required. (If host RSS pressure changes in the future, recompute and re-rate before the next concurrent batch.)
+
 ## 5 · Open Questions
 
 (rolling — anything that blocks but does not stop the sprint)
 
 - **OQ-1 (deferred to W5 D5):** Once 5-axis numbers are in, decide whether to refresh Fig 3 v2 PNG/PDF to include the per-source canonicalization deltas from Background G, or treat per-source as a supplementary stat only.
 - **OQ-2:** Wieder cold email (Background H) timing — draft now, user reviews W6 before send. Do NOT send in W5.
+- **OQ-3 (D2):** FELLA RWR (pagerank) currently skipped — the Dockerfile pre-warm builds only `matrices="diffusion"`, so `pagerank.matrix.RData` is absent and `enrich(method="pagerank")` returns NULL from `generateResultsTable`. Adding pagerank matrices would add ~10-15 min build time. Defer to D5: if the 5-axis Jaccard heatmap shows RWR adds signal beyond diffusion + RaMP KEGG ORA, rebuild with `matrices="all"`; otherwise treat diffusion as the canonical FELLA axis.
+- **OQ-4 (D2):** FELLA diffusion per-call wall is ~94 s on N=8 input (most of it the niter=100 normality permutation in `enrich(approx="normality")`), well over the 30 s D1 soft budget. Investigate after K=10 spike: either (a) drop `approx="normality"` and rely on simulated permutations only, (b) lower niter at runtime, or (c) cache p-value distributions per input-size bucket. For W5 5-axis Gate 1 we live with 94 s/call (15 min for N=30 sequential, ~2 min at K=10).
+- **OQ-5 (D1下):** MetaboAnalystR `mSet$analSet$ora.hits` carries native KEGG cpd IDs for KEGG-pathway lib and HMDB IDs for SMPDB lib — but our normalizer's "library == kegg ? KEGG : HMDB" heuristic does not verify the assumption for non-standard libraries (e.g. `smpdb_pathway` vs other SMPDB variants). If we expand to non-default libraries the source-ns dispatch will need a more robust signal (probably inspect the actual hits prefix).
 
 ---
 
