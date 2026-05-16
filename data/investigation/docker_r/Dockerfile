@@ -24,30 +24,49 @@ LABEL release="0.1-investigation"
 
 # Install MetaboAnalystR + FELLA + supporting deps
 # (BiocManager pre-installed in bioconductor_docker base image)
+# NOTE (W5 D1 hotfix 2026-05-16): MetaboAnalystR depends on a chain of
+# Bioconductor packages (pcaMethods, Biobase, RBGL, edgeR, impute, siggenes,
+# and CRAN's crmn which in turn needs pcaMethods + Biobase). Previous build
+# omitted these → devtools::install_github silently logged ERROR and
+# MetaboAnalystR install failed despite the "DONE" cat fence. Adding the
+# full transitive Bioconductor dep set up-front so devtools sees them.
 RUN R -e ' \
     options(repos = c(CRAN = "https://cloud.r-project.org")); \
     install.packages("optparse", quiet=TRUE); \
     install.packages("jsonlite", quiet=TRUE); \
     BiocManager::install(c( \
         "fgsea", "limma", "KEGGREST", "graph", "KEGGgraph", \
-        "FELLA", "igraph" \
+        "FELLA", "igraph", \
+        "pcaMethods", "Biobase", "RBGL", "edgeR", "impute", "siggenes" \
     ), ask=FALSE, update=FALSE, quiet=FALSE); \
+    install.packages("crmn", quiet=TRUE); \
     cat("CORE_DEPS_DONE\n")'
 
 # MetaboAnalystR 完整 install(深度依赖大,~30 min build wall time)
+# Fail-loud: if devtools::install_github did not install MetaboAnalystR,
+# stop with a non-zero exit so the layer fails and the issue surfaces
+# in the build log instead of silently propagating into the image.
 RUN R -e ' \
     install.packages("devtools", quiet=TRUE); \
     devtools::install_github("xia-lab/MetaboAnalystR", build_vignettes=FALSE, \
                              upgrade="never", quiet=FALSE); \
+    if (!requireNamespace("MetaboAnalystR", quietly=TRUE)) { \
+      stop("MetaboAnalystR install failed — check upstream deps"); \
+    }; \
     cat("METABOANALYSTR_DONE\n")'
 
-# FELLA KEGG graph init(需要下载 KEGG release graph,~200 MB)
-# 这步会触发首次 KEGG REST 调用初始化 hierarchical graph
+# FELLA KEGG graph build + persist to /opt/fella_kegg_hsa
+# (buildGraphFromKEGGREST is in-memory only; buildDataFromGraph writes the
+# four-table KEGG data structure to disk so loadKEGGdata can re-use it at
+# runtime without re-hitting KEGG REST). On a fresh image this download
+# takes ~5-10 min and ~200 MB.
 RUN R -e ' \
     suppressMessages(library(FELLA)); \
     set.seed(42); \
-    tmp <- tempdir(); \
-    buildGraphFromKEGGREST(organism="hsa", filter.path=character(0)); \
+    g <- buildGraphFromKEGGREST(organism="hsa", filter.path=character(0)); \
+    buildDataFromGraph(keggdata.graph=g, databaseDir="/opt/fella_kegg_hsa", \
+                       internalDir=FALSE, matrices="diffusion", \
+                       normality="diffusion", niter=50); \
     cat("FELLA_GRAPH_INIT_DONE\n")' || \
     echo "WARN: FELLA graph init failed during build — defer to runtime"
 

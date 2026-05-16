@@ -306,8 +306,8 @@ run_metaboanalystr_mummichog <- function(params) {
   # W5 stub — full mummichog wrapper W6 (mummichog Python wrapper covers
   # the case adequately for 5-axis Gate 1).
   list(method="metaboanalystr_mummichog",
-       error="MetaboAnalystR R-mummichog not implemented in W5; "
-             "use concord.wrappers.mummichog_wrapper for Python path",
+       error=paste0("MetaboAnalystR R-mummichog not implemented in W5; ",
+                    "use concord.wrappers.mummichog_wrapper for Python path"),
        pathways=list())
 }
 

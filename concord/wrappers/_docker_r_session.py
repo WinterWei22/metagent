@@ -165,10 +165,16 @@ class DockerRSession:
                 _run_docker(["rm", "-f", self.container_name],
                             prefix=self.docker_prefix, timeout=20)
 
-        # Spawn fresh persistent container
+        # Spawn fresh persistent container.
+        # ``--entrypoint sleep`` is required: the image's Dockerfile sets
+        # ``ENTRYPOINT ["Rscript", "/opt/entrypoint.R"]``, so without an
+        # override any positional args (``tail -f /dev/null``) become
+        # arguments to entrypoint.R — which makes PID 1 a stuck R process
+        # that refuses subsequent ``docker exec`` invocations with
+        # "OCI runtime exec failed: read init-p: connection reset by peer".
         r = _run_docker(
-            ["run", "-d", "--name", self.container_name, self.image,
-             "tail", "-f", "/dev/null"],
+            ["run", "-d", "--name", self.container_name,
+             "--entrypoint", "sleep", self.image, "infinity"],
             prefix=self.docker_prefix, timeout=30,
         )
         if r.returncode != 0:
