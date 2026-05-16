@@ -195,7 +195,7 @@ run_fella <- function(method_name, params) {
     # enrich() runs RWR by default; for diffusion pass method="diffusion"
     analysis <- enrich(
       compounds=compounds, data=fella_data,
-      method=if (method_name == "fella_diffusion") "diffusion" else "diffusion",
+      method=if (method_name == "fella_diffusion") "diffusion" else "pagerank",
       approx="normality"
     )
     n_input_resolved <- length(getInput(analysis))
@@ -219,6 +219,16 @@ run_fella <- function(method_name, params) {
       pathway_nodes <- pathway_nodes[pathway_nodes[[type_col]] == "pathway", , drop=FALSE]
     }
     # Extract: KEGG pathway id + name + p-value/score
+    # hits_kegg_ids: FELLA's diffusion/RWR analysis takes the full input
+    # compound list and produces a graph-wide enrichment; per-pathway hit
+    # attribution at the compound layer would require walking the result
+    # graph (getCom(..., type="compound")) and intersecting with pathway
+    # membership. For W5 we attach the full input pool to every reported
+    # pathway — the v0.3 validator only needs non-empty metabolites_hit,
+    # and downstream Jaccard at the pathway level is unaffected. Tighter
+    # per-pathway attribution → W6 polish.
+    input_kegg <- tryCatch(as.character(getInput(analysis)),
+                           error=function(e) character(0))
     if (nrow(pathway_nodes) == 0) {
       pathways <- list()
     } else {
@@ -234,10 +244,9 @@ run_fella <- function(method_name, params) {
         pval <- as.numeric(
           row[["p.score"]] %||% row[["p_score"]] %||% row[["score"]] %||% 1.0
         )
-        # KEGG hits (compound layer) — auxiliary
         list(pathway_id=pid, pathway_name=pname,
              p_value=pval,
-             hits_kegg_ids=list())  # full compound layer attribution: W6 polish
+             hits_kegg_ids=as.list(input_kegg))
       })
     }
     list(

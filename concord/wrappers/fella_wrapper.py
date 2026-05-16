@@ -33,15 +33,40 @@ def _get_session(container_name: str, image: str) -> DockerRSession:
 
 
 def _compound_refs_to_kegg_ids(compound_refs: list[Any]) -> list[str]:
+    """Extract KEGG cpd IDs (Cxxxxx) from a list of CompoundRefs.
+
+    Falls back to a ChEBI → KEGG xref lookup when ``ref.kegg_compound_id``
+    is not populated by id_resolve (which only sets it when the *input*
+    source ns was KEGG). FELLA operates exclusively on KEGG cpd IDs so
+    we cannot let HMDB-input compounds vanish here.
+    """
     out, seen = [], set()
+    chebi_conn = None
     for ref in compound_refs:
         if ref is None:
             continue
         k = getattr(ref, "kegg_compound_id", None)
+        if not k:
+            chebi_id = (getattr(ref, "chebi_id", None) or "").replace("CHEBI:", "")
+            if chebi_id:
+                if chebi_conn is None:
+                    import sqlite3
+                    from concord.lookup.chebi import DEFAULT_DB_PATH
+                    chebi_conn = sqlite3.connect(
+                        f"file:{DEFAULT_DB_PATH}?mode=ro", uri=True)
+                row = chebi_conn.execute(
+                    "SELECT external_id FROM compound_xref "
+                    "WHERE chebi_id=? AND external_ns='KEGG' LIMIT 1",
+                    (chebi_id,)
+                ).fetchone()
+                if row:
+                    k = row[0]
         if k:
             k = k.replace("KEGG:", "").strip()
             if k and k not in seen:
                 seen.add(k); out.append(k)
+    if chebi_conn is not None:
+        chebi_conn.close()
     return out
 
 
