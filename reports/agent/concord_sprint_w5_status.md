@@ -100,10 +100,13 @@ gseapy unconditionally promotes `exprs.columns[0]` to the index, regardless of w
 
 ## 7 · D1-D5 Sequence (executed once image green)
 
-- **D1 (pending — IMAGE READY, awaiting user go-ahead):** `_docker_r_session.py` self-test + `tests/concord/test_docker_r_session.py` PASS
-  - Currently 2 failures surfaced once image was built:
-    - `test_session_self_test`: `Rscript --self-test` output not JSON-parseable (`json.decoder.JSONDecodeError`) — `entrypoint.R --self-test` probably writes JSON not on the last line, or writes log/warning text after. Need to inspect entrypoint output.
-    - `test_session_exec_unknown_method`: container exits 137 (SIGKILL) instead of expected 1 — OOM or container terminated during exec; need to inspect docker daemon logs + memory headroom.
+- **D1 (in-progress, rebuild v3 running):** `_docker_r_session.py` self-test + `tests/concord/test_docker_r_session.py` PASS
+  - **2026-05-16 11:46** — three real root causes diagnosed (commit `fc9edd2`); user's spec hypotheses (stdout/stderr separation, memory pressure) ruled out by direct repro:
+    - **(A) `ensure_running` did not override ENTRYPOINT.** Container started via `docker run -d IMAGE tail -f /dev/null` made PID 1 a stuck `Rscript /opt/entrypoint.R tail -f /dev/null` process; subsequent `docker exec` returned OCI runtime "read init-p: connection reset by peer" and the kernel SIGKILLed the exec init (exit 137). Fixed by adding `--entrypoint sleep` + arg `infinity`. Confirmed: container `ps -ef` now shows only `sleep infinity` as PID 1.
+    - **(B) `entrypoint.R` had a Python-style multi-line string** in `run_metaboanalystr_mummichog()` — R requires `paste0(...)` for explicit concatenation. R parse error on entrypoint load made every dispatch fail with empty stdout. Fixed by wrapping in `paste0(...)`.
+    - **(C) Dockerfile silently failed to install MetaboAnalystR** — `devtools::install_github` logged `ERROR: dependencies 'RBGL', 'crmn', 'edgeR', 'impute', 'pcaMethods', 'siggenes' are not available`, but the `cat("METABOANALYSTR_DONE\n")` fence still ran so the build appeared healthy. Fixed by adding pcaMethods + Biobase + RBGL + edgeR + impute + siggenes to BiocManager::install + crmn to CRAN install, and gating the MetaboAnalystR step on `requireNamespace(..., quietly=TRUE)` + `stop()` so future install failures fail loud.
+    - **Bonus:** Dockerfile FELLA step previously called `buildGraphFromKEGGREST()` but did not persist; runtime self-test always reported `fella_data_ready=false`. Added `buildDataFromGraph(databaseDir="/opt/fella_kegg_hsa")`.
+  - **Build v3 in progress** (started 2026-05-16 11:46, ETA ~30-60 min — Bioc deps cached from build v2, MetaboAnalystR + FELLA-data layers are new). Stop condition #1 still 4 h.
 - **D1下:** MetaboAnalystR end-to-end test (PSEA / MSEA / mummichog) on N=5 toy
 - **D2:** FELLA RWR + Diffusion on N=5; KEGG graph prewarm to keep ≥10 concurrent execs cheap
 - **D3:** K=10 docker exec concurrent spike (target speedup > 6× vs sequential)
