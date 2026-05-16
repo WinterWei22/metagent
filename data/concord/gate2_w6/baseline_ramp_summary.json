@@ -1,0 +1,29 @@
+{
+  "primary": {
+    "cohort": "primary",
+    "n_tasks": 51,
+    "n_hit": 12,
+    "hit_rate": 0.23529411764705882,
+    "wall_total_sec": 7.158545255661011,
+    "wall_median_sec": 0.014922857284545898,
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/baseline_ramp_primary.jsonl"
+  },
+  "sens_a": {
+    "cohort": "sens_a",
+    "n_tasks": 19,
+    "n_hit": 7,
+    "hit_rate": 0.3684210526315789,
+    "wall_total_sec": 1.7951440811157227,
+    "wall_median_sec": 0.020903825759887695,
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/baseline_ramp_sens_a.jsonl"
+  },
+  "sens_b": {
+    "cohort": "sens_b",
+    "n_tasks": 12,
+    "n_hit": 3,
+    "hit_rate": 0.25,
+    "wall_total_sec": 0.07962226867675781,
+    "wall_median_sec": 0.006102085113525391,
+    "out_path": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/data/concord/gate2_w6/baseline_ramp_sens_b.jsonl"
+  }
+}

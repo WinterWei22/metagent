@@ -193,14 +193,29 @@ def _load_zscore_recon2(
     return z_join, pert_cols
 
 
+_RECON2_PATHWAY_DICT: dict[str, str] | None = None
+
+
+def _load_recon2_pathway_dict(path: Path) -> dict[str, str]:
+    """Recon2.2 simulatedPA `pathway_dict.tsv` — `subsystemN` → biological name."""
+    df = pd.read_csv(path, sep="\t")
+    return dict(zip(df["Group"], df["Pathway"]))
+
+
 def _recon2_perturbation_label(col: str) -> str:
-    """Recon2.2 perturbation column = ``subsystemN``. The pathway-name
-    mapping is not in the simulatedPA repo for Recon2.2 (R-input is
-    Human1-only). Emit the raw column header as the label and rely on
-    Gate-2 fuzzy-match (W6 D4) to bridge it to KEGG/Reactome names.
-    Acceptable because Cooke's Recon2.2 subsystems are stable
-    identifiers within the model."""
-    return col
+    """Recon2.2 perturbation column = ``subsystemN``. Looks up the
+    biological name via simulatedPA `Recon2.2/r_input/pathway_dict.tsv`
+    (added W6 D2 hotfix — the dict file was present in the repo but
+    not picked up by the initial D1.2 ETL, which left
+    ``perturbation_pathway_name`` literally equal to ``subsystemN``
+    and broke the D2 baseline name-fuzzy match for SENS_B)."""
+    global _RECON2_PATHWAY_DICT
+    if _RECON2_PATHWAY_DICT is None:
+        path = DEFAULT_AUX_DIR / "pathway_dict_recon2.tsv"
+        if not path.exists():
+            return col
+        _RECON2_PATHWAY_DICT = _load_recon2_pathway_dict(path)
+    return _RECON2_PATHWAY_DICT.get(col, col)
 
 
 def etl_cooke_tasks(
