@@ -154,14 +154,14 @@ def test_normalize_mummichog_populates_hits(synthetic_peaks):
     raw = run_mummichog(synthetic_peaks, mode="positive", permutations=20)
     er = normalize_mummichog_output(raw, top_n=10, chebi_lookup=chebi)
     assert isinstance(er, EnrichmentResult)
-    assert er.schema_version == "concordmet_v0.3"
+    assert er.schema_version == "concordmet_v0.3.1"
     assert len(er.pathways) >= 1
     # Pathway namespace
     for p in er.pathways:
         ns = p.pathway_id.split(":", 1)[0]
         assert ns in PATHWAY_NAMESPACES, p.pathway_id
         # Mummichog uses KEGG: namespace
-        assert ns == "KEGG", f"expected KEGG: but got {ns}:"
+        assert ns == "MUMM", f"expected MUMM: but got {ns}:"
 
     # metabolites_hit populated (W4 D2 wire)
     total_hits = sum(len(p.metabolites_hit) for p in er.pathways)

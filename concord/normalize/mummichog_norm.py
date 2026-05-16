@@ -1,15 +1,23 @@
-"""normalize_mummichog_output → v0.3 EnrichmentResult (W4 D2).
+"""normalize_mummichog_output → v0.3 EnrichmentResult.
 
 Mummichog v2.7.0 outputs human_mfn pathway names + comma-separated KEGG cpd
-IDs per pathway (hits_kegg_ids). This normalizer converts to the namespaced
-v0.3 schema:
-  - pathway_id = "KEGG:" + human_mfn pathway name (using KEGG namespace since
-    mummichog's reference network is KEGG-based even though the names are
-    human_mfn-style descriptive strings)
-  - metabolites_hit via concord.reconcile.id_resolve(hits_kegg_ids, "KEGG", ...)
+IDs per pathway (hits_kegg_ids). W6 D1.3 normalizer:
+  - pathway_id = ``MUMM:<slug>`` — mummichog model.json has 119 human_mfn
+    pathway objects with ``id`` like ``mfn1v10path215`` and ``name`` like
+    "Vitamin D3 (cholecalciferol) metabolism", but **no KEGG hsa-counterpart
+    is recorded in the model**, so no fallback to KEGG: namespace is possible
+    at the pathway-id level. Pathway membership *does* live in KEGG cpd
+    space — that surface continues to use the KEGG: namespace for
+    metabolites_hit (the W4 D2 path).
+  - metabolites_hit via ``concord.reconcile.id_resolve(hits_kegg_ids, "KEGG", …)``
+  - pathway_db = MUMMICHOG_MFN (faithful to the actual reference DB)
+  - pathway_id_native = original human_mfn name (paper-supplementary trace)
 
-Note: human_mfn pathway names are not stable KEGG mapIDs. We preserve the
-mfn name in ``pathway_id_native`` for paper-supplementary traceability.
+Prior wiring (W4 D2) used ``KEGG:<name>`` which inflated the apparent
+within-namespace KEGG overlap with PSEA / FELLA. The MUMM dispatch lets
+the W6 D3 paradigm analysis classify mummichog as the m/z-direct
+paradigm and the 4×4 / 5×5 Jaccard matrix to attribute cross-paradigm
+disagreement correctly.
 """
 from __future__ import annotations
 
@@ -28,16 +36,22 @@ from concord.schema.enrichment import (
 logger = logging.getLogger(__name__)
 
 
-def _namespace_pathway_id(raw_name: str) -> str:
-    """human_mfn pathway name → "KEGG:<name>" (Q05-NEW-4 whitelist requires NS prefix).
+def _slug(s: str) -> str:
+    import re
+    return re.sub(r"[^a-zA-Z0-9]+", "_", s).strip("_").lower()[:80]
 
-    Mummichog v2.7.0 doesn't ship stable KEGG mapIDs; we use the descriptive
-    name as the native ID and prefix with KEGG: because the underlying
-    reference model is KEGG-based. Sprint W5+ may swap for proper mapIDs.
+
+def _namespace_pathway_id(raw_name: str) -> str:
+    """human_mfn pathway name → "MUMM:<slug>" (W6 D1.3).
+
+    Mummichog v2.7.0 model.json does not carry KEGG ``hsa00XXX`` cross-
+    references for its 119 human_mfn pathways, so we emit the MUMM:
+    namespace whitelisted in W6 D1.3 and let the W6 D4 Gate-2 metric
+    layer do name-fuzzy-match if KEGG bridging is needed.
     """
     if not raw_name:
         return ""
-    return f"KEGG:{raw_name.strip()}"
+    return f"MUMM:{_slug(raw_name)}"
 
 
 def normalize_mummichog_output(
@@ -119,7 +133,7 @@ def normalize_mummichog_output(
 
     return EnrichmentResult(
         method=EnrichmentMethod.MUMMICHOG,
-        pathway_db=PathwayDB.KEGG,
+        pathway_db=PathwayDB.MUMMICHOG_MFN,
         pathways=tuple(hits),
         parameters=params,
         tool_version=str(mummichog_result.get("tool_version", "mummichog-2.7.0")),

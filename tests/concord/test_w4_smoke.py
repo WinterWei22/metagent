@@ -122,7 +122,7 @@ def test_w4_three_method_smoke():
     # Assert all 3 are v0.3, namespace OK, metabolites_hit non-empty
     for name, er in [("sspa", sspa_er), ("mummichog", mc_er), ("ramp", ramp_er)]:
         assert isinstance(er, EnrichmentResult), name
-        assert er.schema_version == "concordmet_v0.3", name
+        assert er.schema_version == "concordmet_v0.3.1", name
         assert len(er.pathways) >= 1, name
         n_hits = sum(len(p.metabolites_hit) for p in er.pathways)
         assert n_hits > 0, f"{name} 0 metabolites_hit"

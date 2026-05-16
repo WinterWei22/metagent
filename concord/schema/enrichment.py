@@ -55,6 +55,7 @@ class PathwayDB(str, Enum):
     HMDB = "hmdb"
     SMPDB = "smpdb"
     MERGED = "merged"                   # 跨库合并(MetaNetX 路径)
+    MUMMICHOG_MFN = "mummichog_mfn"     # human_mfn reference (W6 D1.3)
 
 
 class ScoreType(str, Enum):
@@ -89,6 +90,16 @@ PATHWAY_NAMESPACES = frozenset({
     "WP",          # WP:WP167,WikiPathways
     "SMPDB",       # SMPDB:SMP0000456
     "METACYC",     # METACYC:GLYCOLYSIS
+    "MUMM",        # MUMM:vitamin_d3_cholecalciferol_metabolism,
+                   # mummichog human_mfn pathway name slug — added W6 D1.3
+                   # for the m/z-direct paradigm axis when the human_mfn
+                   # pathway has no KEGG hsa-counterpart in mummichog
+                   # model.json. v0.3.1 minor bump (backward compat).
+    "HUMAN1",      # HUMAN1:alanine_aspartate_and_glutamate_metabolism,
+                   # Cooke SAMBA Tier-A ground-truth pathway namespace
+                   # (W6 D1.1). Defers KEGG/Reactome bridging to the
+                   # D4 Gate-2 metric phase fuzzy-name-match.
+    "RECON2",      # RECON2:subsystem27,same role for Recon2.2 sens-B cohort.
 })
 
 
@@ -221,7 +232,7 @@ class EnrichmentResult:
     wall_time_sec: float                 # 实测调用 wall time(单点)
 
     # ConcordMet schema metadata
-    schema_version: str = "concordmet_v0.3"
+    schema_version: str = "concordmet_v0.3.1"  # +MUMM/HUMAN1/RECON2 pathway ns (W6 D1.3, backward-compat)
     tautomer_canonicalized: bool = False  # 见 §2.6 Q-04;输入 metabolite 是否过了 ChEBI is_a 上爬 / RDKit canonicalizer
     chebi_canonicalized: bool = False     # Q-05:输入 metabolite 是否已 normalize 到 ChEBI 主键
     notes: str = ""                       # 任何工具/方法特殊说明

@@ -87,7 +87,7 @@ def test_w3_end_to_end_smoke():
     """Spec checkpoints:
       ✓ pathways[0].pathway_id 是 REACT:... 或 KEGG:... 格式
       ✓ metabolites_hit primary_id 是 CHEBI:... 格式(若有)
-      ✓ EnrichmentResult.schema_version == "concordmet_v0.3"
+      ✓ EnrichmentResult.schema_version == "concordmet_v0.3.1"
     """
     chebi = ChebiLookup(db_path=DB_PATH)
     task = _pick_one_task()
@@ -115,7 +115,7 @@ def test_w3_end_to_end_smoke():
     print(f"[smoke] EnrichmentResult v{er.schema_version}: "
           f"{len(er.pathways)} pathways, method={er.method.value}")
     assert isinstance(er, EnrichmentResult)
-    assert er.schema_version == "concordmet_v0.3"
+    assert er.schema_version == "concordmet_v0.3.1"
     assert er.chebi_canonicalized is True
     assert len(er.pathways) >= 1
 

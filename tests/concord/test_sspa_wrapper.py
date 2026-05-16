@@ -163,7 +163,7 @@ def test_normalize_to_v03_namespace_format(toy_refs):
     )
     er = normalize_sspa_output(raw_result, top_n=10)
     assert isinstance(er, EnrichmentResult)
-    assert er.schema_version == "concordmet_v0.3"
+    assert er.schema_version == "concordmet_v0.3.1"
     assert er.chebi_canonicalized is True
     # At least 1 pathway hit (ORA on 8 mainstream metabolites should yield ≥1)
     assert len(er.pathways) >= 1

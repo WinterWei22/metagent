@@ -31,6 +31,8 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
 
+import numpy as np
+
 from concord.schema.peak import PeakRecord
 
 logger = logging.getLogger(__name__)
@@ -56,6 +58,104 @@ class MummichogVenvMissing(FileNotFoundError):
 
 class MummichogSubprocessError(RuntimeError):
     """mummichog subprocess returned non-zero or surfaced runner-level errors."""
+
+
+# Proton + sodium / chloride adduct masses (monoisotopic)
+_ADDUCTS_POS = {"M+H": 1.00784, "M+Na": 22.98922}
+_ADDUCTS_NEG = {"M-H": -1.00784, "M+Cl": 34.96885}
+
+
+def synthesize_peaks(
+    compound_set: list,
+    *,
+    n_background: int = 250,
+    mode: Literal["positive", "negative"] = "positive",
+    seed: int = 42,
+    rt_range: tuple[float, float] = (30.0, 600.0),
+    bg_mz_range: tuple[float, float] = (50.0, 1000.0),
+) -> list[PeakRecord]:
+    """Build a mummichog input peak list from a CompoundRef list.
+
+    Ported from W4 D5 ``gate1_toy.py:run_mummichog`` peak-builder.
+
+    For each significant compound, emits one PeakRecord per supported
+    adduct (positive mode: ``M+H`` + ``M+Na``; negative: ``M-H`` +
+    ``M+Cl``), using the ChEBI monoisotopic mass via ChebiLookup. Then
+    appends ``n_background`` non-significant random features so
+    mummichog can estimate the null distribution (without background
+    mummichog reports "0 significant features" and yields a vacuous
+    pathway table).
+
+    Args:
+        compound_set: list of CompoundRef (must have ``chebi_id``).
+        n_background: random non-significant features to seed (≥ 100
+            for mummichog to compute a usable null; default 250 matches
+            W4 gate1_toy).
+        mode: ionization polarity; determines which adducts are emitted.
+        seed: deterministic PRNG seed (per-task = hash(task_id) is the
+            W4 convention).
+        rt_range: retention-time range for synthetic peaks (seconds).
+        bg_mz_range: m/z range for background features.
+
+    Returns:
+        list[PeakRecord] ready for ``run_mummichog(peaks, mode=…)``.
+    """
+    from concord.lookup.chebi import ChebiLookup
+    chebi = ChebiLookup()
+    rng = np.random.default_rng(seed=seed)
+    adducts = _ADDUCTS_POS if mode == "positive" else _ADDUCTS_NEG
+    peaks: list[PeakRecord] = []
+
+    for i, ref in enumerate(compound_set):
+        chebi_id = (getattr(ref, "chebi_id", None) or "").replace("CHEBI:", "").strip()
+        if not chebi_id:
+            continue
+        rec = chebi.get_compound(chebi_id)
+        if rec is None or rec.monoisotopic_mass is None:
+            continue
+        emass = float(rec.monoisotopic_mass)
+        if emass < 50.0:  # filter out trivial small ions
+            continue
+        for adduct_name, delta in adducts.items():
+            mz = emass + delta
+            rt = float(rng.uniform(*rt_range))
+            peaks.append(PeakRecord(
+                feature_id=f"diff_{i}_{adduct_name}",
+                mz=mz, retention_time=rt,
+                p_value=0.001,                # well below mummichog's 0.01 cutoff
+                t_score=4.5,
+            ))
+
+    # Background features — non-significant noise so mummichog can fit a null.
+    for j in range(n_background):
+        mz = float(rng.uniform(*bg_mz_range))
+        rt = float(rng.uniform(*rt_range))
+        peaks.append(PeakRecord(
+            feature_id=f"bg_{j}",
+            mz=mz, retention_time=rt,
+            p_value=float(rng.uniform(0.1, 0.95)),
+            t_score=float(rng.normal(0.0, 1.0)),
+        ))
+    return peaks
+
+
+def run_mummichog_for_compound_set(
+    compound_set: list,
+    *,
+    mode: Literal["positive", "negative"] = "positive",
+    n_background: int = 250,
+    seed: int = 42,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Convenience: synth peaks → run_mummichog. Accepts CompoundRef list directly.
+
+    Mirrors the ``run_*`` signature used by the other 4 wrappers so the
+    W6 5-axis driver can dispatch uniformly across paradigms.
+    """
+    peaks = synthesize_peaks(
+        compound_set, n_background=n_background, mode=mode, seed=seed,
+    )
+    return run_mummichog(peaks, mode=mode, **kwargs)
 
 
 def run_mummichog(

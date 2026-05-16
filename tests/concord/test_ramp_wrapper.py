@@ -68,7 +68,7 @@ def test_ramp_happy_path(toy_refs, chebi):
     assert raw["report"] is not None
     er = normalize_ramp_output(raw, top_n=10, chebi_lookup=chebi)
     assert isinstance(er, EnrichmentResult)
-    assert er.schema_version == "concordmet_v0.3"
+    assert er.schema_version == "concordmet_v0.3.1"
     assert len(er.pathways) >= 1
     for hit in er.pathways:
         ns = hit.pathway_id.split(":", 1)[0]
