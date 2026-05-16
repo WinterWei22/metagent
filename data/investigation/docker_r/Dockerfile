@@ -54,12 +54,19 @@ RUN R -e ' \
     cat("CORE_DEPS_DONE\n")'
 
 # MetaboAnalystR 完整 install(深度依赖大,~30 min build wall time)
-# Fail-loud: if devtools::install_github did not install MetaboAnalystR,
-# stop with a non-zero exit so the layer fails and the issue surfaces
-# in the build log instead of silently propagating into the image.
+# NOTE (W5 D1 hotfix 2026-05-16, attempt 3): HEAD of xia-lab/MetaboAnalystR
+# is currently 4.3.0 with a broken NAMESPACE file — exports undefined
+# functions (GetMumStatColNames, GetMumStatMat, GetMumStatRowNames,
+# GetPvalCutoffForSigFeatures, PerformMumTableStat, PlotMumVolcano) and
+# fails with "package or namespace load failed … undefined exports".
+# This is an upstream bug; pinning to ref="v4.2.0" (89dd939, the most
+# recent stable release tag) avoids it.
+# Fail-loud guard kept: if install fails despite the pin, the layer
+# fails the build instead of silently leaving the image MetaboAnalystR-less.
 RUN R -e ' \
     install.packages("devtools", quiet=TRUE); \
-    devtools::install_github("xia-lab/MetaboAnalystR", build_vignettes=FALSE, \
+    devtools::install_github("xia-lab/MetaboAnalystR", ref="v4.2.0", \
+                             build_vignettes=FALSE, \
                              upgrade="never", quiet=FALSE); \
     if (!requireNamespace("MetaboAnalystR", quietly=TRUE)) { \
       stop("MetaboAnalystR install failed — check upstream deps"); \
