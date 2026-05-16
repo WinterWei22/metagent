@@ -1,0 +1,16 @@
+method_a,method_b,mean_jaccard,n_tasks
+sspa_ora,sspa_ora,1.0000,2
+sspa_ora,mummichog,0.0000,2
+sspa_ora,ramp,0.0526,2
+sspa_ora,metaboanalystr_psea,0.0000,2
+sspa_ora,fella_diffusion,0.0000,2
+mummichog,mummichog,0.0000,2
+mummichog,ramp,0.0000,2
+mummichog,metaboanalystr_psea,0.0000,2
+mummichog,fella_diffusion,0.0000,2
+ramp,ramp,1.0000,2
+ramp,metaboanalystr_psea,0.0000,2
+ramp,fella_diffusion,0.0000,2
+metaboanalystr_psea,metaboanalystr_psea,1.0000,2
+metaboanalystr_psea,fella_diffusion,0.0625,2
+fella_diffusion,fella_diffusion,0.5000,2
