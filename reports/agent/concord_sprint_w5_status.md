@@ -112,6 +112,19 @@ This shift is non-trivial — flagged for explicit user sign-off before W6 promp
 
 Artifact: `data/concord/gate1_w5_5axis/jaccard_compound_level_n30.csv` (rows = task × method-pair, columns = method_a, method_b, compound_jaccard, n_a, n_b, n_intersect).
 
+### Paradigm-split (ORA × ORA vs ORA × topology)
+
+Classifying sspa_ora / ramp / PSEA as ORA-style enrichment and FELLA as topology / diffusion:
+
+| paradigm_class | mean compound-level Jaccard | std | count |
+|----------------|---------------------------:|----:|------:|
+| ora × ora      | **0.655** | 0.243 | 90 |
+| ora × topo     | **0.115** | 0.158 | 90 |
+
+ORA-vs-ORA agreement is ~5.7× higher than ORA-vs-topology agreement at the compound layer. This is the empirical anchor for the Fig 3 v3 narrative: **the dominant cross-method disagreement is paradigm-driven (set-based ORA vs. graph-diffusion topology) rather than namespace-driven** — and once you split by paradigm, both clusters internally agree well above the W4 baseline (ORA cluster mean 0.655 ≫ W4's 0.046; topo cluster has only one tool here so we cannot characterise within-paradigm yet).
+
+Implication for W6 Gate-2 metric design: a single mean number obscures the structure. The paper-grade metric should report **(a) ORA-cluster mean compound-level Jaccard** and **(b) ORA-vs-topology compound-level Jaccard** as two separate columns, not aggregated. Mummichog (once OQ-6 ports its peak synthesis) goes in the ORA cluster, so the 5-axis run will give us 3 ORA tools × 2 topology tools (mummichog + FELLA — actually mummichog is also ORA-style on empirical compounds, so probably still 4 ORA × 1 topo; will confirm when mummichog is back online).
+
 ## 5 · Open Questions
 
 (rolling — anything that blocks but does not stop the sprint)
