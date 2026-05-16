@@ -19,7 +19,19 @@
 | 4 | MetaboAnalystR PSEA (KEGG hsa) | ✓ |
 | 5 | FELLA diffusion (KEGG hsa) | ✓ (RWR deferred — OQ-3) |
 
-**Effective panel = 4 axes** (sspa_ora, ramp, metaboanalystr_psea, fella_diffusion). Five-axis target is **PARTIAL**: 4 active + 1 OQ. mummichog was active in W4 Gate 1 (Reactome via gate1_toy_n30.py) so the full coverage exists at the panel level — the gap is only in this single D4 driver, not in the concord/ codebase.
+**Effective panel = 4 axes** (sspa_ora, ramp, metaboanalystr_psea, fella_diffusion). **Sprint W5 ran as a 4-axis Gate 1 (not 5-axis)**: mummichog deferred per OQ-6 — the benchmark tasks ship `differential_metabolites` (compound-only) and have `peaks: None` for all 63 entries; mummichog requires peak m/z + background features. mummichog was active in W4 Gate 1 (`gate1_toy.py:run_mummichog` synthesises 250 random background features); my W5 D4 driver did not port that background-synthesis path. OQ-6 classified as **(a)** — input modality mismatch + missing background synthesis. The concord/ wrappers themselves are unchanged from W4.
+
+## 1.5 · Sanity-check verdicts (2026-05-16 18:25, vs user spec)
+
+| Check | Verdict | One-line |
+|-------|---------|----------|
+| 1 — FELLA self-Jaccard 0.633 | **PASS** | 0.633 = 19/30, 11 empty FELLA tasks listed |
+| 2 — compound-level Jaccard | **STOP / PING** | cross-ns compound-level **0.376** > 0.3 — pathway-id-level 0.032 is mostly namespace artifact, paper narrative must use compound-level metric |
+| 3 — mummichog OQ-6 | **PASS** | type (a), 4-axis run is the canonical W5 deliverable |
+| 4 — K=10 speedup methodology | **PASS** | 10.03× genuine same-task same-warm-state; paper should write "10× on homogeneous batches, bound by slowest call on heterogeneous" |
+| 5 — per-task spot check | **PASS** | 0/120 vacuous, 74/74 pathway-IDs namespace-prefixed, all sample CompoundRefs are CHEBI primary |
+
+**Action per user processing rules:** Check 2 (>0.3 cross-ns) triggers "必停 ping" — pause W6 prompt drafting until user reads the compound-level numbers and decides Gate-2 metric design.
 
 ## 2 · Per-method statistics (N=30)
 
@@ -49,7 +61,7 @@
 
 ## 4 · Gate-1 Verdict
 
-**STRONG GREEN — MAINTAINED.**
+**STRONG GREEN — MAINTAINED, narrative re-grounded on compound-level metric (W5 D5 sanity Check 2).**
 
 W3/W4 verdict was STRONG GREEN with mean cross-tool Jaccard 0.046. W5 extends the panel from 3 to 4 active axes (sspa + ramp + PSEA + FELLA) and confirms the same qualitative story: within-namespace tool agreement is non-trivial (0.08-0.11), and the dominant cross-tool disagreement is the cross-namespace gap, not the cross-method gap. The W4 reconciliation pipeline (RDKit canonicalisation + ChEBI is_a + MetaNetX crosswalk) takes that 5.5% compound-level residual down by 91% — that work continues to be the load-bearing contribution of the project.
 

@@ -80,6 +80,38 @@ Captured 2026-05-16 14:40 immediately before the K=10 concurrent docker-exec spi
 
 **Auto-rating: GREEN.** K=10 stays well within the 165 GiB headroom and ≪ the 2× safety-margin trigger; no amendment to K required. (If host RSS pressure changes in the future, recompute and re-rate before the next concurrent batch.)
 
+## 4.6 · Cross-Namespace Artifact Analysis (D5 sanity Check 2, 2026-05-16)
+
+The W5 D5 pathway-id-level 4×4 Jaccard (mean off-diagonal **0.032**) suggested a near-total cross-tool disagreement at the pathway-ID surface. The user sanity Check 2 (compound-level Jaccard) shows that this is **largely a namespace artifact** rather than methodological disagreement:
+
+| pair | namespace classes | pathway-id-level | **compound-level** |
+|------|-------------------|------------------:|-------------------:|
+| sspa_ora vs ramp | REACT vs REACT/SMPDB | 0.111 | **0.624** |
+| sspa_ora vs PSEA | REACT vs KEGG | 0.000 | **0.554** |
+| sspa_ora vs FELLA | REACT vs KEGG | 0.000 | 0.032 |
+| ramp vs PSEA | REACT/SMPDB vs KEGG | 0.000 | **0.787** |
+| ramp vs FELLA | REACT/SMPDB vs KEGG | 0.000 | 0.131 |
+| PSEA vs FELLA | KEGG vs KEGG | 0.082 | 0.182 |
+| **mean off-diagonal** | — | **0.032** | **0.385** |
+| **cross-namespace mean** (REACT × KEGG) | — | 0.000 | **0.376** |
+| **within-Reactome** (sspa vs ramp) | — | 0.111 | 0.624 |
+| **within-KEGG** (PSEA vs FELLA) | — | 0.082 | 0.182 |
+
+### Paper-narrative implication (per user spec)
+
+The cross-namespace **compound-level** Jaccard of **0.376** falls in the user spec's `> 0.3` band — pathway-id-level 0.032 **severely overstates** tool disagreement. The Reactome / KEGG / SMPDB pathway sets carry overlapping compound membership but disjoint pathway-id strings, and a metric that only compares pathway-id strings reads "no overlap" where there is in fact substantial biological overlap at the compound layer.
+
+**Implications for the paper / W6 Gate-2:**
+
+- **Primary metric MUST be compound-level**, not pathway-id-level. A pathway-id-level metric is a strict lower bound that conflates "different tools disagreed" with "different tools used different pathway databases".
+- The W3/W4 reconciliation pipeline (RDKit canonicalization + ChEBI is_a + MetaNetX cross-namespace map) becomes load-bearing for a second reason: it is *the* mechanism that makes compound-level metrics interpretable across the REACT / KEGG / SMPDB family.
+- "STRONG GREEN" verdict survives but the supporting numbers shift: cross-tool agreement at the level the tools were *designed for* (compound membership) is **0.38**, not 0.03. The "tools disagree a lot" framing must be replaced by "tools disagree on what to *call* a pathway, but agree more than 1/3 of the time on the compound evidence behind it".
+- W6 Gate-2's *supported %* score should evaluate against **compound-level** ground-truth overlap; using pathway-id-level would bake in the 92% namespace-artifact penalty and produce uselessly low scores.
+
+This shift is non-trivial — flagged for explicit user sign-off before W6 prompt is drafted.
+
+Artifact: `data/concord/gate1_w5_5axis/jaccard_compound_level_n30.csv` (rows = task × method-pair, columns = method_a, method_b, compound_jaccard, n_a, n_b, n_intersect).
+
 ## 5 · Open Questions
 
 (rolling — anything that blocks but does not stop the sprint)
