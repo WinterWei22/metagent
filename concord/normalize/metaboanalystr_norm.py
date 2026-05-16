@@ -102,8 +102,11 @@ def normalize_metaboanalystr_output(
 
     from concord.reconcile.id_resolve import resolve_ids_to_compound_refs
 
-    id_type_used = (result.get("parameters", {}) or {}).get("id_type", "hmdb").upper()
-    src_ns = {"HMDB": "HMDB", "KEGG": "KEGG", "CHEBI": "CHEBI"}.get(id_type_used, "HMDB")
+    # hits_ids in the docker R response come from mSet$analSet$ora.hits,
+    # which always stores native pathway-library IDs (KEGG cpd Cxxxxx for
+    # the KEGG pathway library, HMDB for the SMPDB library) — independent
+    # of the user-side id_type used for input cross-referencing.
+    src_ns = "KEGG" if library == "kegg" else "HMDB"
 
     hits: list[PathwayHit] = []
     for rank, p in enumerate(top):

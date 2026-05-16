@@ -110,6 +110,19 @@ RUN R -e ' \
     cat("FELLA_GRAPH_INIT_DONE\n")' || \
     echo "WARN: FELLA graph init failed during build — defer to runtime"
 
+# Pre-warm MetaboAnalystR library cache (W5 D1下 hotfix 2026-05-16).
+# CrossReferencing("hmdb") downloads compound_db.qs (~1 MB) from
+# metaboanalyst.ca on first call (~60-90s over the per-cmd network);
+# pre-fetching it here makes the runtime PSEA path start hitting cache
+# from the first request. The runtime monkey-patch in entrypoint.R
+# also enables a qs2 fallback because metaboanalyst.ca currently serves
+# the file in qs2 format rather than the legacy qs format that
+# MetaboAnalystR's .get.my.lib expects.
+RUN mkdir -p /opt/metaboanalystr_cache && \
+    cd /opt/metaboanalystr_cache && \
+    curl -sSL -o compound_db.qs https://www.metaboanalyst.ca/resources/libs/compound_db.qs && \
+    ls -la compound_db.qs
+
 # Copy entrypoint
 COPY entrypoint.R /opt/entrypoint.R
 RUN chmod +x /opt/entrypoint.R

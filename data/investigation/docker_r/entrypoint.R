@@ -39,6 +39,39 @@ log_msg <- function(...) {
 # Constants
 # ---------------------------------------------------------------------------
 FELLA_DATA_DIR <- Sys.getenv("FELLA_DATA_DIR", "/opt/fella_kegg_hsa")
+METABOANALYSTR_CACHE_DIR <- Sys.getenv(
+  "METABOANALYSTR_CACHE_DIR", "/opt/metaboanalystr_cache")
+dir.create(METABOANALYSTR_CACHE_DIR, recursive=TRUE, showWarnings=FALSE)
+
+# ---------------------------------------------------------------------------
+# qs::qread → qs2::qs_read fallback (W5 D1下 hotfix 2026-05-16)
+# ---------------------------------------------------------------------------
+# metaboanalyst.ca currently serves .qs library files in the qs2 binary
+# format (magic bytes 0b 0e 0a c1) but MetaboAnalystR's `.get.my.lib`
+# calls qs::qread, which only understands the legacy qs format and bails
+# with "QS format not detected". Patch qs::qread inside the loaded
+# namespace so that on read failure it transparently retries with
+# qs2::qs_read. No upstream MetaboAnalystR change required.
+suppressMessages({
+  library(qs)
+  library(qs2)
+})
+.orig_qread <- qs::qread
+.patched_qread <- function(file, ...) {
+  tryCatch(
+    .orig_qread(file, ...),
+    error = function(e) {
+      if (grepl("QS format not detected|unsupported", conditionMessage(e),
+                ignore.case=TRUE)) {
+        cat("[entrypoint] qs::qread failed (", conditionMessage(e),
+            "), retrying with qs2::qs_read\n", file=stderr())
+        return(qs2::qs_read(file))
+      }
+      stop(e)
+    }
+  )
+}
+utils::assignInNamespace("qread", .patched_qread, ns="qs")
 
 # ---------------------------------------------------------------------------
 # Self-test mode
@@ -239,34 +272,67 @@ run_metaboanalystr_psea <- function(params) {
   }
   suppressMessages(library(MetaboAnalystR))
 
+  # Stable cwd for MetaboAnalystR's compound_db.qs / pathway_db.qs cache.
+  # .get.my.lib downloads to getwd() and re-reads from there on subsequent
+  # calls, so running every PSEA from the same dir is the cheapest cache
+  # mechanism that does not require monkey-patching the function itself.
+  old_wd <- getwd()
+  setwd(METABOANALYSTR_CACHE_DIR)
+  on.exit(setwd(old_wd), add=TRUE)
   result <- tryCatch({
-    mSet <- InitDataObjects("conc", "msetora", FALSE)
+    # MetaboAnalystR v4.2.0 ships InitDataObjects() with
+    # ``default.dpi = default.dpi`` as the 4th formal — a self-
+    # referential default that triggers "promise already under
+    # evaluation: recursive default argument reference" when omitted.
+    # Pass an explicit value (72 is MetaboAnalystR's documented default).
+    mSet <- InitDataObjects("conc", "msetora", FALSE, default.dpi=72)
     mSet <- Setup.MapData(mSet, compounds)
     mSet <- CrossReferencing(mSet, id_type)
     mSet <- CreateMappingResultTable(mSet)
+    # MetaboAnalystR has two dispatch families:
+    #   pathway lib (SetKEGG.PathLib) → CalculateOraScore (PSEA-style)
+    #   metset lib (SetCurrentMsetLib) → CalculateHyperScore (MSEA-style)
+    # Using the wrong score function leads to
+    # "argument is of length zero" when CalculateHyperScore checks
+    # mSetObj$analSet$msetlibname which is not set in pathway mode.
+    # SetKEGG.PathLib / SetCurrentMsetLib both *overwrite* mSet$api with
+    # the library's {libVersion, libNm}, so SetMetabolomeFilter (which
+    # writes mSet$api$filter that the score functions check) MUST come
+    # afterwards. Earlier ordering silently dropped api$filter and the
+    # score function then died on "argument is of length zero" inside
+    # ``if (mSetObj$api$filter)``.
     if (library_name == "kegg") {
       mSet <- SetKEGG.PathLib(mSet, "hsa", "current")
-    } else {
       mSet <- SetMetabolomeFilter(mSet, FALSE)
+      mSet <- CalculateOraScore(mSet, "rbc", "hyperg")
+    } else {
       mSet <- SetCurrentMsetLib(mSet, "smpdb_pathway", 2)
+      mSet <- SetMetabolomeFilter(mSet, FALSE)
+      mSet <- CalculateHyperScore(mSet)
     }
-    mSet <- CalculateHyperScore(mSet)
     res_mat <- if (!is.null(mSet$analSet$ora.mat)) mSet$analSet$ora.mat else
                if (!is.null(mSet$analSet$msea.mat)) mSet$analSet$msea.mat else NULL
     if (is.null(res_mat) || nrow(res_mat) == 0) {
       return(list(method="metaboanalystr_psea", pathways=list(), n_resolved=0))
     }
     res_df <- as.data.frame(res_mat)
+    # ora.hits is a named list: pathway_id → named char vec of KEGG cpd IDs
+    # (names = compound display names). Used to populate hits_ids per
+    # pathway so the v0.3 normalizer can resolve them via id_resolve.
+    ora_hits <- mSet$analSet$ora.hits
     pathways <- lapply(seq_len(nrow(res_df)), function(i) {
+      pid <- rownames(res_df)[i]
+      hit_ids <- if (!is.null(ora_hits) && pid %in% names(ora_hits))
+        as.character(ora_hits[[pid]]) else character(0)
       list(
-        pathway_id=rownames(res_df)[i],
-        pathway_name=as.character(res_df[i, "Name"] %||% rownames(res_df)[i]),
+        pathway_id=pid,
+        pathway_name=as.character(res_df[i, "Name"] %||% pid),
         p_value=as.numeric(res_df[i, "Raw p"] %||% res_df[i, "p.value"] %||% 1.0),
         fdr=as.numeric(res_df[i, "Holm p"] %||% res_df[i, "fdr"] %||% NA),
         total=as.integer(res_df[i, "Total"] %||% 0),
         expected=as.numeric(res_df[i, "Expected"] %||% NA),
         hits=as.integer(res_df[i, "Hits"] %||% 0),
-        hits_ids=list()  # MetaboAnalystR doesn't expose hit ids in mat; W6 follow-up
+        hits_ids=as.list(hit_ids)  # KEGG cpd IDs; normalizer resolves via id_resolve
       )
     })
     list(
