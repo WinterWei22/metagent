@@ -54,22 +54,44 @@ RUN R -e ' \
     cat("CORE_DEPS_DONE\n")'
 
 # MetaboAnalystR 完整 install(深度依赖大,~30 min build wall time)
-# NOTE (W5 D1 hotfix 2026-05-16, attempt 3): HEAD of xia-lab/MetaboAnalystR
-# is currently 4.3.0 with a broken NAMESPACE file — exports undefined
-# functions (GetMumStatColNames, GetMumStatMat, GetMumStatRowNames,
-# GetPvalCutoffForSigFeatures, PerformMumTableStat, PlotMumVolcano) and
-# fails with "package or namespace load failed … undefined exports".
-# This is an upstream bug; pinning to ref="v4.2.0" (89dd939, the most
-# recent stable release tag) avoids it.
-# Fail-loud guard kept: if install fails despite the pin, the layer
-# fails the build instead of silently leaving the image MetaboAnalystR-less.
+# NOTE (W5 D1 hotfix 2026-05-16, attempt 5): Upstream MetaboAnalystR
+# v4.2.0 (and HEAD) ship NAMESPACE files that export functions which
+# do not exist in the R/ sources. v4 of this hotfix tried
+# `INSTALL_opts=c("--no-test-load")` to bypass the install-time
+# check, but ``requireNamespace("MetaboAnalystR")`` at *runtime* still
+# triggers namespaceExport(...) which re-validates the exports and
+# returns FALSE.
+#
+# Fix: download the source, strip the offending lines from NAMESPACE,
+# then R CMD INSTALL from the patched local copy. Both v4.2.0's set
+# (Plot.sampletrend, PlotImpVarMeta, RemoveMissingPercent, ReplaceMin,
+# plot_dist) and HEAD's set (the Mum* / PlotMumVolcano family) are
+# stripped so this works if we re-pin upstream later. None of these
+# functions are used by the PSEA / MSEA / Mummichog dispatch paths
+# that entrypoint.R exposes, so removing the exports is safe for our
+# call surface.
 RUN R -e ' \
-    install.packages("devtools", quiet=TRUE); \
-    devtools::install_github("xia-lab/MetaboAnalystR", ref="v4.2.0", \
-                             build_vignettes=FALSE, \
-                             upgrade="never", quiet=FALSE); \
+    options(repos = c(CRAN = "https://cloud.r-project.org")); \
+    install.packages(c("devtools","RSQLite","progress"), quiet=TRUE); \
+    td <- tempfile(); dir.create(td); \
+    tarball <- file.path(td, "MetaboAnalystR.tar.gz"); \
+    download.file("https://github.com/xia-lab/MetaboAnalystR/archive/refs/tags/v4.2.0.tar.gz", \
+                  tarball, quiet=FALSE, mode="wb"); \
+    untar(tarball, exdir=td); \
+    pkg_dir <- file.path(td, "MetaboAnalystR-4.2.0"); \
+    ns_path <- file.path(pkg_dir, "NAMESPACE"); \
+    ns <- readLines(ns_path); \
+    broken <- c("Plot.sampletrend","PlotImpVarMeta","RemoveMissingPercent","ReplaceMin","plot_dist", \
+                "GetMumStatColNames","GetMumStatMat","GetMumStatRowNames", \
+                "GetPvalCutoffForSigFeatures","PerformMumTableStat","PlotMumVolcano"); \
+    keep <- !sapply(ns, function(line) any(sapply(broken, function(f) \
+        grepl(paste0("\\(", f, "\\)"), line) ))); \
+    writeLines(ns[keep], ns_path); \
+    cat("NAMESPACE patched: removed", sum(!keep), "lines\n"); \
+    install.packages(pkg_dir, repos=NULL, type="source", \
+                     INSTALL_opts=c("--no-test-load")); \
     if (!requireNamespace("MetaboAnalystR", quietly=TRUE)) { \
-      stop("MetaboAnalystR install failed — check upstream deps"); \
+      stop("MetaboAnalystR install failed after NAMESPACE patch"); \
     }; \
     cat("METABOANALYSTR_DONE\n")'
 
