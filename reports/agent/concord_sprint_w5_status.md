@@ -100,7 +100,26 @@ gseapy unconditionally promotes `exprs.columns[0]` to the index, regardless of w
 
 ## 7 · D1-D5 Sequence (executed once image green)
 
-- **D1 (in-progress, rebuild v3 running):** `_docker_r_session.py` self-test + `tests/concord/test_docker_r_session.py` PASS
+### D1 — COMPLETE (2026-05-16 14:27)
+
+- **D1上 (image build)** done across builds v2-v8 (multiple upstream-MetaboAnalystR fixes — see commits `fc9edd2`, `8f871ba`, `0581675`, `90a957c`).
+  - Image `concord-r:RELEASE_3_19` final SHA `3a6ed705a424`
+  - 6/6 `test_docker_r_session.py` PASS
+- **D1下 (MetaboAnalystR PSEA real-task smoke)** done via commit `57b95b9`.
+  - Task: `RAMP_P_000000421_seed1` (8 differential HMDB IDs → 7 ChEBI refs)
+  - Wall: **12.95 s** (< 30 s budget)
+  - Pathways: 2 — KEGG:hsa00140 (steroid hormone biosynthesis, p = 1.5e-7, 6 hits), KEGG:hsa00350 (p = 0.17, 1 hit)
+  - metabolites_hit: 7/7 = **100% CHEBI primary**
+  - all pathway_ids namespace-prefixed (`KEGG:`)
+  - All 4 D1 末 sanity checks **PASS**.
+  - Full concord regression: **111/111** still green.
+- **Five upstream MetaboAnalystR bugs uncovered and worked around in entrypoint.R + Dockerfile:**
+  1. metaboanalyst.ca serves qs2-format library files; `qs::qread` cannot read them → monkey-patch qread with qs2 fallback.
+  2. `InitDataObjects(default.dpi = default.dpi)` self-referential default → pass explicit `default.dpi = 72`.
+  3. `CalculateHyperScore` is MSEA-only; KEGG path lib needs `CalculateOraScore("rbc", "hyperg")`.
+  4. `SetKEGG.PathLib` overwrites `mSet$api` → `SetMetabolomeFilter` must come AFTER, not before.
+  5. `hits_ids` not in `ora.mat`; live in `mSet$analSet$ora.hits` (named list, pathway_id → KEGG cpd vec). Wired into JSON response.
+- **D1 (legacy header — keep for diff context):** `_docker_r_session.py` self-test + `tests/concord/test_docker_r_session.py` PASS
   - **2026-05-16 11:46** — three real root causes diagnosed (commit `fc9edd2`); user's spec hypotheses (stdout/stderr separation, memory pressure) ruled out by direct repro:
     - **(A) `ensure_running` did not override ENTRYPOINT.** Container started via `docker run -d IMAGE tail -f /dev/null` made PID 1 a stuck `Rscript /opt/entrypoint.R tail -f /dev/null` process; subsequent `docker exec` returned OCI runtime "read init-p: connection reset by peer" and the kernel SIGKILLed the exec init (exit 137). Fixed by adding `--entrypoint sleep` + arg `infinity`. Confirmed: container `ps -ef` now shows only `sleep infinity` as PID 1.
     - **(B) `entrypoint.R` had a Python-style multi-line string** in `run_metaboanalystr_mummichog()` — R requires `paste0(...)` for explicit concatenation. R parse error on entrypoint load made every dispatch fail with empty stdout. Fixed by wrapping in `paste0(...)`.
