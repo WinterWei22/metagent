@@ -1,0 +1,113 @@
+# Concord Sprint W5 — Status
+
+**Branch:** `feature/investigation-concord` (worktree `metagent_day1_v5_investigation`)
+**HEAD at sprint start:** `58979ba` (W5 D1 prep — docker session manager + R/Py wrappers + new entrypoint)
+**Sprint window:** 2026-05-16 → 2026-05-22
+
+---
+
+## 1 · Sprint Goals
+
+| Axis | Tool | Status |
+|------|------|--------|
+| 1 | sspa ORA + ssGSEA (Python) | DONE (W3) |
+| 2 | mummichog (Py3.10 venv) | DONE (W4) |
+| 3 | RaMP (existing T1 wrap) | DONE (W4) |
+| 4 | MetaboAnalystR (PSEA / MSEA / Mummichog) | wrappers IN-FLIGHT, image building |
+| 5 | FELLA (RWR / Diffusion) | wrappers IN-FLIGHT, image building |
+
+Once image online → D1 self-test → D2 FELLA prewarm → D3 K=10 concurrent spike → D4-D5 5-axis run on N=30 → Gate 1 upgrade.
+
+---
+
+## 2 · Stop Conditions (revised)
+
+| # | Trigger | Action | Notes |
+|---|---------|--------|-------|
+| **1** | **Docker `concord-r:RELEASE_3_19` build wall-time > 4 h** | halt + report, no workaround | **AMENDED from 45 min per user 2026-05-16.** Bioconductor + MetaboAnalystR + FELLA + KEGG graph prewarm total install size is multi-GB; tighter limit unrealistic. |
+| 2 | Background F (R-NEW-17 ssGSEA fix) breaks any regression test | halt + report, maintain xfail strict | 1 h time-box; if exceeded stop attempt |
+| 3 | Background G (per-source canonicalization ETL) fails | halt + report, do not modify Fig 3 v2 artifacts | data → CSV only, integration deferred to D5 |
+| 4 | docker exec dispatch returns non-OK on self-test | halt + report | likely package install failure inside image |
+| 5 | Anything pushed to origin / touches `feature/agent-phase-b1` branch | hard stop, revert | user invariant |
+
+---
+
+## 3 · Risk Register Updates
+
+### R-NEW-19 — Docker group membership requires `sg docker` wrapper
+
+- **Severity:** LOW (workaround stable)
+- **Source:** W5 D1 setup
+- **Symptom:** Plain `docker ps` from current shell session yields `permission denied while trying to connect to the Docker daemon socket` even though `getent group docker` shows user `weiwentao` in the docker group. Effective gid set on login predates user being added.
+- **Workaround:** `sg docker -c "docker <args>"` re-evaluates supplementary groups for the subshell. Codified in `concord/wrappers/_docker_r_session.py::_detect_docker_invocation()` which auto-detects and prefixes accordingly:
+  ```python
+  if plain.returncode == 0:
+      return ["docker"]
+  if "permission denied" in plain.stderr.lower():
+      sg_check = subprocess.run(["sg", "docker", "-c", "docker ps"], ...)
+      if sg_check.returncode == 0:
+          return ["sg", "docker", "-c"]
+  ```
+- **Long-term fix:** user logs out + back in once after `sudo gpasswd -a weiwentao docker` was run; current session retains old gid set. No urgency — wrapper is transparent.
+
+---
+
+## 4 · Build Progress (rolling notes — appended every ~30 min)
+
+| Timestamp | Phase | Layer / Step | Wall (min) | Notes |
+|-----------|-------|--------------|------------|-------|
+| 2026-05-16 11:14 | start (v2) | restart after `--progress=plain` flag rejected by legacy builder | 0 | first build attempt v1 also rejected; v2 strips the flag |
+| 2026-05-16 11:14 | running | BiocManager `install.packages(fgsea, limma, KEGGREST, graph, KEGGgraph, FELLA, igraph)` | ~1 | base image layers already cached from earlier aborted run; package install live |
+| 2026-05-16 11:26 | **DONE** | `Successfully tagged concord-r:RELEASE_3_19`, exit 0 | **~12** | layer cache from earlier (killed) build accelerated re-run; both base + Bioconductor + MetaboAnalystR + FELLA fully installed |
+
+---
+
+## 5 · Open Questions
+
+(rolling — anything that blocks but does not stop the sprint)
+
+- **OQ-1 (deferred to W5 D5):** Once 5-axis numbers are in, decide whether to refresh Fig 3 v2 PNG/PDF to include the per-source canonicalization deltas from Background G, or treat per-source as a supplementary stat only.
+- **OQ-2:** Wieder cold email (Background H) timing — draft now, user reviews W6 before send. Do NOT send in W5.
+
+---
+
+## 6 · Background Tracks (parallel during build wall time)
+
+| Track | Description | Time-box | Status |
+|-------|-------------|----------|--------|
+| H | `docs/concord/wieder_outreach.md` cold email draft | 30 min | **DONE** (2026-05-16 11:13) — DO NOT send during W5; user W6 review |
+| F | R-NEW-17 ssGSEA gseapy fix attempt + xfail→pass | 1 h | **DONE** (2026-05-16 11:32, commit `50e7de8`) — root cause was `gseapy._check_data()` `set_index(keys=exprs.columns[0])` clobbering compound-ID index with first-sample float values; fix bypasses `sspa.sspa_ssGSEA` and calls `gseapy.ssgsea(data=mat.T.reset_index(), …)` directly; 13/13 sspa tests pass, 109 concord tests pass (was 103+2xfail = 105 → 109, +4 from flip) |
+| G | per-source canonicalization → `data/concord/fig3/reconciled_per_source.csv` | conditional (only if F done + build still running) | **SKIPPED** — trigger condition not met (build completed at 11:26, before F finished at 11:32). G is deferrable to W5 D5 integration per user spec; no urgency. |
+
+### F technical write-up (root cause + fix detail)
+
+**Symptom:** `gseapy.ssgsea(...)` raised `LookupError: No gene sets passed through filtering condition` even though `pathway_df` cells were correctly normalized to str (R-NEW-15 fix). gseapy's error message printed `The first 5 genes look like this : [ 1.03, 0.89, ... ]` — i.e. data values, not compound IDs.
+
+**Root cause** (gseapy 1.2.1, `base.py:_check_data`):
+```python
+# set gene name as index
+exprs.set_index(keys=exprs.columns[0], inplace=True)
+```
+gseapy unconditionally promotes `exprs.columns[0]` to the index, regardless of whether the caller already passed compound IDs *as* the index. sspa-1.0.4's `sspa_ssGSEA.transform()` does `gseapy.ssgsea(data=X.T, ...)` where `X` is `samples × compounds`; therefore `X.T` has compound IDs as INDEX and sample names as columns. gseapy then overwrites that index with the first column's float values, destroying the compound IDs.
+
+**Fix:** bypass `sspa.sspa_ssGSEA` for the ssGSEA path and call `gseapy.ssgsea(data=mat.T.reset_index(), …)` directly. `reset_index()` pushes the compound IDs into column 0, where gseapy expects them. The remaining 7 lines of sspa's wrapper (a `pivot` + `astype(float)`) are mirrored locally. Other sspa methods (ORA / KPCA / GSVA / zscore) are unaffected.
+
+**Secondary fix:** the W3 hotfix added a vacuous-pathways validator on `EnrichmentResult` (rejects `n_pathways > 0 && n_compound_hits == 0`). ssGSEA's score-based output doesn't carry a `DA_Metabolites_ID` column like ORA does. To populate `metabolites_hit` without altering the schema, the wrapper now surfaces `pathway_df` + the input ChEBI numeric list via private result keys (`_pathway_df`, `_input_chebi_numeric`), and the normalizer (a) intersects each pathway's membership with the input set and (b) filters top-N to pathways with ≥1 input compound (mirroring ORA "hit" semantics, while keeping ssGSEA's continuous score as the rank order).
+
+**Risk register:** R-NEW-17 → CLOSED.
+
+---
+
+## 7 · D1-D5 Sequence (executed once image green)
+
+- **D1 (pending — IMAGE READY, awaiting user go-ahead):** `_docker_r_session.py` self-test + `tests/concord/test_docker_r_session.py` PASS
+  - Currently 2 failures surfaced once image was built:
+    - `test_session_self_test`: `Rscript --self-test` output not JSON-parseable (`json.decoder.JSONDecodeError`) — `entrypoint.R --self-test` probably writes JSON not on the last line, or writes log/warning text after. Need to inspect entrypoint output.
+    - `test_session_exec_unknown_method`: container exits 137 (SIGKILL) instead of expected 1 — OOM or container terminated during exec; need to inspect docker daemon logs + memory headroom.
+- **D1下:** MetaboAnalystR end-to-end test (PSEA / MSEA / mummichog) on N=5 toy
+- **D2:** FELLA RWR + Diffusion on N=5; KEGG graph prewarm to keep ≥10 concurrent execs cheap
+- **D3:** K=10 docker exec concurrent spike (target speedup > 6× vs sequential)
+- **D4:** 5-axis run on N=30 (Gate 1 task panel from W4 D5)
+- **D5:** 5×5 Jaccard heatmap update + Gate 1 verdict (STRONG GREEN / amber / red); commit + close sprint
+
+---
