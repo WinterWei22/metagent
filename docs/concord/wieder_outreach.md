@@ -1,6 +1,12 @@
 # Wieder Lab — Cold Outreach Draft
 
-**Status:** DRAFT — user reviews W6 before send. **DO NOT send during W5.**
+**Status (W7 D5 update 2026-05-17):** still **DRAFT** — held for user review.
+W7 produced PRIMARY GREEN under V3 soft-union (+25.5 pp, p = 0.0009,
+13/0 positive deltas). LLM-consistency precondition unmet (OQ-9, only
+MiniMax key configured), so the autonomous send rule held. **DO NOT send
+during W5 / W6 / W7.** Replace pre-send placeholders + final user review
+needed before any send action. Updated body suggestion: lead with the
+V3 result (+25.5 pp on N=51) and attach Fig 3 v4 PNG.
 **Drafted:** 2026-05-16 (Sprint W5 background H)
 **Target recipient:** Dr. Cecilia Wieder, *currently at* Imperial College London (formerly Ebbels/Glen lab) — primary maintainer of the `sspa` Python package and recent benchmarks of pathway-level enrichment on metabolomics data.
 **Why her:** sspa (pyssp) is the only first-class Python wrapper for the GSEA / ssGSEA / kPCA pathway-activity-score family on metabolite sets; she is also the corresponding author of the 2024 *Briefings in Bioinformatics* tutorial-style benchmark comparing ORA, GSEA, ssPA on metabolite data. Most relevant external expert for a cross-method reconciliation question that is the core of ConcordMet.
