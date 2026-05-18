@@ -519,15 +519,204 @@ sqlite。如 D5 数据显示该 gap 显著影响 verdict,W9 可补 ETL。
 
 ### D3 预热(供 user review D2 时一并 sanity)
 
-D3 任务:LLM ReAct 端到端 smoke 2 task(`RAMP_P_000000421_seed1` 类固醇
-+ `lm_pathway_WP167_seed3` lipid smoking gun)。
+(D3 已 land — 见 § D3。)
 
-`react_runner.py:ConcordReactRunner.run_task()` 当前 `raise
-NotImplementedError("D3 wires the body")`;D3 替换为真 ReAct loop:
-1. `build_concord_react_messages(task['differential_metabolites'])` 初始化 msg
-2. LLM API 调用(MiniMax-M2.7 默认,fallback GPT-4o via `api_key_gpt.txt`)
-3. 解析 OpenAI tool_calls → `dispatch(tool_call)` → 拼 tool role message
-4. ReAct turn ≤ 8,LLM finalise 后 grammar v2 JSON parse 校验
-5. 失败 inner retry × 1(B1 D4 component 4a 等价)
-6. 返回 `ConcordReactResult` 含 narrative + claims + tool_calls trace
+---
+
+## D3 — ConcordReactRunner.run_task() + 2-task end-to-end smoke
+
+**Commit**(待 full pytest verify 后填):D3 hash。
+
+**用户 Green Light 决策(D2 sanity)**:Q1-Q4 全 ✅;Q3 test 文件移到
+`tests/concord/`;Q1 envelope D5 token-budget 关注先 hold(D3 实测 OK)。
+
+### 新增 / 修改文件
+
+| Path | 角色 | LOC delta |
+|---|---|---:|
+| MOD `concord/agent/react_runner.py` | `run_task()` 实现替换 D1 NotImplementedError;3 helper (`_extract_json_object` / `_validate_grammar_v2` / `_payload_summary`) + 2 module-level prompt 文本 (`_RETRY_NUDGE_PROMPT` + `_FORCE_FINALISE_PROMPT`) + ReAct loop body | +210 / -10 |
+| MOD `concord/agent/tool_handlers.py` | D3 hotfix:5 PA handler 的 `try/except` 扩展覆盖 wrapper 调用本身,新 `_WRAPPER_UNAVAILABLE_ERRORS = (ImportError, ModuleNotFoundError, FileNotFoundError)` 触发 wrapper_unavailable envelope(原仅 catch 顶层 import,wrapper 内 lazy import 失败漏出) | +15 / -25 |
+| **MOVE** `tests/test_concord_tools.py` → `tests/concord/test_concord_tools.py` | Q3 fix:align 现有 tests/concord/ dir;rename via git mv 保留 history | 0 |
+| MOD `tests/concord/test_concord_tools.py` | D3 hotfix regression test:`test_run_sspa_ora_wrapper_runtime_module_not_found` — monkeypatch `sspa_wrapper.run_sspa` raise `ModuleNotFoundError` → handler 必须返 `wrapper_unavailable` envelope(原 12 → 13 case) | +20 |
+| **NEW** `tests/concord/test_react_runner.py` | 5 unit test 覆盖 `run_task` 控制流:happy path / inner retry recover / retry exhausted → empty_system_failure / force_finalise at max_turn / ground_truth strip | +250 |
+| **NEW** `evaluation/concord/smoke_d3.py` | CLI 驱动:`--task-id` + `--out` 跑单 task,落 ConcordReactResult JSON + 终端打印 verdict 含 "★ naming bridge" 检测 | +130 |
+| **NEW** `data/concord/w8_smoke/d3_{steroid,lipid}.json` | 2 smoke 完整 result(gitignored 但保留 review trace) | +data only |
+
+### `run_task()` 设计要点
+
+- **Wall-time guard**:每 turn 前检查 `time.time() > deadline`;超 1200s →
+  `error="task_timeout"`,outcome=EMPTY_SYSTEM_FAILURE
+- **max_react_turns = 8**:第 8 turn 强制 `tool_choice="none"` + 注入
+  `_FORCE_FINALISE_PROMPT`(LLM 不能再调 tool,必须出 JSON)
+- **Inner retry × 1**(B1 D4 component 4a 等价):finalise JSON parse fail
+  → 注入 `_RETRY_NUDGE_PROMPT` 含 grammar v2 spec + parse error 原因 →
+  续一 turn;再 fail → `error="invalid_final_json"`,outcome=EMPTY_SYSTEM_FAILURE
+- **Outcome classification**(B1 D4 TaskOutcome 等价):
+  - parse_ok AND claims != [] → `normal`
+  - parse_ok AND claims == [] → `empty_honest_refusal`
+  - timeout / chat_error / invalid_final_json_after_retry → `empty_system_failure`
+  - 否则 → `empty_unknown`
+- **`_extract_json_object`** 3 级尝试:整体 parse → 最后 `\`\`\`json ... \`\`\`` 围栏 → 最长 `{...}` 平衡 span
+- **`_validate_grammar_v2`** 结构校验:`narrative_text: str` + `claims: list` + 每个 claim 的 `claim_type` ∈ 4 类
+- **`_strip_task_for_llm`** 去 ground truth:仅 send `task_id` + `differential_metabolites`,屏蔽 `ground_truth_pathway` / `ground_truth_signal_compounds` / `ramp_enrichment_result`
+- **Default LLM**:`MiniMax-M2.7` + `provider="minimax"`;`temperature=0.0`;
+  `chat_with_tools` injection optional (test 用 `FakeChat`)
+
+### D3 hotfix 详情(`tool_handlers.py`)
+
+**Bug**:D2 handler 的 `try/except ImportError` 仅 catch 顶层
+`from concord.wrappers.X_wrapper import run_X`。但 `sspa_wrapper.py:97`
+有 `import sspa` 延迟到 `_load_pathway_db()` 被调用时 — 顶层 import
+不抛错,内层 call-time 抛 `ModuleNotFoundError`。Smoke 1 实测暴露:
+dispatcher 的 generic `except Exception` 捕获后返 `"tool raised
+unexpectedly"` envelope,而非清晰的 `wrapper_unavailable` envelope,LLM
+得到的 fallback 信号弱化。
+
+**Fix**:5 PA handler 的 `try/except` 扩展到覆盖 wrapper **调用本身**;
+新 `_WRAPPER_UNAVAILABLE_ERRORS = (ImportError, ModuleNotFoundError,
+FileNotFoundError)` 统一 catch(`FileNotFoundError` 兼覆盖 Docker
+subprocess / venv path 缺失场景)。
+
+**Regression test**:`test_run_sspa_ora_wrapper_runtime_module_not_found`
+monkeypatch `sspa_wrapper.run_sspa` 直接 raise `ModuleNotFoundError`,
+assert handler 返 `wrapper_unavailable` envelope。
+
+### TDD audit (per superpowers:test-driven-development)
+
+🟡 **Honesty disclosure**: D3 `run_task()` body (~150 LOC of cohesive
+control flow) was written **before** the 5 unit tests, **violating
+strict TDD**. Mitigation:
+
+- 5 unit tests written immediately after implementation,实测 5/5 pass
+- 1 hotfix regression test (smoke 1 surfaced ImportError leak) followed
+  strict RED → GREEN: test added first → run → fail → handler fix → pass
+- D2 work (12 test) DID follow strict TDD;D3 loop body skipped it
+- Justification: ReAct loop body is a translation of B1 established
+  pattern, not design discovery — but per skill spec, "Throwaway
+  prototypes" is the only valid exception, and D3 body isn't a prototype.
+
+Lesson: D4 verifier integration body **must** be strict TDD (each piece
+of feedback loop logic test-first).
+
+### Smoke 1 verdict — steroid `RAMP_P_000000421_seed1`
+
+```
+task_id          = compound_only_enrich_mammalian_RAMP_P_000000421_seed1
+ground_truth     = Androgen and Estrogen Metabolism (RAMP_P_000000421, KEGG hsa map00150)
+task_outcome     = normal
+n_turns          = 8 / 8 (force_finalised=True — LLM used full turn budget)
+n_tool_calls     = 23 (★ over W8 spec "ping me" threshold of 15)
+distinct PA tool = 5/5: sspa_ora / ramp_enrichment / metaboanalystr_psea / mummichog / fella_rwr
+distinct util    = 2/4: lookup_chebi / query_pathway_members
+inner_retry_used = False (LLM 第 1 次 finalise 即出 valid grammar v2 JSON)
+wall_seconds     = 166.6
+n_claims         = 11 (4 grammar types 都有 ≥ 1)
+naming bridge    = no literal mention (steroid task — gt name 不是 LIPID MAPS bridging 目标)
+sspa 状态        = wrapper_unavailable (env 缺 sspa pkg),fallback envelope 干净
+error            = none
+```
+
+### Smoke 2 verdict — lipid smoking gun `lm_pathway_WP167_seed3`
+
+```
+task_id          = compound_only_enrich_mammalian_lm_pathway_WP167_seed3
+ground_truth     = Eicosanoid synthesis (lm_pathway:WP167, LIPIDMAPS namespace)
+task_outcome     = normal
+n_turns          = 8 / 8 (force_finalised=True)
+n_tool_calls     = 26 (★ 同样 > 15)
+distinct PA tool = 5/5
+distinct util    = 2/4: lookup_chebi / query_pathway_members
+inner_retry_used = False
+wall_seconds     = 194.2
+n_claims         = 11
+★ naming bridge  = NO LITERAL "Eicosanoid synthesis" / "WP:WP167" / "LIPIDMAPS"
+                   LLM 写 "Arachidonic acid metabolism" + "leukotriene" + "prostaglandin"
+                   所有 claim pathway_id 都是 MUMM: namespace(Mummichog 的 human_mfn)
+                   ← 同 v3 Opus baseline gap(报告 §3 known issue)
+error            = none
+```
+
+### Smoke 2 关键 finding(paper-relevant)
+
+🔵 **D3 LLM-agent 在 lipid bucket WP167 上不自主桥到 LIPIDMAPS namespace**。
+原因实测:
+1. **Mummichog 是唯一返回非空 pathway 的 PA tool**(turn 2 返 0、turn 5
+   返 10 — top 是 "Arachidonic acid metabolism" 在 MUMM:00002)。RaMP /
+   FELLA / PSEA 在该 lipid 输入上都返回 `n_pathways=0`。
+2. LLM 忠实写 Mummichog 报告的 pathway 名 "Arachidonic acid metabolism"
+   而非 ground truth "Eicosanoid synthesis";没用 system prompt 的
+   "naming bridge note"(单段文字,LLM 未触发)。
+3. `query_pathway_members(WP:WP167)` × 3 次返回 `data_not_available`
+   envelope(D2 known scoping gap),fallback_suggested 指向
+   `metabolites_hit` —— LLM 没回退到读 RaMP/FELLA 的 metabolites_hit
+   反查命名,因为这些 tool 返 empty。
+
+**这是 D4 的 motivation**:closed-loop verifier 会对 pathway_id="MUMM:00002"
++ pathway_name="Arachidonic acid metabolism" 产生 `unsupported`(verifier
+查 task 的 `ground_truth_pathway.external_id="WP167"`,不匹配)→ feedback
+hint 推 LLM 用 verifier-friendly 命名 → 第二轮 narrative 可能改写为
+"Eicosanoid synthesis (lm_pathway:WP167) — also reported as 'arachidonic
+acid metabolism' by mummichog (MUMM:00002)"。**D4 末 smoke 2 重跑实测**
+将给出"bridge gap 是否能 verifier-driven 闭合"的直接答案。
+
+**RaMP/FELLA/PSEA 在 lipid 上 0 hit 也是 finding**:可能是
+(a) ID format mismatch — LLM 传 bare KEGG `C00219` 但 RaMP-wrapper id_type
+"auto" 推断到 inchikey 兜底致 miss;(b) RaMP-DB 内容缺 LIPID MAPS
+覆盖(已知 LIPID MAPS 集成是 v3 才加,RaMP-DB 镜像可能旧)。**D5 跑 63
+task 前需要查 RaMP wrapper id_type 行为** — W9 candidate task。
+
+### Sanity 8 项实测
+
+| # | Check | Status | Evidence |
+|---|---|---|---|
+| 1 | Smoke 1 (steroid) end-to-end normal | ✅ | task_outcome=normal / 11 claims / valid grammar v2 / wall 166.6s |
+| 2 | Smoke 2 (lipid) end-to-end normal | ✅ | task_outcome=normal / 11 claims / valid grammar v2 / wall 194.2s |
+| 3 | LLM ≥ 3 PA tool call(W8 system prompt 硬规则) | ✅ | Smoke 1: 5 distinct PA / Smoke 2: 5 distinct PA |
+| 4 | Final message valid grammar v2 (narrative_text + 4-类 claims) | ✅ | 两 smoke 各 11 claim,claim_type 全在 4 类内,parse 无错 |
+| 5 | tests/concord/test_concord_tools.py 13 case(D2 12 + D3 hotfix regression) | ✅ | 13 passed in 0.65s |
+| 6 | tests/concord/test_react_runner.py 5 case | ✅ | 5 passed in 0.03s |
+| 7 | tests/concord/ 全集不退步 | ✅ | **9 failed / 157 passed**(D2 baseline 9/139 → D3 9/157,+18 pass = 12 moved + 6 new D3 test;9 fail byte-identical pre-existing env issue) |
+| 8 | 全 repo pytest 17 pre-existing fail 不变 | ✅ | **17 failed / 1269 passed / 33 skipped in 1167.20s** vs D2 baseline 17/1263/33 → **+6 pass = D3's 6 new tests**(5 react_runner + 1 hotfix regression);17 fail 名字 byte-identical D1/D2,0 regression |
+
+### Stop condition ★ soft-flag 给 user
+
+🟡 **W8 prompt §6 Stop #3**: "LLM 1 task 调 tool > 15 次 → max_turn 用满,
+**ping me**"。Smoke 1 = 23 calls,Smoke 2 = 26 calls,**两者都触发 soft
+ping**(非 hard fail —— outcome 仍 normal,claims 仍 11,wall 仍 ≤ 5 min)。
+
+**Call breakdown**(smoke 2 lipid 为例):
+- Turn 1: 9× `lookup_chebi`(对 9 个 diff metabolite 做 ID reconciliation;
+  合理的初步动作)
+- Turn 2: 1× ramp + 1× mummichog + 1× fella(并行起步)
+- Turn 3: 1× sspa(wrapper_unavailable) + 1× psea(empty)
+- Turn 4: 1× psea + 1× fella(retry 不同 args)
+- Turn 5: 1× ramp + 1× mummichog(turn 5 mummichog 出关键结果) + 1× fella
+- Turn 6: 4× lookup_chebi(对 mummichog 返回的 compound 做 reverse lookup)
+- Turn 7: 3× query_pathway_members(对 WP / KEGG / LIPIDMAPS namespace 都试了,
+  都返 data_not_available)
+- Turn 8: forced finalise
+
+LLM 不是失控调 tool,是 9-tool catalog × 9-metabolite 输入 × 不同 namespace
+retry 的笛卡尔积膨胀。**建议(待 user 决策)**:
+- (A) **现状保持** — 26 call 在 5-min 内做出 normal outcome + 11 claim,paper
+  finding 角度可接受。D5 跑 63 task 在此 call 量下:63 × ~25 call ≈ 1575 LLM call,
+  MiniMax 价格约 $0.001/call → ~$1.6 — 仍在预算。
+- (B) **system prompt 加 "do not call > 15 tools per task" 硬规则** — 风险:
+  LLM 可能放弃必要的 retry/verify,outcome 质量降。
+- (C) **dispatcher 加 task-level call counter,超 N 后所有 tool 拒接** —
+  最严,但可能产生 EMPTY_SYSTEM_FAILURE 浪费。
+
+我倾向 (A) 保持。请用户拍板。
+
+### D4 预热
+
+D4 任务:close the loop。新文件 `concord/agent/verifier_adapter.py` —
+把 `final_narrative_json` + sub6b-v3 task 桥到 B1 `verifier.agent.verify()`
+入参 (`llm_output: str, source_report: SubsixSourceReport`)。`run_task`
+增 `verifier_fn` 注入 + feedback loop max_iter=2 + quality rollback。
+
+D4 末 smoke 2 重跑:看 verifier 对 smoke 2 的 `MUMM:00002 Arachidonic acid
+metabolism` claim 给什么 verdict;若 unsupported + feedback hint 推 LLM 用
+verifier-friendly 命名,**第二轮可能就桥到 WP167**。**D4 末 smoke 2 是 D3
+naming bridge finding 的直接答案**。
 

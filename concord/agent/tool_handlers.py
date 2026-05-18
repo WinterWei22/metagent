@@ -213,13 +213,28 @@ def _count_pathways_compounds(result: dict[str, Any]) -> tuple[int, int]:
     return n_paths, n_refs
 
 
+# Errors that signal "heavy dep missing in this env" and should be
+# converted to a wrapper_unavailable envelope rather than propagated up.
+# Note: ModuleNotFoundError is a subclass of ImportError (Py 3.6+); we
+# list both for clarity. FileNotFoundError covers Docker subprocesses /
+# venv path resolution failing before they even spawn.
+_WRAPPER_UNAVAILABLE_ERRORS = (ImportError, ModuleNotFoundError, FileNotFoundError)
+
+
 def handle_run_sspa_ora(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_sspa_ora")
     if err:
         return err
+    refs = _ids_to_refs(arguments["compound_ids"])
+    top_n = _top_n_or_default(arguments)
     try:
+        # Both the top-level wrapper module import AND the call body
+        # are guarded — `sspa_wrapper` itself imports fine, but its
+        # body lazy-imports the heavy `sspa` pkg only when run_sspa()
+        # touches the pathway DB. A pre-D3 smoke surfaced this gap.
         from concord.wrappers.sspa_wrapper import run_sspa
-    except ImportError as exc:
+        raw = run_sspa(compound_refs=refs)
+    except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_sspa_ora",
             error="wrapper_unavailable",
@@ -228,11 +243,8 @@ def handle_run_sspa_ora(arguments: dict[str, Any]) -> dict[str, Any]:
                 "coverage) or run_metaboanalystr_psea (KEGG-specific ORA) "
                 "instead"
             ),
-            reason=f"sspa wrapper import failed: {exc}",
+            reason=f"sspa unavailable: {type(exc).__name__}: {exc}",
         )
-    refs = _ids_to_refs(arguments["compound_ids"])
-    top_n = _top_n_or_default(arguments)
-    raw = run_sspa(compound_refs=refs)
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
     n_paths, n_refs = _count_pathways_compounds(trimmed)
@@ -246,9 +258,12 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_ramp_enrichment")
     if err:
         return err
+    refs = _ids_to_refs(arguments["compound_ids"])
+    top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.ramp_wrapper import run_ramp_enrichment
-    except ImportError as exc:
+        raw = run_ramp_enrichment(refs, top_n=top_n)
+    except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_ramp_enrichment",
             error="wrapper_unavailable",
@@ -257,11 +272,8 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
                 "or run_metaboanalystr_psea (KEGG ORA) for a partial "
                 "namespace replacement"
             ),
-            reason=f"ramp wrapper import failed: {exc}",
+            reason=f"ramp unavailable: {type(exc).__name__}: {exc}",
         )
-    refs = _ids_to_refs(arguments["compound_ids"])
-    top_n = _top_n_or_default(arguments)
-    raw = run_ramp_enrichment(refs, top_n=top_n)
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
     n_paths, n_refs = _count_pathways_compounds(trimmed)
@@ -275,11 +287,14 @@ def handle_run_metaboanalystr_psea(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_metaboanalystr_psea")
     if err:
         return err
+    refs = _ids_to_refs(arguments["compound_ids"])
+    top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.metaboanalystr_wrapper import (
             run_metaboanalystr_psea,
         )
-    except ImportError as exc:
+        raw = run_metaboanalystr_psea(refs)
+    except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_metaboanalystr_psea",
             error="wrapper_unavailable",
@@ -288,11 +303,8 @@ def handle_run_metaboanalystr_psea(arguments: dict[str, Any]) -> dict[str, Any]:
                 "alternative ORA verdict, or skip the KEGG-only "
                 "paradigm and rely on run_ramp_enrichment's KEGG slice"
             ),
-            reason=f"metaboanalystr wrapper import failed: {exc}",
+            reason=f"metaboanalystr unavailable: {type(exc).__name__}: {exc}",
         )
-    refs = _ids_to_refs(arguments["compound_ids"])
-    top_n = _top_n_or_default(arguments)
-    raw = run_metaboanalystr_psea(refs)
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
     n_paths, n_refs = _count_pathways_compounds(trimmed)
@@ -306,11 +318,14 @@ def handle_run_mummichog(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_mummichog")
     if err:
         return err
+    refs = _ids_to_refs(arguments["compound_ids"])
+    top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.mummichog_wrapper import (
             run_mummichog_for_compound_set,
         )
-    except ImportError as exc:
+        raw = run_mummichog_for_compound_set(refs)
+    except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_mummichog",
             error="wrapper_unavailable",
@@ -319,11 +334,8 @@ def handle_run_mummichog(arguments: dict[str, Any]) -> dict[str, Any]:
                 "rely on the ORA tools — note that lipid pathways may be "
                 "under-represented without mummichog"
             ),
-            reason=f"mummichog wrapper import failed: {exc}",
+            reason=f"mummichog unavailable: {type(exc).__name__}: {exc}",
         )
-    refs = _ids_to_refs(arguments["compound_ids"])
-    top_n = _top_n_or_default(arguments)
-    raw = run_mummichog_for_compound_set(refs)
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
     n_paths, n_refs = _count_pathways_compounds(trimmed)
@@ -337,9 +349,12 @@ def handle_run_fella_rwr(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_fella_rwr")
     if err:
         return err
+    refs = _ids_to_refs(arguments["compound_ids"])
+    top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.fella_wrapper import run_fella_rwr
-    except ImportError as exc:
+        raw = run_fella_rwr(refs)
+    except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_fella_rwr",
             error="wrapper_unavailable",
@@ -348,11 +363,8 @@ def handle_run_fella_rwr(arguments: dict[str, Any]) -> dict[str, Any]:
                 "paradigm and rely on ORA + mummichog. Indirect "
                 "pathway involvement may be missed."
             ),
-            reason=f"fella wrapper import failed: {exc}",
+            reason=f"fella unavailable: {type(exc).__name__}: {exc}",
         )
-    refs = _ids_to_refs(arguments["compound_ids"])
-    top_n = _top_n_or_default(arguments)
-    raw = run_fella_rwr(refs)
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
     n_paths, n_refs = _count_pathways_compounds(trimmed)

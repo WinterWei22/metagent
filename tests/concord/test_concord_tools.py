@@ -296,6 +296,28 @@ def test_run_sspa_ora_wrapper_unavailable(monkeypatch):
     assert "ramp" in fb or "metaboanalystr" in fb or "psea" in fb
 
 
+def test_run_sspa_ora_wrapper_runtime_module_not_found(monkeypatch):
+    """D3 hotfix regression: when the wrapper module imports fine but
+    its body lazy-imports a heavy dep at CALL time (sspa pkg pattern),
+    the handler must still return wrapper_unavailable — not let the
+    inner ModuleNotFoundError escape to the dispatcher."""
+    from concord.agent import tool_dispatcher
+    from concord.wrappers import sspa_wrapper
+
+    def _boom(**_kwargs):
+        raise ModuleNotFoundError("No module named 'sspa'")
+
+    monkeypatch.setattr(sspa_wrapper, "run_sspa", _boom)
+
+    r = tool_dispatcher.dispatch({
+        "name": "run_sspa_ora",
+        "arguments": {"compound_ids": ["CHEBI:17234"]},
+    })
+    assert r.payload.get("error") == "wrapper_unavailable", r.payload
+    assert "fallback_suggested" in r.payload
+    assert "sspa" in r.payload.get("reason", "").lower()
+
+
 def test_dedup_cache_hit_on_identical_call(monkeypatch):
     """Same (tool, args) twice in one task → second call returns cached
     payload with _cached=True and a _note advising to vary the inputs."""
