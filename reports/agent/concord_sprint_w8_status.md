@@ -710,13 +710,162 @@ retry 的笛卡尔积膨胀。**建议(待 user 决策)**:
 
 ### D4 预热
 
-D4 任务:close the loop。新文件 `concord/agent/verifier_adapter.py` —
-把 `final_narrative_json` + sub6b-v3 task 桥到 B1 `verifier.agent.verify()`
-入参 (`llm_output: str, source_report: SubsixSourceReport`)。`run_task`
-增 `verifier_fn` 注入 + feedback loop max_iter=2 + quality rollback。
+(D4 已 land — 见 § D4。)
 
-D4 末 smoke 2 重跑:看 verifier 对 smoke 2 的 `MUMM:00002 Arachidonic acid
-metabolism` claim 给什么 verdict;若 unsupported + feedback hint 推 LLM 用
-verifier-friendly 命名,**第二轮可能就桥到 WP167**。**D4 末 smoke 2 是 D3
-naming bridge finding 的直接答案**。
+---
+
+## D4 — closed-loop verifier wire(strict TDD per sub-task)
+
+**Commit**(待 final pytest 后填):D4 hash。
+**用户 Green Light(D3 sanity)**:Q1-Q4 全 ✅;tool_calls 阈值 15 → 25;
+TDD slip 接受 + D4 严守 strict TDD。
+
+### 新增 / 修改文件
+
+| Path | 角色 | LOC delta |
+|---|---|---:|
+| **NEW** `concord/agent/verifier_adapter.py` | 3 boundary fn:`concord_result_to_b1_narrative` (prose str only,B1 不消费 grammar-v2 JSON 字段) / `sub6b_task_to_subsix_source_report` (pydantic construct) / `task_outcome_str_to_enum` (本地 `ConcordTaskOutcome` enum;B1 D4 TaskOutcome 还未进 investigation branch) | +160 |
+| **NEW** `tests/concord/test_verifier_adapter.py` | 8 strict-TDD case (RED → GREEN per fn) | +250 |
+| **NEW** `tests/concord/test_verify_with_b1.py` | 6 strict-TDD case 含 D4 hotfix regression(B1 `claim_metrics` field-name 解码 + ClaimVerdict str-enum 修复) | +220 |
+| **NEW** `tests/concord/test_run_task_with_feedback.py` | 6 strict-TDD case 覆盖 4 类 trajectory:early_exit / iter1_improves / iter1_degrades_rollback_n0 / iter2_budget_keeps_best / iter2_degrades_rollback_n1 | +280 |
+| **NEW** `evaluation/concord/smoke_d4.py` | CLI:`--task-id` + `--out`,跑 `run_task_with_feedback`,打印 per-iter verdict + ★ naming-bridge 检测 + 落 ConcordFeedbackResult JSON | +140 |
+| MOD `concord/agent/react_runner.py` | (1) `run_task` 加 `feedback_user_msg` 可选 param;(2) `verify_with_b1` method + `VerificationOutcome` dataclass;(3) `run_task_with_feedback` method + `ConcordFeedbackResult` + `FeedbackIterationRecord` + `_assemble_feedback_result` 工厂 + `_resolve_default_feedback_builder` (lazy 拉 B1 `build_feedback_message` + `annotate_claims(pass_id="v1")`);(4) D4 hotfix:count 提取 strategy 三级降级 `verdicts_total` (mock) → `claim_metrics` (B1 实际) → `claims_v1` iter (str-enum 安全 `.value` 读) | +230 / -10 |
+| **NEW** `data/concord/w8_smoke/d4_{steroid,lipid}.json` | 完整 ConcordFeedbackResult(3 iter × {react_result + verification}) | +data |
+
+### Strict-TDD audit (per sub-task)
+
+| Sub-task | RED before impl? | GREEN test count | Slip? |
+|---|---|---:|---|
+| D4.1 verifier_adapter (3 fn) | ✅ 8/8 tests fail `ModuleNotFoundError` before impl | 8/8 | no |
+| D4.2 verify_with_b1 (method + VerificationOutcome) | ✅ 5/5 `AttributeError` 'no attribute verify_with_b1' before impl | 5/5 → 6/6(+1 hotfix regression for `claim_metrics` field-name extraction) | no |
+| D4.3 run_task_with_feedback (method + ConcordFeedbackResult + feedback_user_msg param) | ✅ 6/6 `AttributeError / TypeError` before impl | 6/6 | no |
+| D4 hotfix(count extraction)| ✅ regression test added first → fail → fix → pass | +1 | no |
+| **Total D4 unit tests** | | **20/20 GREEN** | **0 slips** |
+
+D3 TDD slip(run_task body)承诺 D4 严守 — 实测:**每个 method 都 RED→GREEN
+per-piece**,无大块 impl 先写。
+
+### D4 hotfix(smoke 1 v1 surfaced)
+
+**Bug**:`verify_with_b1` 原 count 提取代码读 `verdict.verdicts_total`,
+但**B1 VerifiedIdentification 没这个字段**;真实 ClaimMetrics 用
+`supported_claims / unsupported_claims / contradicted_claims /
+unverifiable_claims`(非 `n_supported` 等)。Smoke 1 v1 实测返 0/0/0/0
+全 0 表象。**Strict-TDD 流程**:
+1. 实测发现 D4 smoke 1 v1 quality=0 不合理
+2. Direct verifier inspection 确认真实 counts(sup=0/unsup=7/contra=1/unv=26)
+3. **写 regression test 先**(`test_verify_with_b1_extracts_counts_from_real_claim_metrics_shape`)
+4. **跑 → 失败**
+5. Fix `verify_with_b1` 三级 count strategy
+6. 跑 → 通过
+
+### Smoke 1 verdict(steroid)— full closed-loop
+
+```
+task_id       = compound_only_enrich_mammalian_RAMP_P_000000421_seed1
+ground_truth  = Androgen and Estrogen Metabolism (RAMP_P_000000421)
+iters_run     = 3 (max_feedback_iters=2)
+final_iter    = iter 2  (rollback_reason: none)
+wall (total)  = 1074.6s (3 iter × ~6 min each)
+
+iter 0: outcome=normal turns=8 tools=18 wall=205.8s
+  verdict: sup=0 unsup=11 contra=0 unv=16  →  quality=11
+  namespaces=['MUMM']  bridge=no
+iter 1: outcome=normal turns=8 tools=26 wall=140.9s  ← feedback hint applied
+  verdict: sup=0 unsup=14 contra=1 unv=19  →  quality=15  ← WORSE than iter 0
+  namespaces=['MUMM']  bridge=no
+iter 2: outcome=normal turns=8 tools=21 wall=134.3s  ← second feedback hint
+  verdict: sup=0 unsup=7 contra=3 unv=36  →  quality=10  ← slight improvement
+  namespaces=['none']  bridge=no
+```
+
+**Finding**:steroid task 上 feedback iter 1 让 LLM **多写 claim** 不是
+**更好的 claim** → unsupported 涨;iter 2 微改善。**ground truth
+"Androgen and Estrogen Metabolism"(RAMP-namespace)在 v3 lipid bucket 之
+外**,naming-bridge 检测预期 no(此 task 非 smoking gun)。Final selection
+鉴于 q(iter2)=10 < q(iter1)=15 且 q(iter2) ≤ q(iter0)=11 → pick iter 2,
+不 rollback。**B1 quality 算法对 Sub-6 非 6a-6d claim_type 一律
+UNVERIFIABLE_V0,quality 量化能力受限**(W9 candidate)。
+
+### Smoke 2 verdict(lipid smoking gun)— ★ PAPER-CRITICAL
+
+```
+task_id       = compound_only_enrich_mammalian_lm_pathway_WP167_seed3
+ground_truth  = Eicosanoid synthesis (lm_pathway:WP167, LIPIDMAPS ns, external_id=WP167)
+iters_run     = 3
+final_iter    = iter 0  ← ★ rolled back from iter 2 due to "feedback_made_it_worse"
+wall (total)  = 1137.6s
+
+iter 0: outcome=normal turns=8 tools=18 wall=206.5s
+  verdict: sup=4 unsup=2 contra=0 unv=29  →  quality=2
+  namespaces=['MUMM']  bridge=no  (LLM 仍写 "Arachidonic acid metabolism")
+iter 1: outcome=normal turns=8 tools=18 wall=192.8s  ← feedback hint applied
+  verdict: sup=1 unsup=14 contra=0 unv=33  →  quality=14  ← WORSE
+  namespaces=['MUMM']  bridge=no  (LLM 没听懂 hint,仍 MUMM)
+iter 2: outcome=normal turns=8 tools=25 wall=121.3s  ← second feedback hint
+  verdict: sup=4 unsup=10 contra=0 unv=11  →  quality=10
+  namespaces=['WP']  bridge=★ HIT
+```
+
+**iter 2 narrative excerpt**:
+> "The differential metabolite panel is strongly enriched for arachidonic
+> acid and its downstream eicosanoid derivatives... Five of the nine
+> input compounds are biosynthetically connected through the
+> **eicosanoid synthesis pathway**."
+
+**iter 2 所有 9 个 grammar-v2 claim 全 `pathway_id="WP:WP167"` +
+`pathway_name="Eicosanoid synthesis"`** ✓ — 与 task ground truth
+`lm_pathway:WP167 / Eicosanoid synthesis` 字面 + 命名空间双匹配。
+
+### 🔵 D4 paper-critical 三大 finding
+
+**(1) closed-loop verifier feedback CAN bridge v3 namespace gap**
+iter 0 LLM 写 MUMM:00002 "Arachidonic acid metabolism";iter 2 在 2
+轮 feedback 后桥到 `WP:WP167` literal "Eicosanoid synthesis"。**这是 W8
+设计核心命题的直接 positive 验证**:LLM 自主无法桥(D3 smoke 2),但
+verifier 闭环驱动下 bridge 显式发生。
+
+**(2) BUT B1 quality metric 反向罚了 bridging**
+iter 2 quality=10 > iter 0 quality=2 → Quality rollback rule 选 iter 0,
+丢弃了正确的 WP167 narrative。原因:B1 Layer 6a SET_ENRICHMENT 比对
+任务的 `ramp_enrichment_result.top_pathways`(RaMP-namespace 列表)与
+LLM claim 的 pathway_id。LLM 改写 `WP:WP167` 后,**没匹配任务 RaMP
+top_pathways 中的任何条目**(因为 v3 LIPIDMAPS pathway 不在 RaMP 镜像里),
+verifier 把每个 WP claim 都判 `unsupported` 或 `unverifiable_v0`。
+**结论:B1 Layer 6a 对 cross-namespace ground-truth(LIPIDMAPS vs
+RaMP)缺识别能力 — 是 B1 verifier 限制,不是 ConcordMet 限制**。
+
+**(3) Paper data preserved in `iterations[2]` even when rollback selected iter 0**
+`ConcordFeedbackResult.iterations` 保留 3 iter 全数据(`data/concord/w8_smoke/d4_lipid.json`);
+paper narrative 可以直接引这份 data 展示 closed-loop bridging trajectory
+即使被 rollback。**D5 quad-report 主表必报 rollback-adjusted final +
+"best-bridge-iter" 副口径**(后者揭示 LLM-agent 真实能力 ceiling)。
+
+### W9 候选(D4 数据驱动)
+
+🟡 **B1 Layer 6a 跨 namespace 识别增强**:
+当 LLM claim `pathway_id="WP:WP167"` 且 task `ground_truth_pathway.external_id="WP167"`,
+Layer 6a 应识别这是 ground-truth 匹配(目前不识别)。增强方案:
+- (a) 把 task 的 `ground_truth_pathway` 加进 Layer 6a 的"acceptance set"
+  (除 ramp top_pathways 外)
+- (b) Layer 6a 加 fuzzy pathway-name match(W7 V1 已实现 0.5 Jaccard 算法,
+  移植即可)
+
+🟡 **Quality metric tweak**:当前 `quality = n_contra + n_unsup` 不区分
+"unsupported because verifier 缺识别能力" vs "unsupported because LLM
+真错"。Q-W9:加一个 `bridge-aware-quality` = `n_contra + n_unsup_excluding_bridge`,
+或直接用 `supported_for_correct_pathway` count 作 selection key。
+
+### Sanity 8 项实测
+
+| # | Check | Status | Evidence |
+|---|---|---|---|
+| 1 | Smoke 1 (steroid) closed-loop 3 iter 跑通 | ✅ | iter 0 quality=11 → iter 1 quality=15 → iter 2 quality=10 → final=iter 2 |
+| 2 | Smoke 2 (lipid) closed-loop 3 iter 跑通 | ✅ | iter 0 q=2 → iter 1 q=14 → iter 2 q=10 → final=iter 0 (rollback "feedback_made_it_worse") |
+| 3 | ★ Smoke 2 iter 2 实现 WP:WP167 命名 bridge | ✅ | 9 claim 全 `WP:WP167` + literal "eicosanoid synthesis" in narrative |
+| 4 | Quality rollback 逻辑正确 | ✅ | smoke 2: q_last=10 > q_iter0=2 → rollback to iter 0,reason="feedback_made_it_worse" ✓ |
+| 5 | `tests/concord/test_verifier_adapter.py` 8/8 + `test_verify_with_b1.py` 6/6 + `test_run_task_with_feedback.py` 6/6 全绿 | ✅ | 20/20 D4 unit test pass |
+| 6 | tests/concord/ 不退步 | ✅ | 20/20 D4 unit test pass + 5 D3 react_runner pass + 13 D2 concord_tools pass = 38 concord/agent tests all green |
+| 7 | 全 repo pytest 17 fail 不变 | ✅ | **17 failed / 1289 passed / 33 skipped in 1184.03s** vs D3 baseline 17/1269/33 → **+20 pass = D4's 20 new unit tests**(8 adapter + 6 verify_with_b1 含 hotfix regression + 6 feedback loop);17 fail 名字 byte-identical D1/D2/D3,0 regression |
+| 8 | git status 干净 | ✅ | 1 M (react_runner) + 7 new (verifier_adapter + 3 test file + smoke_d4 driver + 2 smoke result JSON) + status file MOD |
 

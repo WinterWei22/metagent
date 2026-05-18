@@ -129,10 +129,39 @@ class ConcordReactResult:
     termination_reason: str | None = None
 
 
-# Verifier injection: a callable that takes the finalised grammar-v2
-# JSON narrative + the task row and returns a B1 VerdictReport-equivalent
-# dict. D4 wires the real adapter; D3 leaves it Optional.
-VerifierFn = Callable[[str, dict[str, Any]], dict[str, Any]]
+# Verifier injection: a callable that takes the prose narrative string
+# + a B1 SubsixSourceReport (positionally) and returns a B1
+# VerifiedIdentification-like object exposing `verdicts_total` (a dict
+# of verdict-name → int) and `claims_v1` (list of VerifiedClaim).
+# Defaults to `verifier.agent.verify_sub6` (resolved lazily at call
+# time so import stays light + tests can inject mocks via constructor).
+VerifierFn = Callable[..., Any]
+
+
+@dataclass
+class VerificationOutcome:
+    """Envelope returned by `ConcordReactRunner.verify_with_b1`.
+
+    `ok=False` means the verifier did not run successfully — either the
+    SubsixSourceReport adapter raised (benchmark corruption) or the B1
+    verifier itself raised. In both cases `verdict` is None and `quality`
+    is treated as 0 so downstream feedback loops short-circuit
+    gracefully rather than crash.
+    """
+
+    ok: bool
+    verdict: Any  # VerifiedIdentification on success, None on failure
+    error: str | None
+    n_supported: int = 0
+    n_unsupported: int = 0
+    n_contradicted: int = 0
+    n_unverifiable_v0: int = 0
+
+    @property
+    def quality(self) -> int:
+        """B1 D4 definition: quality = n_contradicted + n_unsupported.
+        Lower is better; 0 means no claim needs revision."""
+        return self.n_contradicted + self.n_unsupported
 
 # LLM client injection: a callable matching the OpenAI-compatible
 # chat-with-tools shape. D3 wires this against `common.llm_client`.
@@ -362,13 +391,17 @@ class ConcordReactRunner:
         task: dict[str, Any],
         *,
         trace_id: str | None = None,
+        feedback_user_msg: str | None = None,
     ) -> ConcordReactResult:
         """Run one sub6b-v3 task end-to-end through the ConcordMet ReAct loop.
 
         D3 body: ReAct turn loop with the 9 ConcordMet tools, single
-        inner finalise retry, task-level wall-time guard. D4 will wrap
-        this loop in the verifier feedback path; for now `iterations`
-        contains exactly one record (iter_idx=0).
+        inner finalise retry, task-level wall-time guard.
+        D4 extension: optional `feedback_user_msg` is appended as an
+        extra user-role message after the initial prompt, so feedback
+        iterations (iter ≥ 1 in `run_task_with_feedback`) can seed the
+        loop with verifier hints derived from the previous iteration's
+        verdict. When None, behaves exactly as D3.
         """
         started = time.time()
         reset_call_cache()
@@ -378,6 +411,8 @@ class ConcordReactRunner:
         safe = _strip_task_for_llm(task)
         metabolites = safe["differential_metabolites"]
         messages = build_concord_react_messages(metabolites)
+        if feedback_user_msg:
+            messages.append({"role": "user", "content": feedback_user_msg})
 
         chat_fn = self.chat_with_tools or _resolve_default_chat_fn()
         deadline = started + self.task_timeout_seconds
@@ -543,6 +578,216 @@ class ConcordReactRunner:
         )
 
     # ------------------------------------------------------------------
+    # B1 verifier feedback loop (D4)
+    # ------------------------------------------------------------------
+
+    def run_task_with_feedback(
+        self,
+        task: dict[str, Any],
+        *,
+        feedback_msg_builder: Callable[[Any], str] | None = None,
+        trace_id: str | None = None,
+    ) -> "ConcordFeedbackResult":
+        """Run a task through iter 0 → ... → iter N with verifier feedback.
+
+        Loop logic (B1 D4 Q6 quality rollback):
+          - iter 0: `run_task(task)` → verify → quality_N0
+          - if quality_N0 == 0 or max_feedback_iters == 0:
+                return ConcordFeedbackResult(final=N0)
+          - iter k (1 ≤ k ≤ max_feedback_iters):
+                hint = feedback_msg_builder(verdict_{k-1})
+                run_task(task, feedback_user_msg=hint) → verify → quality_Nk
+          - Final selection vs N0:
+                q(Nfinal) > q(N0) → rollback to N0; reason="feedback_made_it_worse"
+                q(Nfinal) > q(N_{final-1}) → rollback to N_{final-1};
+                                              reason="iter{N}_degraded"
+                else → keep N_final, no rollback
+
+        `feedback_msg_builder(verdict)` builds the user-role hint text
+        from a verdict. Inject for tests; runtime default lifts B1's
+        `build_feedback_message` from `evaluation.sub6.run_sub6b_react_feedback`
+        (lazy-imported so import-time stays light).
+        """
+        task_id = str(task.get("task_id") or "unknown")
+        trace_id = trace_id or f"concord_w8_d4.{task_id}"
+        builder = feedback_msg_builder or _resolve_default_feedback_builder()
+
+        iterations: list[tuple[ConcordReactResult, VerificationOutcome]] = []
+
+        # iter 0
+        r0 = self.run_task(task, trace_id=f"{trace_id}.iter0")
+        v0 = self.verify_with_b1(r0, task, trace_id=f"{trace_id}.iter0.verify")
+        iterations.append((r0, v0))
+
+        if v0.quality == 0 or self.max_feedback_iters == 0:
+            return _assemble_feedback_result(
+                task_id=task_id,
+                iterations=iterations,
+                final_iter_idx=0,
+                rollback_reason=None,
+            )
+
+        # iter 1..max_feedback_iters
+        for k in range(1, self.max_feedback_iters + 1):
+            prev_verdict = iterations[-1][1].verdict
+            try:
+                hint = builder(prev_verdict)
+            except Exception as exc:
+                # If the feedback builder itself bombs, treat it as a
+                # halt — we cannot ask the LLM to revise without a hint.
+                logger.warning("feedback builder failed: %s", exc)
+                hint = (
+                    "VERIFIER FEEDBACK: previous iteration had unsupported / "
+                    "contradicted claims — please re-emit a stricter "
+                    "narrative referring to pathways by their literal "
+                    "namespace-prefixed names from the tool outputs."
+                )
+            rk = self.run_task(
+                task, trace_id=f"{trace_id}.iter{k}", feedback_user_msg=hint,
+            )
+            vk = self.verify_with_b1(rk, task, trace_id=f"{trace_id}.iter{k}.verify")
+            iterations.append((rk, vk))
+
+        # Final selection: prefer the latest if it monotonically beat both
+        # the previous iteration AND iter 0. Otherwise rollback.
+        last_idx = len(iterations) - 1
+        q_last = iterations[last_idx][1].quality
+        q_prev = iterations[last_idx - 1][1].quality
+        q0 = iterations[0][1].quality
+
+        if q_last > q0:
+            final_iter_idx = 0
+            rollback_reason = "feedback_made_it_worse"
+        elif q_last > q_prev:
+            final_iter_idx = last_idx - 1
+            rollback_reason = f"iter{last_idx}_degraded"
+        else:
+            final_iter_idx = last_idx
+            rollback_reason = None
+
+        return _assemble_feedback_result(
+            task_id=task_id,
+            iterations=iterations,
+            final_iter_idx=final_iter_idx,
+            rollback_reason=rollback_reason,
+        )
+
+    # ------------------------------------------------------------------
+    # B1 verifier integration (D4)
+    # ------------------------------------------------------------------
+
+    def verify_with_b1(
+        self,
+        react_result: ConcordReactResult,
+        task: dict[str, Any],
+        *,
+        trace_id: str | None = None,
+    ) -> "VerificationOutcome":
+        """Run the finalised narrative through B1 `verify_sub6()`.
+
+        Always returns a VerificationOutcome — never raises. Failures
+        (adapter / verifier) populate `outcome.error` so a feedback
+        loop can decide whether to retry, rollback, or accept.
+
+        `verifier_fn` MUST be injected on the runner (constructor arg)
+        — when None, this method raises RuntimeError because D4
+        callers explicitly opted into verification and a missing
+        verifier is a wiring bug, not a runtime exception.
+        """
+        if self.verifier_fn is None:
+            raise RuntimeError(
+                "verifier_fn was not injected on ConcordReactRunner — "
+                "call ConcordReactRunner(verifier_fn=verifier.agent.verify_sub6) "
+                "or pass a test mock"
+            )
+
+        # Short-circuit on empty narrative — calling B1 verify_sub6 with
+        # "" wastes 1-7 LLM calls on a known-empty input.
+        from concord.agent.verifier_adapter import (
+            concord_result_to_b1_narrative,
+            sub6b_task_to_subsix_source_report,
+        )
+
+        narrative = concord_result_to_b1_narrative(react_result, task)
+        if not narrative:
+            return VerificationOutcome(
+                ok=True, verdict=None, error=None,
+                n_supported=0, n_unsupported=0, n_contradicted=0,
+                n_unverifiable_v0=0,
+            )
+
+        # Adapter step — surface adapter failures as outcome.error
+        try:
+            source_report = sub6b_task_to_subsix_source_report(task)
+        except Exception as exc:
+            return VerificationOutcome(
+                ok=False, verdict=None,
+                error=f"source_report_adapter_failed: {type(exc).__name__}: {exc}",
+            )
+
+        # Run B1 verifier — surface its internal failures the same way
+        tid = trace_id or f"concord_w8_d4.{react_result.task_id}.verify"
+        try:
+            verdict = self.verifier_fn(
+                narrative,
+                source_report,
+                trace_id=tid,
+            )
+        except Exception as exc:
+            return VerificationOutcome(
+                ok=False, verdict=None,
+                error=f"verifier_raised: {type(exc).__name__}: {exc}",
+            )
+
+        # Verdict-count extraction strategy (defensive — B1's
+        # VerifiedIdentification has multiple aggregate shapes across
+        # the cascade and across mocks):
+        #   1. test mocks set `verdicts_total = {"supported": N, ...}`
+        #   2. real B1 puts aggregates on `claim_metrics`
+        #      (ClaimMetrics) with the fields
+        #      supported_claims / unsupported_claims /
+        #      contradicted_claims / unverifiable_claims
+        #   3. when neither is populated, derive from `claims_v1` (each
+        #      claim's `.verdict` is a `ClaimVerdict(str, Enum)`; in
+        #      some Py builds `str(enum)` returns
+        #      "ClaimVerdict.UNVERIFIABLE_V0" not the value, so read
+        #      `.value` defensively)
+        counts = {"supported": 0, "unsupported": 0,
+                  "contradicted": 0, "unverifiable_v0": 0}
+        vt = getattr(verdict, "verdicts_total", None)
+        if isinstance(vt, dict) and vt:
+            for k in counts:
+                if k in vt:
+                    counts[k] = int(vt[k] or 0)
+        else:
+            cm = getattr(verdict, "claim_metrics", None)
+            if cm is not None and (
+                getattr(cm, "supported_claims", None) is not None
+                or getattr(cm, "total_claims", None) is not None
+            ):
+                counts["supported"] = int(getattr(cm, "supported_claims", 0) or 0)
+                counts["unsupported"] = int(getattr(cm, "unsupported_claims", 0) or 0)
+                counts["contradicted"] = int(getattr(cm, "contradicted_claims", 0) or 0)
+                counts["unverifiable_v0"] = int(getattr(cm, "unverifiable_claims", 0) or 0)
+            else:
+                claims = list(getattr(verdict, "claims_v1", None) or [])
+                for c in claims:
+                    vobj = getattr(c, "verdict", None)
+                    key = (
+                        getattr(vobj, "value", None)
+                        or (str(vobj) if vobj is not None else "")
+                    ).lower()
+                    if key in counts:
+                        counts[key] += 1
+        return VerificationOutcome(
+            ok=True, verdict=verdict, error=None,
+            n_supported=counts["supported"],
+            n_unsupported=counts["unsupported"],
+            n_contradicted=counts["contradicted"],
+            n_unverifiable_v0=counts["unverifiable_v0"],
+        )
+
+    # ------------------------------------------------------------------
     # Inspection helpers — useful for tests and D1 sanity probes
     # ------------------------------------------------------------------
 
@@ -572,6 +817,97 @@ def _resolve_default_chat_fn() -> ChatWithToolsFn:
     from common.llm_client import chat_with_tools as _real
 
     return _real
+
+
+def _resolve_default_feedback_builder() -> Callable[[Any], str]:
+    """Lazy-loaded default: B1's `build_feedback_message` with claim
+    annotation via `verifier.feedback_hints`.
+
+    Returns a single-arg fn (verdict → str) so the
+    `run_task_with_feedback` interface is the same whether the caller
+    injects a mock or accepts the B1 default.
+    """
+    def _builder(verdict: Any) -> str:
+        from evaluation.sub6.run_sub6b_react_feedback import build_feedback_message
+        from verifier.feedback_hints import annotate_claims
+        from verifier.schemas import ClaimVerdict
+
+        claims = list(getattr(verdict, "claims_v1", None) or [])
+        # Populate `feedback_hint` per claim using B1's drop-reason +
+        # contradicted / unsupported templates. `verify_sub6()` (unlike
+        # the spectrum `verify()`) does NOT call annotate_claims
+        # internally — we own this step at the feedback boundary.
+        annotated = annotate_claims(claims, pass_id="v1")
+        contradicted = [c for c in annotated if str(getattr(c, "verdict", "")).lower() == ClaimVerdict.CONTRADICTED.value]
+        unsupported = [c for c in annotated if str(getattr(c, "verdict", "")).lower() == ClaimVerdict.UNSUPPORTED.value]
+        # Source narrative is not strictly required by B1's template, but
+        # passing it gives the LLM context for the re-write. We don't have
+        # it cleanly available here without threading; pass empty.
+        return build_feedback_message(
+            contradicted=contradicted,
+            unsupported=unsupported,
+            original_narrative="",
+        )
+    return _builder
+
+
+@dataclass
+class ConcordFeedbackResult:
+    """Output of a `run_task_with_feedback` call.
+
+    Carries every iteration's react result + verification outcome so D4
+    audit / D5 quad-report can read the trajectory and rollback
+    decision. `iterations[final_iter_idx]` is the chosen narrative.
+    """
+
+    task_id: str
+    iterations: list["FeedbackIterationRecord"]
+    final_iter_idx: int
+    n_feedback_iterations: int
+    rollback_reason: str | None
+    final_react_result: ConcordReactResult
+    final_verdict: "VerificationOutcome"
+
+
+@dataclass
+class FeedbackIterationRecord:
+    """Per-iteration snapshot inside ConcordFeedbackResult.
+
+    `quality` is the B1 D4 definition (n_contradicted + n_unsupported);
+    lower is better; 0 means the iteration's claims were fully grounded.
+    """
+
+    iter_idx: int
+    react_result: ConcordReactResult
+    verification: "VerificationOutcome"
+
+    @property
+    def quality(self) -> int:
+        return self.verification.quality
+
+
+def _assemble_feedback_result(
+    *,
+    task_id: str,
+    iterations: list[tuple[ConcordReactResult, "VerificationOutcome"]],
+    final_iter_idx: int,
+    rollback_reason: str | None,
+) -> ConcordFeedbackResult:
+    """Build a ConcordFeedbackResult from a list of (react_result, outcome) pairs."""
+    iter_records = [
+        FeedbackIterationRecord(iter_idx=i, react_result=r, verification=v)
+        for i, (r, v) in enumerate(iterations)
+    ]
+    final_r, final_v = iterations[final_iter_idx]
+    return ConcordFeedbackResult(
+        task_id=task_id,
+        iterations=iter_records,
+        final_iter_idx=final_iter_idx,
+        n_feedback_iterations=len(iter_records) - 1,
+        rollback_reason=rollback_reason,
+        final_react_result=final_r,
+        final_verdict=final_v,
+    )
 
 
 def _payload_summary(payload: dict[str, Any]) -> dict[str, Any]:
