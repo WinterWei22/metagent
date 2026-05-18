@@ -153,6 +153,14 @@ parallel + 63-task 的固有噪声底(D5 hotfix 已把它从 24 % 降到 15 %,�
 
 ## §4 D4 mechanism trigger rates
 
+> ⚠️ **2026-05-18 RETRACTION** — see §4-RETRACTION below this table.
+> The "0 / 189" trigger numbers were silently miscounted by an
+> ad-hoc aggregator script (now lost — `git log -S "seed_summary"`
+> returns 0). Phase B1 P0 Stage A1.5 audit + A1.6 re-emit through
+> the canonical aggregator `scripts/eval_sub6/aggregate_seed_summary.py`
+> showed the true number is **144 / 189 (76.2 %)**. The historical
+> wording is preserved below for traceability; do not cite it.
+
 189 runs 上 D4 几乎完全没被激活:
 
 | 机制 | 触发 / 189 | 备注 |
@@ -168,6 +176,52 @@ parallel + 63-task 的固有噪声底(D5 hotfix 已把它从 24 % 降到 15 %,�
 **结论:D5 实际只跑了 D1 + D2 + D3 的逻辑,D4 retry/feedback/Mode-B 全都
 dormant。** D4 的工程贡献是健壮性 (hotfix 把 EMPTY 从 24 % 降到 15 %),
 不是 metric 改进。
+
+### §4-RETRACTION (2026-05-18) — D4 was NOT dormant
+
+The original §4 table above came from buggy `seed_summary.json` files.
+A1.5 audit (`reports/agent/phase_b1_aggregator_audit.md`) diffed every
+field against per-task `result.json` and exposed three silent bugs:
+
+1. `n_feedback_iter_above_zero` always reported 0 (or None) — truth was
+   per-seed `50 / 43 / 51`.
+2. `feedback_iter_distribution` always reported `{0: 63, 1: 0, 2: 0}` —
+   truth was e.g. seed 0 `{0: 13, 1: 40, 2: 10}`.
+3. `metrics_normal_only.unsupported_mean` was omitted entirely.
+
+A1.6 promoted the audit helper into a canonical aggregator
+(`scripts/eval_sub6/aggregate_seed_summary.py`) and re-emitted every
+seed summary + `d5_aggregate.json` (originals preserved as `*.bak`).
+Corrected D4 trigger table (same denominator, n=189):
+
+| 机制 | original 报告 | corrected | 备注 |
+|---|---:|---:|---|
+| feedback iter 1 fired | **0 / 189** | **110 / 189** | termination = no_actionable_claims_after_iter (134) / early_exit_no_revisions (44) |
+| feedback iter 2 fired | 0 / 189 | **34 / 189** | of which 10 hit `max_iterations_reached` (≤2 = N3) |
+| any feedback iter > 0 | **0 / 189** | **144 / 189 (76.2 %)** | per-seed `50 / 43 / 51` |
+| quality rollback fired | n/a | 1 / 189 | seed 2 only; rollback path is essentially cold |
+| inner retry fired | "0 confirmed rescues" | 195 / 189 (multi per task) | `iterations[].force_finalised` — main D4 workhorse |
+| tool calls (cross-seed total) | not reported | **2 993** | ~16 / task average |
+
+A companion analysis (`reports/agent/phase_b1_d4_efficacy.md`,
+Stage A1.6 Step 3) measured iter-0 → final-iter delta on the 144
+fired tasks:
+
+| metric | improved | unchanged | worse | mean Δ |
+|---|---:|---:|---:|---:|
+| quality (contra + unsup + UV) | 126 | 16 | 2 | **+2.26** (lower is better — so +2.26 means iter-0 had 2.26 more bad claims) |
+| supported ratio | 127 | 14 | 3 | **+21.92 pp** |
+| top-1 hybrid (Step Z extractor) | 26 | 114 | 4 | **+0.15** (net +22 tasks correct) |
+
+**Retracted claim:** "D4 retry/feedback/Mode-B 全都 dormant" — false.
+The D4 feedback loop was the **dominant** quality-improvement mechanism
+on D5 v2: it added ~22 pp to the supported ratio and flipped 22 net
+top-1 hits over the iter-0 narratives. The dormancy story was a
+pure aggregator artefact.
+
+**Retained:** Mode-B refusal-hint outer retry (0 / 189) is genuinely
+dormant — 0 `empty_honest_refusal` outcomes were observed, so the
+trigger condition never fired.
 
 ---
 
@@ -389,8 +443,11 @@ cross-LLM (A4 territory)。
 
 ### 6c. P2(暂缓) — 原 D6 brief 的 ablation
 
-- `react_only` (no feedback):D5 §4 已经显示 D4 dormant,这个 ablation
-  数字会跟 D5 几乎一样,**没新信息**。skip。
+- `react_only` (no feedback):~~D5 §4 已经显示 D4 dormant,这个 ablation
+  数字会跟 D5 几乎一样,**没新信息**。skip。~~
+  > 2026-05-18 RETRACTION: §4 retraction 显示 D4 实际触发 144/189,且对 supported
+  > 贡献 +22 pp,top1 净 +22 task。`react_only` ablation 现在是**有价值的**
+  > (能 isolate D4 feedback 对 top1 的边际贡献)。重新归入 P1。
 - 真要 ablate, 应该 ablate D1 prompt(用 A3 prose prompt + B1 grammar
   validator)看 top1 是否回到 A3 水平 — 这是 D6.1 的逆方向。
 
