@@ -80,8 +80,9 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "name": "run_ramp_enrichment",
             "description": (
                 "RaMP-DB multi-database ORA (Reactome + SMPDB + KEGG + "
-                "WikiPathways). Broadest namespace coverage; the best "
-                "first call when input namespace mix is unclear."
+                "WikiPathways). Broadest namespace coverage, fast (~1s, "
+                "local sqlite, no Docker). Best first call: cheapest "
+                "broad-coverage ORA when namespace mix is unclear."
             ),
             "parameters": {
                 "type": "object",
@@ -91,7 +92,13 @@ TOOL_SPECS: list[dict[str, Any]] = [
                         "items": {"type": "string"},
                         "description": "Compound IDs (any supported namespace).",
                     },
-                    "top_n": {"type": "integer", "default": 10},
+                    "top_n": {
+                        "type": "integer",
+                        "default": 10,
+                        "minimum": 1,
+                        "maximum": 50,
+                        "description": "Number of top pathways to return.",
+                    },
                 },
                 "required": ["compound_ids"],
             },
@@ -115,7 +122,13 @@ TOOL_SPECS: list[dict[str, Any]] = [
                         "items": {"type": "string"},
                         "description": "Compound IDs (KEGG preferred).",
                     },
-                    "top_n": {"type": "integer", "default": 10},
+                    "top_n": {
+                        "type": "integer",
+                        "default": 10,
+                        "minimum": 1,
+                        "maximum": 50,
+                        "description": "Number of top pathways to return.",
+                    },
                 },
                 "required": ["compound_ids"],
             },
@@ -152,7 +165,13 @@ TOOL_SPECS: list[dict[str, Any]] = [
                             "from compound_ids."
                         ),
                     },
-                    "top_n": {"type": "integer", "default": 10},
+                    "top_n": {
+                        "type": "integer",
+                        "default": 10,
+                        "minimum": 1,
+                        "maximum": 50,
+                        "description": "Number of top pathways to return.",
+                    },
                 },
                 "required": ["compound_ids"],
             },
@@ -176,7 +195,13 @@ TOOL_SPECS: list[dict[str, Any]] = [
                         "items": {"type": "string"},
                         "description": "Compound IDs (KEGG preferred).",
                     },
-                    "top_n": {"type": "integer", "default": 10},
+                    "top_n": {
+                        "type": "integer",
+                        "default": 10,
+                        "minimum": 1,
+                        "maximum": 50,
+                        "description": "Number of top pathways to return.",
+                    },
                 },
                 "required": ["compound_ids"],
             },
@@ -188,11 +213,14 @@ TOOL_SPECS: list[dict[str, Any]] = [
         "function": {
             "name": "lookup_chebi",
             "description": (
-                "Resolve one identifier (KEGG / HMDB / LIPIDMAPS / name / "
-                "SMILES / InChIKey) to a structured CompoundRef with "
+                "Resolve one identifier to a structured CompoundRef with "
                 "namespace-prefixed primary_id, full InChIKey, and "
-                "cross-DB IDs. Call before running a PA tool when input "
-                "namespaces are mixed."
+                "cross-DB IDs. Accepts: 'CHEBI:NNNNN', 'KEGG:Cxxxxx' or "
+                "bare 'Cxxxxx', 'HMDB:HMDB...' or bare 'HMDB0000NNN', "
+                "'LIPIDMAPS:LM...' or bare 'LM...', a full 27-char "
+                "InChIKey, a compound name, or SMILES (pass "
+                "namespace='SMILES' hint). Call before running a PA tool "
+                "when input namespaces are mixed."
             ),
             "parameters": {
                 "type": "object",
@@ -286,8 +314,22 @@ TOOL_SPECS: list[dict[str, Any]] = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string"},
-                    "max_results": {"type": "integer", "default": 5},
+                    "query": {
+                        "type": "string",
+                        "description": (
+                            "Free-text search query — biological-context "
+                            "specific. Use compound or pathway names + "
+                            "biology keywords (e.g. 'eicosanoid signalling "
+                            "arachidonic acid metabolism')."
+                        ),
+                    },
+                    "max_results": {
+                        "type": "integer",
+                        "default": 5,
+                        "minimum": 1,
+                        "maximum": 20,
+                        "description": "Maximum number of papers to return.",
+                    },
                 },
                 "required": ["query"],
             },
@@ -327,40 +369,15 @@ def reset_call_cache() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Handler registry — D1 skeleton: every handler is a stub raising
-# NotImplementedError. D2 will replace each entry with a real wrapper.
+# Handler registry — D2 wires all 9 handlers via concord.agent.tool_handlers.
+# Each handler validates arguments, defers wrapper import to call-time
+# (for ImportError resilience), and returns a uniform envelope.
 # ---------------------------------------------------------------------------
 
 HandlerFn = Callable[[dict[str, Any]], dict[str, Any]]
 
 
-def _stub(tool_name: str, day: str) -> HandlerFn:
-    """Return a stub handler that raises NotImplementedError when called."""
-
-    def _handler(arguments: dict[str, Any]) -> dict[str, Any]:
-        raise NotImplementedError(
-            f"{tool_name} handler is a D1 skeleton; "
-            f"{day} will wire the real body. arguments={arguments!r}"
-        )
-
-    _handler.__name__ = f"_stub_{tool_name}"
-    return _handler
-
-
-HANDLERS: dict[str, HandlerFn] = {
-    # 5 PA tools — D2 wires
-    "run_sspa_ora": _stub("run_sspa_ora", "D2"),
-    "run_ramp_enrichment": _stub("run_ramp_enrichment", "D2"),
-    "run_metaboanalystr_psea": _stub("run_metaboanalystr_psea", "D2"),
-    "run_mummichog": _stub("run_mummichog", "D2"),
-    "run_fella_rwr": _stub("run_fella_rwr", "D2"),
-    # 3 reconciliation tools — D3 wires
-    "lookup_chebi": _stub("lookup_chebi", "D3"),
-    "reconcile_inchikey": _stub("reconcile_inchikey", "D3"),
-    "query_pathway_members": _stub("query_pathway_members", "D3"),
-    # 1 literature tool — D3 wires (delegate to B1 search_literature)
-    "search_literature": _stub("search_literature", "D3"),
-}
+from concord.agent.tool_handlers import HANDLERS  # noqa: E402  (post-spec)
 
 
 # Sanity: the spec list, name tuple, and handler dict must agree.
@@ -474,19 +491,16 @@ def dispatch(tool_call: dict[str, Any]) -> DispatchResult:
     handler = HANDLERS[name]
     try:
         payload = handler(arguments)
-    except NotImplementedError as exc:
+    except Exception as exc:
+        # Handlers are contracted to never raise — anything that does
+        # escape is treated as a wrapper bug. Catch + envelope so a
+        # malformed handler does not crash the ReAct loop. The
+        # exception is logged for the runner to inspect.
+        logger.exception("concord.dispatch.%s raised — handler contract violated", name)
         payload = {
-            "error": f"tool {name!r} not wired yet (D1 skeleton)",
-            "fallback_suggested": (
-                "skip this tool and try a wired one, or wait for D2/D3"
-            ),
-            "_skeleton_note": str(exc),
-        }
-    except Exception as exc:  # pragma: no cover — D2+ replaces this
-        logger.exception("concord.dispatch.%s raised", name)
-        payload = {
-            "error": f"tool {name!r} raised: {exc!r}",
+            "error": f"tool {name!r} raised unexpectedly: {exc!r}",
             "fallback_suggested": "switch tool or accept the gap",
+            "_tool_name": name,
         }
 
     cache[cache_key] = payload

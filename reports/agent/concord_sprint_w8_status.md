@@ -430,23 +430,104 @@ function tool + OpenAI schema)。
 
 ### D2 预热(供 user review skeleton 时一并 sanity)
 
-D2 计划在 `concord/agent/tools/` 下为 5 个 PA wrapper 各加一个 module
-(`sspa_tool.py / mummichog_tool.py / ramp_tool.py / metaboanalystr_tool.py
-/ fella_tool.py`),把 `_stub` 替换成真正调用 `concord/wrappers/*` 的
-handler。`tool_dispatcher.HANDLERS` dict 替换 5 个 entry,其他 4 个
-reconciliation/literature tool 仍 stub 留 D3。
+(D2 已 land — 见 § D2。)
 
-每个 PA tool 内部:
-1. validate arguments(top_n / compound_ids 类型 + 长度)
-2. resolve compound_ids → CompoundRef list (`lookup_chebi` style helper)
-3. 调底层 wrapper
-4. 序列化 EnrichmentResult v0.3.1 → dict(保留 namespace-prefixed
-   pathway_id;truncate auxiliary metadata 到 2 KB budget,沿用 B1
-   `truncate_to_budget`)
+---
 
-D2 unit test plan(W8 spec § D2 Unit test ≥ 10 case):
-- 9 个 tool 各 1 个正例(stub-replaced PA tool 用真 docker subprocess
-  或 mock,reconciliation/literature 仍 stub 是 negative)→ 实际 5 个
-  PA tool 正例 + 4 个 stub 负例 + 1 个 invalid arguments(LLM 调用错
-  schema)= 10 case
+## D2 — 9 LLM function tools wired with import-guard envelope
+
+**Commit**:`feat(concord): W8 D2 — 9 LLM function tools with OpenAI
+schema + import-guard fallback envelope` (待 verify 后 hash 填入)。
+
+**用户 Green Light 决策**:Q1-Q4 全 ✅;2 nice-to-have(ramp latency
+note + lookup_chebi 输入加粗)合并到 D2 主 commit。
+
+### 新增 / 修改文件
+
+| Path | 角色 | LOC delta |
+|---|---|---:|
+| **NEW** `concord/agent/tool_handlers.py` | 9 个 handler + 3 helper (`_validate_compound_ids` / `_ids_to_refs` / `_ok` + `_err` envelope) | +450 |
+| **NEW** `tests/test_concord_tools.py` | 12 unit test (9 happy + 3 negative)| +290 |
+| MOD `concord/agent/tool_dispatcher.py` | 删 D1 stub registry,改 `from concord.agent.tool_handlers import HANDLERS`;9 tool spec 完善 `top_n` / `query` / `max_results` 的 `description + minimum + maximum`;ramp 描述加 fast-latency note;lookup_chebi 描述加 input-shape 详列;dispatch() NotImplementedError 兜底改通用 Exception 兜底 | -25 / +35 |
+| MOD `prompts/concord/concord_react_prompt.md` | run_ramp_enrichment 加 "Fast (~1s, local sqlite, no Docker)" + "first call";lookup_chebi 输入加 "**Accepted input shapes**" 段全列(6 形态加粗) | -3 / +6 |
+
+### Handler 设计要点
+
+- **统一 envelope**:`_ok(tool_name, result, **meta)` → `{ok: True,
+  result: ..., _tool_name: ..., _n_pathways: ..., _n_compound_refs:
+  ...}`;`_err(tool_name, error=, fallback_suggested=, **extra)` → `{error:
+  ..., fallback_suggested: ..., _tool_name: ...}`。
+- **Import 推迟到 call-time**:每个 PA handler `try: from
+  concord.wrappers.X_wrapper import run_X` 在函数体内,而非 module 顶部。
+  这保证:(a) env 缺 sspa / Docker 时 import 失败被 catch 返回
+  `wrapper_unavailable` envelope,(b) test 可以 `monkeypatch.setattr`
+  module 属性,handler 下次调用会读 patched 值。
+- **Fallback_suggested 一一指定**(对齐用户 spec):
+  - sspa 不可用 → "use run_ramp_enrichment / run_metaboanalystr_psea"
+  - ramp 不可用 → "RaMP-DB sqlite missing; use sspa or psea"
+  - metaboanalystr 不可用 → "Docker R unavailable; use sspa"
+  - mummichog 不可用 → "skip m/z-direct paradigm; rely on ORA tools"
+  - fella 不可用 → "Docker R unavailable; skip network paradigm"
+- **`_ids_to_refs` adapter**:把 LLM 输入的 string ID 列表 (e.g.
+  `["CHEBI:17234", "C00031", "HMDB0000122"]`) 转成 wrappers 能读的
+  duck-typed `SimpleNamespace` 对象(无需 inchikey 兜底,B1 wrapper 用
+  `getattr(ref, ...)` 读)。
+- **`_validate_compound_ids`** 在所有 5 PA handler 共用,LLM 错误传
+  `non-list` / 空数组 / 含非字符串元素 → 返回明确 error envelope。
+- **lookup_chebi 路由**:按 namespace hint + 字面形态分发到 `get_compound
+  / lookup_by_inchikey / lookup_by_xref(HMDB|KEGG|LIPIDMAPS) /
+  lookup_by_name`;serialize 时把 `name` → `display_name` alias 对齐
+  CompoundRef schema。
+- **query_pathway_members 数据缺口**:`pathway_members.sqlite` 只有
+  HUMAN1 + RECON2 (227 pathway,Cooke GEM)。LLM 传 `WP:WP167`/`KEGG:`/
+  `REACT:` 等 namespace → 返回 `data_not_available` envelope +
+  fallback_suggested "inspect `metabolites_hit` inside EnrichmentResult"。
+  **这是 D2 已知 scoping gap,不阻塞 D5 — paper finding 反而可以是
+  LLM-agent 在 WP167 lipid bucket 上的 lift 来自 PA tool 的
+  `metabolites_hit`(而非 pathway_members lookup),证明 cross-paradigm
+  整合的价值。**
+
+### Sanity 8 项实测
+
+| # | Check | Status | Evidence |
+|---|---|---|---|
+| 1 | 9 tool spec 完整 OpenAI schema(name + description + parameters/type/properties/required;每 property 有 type + description) | ✅ | 实测 `get_tool_specs()` 9 spec,所有 property 都有 type + description |
+| 2 | 5 PA handler 全有 import-guard + 对应 fallback_suggested envelope | ✅ | 逐一 monkeypatch import 失败 → `wrapper_unavailable` envelope,每个 fallback_suggested 都提及合适的替代 tool |
+| 3 | system prompt 2 微调到位(ramp latency + lookup_chebi 输入加粗) | ✅ | system prompt 含 `~1s, local sqlite, no Docker` + `Accepted input shapes`;dispatcher spec 同步含 fast-latency + 输入列表 |
+| 4 | EnrichmentResult dict 序列化 + envelope shape + JSON round-trip | ✅ | 实测 `dispatch(...)` → `{ok, result, _tool_name, _n_pathways, _n_compound_refs}`;`json.dumps + json.loads` 完整 round-trip;`pathway_id` namespace 前缀(REACT/KEGG/WP/SMPDB/METACYC/MUMM/HUMAN1/RECON2)保留 |
+| 5 | `tests/test_concord_tools.py` ≥ 12 case 全绿 | ✅ | **12 passed in 0.62s** (9 happy + 3 negative:invalid args / wrapper_unavailable / dedup cache hit) |
+| 6 | `pytest tests/concord/` 不退步 | ✅ | 9 failed / 139 passed — 与 D1 baseline `tests/concord/` 同(9 fail 全部 `sspa` 包未装) |
+| 7 | 全 repo pytest 17 pre-existing fail 数量不变 | ✅ | **17 failed / 1263 passed / 33 skipped in 1193.64s** (vs D1 baseline 17/1251/33);**+12 pass 是 D2 新增 `tests/test_concord_tools.py` 12 case**,17 fail 名字与 D1 完全一致(sspa pkg × 7 + orchestrator/pipeline × 3 + verifier real_llm × 3 + library_search × 2 + w3/w4 smoke × 2 — 全 env-driven pre-existing) |
+| 8 | git status 干净 | ✅ | `2 modified + 2 new`:`M concord/agent/tool_dispatcher.py / M prompts/concord/concord_react_prompt.md / ?? concord/agent/tool_handlers.py / ?? tests/test_concord_tools.py` — 无意外 modified |
+
+### TDD audit (per superpowers:test-driven-development)
+
+- **RED**:12 test 全失败前 GREEN(实测:12/12 fail with right reason
+  "expected `{ok: True, ...}` got `{error: 'not wired yet (D1 skeleton)'}`")
+- **GREEN minimal**:每个 handler 只实现满足 test 所需逻辑,不超前
+  做 D3/D4 工作
+- **REFACTOR**:helper `_ok` / `_err` / `_validate_compound_ids` /
+  `_ids_to_refs` / `_top_n_or_default` 抽出共享逻辑,5 PA handler 体
+  ~ 30 line each(高度相似但显式写出,便于 review)
+
+### Known data gap (flagged for D5 decision)
+
+🟡 `query_pathway_members` 只覆盖 HUMAN1 + RECON2 (227 pathway);sub6b-v3
+lipid `WP:WP167` 等查询返回 `data_not_available` envelope。D5 paper
+finding 可基于 PA tool 自身 `metabolites_hit` 字段,**不依赖** pathway_members
+sqlite。如 D5 数据显示该 gap 显著影响 verdict,W9 可补 ETL。
+
+### D3 预热(供 user review D2 时一并 sanity)
+
+D3 任务:LLM ReAct 端到端 smoke 2 task(`RAMP_P_000000421_seed1` 类固醇
++ `lm_pathway_WP167_seed3` lipid smoking gun)。
+
+`react_runner.py:ConcordReactRunner.run_task()` 当前 `raise
+NotImplementedError("D3 wires the body")`;D3 替换为真 ReAct loop:
+1. `build_concord_react_messages(task['differential_metabolites'])` 初始化 msg
+2. LLM API 调用(MiniMax-M2.7 默认,fallback GPT-4o via `api_key_gpt.txt`)
+3. 解析 OpenAI tool_calls → `dispatch(tool_call)` → 拼 tool role message
+4. ReAct turn ≤ 8,LLM finalise 后 grammar v2 JSON parse 校验
+5. 失败 inner retry × 1(B1 D4 component 4a 等价)
+6. 返回 `ConcordReactResult` 含 narrative + claims + tool_calls trace
 
