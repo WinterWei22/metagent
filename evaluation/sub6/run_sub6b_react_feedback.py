@@ -10,7 +10,10 @@ Closed-loop variant of A1's `run_sub6b_react`:
     iteration 2:  same as 1 against V1 → N2 → V2
 
 After all iterations, the *final* narrative is selected by quality:
-    quality(N) = #contradicted + #unsupported   (lower is better)
+    quality(N) = #contradicted + #unsupported + #unverifiable_v0  (lower is better)
+    (P0 fix 2026-05-18: UNV added — D4 removed UV from neutral verdicts
+    but the quality function never followed suit, so rollback comparisons
+    silently treated UV-only iterations as quality=0.)
 The *earliest* iteration with the minimum quality wins (Q6: tie ↔ earliest):
 
     if  q(N2) >  q(N0):  rollback to N0, error="feedback_made_it_worse"
@@ -90,7 +93,7 @@ class IterationRecord:
     iter_idx: int
     narrative: str
     verdict_total: dict[str, int]
-    quality: int  # n_contradicted + n_unsupported (lower is better)
+    quality: int  # n_contradicted + n_unsupported + n_unverifiable_v0 (lower is better; P0 fix 2026-05-18)
     n_contradicted: int
     n_unsupported: int
     n_supported: int
@@ -258,12 +261,30 @@ def build_feedback_message(
 def _quality_score(verdict_total: dict[str, int]) -> tuple[int, int, int, int]:
     """Return (quality, n_contradicted, n_unsupported, n_supported).
 
-    quality = n_contradicted + n_unsupported.
+    Phase B1 P0 fix (2026-05-18):
+        quality = n_contradicted + n_unsupported + n_unverifiable_v0.
+
+    Pre-fix the formula was n_contradicted + n_unsupported. That was
+    consistent with the pre-D4 ``_NEUTRAL_VERDICTS`` set (which
+    included UV), but D4 commit ``39c4272`` removed UV from
+    ``_NEUTRAL_VERDICTS`` in ``verifier/feedback_hints.py:58`` and
+    started generating feedback hints for UV claims. The quality
+    function silently kept the old formula, so:
+
+      (a) the post-iteration exit check ``if q == 0: break`` (line
+          ~785) treated UV-only iterations as "nothing more to fix".
+      (b) the rollback rule in ``_select_final_iteration`` could
+          declare a UV-heavy iter "equal quality" to a low-UV iter,
+          eroding the feedback loop's incentive structure.
+
+    UV is now actionable (D4 hint generates a "rewrite or omit"
+    instruction); the gate and the rollback should agree.
     """
     n_c = int(verdict_total.get("contradicted", 0))
     n_u = int(verdict_total.get("unsupported", 0))
+    n_v = int(verdict_total.get("unverifiable_v0", 0))
     n_s = int(verdict_total.get("supported", 0))
-    return n_c + n_u, n_c, n_u, n_s
+    return n_c + n_u + n_v, n_c, n_u, n_s
 
 
 def _select_final_iteration(

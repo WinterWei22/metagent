@@ -484,23 +484,54 @@ def test_feedback_react_loop_fires_inner_retry_on_empty_finalise(
 # ---------------------------------------------------------------------------
 
 
-def test_quality_score_ignores_grammar_dropped() -> None:
-    """quality = n_contradicted + n_unsupported only. Dropped claims
-    do not bump quality up (which would otherwise tempt the LLM to
-    write fewer claims to lower the score)."""
+def test_quality_score_counts_contra_unsup_and_unv() -> None:
+    """Phase B1 P0 fix (2026-05-18): quality = n_contradicted +
+    n_unsupported + n_unverifiable_v0.
+
+    D4 commit 39c4272 removed UV from ``_NEUTRAL_VERDICTS`` (UV is
+    actionable — feedback hints tell the LLM to rewrite or omit it).
+    But ``_quality_score`` was left with the pre-D4 formula, so:
+
+    1. The post-iteration exit ``if q == 0: break`` treated UV-only
+       iterations as "nothing more to fix" and exited the feedback
+       loop early.
+    2. ``_select_final_iteration`` rolled back to (or held) iters with
+       fewer contra+unsup but more UV, even though those UVs are
+       material defects.
+
+    Grammar-dropped claims (DroppedClaim) are tracked separately and
+    deliberately NOT in quality — counting them would tempt the LLM
+    to write fewer claims to lower the score.
+    """
     from evaluation.sub6.run_sub6b_react_feedback import _quality_score
 
-    verdict_total = {
-        "supported": 5,
-        "contradicted": 0,
-        "unsupported": 0,
-        "unverifiable_v0": 3,  # also not counted
-    }
-    quality, n_c, n_u, n_s = _quality_score(verdict_total)
-    assert quality == 0
-    assert n_c == 0
-    assert n_u == 0
+    # The P0 spec assertion: UV-only iteration is NOT quality==0.
+    quality, _, _, _ = _quality_score(
+        {"supported": 10, "unverifiable_v0": 1}
+    )
+    assert quality == 1, "UV must count toward quality (P0 fix)"
+
+    # Mixed: contra+unsup+UV should all roll up.
+    quality, n_c, n_u, n_s = _quality_score(
+        {
+            "supported": 5,
+            "contradicted": 1,
+            "unsupported": 2,
+            "unverifiable_v0": 3,
+        }
+    )
+    assert quality == 1 + 2 + 3 == 6
+    assert n_c == 1
+    assert n_u == 2
     assert n_s == 5
+
+    # All-supported is still quality == 0.
+    quality, _, _, _ = _quality_score({"supported": 8})
+    assert quality == 0
+
+    # Empty verdict_total degrades gracefully.
+    quality, n_c, n_u, n_s = _quality_score({})
+    assert (quality, n_c, n_u, n_s) == (0, 0, 0, 0)
 
 
 # ---------------------------------------------------------------------------
