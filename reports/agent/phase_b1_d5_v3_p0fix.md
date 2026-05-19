@@ -186,3 +186,26 @@ Companion to:
 - commit `a1fbf2f` — D4 efficacy retraction analysis (A1.7)
 - commit `02e7268` — D5 §4 retraction
 - commit `2a2eeb9` — `_quality_score` UV fix (P0)
+
+---
+
+## §9 Final red-line status (post-verification, 2026-05-19)
+
+After the verification pass (`phase_b1_leak_check.md` → `phase_b1_p0_isolation.md` → `phase_b1_step_r_v3.md` → A3 rerun N=3), the corrected red-line table on **same-LLM apples-to-apples** comparison:
+
+| # | red line | threshold | v3 P0 fix N=3 actual | status |
+|---|---|---|---|---|
+| 1 | UV % | < 10 % | 2.80 ± 0.55 | ✓ |
+| 2 | dropped_by_grammar % | < 30 % | 1.54 ± 0.10 | ✓ |
+| 3 | supported not regress > 5 pp vs A3 | ≥ A3 − 5 pp | 96.10 ± 1.21 | ✓ |
+| 4 | Step R driver-filtered Δ | ≥ +18 pp | +3.50 pp | ✗ FAIL (durable; tautology diagnosis line, not a B1-claims line) |
+| NEW (top-1 hybrid) | ≥ A3 same-LLM N=3 (66.67 ± 4.75) | CIs disjoint | 83.60 ± 7.48 | **✓ +16.93 pp** significant |
+| NEW (top-1 method-A) | ≥ A3 same-LLM N=3 | within CI | 69.31 ± 8.10 | directional +2.64 pp (NOT significant at N=3) |
+
+**5/6 green; #4 is the one durable FAIL.** The NEW method-A row is the most paper-relevant negative finding: at N=3, the **grammar prompt rewrite alone (D1) is within noise**. The full +16.93 pp B1 hybrid gain over A3 comes from the **structured-claims extractor (Step Z)**, not from the prompt rewrite per se.
+
+For paper:
+- Lead metric: top-1 hybrid, +16.93 pp over A3 (same LLM, N=3, CIs disjoint).
+- Caveat: prompt rewrite alone is in the noise band; the extractor is the work-horse.
+- Discussion: Step R FAIL + tautology pattern (driver ↓ ~6 pp, membership ↑ ~10 pp) explains why supported % is a process metric, not a top-1 predictor.
+- Do not cite the original "+30 pp" or "+22.31 pp" — see §3 / §4 of `phase_b1_p0_isolation.md`.
