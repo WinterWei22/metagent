@@ -1,5 +1,19 @@
 # Phase B1 D5 v3 — P0 fix rerun (N=3 final)
 
+> ⚠ **2026-05-19 RETRACTED — see `reports/agent/phase_b1_p0_isolation.md`**
+> The "+30.69 pp top-1 attributed to P0 fix" headline is wrong.
+> v2 rerun on 2026-05-18/19 model (without P0 fix) reaches the same
+> 83.60 ± 3.74 % top-1 hybrid; the entire +30 pp gain came from a
+> MiniMax M2.7 server-side change between 2026-05-15 and 2026-05-18,
+> NOT from the P0 fix (commit `2a2eeb9`). P0 fix's true marginal on
+> top-1 hybrid is **0.00 pp**; it delivers only mechanism telemetry
+> (more iter-2 reach, UV % down, supported % up, rollback now firing).
+> The honest B1 vs A3 gap on today's LLM is **+6.96 pp** (method A
+> apples-to-apples) or **+22.31 pp** (with hybrid extractor) — both
+> attributable to the prompt rewrite (D1) and extractor (Step Z), not
+> the P0 fix. See `phase_b1_p0_isolation.md` §2-§4 for the full
+> attribution decomposition.
+
 **Stage:** Phase B1 P0 Stage A — final N=3 evaluation and gate check.
 **Source:** `data/eval/sub6/b1_d5_v3_p0fix/` (3 seeds × 63 tasks = 189 runs).
 **Baseline:** `data/eval/sub6/b1_d5_v2_full_feedback_lit/` (N=3 corrected via canonical aggregator, commit `0ba10f7`).
