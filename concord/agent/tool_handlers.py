@@ -452,6 +452,9 @@ def handle_run_metaboanalystr_psea(arguments: dict[str, Any]) -> dict[str, Any]:
         from concord.wrappers.metaboanalystr_wrapper import (
             run_metaboanalystr_psea,
         )
+        from concord.normalize.metaboanalystr_norm import (
+            normalize_metaboanalystr_output,
+        )
         raw = run_metaboanalystr_psea(refs)
     except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
@@ -464,12 +467,16 @@ def handle_run_metaboanalystr_psea(arguments: dict[str, Any]) -> dict[str, Any]:
             ),
             reason=f"metaboanalystr unavailable: {type(exc).__name__}: {exc}",
         )
-    pathways = (raw.get("pathways") or [])[:top_n]
-    trimmed = {**raw, "pathways": pathways}
-    n_paths, n_refs = _count_pathways_compounds(trimmed)
+    # W9 D2b: wire normalize_metaboanalystr_output so the envelope
+    # carries v0.3.1 EnrichmentResult with KEGG: / SMPDB: namespace
+    # prefixes (per the psea wrapper's `library` parameter), rather
+    # than the raw `{"raw": <R JSON>, ...}` dict.
+    enriched = normalize_metaboanalystr_output(raw, top_n=top_n)
+    result_dict = dataclasses.asdict(enriched)
     return _ok(
-        "run_metaboanalystr_psea", trimmed,
-        n_pathways=n_paths, n_compound_refs=n_refs,
+        "run_metaboanalystr_psea", result_dict,
+        n_pathways=len(enriched.pathways),
+        n_compound_refs=sum(len(p.metabolites_hit) for p in enriched.pathways),
     )
 
 
