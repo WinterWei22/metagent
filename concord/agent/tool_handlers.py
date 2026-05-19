@@ -478,6 +478,7 @@ def handle_run_mummichog(arguments: dict[str, Any]) -> dict[str, Any]:
         from concord.wrappers.mummichog_wrapper import (
             run_mummichog_for_compound_set,
         )
+        from concord.normalize.mummichog_norm import normalize_mummichog_output
         raw = run_mummichog_for_compound_set(refs)
     except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
@@ -490,12 +491,15 @@ def handle_run_mummichog(arguments: dict[str, Any]) -> dict[str, Any]:
             ),
             reason=f"mummichog unavailable: {type(exc).__name__}: {exc}",
         )
-    pathways = (raw.get("pathways") or [])[:top_n]
-    trimmed = {**raw, "pathways": pathways}
-    n_paths, n_refs = _count_pathways_compounds(trimmed)
+    # W9 D2b: wire normalize_mummichog_output so the envelope carries a
+    # v0.3.1 EnrichmentResult with MUMM:-prefixed pathway_ids, not the
+    # raw wrapper dict with bare pathway names.
+    enriched = normalize_mummichog_output(raw, top_n=top_n)
+    result_dict = dataclasses.asdict(enriched)
     return _ok(
-        "run_mummichog", trimmed,
-        n_pathways=n_paths, n_compound_refs=n_refs,
+        "run_mummichog", result_dict,
+        n_pathways=len(enriched.pathways),
+        n_compound_refs=sum(len(p.metabolites_hit) for p in enriched.pathways),
     )
 
 
