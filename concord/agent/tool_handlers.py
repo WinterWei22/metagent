@@ -523,6 +523,7 @@ def handle_run_fella_rwr(arguments: dict[str, Any]) -> dict[str, Any]:
     top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.fella_wrapper import run_fella_rwr
+        from concord.normalize.fella_norm import normalize_fella_output
         raw = run_fella_rwr(refs)
     except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
@@ -535,12 +536,27 @@ def handle_run_fella_rwr(arguments: dict[str, Any]) -> dict[str, Any]:
             ),
             reason=f"fella unavailable: {type(exc).__name__}: {exc}",
         )
-    pathways = (raw.get("pathways") or [])[:top_n]
-    trimmed = {**raw, "pathways": pathways}
-    n_paths, n_refs = _count_pathways_compounds(trimmed)
+    # W9 D2b: wire normalize_fella_output so the envelope follows v0.3.1
+    # schema even when the FELLA R subprocess errors out (current state:
+    # "argument is of length zero" 100% on sub6b-v3 — W9 D4 stretch
+    # target). The normaliser's notes field preserves the wrapper-
+    # reported error for D2c to escalate to envelope-level.
+    enriched = normalize_fella_output(raw, top_n=top_n)
+    result_dict = dataclasses.asdict(enriched)
+    # Pass wrapper-internal error through `notes` (D2c hook). The
+    # normaliser sets a default notes value ("fella fella_rwr"); append
+    # the wrapper error rather than skip when notes is non-empty.
+    wrapper_err = raw.get("error")
+    if wrapper_err:
+        existing = result_dict.get("notes") or ""
+        suffix = f"wrapper_error: {wrapper_err}"
+        result_dict["notes"] = (
+            f"{existing}; {suffix}" if existing else suffix
+        )
     return _ok(
-        "run_fella_rwr", trimmed,
-        n_pathways=n_paths, n_compound_refs=n_refs,
+        "run_fella_rwr", result_dict,
+        n_pathways=len(enriched.pathways),
+        n_compound_refs=sum(len(p.metabolites_hit) for p in enriched.pathways),
     )
 
 
