@@ -34,46 +34,62 @@ def _dispatch(tool_name: str, arguments: dict) -> dict:
     return dispatch({"name": tool_name, "arguments": arguments}).payload
 
 
-def test_fella_envelope_emits_v031_schema_even_on_wrapper_error():
-    """D2b fella target: even when FELLA's R subprocess errors out,
-    the envelope.result must follow EnrichmentResult v0.3.1 schema.
-    Currently the handler returns the raw wrapper dict (no
-    schema_version key) — RED."""
+def test_fella_envelope_emits_v031_schema_or_escalates_after_d2c():
+    """D2b fella target (post-D2c contract update):
+
+    Two acceptable envelope shapes when FELLA's R subprocess errors:
+    (a) D2b alone (without D2c): ok=True + result.schema_version =
+        'concordmet_v0.3.1' + result.notes carries wrapper_error.
+    (b) D2c escalation (canonical post-W9 D2 state):
+        error='wrapper_runtime_error' + fallback_suggested + reason
+        contains the FELLA error string.
+
+    The test accepts EITHER shape as long as one of them holds. xfail
+    on wrapper_unavailable (Docker missing — different env class)."""
     env = _dispatch("run_fella_rwr", {
         "compound_ids": STEROID_KEGG_IDS, "top_n": 10,
     })
     if env.get("error") == "wrapper_unavailable":
         pytest.xfail(f"env: {env.get('reason')}")
-    result = env.get("result", {})
-    assert result.get("schema_version") == "concordmet_v0.3.1", (
-        f"missing/wrong schema_version: {result.get('schema_version')!r}; "
-        f"keys={sorted(result.keys())}"
-    )
-    method = result.get("method")
-    assert method and "fella" in method.lower(), (
-        f"missing/wrong method: {method!r}"
-    )
+
+    if env.get("error") == "wrapper_runtime_error":
+        # (b) D2c escalation — preferred post-W9 D2 state
+        assert env.get("fallback_suggested"), (
+            f"D2c escalated envelope missing fallback_suggested: {env!r}"
+        )
+        assert "argument is of length zero" in (env.get("reason") or "").lower(), (
+            f"D2c envelope.reason should preserve FELLA error: {env!r}"
+        )
+    else:
+        # (a) D2b alone — schema invariant on result
+        result = env.get("result", {})
+        assert result.get("schema_version") == "concordmet_v0.3.1", (
+            f"D2b: missing schema_version on FELLA envelope: {env!r}"
+        )
+        method = result.get("method")
+        assert method and "fella" in method.lower(), (
+            f"D2b: missing/wrong method on FELLA envelope: {env!r}"
+        )
 
 
-def test_fella_envelope_preserves_wrapper_error_for_d2c():
-    """D2b leaves wrapper-internal error visible in envelope.result
-    (so D2c can detect + escalate). FELLA wrapper sets
-    `raw.error = "FELLA exception: argument is of length zero"`;
-    the v0.3.1 EnrichmentResult.notes (or another discoverable
-    field) must preserve that — otherwise D2c has nothing to act on."""
+def test_fella_wrapper_error_visible_to_caller():
+    """The FELLA R error ("argument is of length zero") must surface
+    somewhere the caller (LLM via dispatch envelope) can read it —
+    either in `env.reason` (post-D2c escalation) or in
+    `env.result.notes` (pre-D2c D2b stub). Without this, the LLM has
+    no signal to switch tools."""
     env = _dispatch("run_fella_rwr", {
         "compound_ids": STEROID_KEGG_IDS, "top_n": 10,
     })
     if env.get("error") == "wrapper_unavailable":
         pytest.xfail(f"env: {env.get('reason')}")
-    result = env.get("result", {})
-    # Either notes or a dedicated error block must mention the
-    # FELLA R-side error so D2c can act on it.
-    notes = (result.get("notes") or "").lower()
-    error_blob = str(result.get("error") or "").lower()
-    assert "argument is of length zero" in notes or "argument is of length zero" in error_blob, (
-        f"D2b fella stub: wrapper-internal R error not preserved "
-        f"in envelope.result for D2c to escalate. "
-        f"notes={notes!r}, error_blob={error_blob!r}, "
-        f"keys={sorted(result.keys())}"
+
+    # Aggregate searchable fields across both shapes
+    haystack = " ".join(str(env.get(k, "")) for k in ("reason", "error", "fallback_suggested"))
+    result = env.get("result") or {}
+    if isinstance(result, dict):
+        haystack += " " + str(result.get("notes") or "")
+        haystack += " " + str(result.get("error") or "")
+    assert "argument is of length zero" in haystack.lower(), (
+        f"FELLA R-side error not visible to caller in envelope: {env!r}"
     )

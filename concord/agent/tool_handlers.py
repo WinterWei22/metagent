@@ -375,6 +375,97 @@ def _count_pathways_compounds(result: dict[str, Any]) -> tuple[int, int]:
 _WRAPPER_UNAVAILABLE_ERRORS = (ImportError, ModuleNotFoundError, FileNotFoundError)
 
 
+# W9 D2c: sentinels that mark a wrapper-INTERNAL runtime error (the
+# wrapper imported + ran, but the underlying tool errored). The
+# normaliser is contracted to surface such errors via `notes` (and the
+# D2b stubs we wrote always inject `wrapper_error: <message>` when the
+# raw wrapper output carried `error`). On detection, the handler
+# rewrites the envelope as `wrapper_runtime_error` so the LLM gets a
+# clean fail-fast signal instead of an ok=True envelope with 0 pathways
+# (which D5 showed the LLM misreads as a shape gap).
+_WRAPPER_ERROR_NOTE_PREFIX = "wrapper_error:"
+
+
+def _detect_wrapper_internal_error(result_dict: dict[str, Any]) -> str | None:
+    """Check a serialised EnrichmentResult for wrapper-internal error
+    sentinels. Returns the error message (for envelope.reason) or None.
+
+    Detection sources (in order of precedence):
+      1. `notes` string containing `wrapper_error:` prefix (D2b stub
+         pattern — preserves the underlying message after the colon).
+      2. `error` field (some normalisers may surface error here too).
+
+    Restricted to those two locations to avoid false positives — the
+    EnrichmentResult schema's other string fields (tool_version,
+    db_release, etc.) may legitimately mention "error" or contain
+    arbitrary debug content that should NOT trigger envelope rewrite.
+    """
+    notes = result_dict.get("notes")
+    if isinstance(notes, str) and _WRAPPER_ERROR_NOTE_PREFIX in notes:
+        # Extract the portion after the `wrapper_error:` prefix; the
+        # D2b stub uses the format `<existing_notes>; wrapper_error: <msg>`
+        idx = notes.find(_WRAPPER_ERROR_NOTE_PREFIX)
+        return notes[idx + len(_WRAPPER_ERROR_NOTE_PREFIX):].strip()
+    err = result_dict.get("error")
+    if err:
+        return str(err)
+    return None
+
+
+# Per-tool fallback message map for wrapper_runtime_error envelopes.
+# Each entry tells the LLM what to do when the wrapper errored at
+# runtime (NOT the same as wrapper_unavailable — env is fine, the
+# underlying tool just crashed).
+_WRAPPER_RUNTIME_ERROR_FALLBACKS: dict[str, str] = {
+    "run_sspa_ora": (
+        "sspa wrapper ran but errored at runtime; try run_ramp_enrichment "
+        "or run_metaboanalystr_psea for alternative ORA verdicts"
+    ),
+    "run_ramp_enrichment": (
+        "ramp wrapper ran but errored at runtime; try run_sspa_ora or "
+        "run_metaboanalystr_psea for alternative ORA verdicts"
+    ),
+    "run_metaboanalystr_psea": (
+        "MetaboAnalystR R subprocess errored at runtime; try run_ramp_enrichment "
+        "or run_sspa_ora; if R container needs reset, ping the operator"
+    ),
+    "run_mummichog": (
+        "mummichog ran but errored at runtime; skip the m/z-direct paradigm "
+        "this turn and rely on the ORA tools"
+    ),
+    "run_fella_rwr": (
+        "FELLA R subprocess errored at runtime (currently 'argument is of "
+        "length zero' on every sub6b-v3 task — W9 D4 stretch target); skip "
+        "the network/diffusion paradigm and rely on ORA + mummichog"
+    ),
+}
+
+
+def _maybe_escalate_wrapper_error(
+    tool_name: str,
+    result_dict: dict[str, Any],
+) -> dict[str, Any] | None:
+    """If `result_dict` shows a wrapper-internal error, return a
+    `wrapper_runtime_error` envelope; otherwise return None and the
+    caller proceeds with the normal `_ok` envelope.
+
+    Centralised so all 5 PA handlers share one detection + escalation
+    path (W9 D2c).
+    """
+    err_msg = _detect_wrapper_internal_error(result_dict)
+    if err_msg is None:
+        return None
+    return _err(
+        tool_name,
+        error="wrapper_runtime_error",
+        fallback_suggested=_WRAPPER_RUNTIME_ERROR_FALLBACKS.get(
+            tool_name,
+            "wrapper ran but errored at runtime; switch tool or accept the gap",
+        ),
+        reason=err_msg,
+    )
+
+
 def handle_run_sspa_ora(arguments: dict[str, Any]) -> dict[str, Any]:
     err = _validate_compound_ids(arguments, "run_sspa_ora")
     if err:
@@ -401,6 +492,10 @@ def handle_run_sspa_ora(arguments: dict[str, Any]) -> dict[str, Any]:
         )
     pathways = (raw.get("pathways") or [])[:top_n]
     trimmed = {**raw, "pathways": pathways}
+    # W9 D2c: escalate wrapper-internal error sentinels in notes/error
+    escalated = _maybe_escalate_wrapper_error("run_sspa_ora", trimmed)
+    if escalated is not None:
+        return escalated
     n_paths, n_refs = _count_pathways_compounds(trimmed)
     return _ok(
         "run_sspa_ora", trimmed,
@@ -435,6 +530,10 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
     # dict whose top-level `pathways` key is empty.
     enriched = normalize_ramp_output(raw, top_n=top_n)
     result_dict = dataclasses.asdict(enriched)
+    # W9 D2c: escalate wrapper-internal error sentinels (notes / error)
+    escalated = _maybe_escalate_wrapper_error("run_ramp_enrichment", result_dict)
+    if escalated is not None:
+        return escalated
     return _ok(
         "run_ramp_enrichment", result_dict,
         n_pathways=len(enriched.pathways),
@@ -473,6 +572,10 @@ def handle_run_metaboanalystr_psea(arguments: dict[str, Any]) -> dict[str, Any]:
     # than the raw `{"raw": <R JSON>, ...}` dict.
     enriched = normalize_metaboanalystr_output(raw, top_n=top_n)
     result_dict = dataclasses.asdict(enriched)
+    # W9 D2c: escalate wrapper-internal error sentinels (notes / error)
+    escalated = _maybe_escalate_wrapper_error("run_metaboanalystr_psea", result_dict)
+    if escalated is not None:
+        return escalated
     return _ok(
         "run_metaboanalystr_psea", result_dict,
         n_pathways=len(enriched.pathways),
@@ -508,6 +611,10 @@ def handle_run_mummichog(arguments: dict[str, Any]) -> dict[str, Any]:
     # raw wrapper dict with bare pathway names.
     enriched = normalize_mummichog_output(raw, top_n=top_n)
     result_dict = dataclasses.asdict(enriched)
+    # W9 D2c: escalate wrapper-internal error sentinels (notes / error)
+    escalated = _maybe_escalate_wrapper_error("run_mummichog", result_dict)
+    if escalated is not None:
+        return escalated
     return _ok(
         "run_mummichog", result_dict,
         n_pathways=len(enriched.pathways),
@@ -553,6 +660,10 @@ def handle_run_fella_rwr(arguments: dict[str, Any]) -> dict[str, Any]:
         result_dict["notes"] = (
             f"{existing}; {suffix}" if existing else suffix
         )
+    # W9 D2c: escalate wrapper-internal error sentinels (notes / error)
+    escalated = _maybe_escalate_wrapper_error("run_fella_rwr", result_dict)
+    if escalated is not None:
+        return escalated
     return _ok(
         "run_fella_rwr", result_dict,
         n_pathways=len(enriched.pathways),

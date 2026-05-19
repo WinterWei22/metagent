@@ -47,11 +47,18 @@ def test_fella_internal_error_surfaces_to_envelope():
     if env.get("error") == "wrapper_unavailable":
         pytest.xfail(f"env: {env.get('reason')}")
 
-    # The D2b stub leaves notes carrying the wrapper error. If FELLA
-    # changed behavior (e.g. D4 lands and the R error stopped firing),
-    # this test no longer applies → xfail with explanation.
-    notes = (env.get("result", {}) or {}).get("notes", "") or ""
-    if "argument is of length zero" not in str(notes):
+    # Gate: ensure FELLA actually emitted "argument is of length zero"
+    # in this run (either pre-D2c via result.notes, or post-D2c via
+    # envelope.reason). If neither location has the error string,
+    # FELLA succeeded this time (e.g. D4 landed) and the D2b→D2c
+    # bridge isn't exercised — xfail with explanation.
+    notes_str = str((env.get("result") or {}).get("notes", "") or "")
+    reason_str = str(env.get("reason") or "")
+    err_visible_anywhere = (
+        "argument is of length zero" in notes_str
+        or "argument is of length zero" in reason_str
+    )
+    if not err_visible_anywhere:
         pytest.xfail(
             "FELLA no longer emits 'argument is of length zero' — D4 "
             "may have landed or env state changed; this test guards "
@@ -69,7 +76,7 @@ def test_fella_internal_error_surfaces_to_envelope():
         f"fallback_suggested missing on escalated envelope: env={env!r}"
     )
     # Reason field preserves the underlying wrapper message
-    assert "argument is of length zero" in (env.get("reason") or "").lower(), (
+    assert "argument is of length zero" in reason_str.lower(), (
         f"envelope.reason should preserve wrapper error: env={env!r}"
     )
 
