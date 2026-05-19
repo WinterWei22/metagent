@@ -64,30 +64,54 @@ The P0 fix still passes the unit test for what it claims (`_quality_score({UV:1}
 
 ---
 
-## §3 Answering Option D — B1 vs A3 on today's LLM
+## §3 Answering Option D — B1 vs A3 on today's LLM (N=3)
 
-**A3 rerun (seed_0, n=62) on 2026-05-18/19 model:** top-1 = **61.29 %**.
+> 2026-05-19 UPDATE: this section initially compared B1 N=3 to A3
+> N=1 (seed_0 only). Full A3 N=3 rerun completed 2026-05-19
+> (`data/eval/sub6/a3_rerun_2026_05_19/`); numbers updated below.
+
+**A3 rerun N=3 on 2026-05-19 model:** mean **66.67 ± 4.75 %** (per-seed 61.90 / 68.25 / 69.84).
 **A3 original (2026-05-10ish, N=1, n=63):** top-1 = 63.49 %.
 
-A3 baseline drift on the new LLM: **−2.20 pp** — small, within the same-seed noise band we see on B1 (CI95 ≈ ±4 pp at N=3). A3 is not meaningfully different on the new LLM.
+A3 baseline drift on the new LLM: **+3.18 pp** under N=3 (vs −2.20 pp from
+the single-seed snapshot — seed_0 was the worst of the three for A3,
+which biased the initial estimate downward). A3 baseline is not
+meaningfully different on the new LLM at the N=3 level.
 
-**On today's LLM, B1 vs A3:**
+**On today's LLM, B1 vs A3 (both N=3):**
 
-| extractor convention | B1 v2 (today) | A3 (today) | Δ |
-|---|---:|---:|---:|
-| **method A (narrative-first only)** | 68.25 ± 4.75 % | 61.29 % | **+6.96 pp** |
-| **method C (B1 hybrid extractor; A3 unchanged)** | 83.60 ± 3.74 % | 61.29 % | **+22.31 pp** |
+| extractor convention | B1 v3 (today, N=3) | A3 (today, N=3) | Δ | significance (CI overlap) |
+|---|---:|---:|---:|---|
+| **method A (narrative-first only)** | 69.31 ± 8.10 % | 66.67 ± 4.75 % | **+2.64 pp** | CIs [61.21, 77.41] vs [61.92, 71.42] — **overlap → NOT significant** |
+| **method C (B1 hybrid extractor; A3 unchanged)** | 83.60 ± 7.48 % | 66.67 ± 4.75 % | **+16.93 pp** | CIs [76.12, 91.08] vs [61.92, 71.42] — **disjoint → SIGNIFICANT** |
 
 ### What this delta means
 
-- The **+6.96 pp method-A delta** is the part attributable to the **prompt rewrite alone** (v1 prose → v2 grammar-JSON narrative). Same extractor, same LLM, same RaMP/literature tools — different prompt.
-- The **+22.31 pp hybrid delta** is the prompt rewrite + the **structured-claims extractor leverage**. Roughly: prompt gives the LLM grammar shapes to emit, and the extractor exploits the claims-first signal when available (B1 hybrid pool rate ≈ 91 % on today's LLM, A3 pool rate = 0 % by design).
-
-Both deltas hold on the same LLM, same task list, same seeds — this is the **honest B1 vs A3 gap**.
+- **Method A delta = +2.64 pp** (NOT significant at N=3): on the
+  same extractor + same LLM + same task list, B1 v2 grammar prompts
+  do not measurably outperform A3 prose prompts on the first-mention
+  pathway extraction. The single-seed estimate of +6.96 pp was
+  inflated by A3's bad-luck seed_0.
+- **Method C delta = +16.93 pp** (significant): the gain over A3
+  comes almost entirely from the **structured-claims extractor leverage**.
+  B1's grammar JSON output emits a `pathway_enrichment` claim 91 % of
+  the time on today's LLM; A3 prose emits 0 (by design). The hybrid
+  extractor uses that claims-first signal when available, and that
+  signal is ~88 % accurate on its own (B_acc in v2_rerun N=3).
 
 ### Conclusion on Option D
 
-**B1 v2 grammar prompts (and the structured claims extractor) DO outperform A3 prose on today's MiniMax**, by **+6.96 pp** (apples-to-apples method A) or **+22.31 pp** (with the hybrid extractor). This is a real win and survives the LLM-version control.
+**B1's primary measurable gain over A3 on today's LLM is the
+structured-claims extractor (+14 pp on top of the prompt rewrite),
+not the prompt rewrite itself.** The prompt rewrite by itself is
+within noise at N=3.
+
+This is a more conservative paper claim than the single-seed
+snapshot suggested. The right framing for the paper is:
+*"B1's grammar-JSON output enables a claims-first extractor that
+contributes +14 pp over the narrative-first baseline on the same
+LLM. The grammar prompt rewrite alone is within noise at our N=3
+seed budget."*
 
 ---
 
@@ -97,12 +121,15 @@ Decomposing the original "+30 pp B1 vs A3" claim (using today's LLM throughout, 
 
 | component | how isolated | contribution to top-1 (method C) |
 |---|---|---:|
-| **B1 v2 grammar prompts (D1)** | v2 rerun method-A vs A3 method-A | **+6.96 pp** (prompt rewrite) |
-| **B1 hybrid extractor (Step Z)** | v2 rerun method-C vs method-A | **+15.35 pp** (extractor leverage) |
+| **B1 v2 grammar prompts (D1)** | v3 method-A vs A3 method-A both N=3 | **+2.64 pp** (within noise; not significant) |
+| **B1 hybrid extractor (Step Z)** | v3 method-C vs v3 method-A | **+14.29 pp** (extractor leverage, significant) |
 | **B1 P0 fix (commit `2a2eeb9`)** | v3 method-C vs v2 rerun method-C | **+0.00 pp** (mechanism, no metric gain) |
 | LLM model-version drift (5/15→5/18) | v2 original vs v2 rerun method-C | **+30.69 pp** (NOT a B1 contribution) |
 
-**Net B1-attributable top-1 gain on today's LLM: +22.31 pp** (prompt + hybrid extractor). The P0 fix contributes nothing measurable to top-1; it is a mechanism-correctness fix only.
+**Net B1-attributable top-1 gain on today's LLM at N=3: +16.93 pp** (mostly the extractor; prompt rewrite is in the noise). The P0 fix contributes nothing measurable to top-1; it is a mechanism-correctness fix only.
+
+Earlier single-seed numbers in this report (e.g. "+22.31 pp / +6.96 pp")
+should be replaced by the N=3 numbers when cited externally.
 
 ---
 
@@ -114,8 +141,8 @@ Decomposing the original "+30 pp B1 vs A3" claim (using today's LLM throughout, 
 | 2 | dropped < 30 % | < 30 % | 1.54 ± 0.10 | ✓ |
 | 3 | supported not regress > 5 pp vs A3 | ≥ A3 − 5 pp | 96.10 ± 1.21 (A3 baseline ≈ 88 % from §1 row 9 if mapped) | ✓ |
 | 4 | Step R driver-filtered correlation +18 pp | (re-run on v3) | not re-computed; deferred | deferred |
-| **NEW** | **top-1 hybrid ≥ A3 baseline same LLM (61.29 %)** | ≥ 61.29 % | 83.60 ± 7.48 | **✓** (+22.31 pp) |
-| **NEW** | **top-1 method-A ≥ A3 method-A same LLM** | ≥ 61.29 % | v3=69.31 or v2-rerun=68.25 | **✓** (+6.96 pp) |
+| **NEW** | **top-1 hybrid ≥ A3 baseline same LLM (N=3 = 66.67 ± 4.75 %)** | ≥ A3 N=3 mean | 83.60 ± 7.48 | **✓** (+16.93 pp, CIs disjoint) |
+| **NEW** | **top-1 method-A ≥ A3 method-A same LLM (N=3)** | ≥ A3 N=3 mean | 69.31 ± 8.10 | **CI overlap** — directional +2.64 pp but not significant |
 
 Four of six lines green (the two new ones are the honest same-LLM comparisons). #4 (Step R) still deferred but is a tautology-diagnosis line, not a B1-claims line.
 
