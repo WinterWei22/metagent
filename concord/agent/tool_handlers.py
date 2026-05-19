@@ -145,49 +145,203 @@ def _validate_compound_ids(
     return None
 
 
-def _ids_to_refs(compound_ids: list[str]) -> list[SimpleNamespace]:
-    """Build duck-typed CompoundRef objects from string IDs.
+# Module-level lazy singleton for the ChEBI sqlite lookup. The handler
+# wraps every call in a try/except so a missing sqlite (un-seeded dev
+# env) silently falls back to the no-enrichment legacy path.
+_CHEBI_LOOKUP_SINGLETON: Any = None  # ChebiLookup | None | False (False = unavailable)
 
-    The PA wrappers read attributes via `getattr(ref, "chebi_id", None)`,
-    `getattr(ref, "kegg_compound_id", None)`, etc. — they do not require
-    a real `CompoundRef` dataclass instance, which would force us to
-    look up an InChIKey before we even call the tool. A `SimpleNamespace`
-    with the right attributes duck-types correctly.
+
+def _get_chebi_lookup():
+    """Lazy-load + cache the ChebiLookup singleton.
+
+    Returns the ChebiLookup instance on success, or None if the sqlite
+    is missing (so callers fall back to the legacy no-enrichment path
+    without raising). Cached at module scope so the per-call setup
+    cost is paid once per process.
+    """
+    global _CHEBI_LOOKUP_SINGLETON
+    if _CHEBI_LOOKUP_SINGLETON is None:
+        try:
+            from concord.lookup.chebi import ChebiLookup
+            _CHEBI_LOOKUP_SINGLETON = ChebiLookup()
+        except (FileNotFoundError, ImportError):
+            _CHEBI_LOOKUP_SINGLETON = False
+    return _CHEBI_LOOKUP_SINGLETON if _CHEBI_LOOKUP_SINGLETON else None
+
+
+def _detect_input_namespace(s: str) -> str | None:
+    """Best-effort namespace detector for a raw ID string.
+
+    Returns "CHEBI" / "HMDB" / "KEGG" / "LIPIDMAPS" / "INCHIKEY", or
+    None if the string doesn't match any known shape.
+    """
+    s_up = s.upper()
+    if s_up.startswith("CHEBI:") or (s.isdigit() and len(s) <= 7):
+        return "CHEBI"
+    if s_up.startswith("HMDB"):
+        return "HMDB"
+    if s_up.startswith("KEGG:") or (
+        s.startswith("C") and len(s) >= 6 and s[1:].lstrip("0").isdigit()
+    ):
+        return "KEGG"
+    if s_up.startswith("LIPIDMAPS:") or s_up.startswith("LM"):
+        return "LIPIDMAPS"
+    if len(s) == 27 and s.count("-") == 2 and all(
+        part.isalnum() for part in s.split("-")
+    ):
+        return "INCHIKEY"
+    return None
+
+
+def _fetch_all_xrefs_for_chebi(lookup, chebi_numeric: str) -> dict[str, str]:
+    """Query compound_xref via the ChebiLookup connection to fetch
+    one cross-reference per external namespace.
+
+    Returns a dict like ``{"HMDB": "HMDB0000053", "KEGG": "C00280",
+    "LIPIDMAPS": "LMST02030001", "INCHIKEY": "..."}``. The query
+    picks the LEXICALLY FIRST external_id per namespace so the result
+    is deterministic across runs even when ChEBI has multiple xrefs
+    for the same (chebi_id, ns) pair (e.g. CAS + KEGG cpd ids both
+    sit in the KEGG namespace bucket — we prefer 'Cxxxxx' shape).
+    """
+    out: dict[str, str] = {}
+    with lookup._conn() as c:
+        # For KEGG: filter to "Cxxxxx" pattern, prefer those over CAS.
+        # For other namespaces: take the lexically-smallest id.
+        rows = c.execute(
+            "SELECT external_ns, external_id FROM compound_xref "
+            "WHERE chebi_id = ? "
+            "  AND external_ns IN ('HMDB', 'KEGG', 'LIPIDMAPS') "
+            "ORDER BY external_ns, external_id",
+            (chebi_numeric,),
+        ).fetchall()
+    for ns, ext in rows:
+        if ns == "KEGG":
+            # Strong preference: Cxxxxx ALWAYS wins over CAS RN. The
+            # compound_xref table commingles both in the same KEGG
+            # bucket; iterating in sorted order means CAS lands first
+            # (numeric < alpha), so we must override when we later
+            # see a Cxxxxx form rather than skip it.
+            is_cpd_id = (
+                ext.startswith("C")
+                and len(ext) >= 4
+                and ext[1:].lstrip("0").isdigit()
+            )
+            if is_cpd_id:
+                out["KEGG"] = ext  # upgrade past any earlier CAS
+            elif out.get("KEGG") is None:
+                out["KEGG"] = ext  # CAS only if no Cxxxxx will come later
+        else:
+            if out.get(ns) is None:
+                out[ns] = ext
+    return out
+
+
+def _enrich_ref_via_chebi(s: str, ns_hint: str | None) -> dict[str, Any]:
+    """Resolve an input ID string to ChEBI + fetch all cross-references.
+
+    Returns a dict suitable for SimpleNamespace splat
+    ({primary_id, chebi_id, hmdb_id, kegg_compound_id, lipidmaps_id,
+    inchikey, display_name}). When the ChEBI sqlite is unavailable or
+    the input doesn't resolve, returns a minimal dict matching the
+    legacy single-namespace behavior (so wrappers still get something
+    even when the enrichment path fails).
+    """
+    lookup = _get_chebi_lookup()
+    rec = None
+    if lookup is not None and ns_hint:
+        if ns_hint == "CHEBI":
+            num = s.replace("CHEBI:", "").replace("chebi:", "").strip()
+            try:
+                rec = lookup.get_compound(num)
+            except (ValueError, TypeError):
+                rec = None
+        elif ns_hint == "HMDB":
+            ext_id = s.replace("HMDB:", "").replace("hmdb:", "").strip()
+            rec = lookup.lookup_by_xref("HMDB", ext_id)
+        elif ns_hint == "KEGG":
+            ext_id = s.replace("KEGG:", "").replace("kegg:", "").strip()
+            rec = lookup.lookup_by_xref("KEGG", ext_id)
+        elif ns_hint == "LIPIDMAPS":
+            ext_id = s.replace("LIPIDMAPS:", "").replace("lipidmaps:", "").strip()
+            rec = lookup.lookup_by_xref("LIPIDMAPS", ext_id)
+        elif ns_hint == "INCHIKEY":
+            recs = lookup.lookup_by_inchikey(s)
+            rec = recs[0] if recs else None
+
+    if rec is not None:
+        xrefs = _fetch_all_xrefs_for_chebi(lookup, rec.chebi_id)
+        primary_id = rec.primary_id
+        return {
+            "primary_id": primary_id,
+            "chebi_id": primary_id,
+            "hmdb_id": f"HMDB:{xrefs['HMDB']}" if xrefs.get("HMDB") else None,
+            "kegg_compound_id": f"KEGG:{xrefs['KEGG']}" if xrefs.get("KEGG") else None,
+            "lipidmaps_id": f"LIPIDMAPS:{xrefs['LIPIDMAPS']}" if xrefs.get("LIPIDMAPS") else None,
+            "inchikey": rec.inchikey or "",
+            "display_name": rec.name or "",
+        }
+
+    # Legacy fallback — single namespace populated, no enrichment
+    return _legacy_single_namespace_dict(s, ns_hint)
+
+
+def _legacy_single_namespace_dict(s: str, ns_hint: str | None) -> dict[str, Any]:
+    """Single-namespace SimpleNamespace shape — used when ChEBI lookup
+    misses or is unavailable. Preserves the W8 D2 behavior for unknown
+    IDs so wrappers still see *something* to try."""
+    primary_id = s
+    chebi_id = hmdb_id = kegg = lipidmaps = None
+    inchikey = ""
+    if ns_hint == "CHEBI":
+        primary_id = s if s.upper().startswith("CHEBI:") else f"CHEBI:{s}"
+        chebi_id = primary_id
+    elif ns_hint == "HMDB":
+        primary_id = s if s.upper().startswith("HMDB:") else f"HMDB:{s}"
+        hmdb_id = primary_id
+    elif ns_hint == "KEGG":
+        primary_id = s if s.upper().startswith("KEGG:") else f"KEGG:{s}"
+        kegg = primary_id
+    elif ns_hint == "LIPIDMAPS":
+        primary_id = s if s.upper().startswith("LIPIDMAPS:") else f"LIPIDMAPS:{s}"
+        lipidmaps = primary_id
+    elif ns_hint == "INCHIKEY":
+        primary_id = f"INCHIKEY:{s}"
+        inchikey = s
+    # else: unknown — primary_id=s, all xref fields None
+    return {
+        "primary_id": primary_id,
+        "chebi_id": chebi_id,
+        "hmdb_id": hmdb_id,
+        "kegg_compound_id": kegg,
+        "lipidmaps_id": lipidmaps,
+        "inchikey": inchikey,
+        "display_name": "",
+    }
+
+
+def _ids_to_refs(compound_ids: list[str]) -> list[SimpleNamespace]:
+    """Build duck-typed CompoundRef objects from string IDs, enriched
+    via ChebiLookup + compound_xref so every available cross-reference
+    is populated (W9 D2a fix).
+
+    Each ref carries: primary_id, chebi_id, hmdb_id, kegg_compound_id,
+    lipidmaps_id, inchikey, display_name. PA wrappers read whichever
+    field their id_type negotiation prefers (ramp auto path: hmdb →
+    inchikey; metaboanalystr_psea: hmdb default; fella:
+    kegg_compound_id with ChEBI→KEGG xref fallback).
+
+    The enrichment is per-input (one ChEBI sqlite query + one xref
+    query per compound_id), which on a 9-compound task costs ~20 ms
+    total. Falls back silently to the legacy single-namespace shape
+    when ChEBI sqlite is unavailable or an input doesn't resolve.
     """
     refs: list[SimpleNamespace] = []
     for raw in compound_ids:
         s = raw.strip()
-        primary_id = s
-        chebi_id = hmdb_id = kegg = lipidmaps = None
-        if s.upper().startswith("CHEBI:"):
-            chebi_id = s
-            primary_id = s
-        elif s.upper().startswith("HMDB"):
-            # accept "HMDB:HMDB0000122" or "HMDB0000122"
-            normalised = s if s.upper().startswith("HMDB:") else f"HMDB:{s}"
-            hmdb_id = normalised
-            primary_id = normalised
-        elif s.upper().startswith("KEGG:"):
-            kegg = s
-            primary_id = s
-        elif s.startswith("C") and len(s) >= 6 and s[1:].lstrip("0").isdigit():
-            # bare KEGG cpd ID like "C00031"
-            kegg = f"KEGG:{s}"
-            primary_id = kegg
-        elif s.upper().startswith("LM") or s.upper().startswith("LIPIDMAPS:"):
-            normalised = s if s.upper().startswith("LIPIDMAPS:") else f"LIPIDMAPS:{s}"
-            lipidmaps = normalised
-            primary_id = normalised
-
-        refs.append(SimpleNamespace(
-            primary_id=primary_id,
-            chebi_id=chebi_id,
-            hmdb_id=hmdb_id,
-            kegg_compound_id=kegg,
-            lipidmaps_id=lipidmaps,
-            inchikey="",
-            display_name="",
-        ))
+        ns_hint = _detect_input_namespace(s)
+        enriched = _enrich_ref_via_chebi(s, ns_hint)
+        refs.append(SimpleNamespace(**enriched))
     return refs
 
 
