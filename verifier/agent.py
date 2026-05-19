@@ -366,7 +366,32 @@ def _verify_per_claim(
             )
         else:  # pragma: no cover — exhaustive
             raise AssertionError(f"unhandled claim_type {c.claim_type}")
-    return out
+    return _stamp_grammar_from_classified(out, classified)
+
+
+def _stamp_grammar_from_classified(
+    verified_claims: list[VerifiedClaim],
+    classified_claims: list[ClassifiedClaim],
+) -> list[VerifiedClaim]:
+    """Phase B1 P0 Stage D — copy ``ClassifiedClaim.grammar`` onto each
+    ``VerifiedClaim`` so per-grammar metric aggregation (e.g. distinguishing
+    ``pathway_membership`` from ``metabolite_pathway_link`` — both collapse
+    to ``ClaimType.BIOLOGICAL``) can read ``VerifiedClaim.grammar`` directly
+    instead of round-tripping through ``ExtractedClaim``.
+
+    Previously the per-layer verifier constructors set
+    ``VerifiedClaim.grammar`` to its default ``None`` because layers don't
+    receive the grammar information explicitly. This dispatcher-level stamp
+    centralises the passthrough — no layer touched.
+
+    1:1 with the classified list (each dispatch appends exactly one verified
+    claim per classified claim). Was followup_debt P0 #1.
+    """
+    return [
+        v if (c.grammar is None or v.grammar == c.grammar)
+        else v.model_copy(update={"grammar": c.grammar})
+        for v, c in zip(verified_claims, classified_claims, strict=True)
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -658,4 +683,4 @@ def _verify_per_claim_sub6(
                     trace_summary=f"sub6 cannot verify {c.claim_type.value}",
                 )
             )
-    return out
+    return _stamp_grammar_from_classified(out, classified)

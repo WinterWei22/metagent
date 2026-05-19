@@ -558,3 +558,83 @@ def test_build_feedback_message_handles_d1_placeholders() -> None:
     assert "UNVERIFIABLE" in msg.upper()
     assert "DROPPED-BY-GRAMMAR" in msg.upper() or "dropped" in msg.lower()
     assert "prev narrative" in msg
+
+
+# ---------------------------------------------------------------------------
+# 10. grammar field passthrough — VerifiedClaim must carry ClassifiedClaim.grammar
+# ---------------------------------------------------------------------------
+
+
+def test_grammar_field_passthrough_to_verified() -> None:
+    """Phase B1 P0 Stage D regression — verifier.agent's dispatcher
+    centrally stamps ``ClassifiedClaim.grammar`` onto each
+    ``VerifiedClaim`` so per-grammar metric aggregation (distinguishing
+    ``pathway_membership`` from ``metabolite_pathway_link``, both of
+    which collapse to ``ClaimType.BIOLOGICAL``) does not have to
+    round-trip through ``ExtractedClaim``.
+
+    Was followup_debt P0 #1: VerifiedClaim.grammar was always None
+    because (a) the field didn't exist on VerifiedClaim, and (b) layers
+    construct VerifiedClaim from scratch without knowing about grammar.
+    Fix adds the field + centralised dispatcher-level stamp helper.
+    """
+    from verifier.agent import _stamp_grammar_from_classified
+    from verifier.grammar import ClaimGrammar
+    from verifier.schemas import (
+        ClaimExtractedFields,
+        ClaimProvenance,
+        ClaimType,
+        ClaimVerdict,
+        ClassifiedClaim,
+        VerifiedClaim,
+    )
+
+    # 1) v2-grammar claim → grammar must propagate
+    c = ClassifiedClaim(
+        claim_id="t1",
+        claim_text="Lysine is a member of Lysine degradation",
+        claim_type=ClaimType.BIOLOGICAL,
+        extracted_fields=ClaimExtractedFields(),
+        provenance=ClaimProvenance(),
+        classifier_source="rule",
+        grammar=ClaimGrammar.PATHWAY_MEMBERSHIP,
+    )
+    v = VerifiedClaim(
+        claim_text=c.claim_text,
+        claim_type=c.claim_type,
+        verdict=ClaimVerdict.SUPPORTED,
+        evidence="RaMP lookup ok",
+    )
+    assert v.grammar is None, "pre-stamp must be None"
+    stamped = _stamp_grammar_from_classified([v], [c])
+    assert stamped[0].grammar == ClaimGrammar.PATHWAY_MEMBERSHIP
+
+    # 2) v1 claim (no grammar) → must stay None
+    c_legacy = ClassifiedClaim(
+        claim_id="t2",
+        claim_text="legacy",
+        claim_type=ClaimType.BIOLOGICAL,
+        extracted_fields=ClaimExtractedFields(),
+        provenance=ClaimProvenance(),
+        classifier_source="rule",
+        grammar=None,
+    )
+    v_legacy = VerifiedClaim(
+        claim_text="legacy",
+        claim_type=ClaimType.BIOLOGICAL,
+        verdict=ClaimVerdict.SUPPORTED,
+        evidence="x",
+    )
+    stamped_legacy = _stamp_grammar_from_classified([v_legacy], [c_legacy])
+    assert stamped_legacy[0].grammar is None
+
+    # 3) Different v2 grammars route correctly (distinguishes membership vs link)
+    c_link = c.model_copy(update={"grammar": ClaimGrammar.METABOLITE_PATHWAY_LINK})
+    v_link = v.model_copy(update={"claim_text": "link"})
+    stamped_link = _stamp_grammar_from_classified([v_link], [c_link])
+    assert stamped_link[0].grammar == ClaimGrammar.METABOLITE_PATHWAY_LINK
+    # Mixed: both should land with their own grammar in one batch
+    mixed = _stamp_grammar_from_classified([v, v_legacy, v_link], [c, c_legacy, c_link])
+    assert mixed[0].grammar == ClaimGrammar.PATHWAY_MEMBERSHIP
+    assert mixed[1].grammar is None
+    assert mixed[2].grammar == ClaimGrammar.METABOLITE_PATHWAY_LINK

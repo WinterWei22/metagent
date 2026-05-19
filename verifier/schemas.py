@@ -701,6 +701,18 @@ class VerifiedClaim(BaseModel):
         default_factory=ClaimExtractedFields,
         description="Typed fields carried through verification.",
     )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 P0 Stage D — preserved from the source "
+            "``ClassifiedClaim`` / ``ExtractedClaim`` so downstream "
+            "metric aggregators can distinguish per-grammar shape "
+            "(pathway_membership vs metabolite_pathway_link, both of "
+            "which collapse to ClaimType.BIOLOGICAL). Stamped by the "
+            "dispatcher post-layer-call; layers themselves do not have "
+            "to know about it. None for v1 (legacy free-text) claims."
+        ),
+    )
     evidence_refs: list[EvidenceRef] = Field(
         default_factory=list,
         description="Structured evidence references used by the verifier.",
