@@ -416,6 +416,7 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
     top_n = _top_n_or_default(arguments)
     try:
         from concord.wrappers.ramp_wrapper import run_ramp_enrichment
+        from concord.normalize.ramp_norm import normalize_ramp_output
         raw = run_ramp_enrichment(refs, top_n=top_n)
     except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
@@ -428,12 +429,16 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
             ),
             reason=f"ramp unavailable: {type(exc).__name__}: {exc}",
         )
-    pathways = (raw.get("pathways") or [])[:top_n]
-    trimmed = {**raw, "pathways": pathways}
-    n_paths, n_refs = _count_pathways_compounds(trimmed)
+    # W9 D2b: wire normalize_ramp_output so the envelope carries a v0.3.1
+    # EnrichmentResult with per-source namespace prefixes (REACT / KEGG /
+    # WP / SMPDB) rather than the raw `{"report": EnrichmentReport, ...}`
+    # dict whose top-level `pathways` key is empty.
+    enriched = normalize_ramp_output(raw, top_n=top_n)
+    result_dict = dataclasses.asdict(enriched)
     return _ok(
-        "run_ramp_enrichment", trimmed,
-        n_pathways=n_paths, n_compound_refs=n_refs,
+        "run_ramp_enrichment", result_dict,
+        n_pathways=len(enriched.pathways),
+        n_compound_refs=sum(len(p.metabolites_hit) for p in enriched.pathways),
     )
 
 
