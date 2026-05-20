@@ -96,6 +96,7 @@ def run_sub6b(
                 model=model,
                 trace_id=task["task_id"],
                 caller=caller,
+                response_format={"type": "json_object"},
                 **_chat_kwargs(provider),
             )
             err = None

@@ -37,6 +37,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from verifier.grammar import ClaimGrammar
+
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -103,6 +105,66 @@ class ClaimType(str, Enum):
     Sub-6 source reports, to the dedicated Sub-6 biological subroute).
     No separate ClaimType is added for 6c — see Sub-6 verifier session
     decision Q1(b)."""
+
+    OTHER = "other_claim"
+    """Phase B1 D3 — explicit catch-all for sentences that the v1
+    classifier used to absorb into BIOLOGICAL by anti-pattern
+    (single-compound abstract sentences like "Polyamines regulate
+    protein synthesis"). Routing these to OTHER rather than BIOLOGICAL
+    avoids two confusions:
+
+    1. Layer C / Sub-6 biological then attempts a real RaMP membership
+       lookup against an unverifiable subject and emits an UNSUPPORTED
+       verdict that misleads downstream metric.
+    2. The Stage 4 rewriter sees the UNSUPPORTED and rewrites — masking
+       the source-side failure mode.
+
+    OTHER is intentionally routed to ``UNVERIFIABLE_V0`` by both
+    dispatchers (sub-6 ``else`` already, spectrum needs a one-line
+    branch). The v2 grammar path NEVER produces OTHER (every grammar
+    shape maps to one of the four routable types); OTHER is exclusive
+    to the v1 legacy classifier path kept for ablation."""
+
+
+class TaskOutcome(str, Enum):
+    """Task-level outcome, distinct from claim-level verdicts.
+
+    Introduced in Phase B1 D4 so D5 aggregate can separate the four
+    cases that all currently look like "0 supported" in the per-claim
+    metric: (i) the LLM honestly refused to fabricate claims because
+    its tools failed; (ii) the run died on the LLM side (empty content,
+    JSON parse failure); (iii) the run produced an empty claim list
+    with no obvious refusal signal; (iv) normal completion.
+
+    The existing claim-level verdicts (supported / unsupported /
+    contradicted / unverifiable_v0) are unchanged; ``task_outcome`` is
+    a separate, peer-rank annotation for the task-as-a-whole.
+    """
+
+    NORMAL = "normal"
+    """LLM produced one or more claim objects (some of which may have
+    been dropped by grammar). The task ran end-to-end and the
+    supported / dropped / unverifiable counts are meaningful."""
+
+    EMPTY_HONEST_REFUSAL = "empty_honest_refusal"
+    """LLM emitted valid JSON with ``claims:[]`` AND the
+    ``narrative_text`` contains an explicit refusal signal (tool
+    failures named, "no enrichment results obtained", etc.). This is
+    the LLM doing the right thing in the absence of grounding —
+    Phase B1 D2 T=0.0 seed-2 mode B. NOT a system failure; should be
+    surfaced separately in D5 aggregate so it does not pollute
+    NORMAL-task ratios."""
+
+    EMPTY_SYSTEM_FAILURE = "empty_system_failure"
+    """LLM produced empty content, the JSON parse failed, or the
+    schema lacked a ``claims`` field. Phase B1 D2 T=0.7 mode A. The
+    inner retry in the runner has already had its single attempt; if
+    we still got here, treat as a system-side failure."""
+
+    EMPTY_UNKNOWN = "empty_unknown"
+    """LLM emitted valid JSON with ``claims:[]`` but no refusal signal.
+    Theoretically should not happen in production; flagged for manual
+    inspection in D5 aggregate."""
 
 
 class ClaimVerdict(str, Enum):
@@ -492,6 +554,17 @@ class ExtractedClaim(BaseModel):
         default_factory=ClaimProvenance,
         description="Extraction/parser provenance for audit and metrics.",
     )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 D2/D3 — when the extractor consumed a v2 grammar "
+            "JSON payload, the LLM's ``grammar`` field is preserved here "
+            "so the classifier can route directly via "
+            "``route_v2_claim`` without inferring the type. ``None`` for "
+            "v1 legacy free-text extractions, which still go through the "
+            "rule + LLM classifier."
+        ),
+    )
 
 
 class ClassifiedClaim(BaseModel):
@@ -557,6 +630,14 @@ class ClassifiedClaim(BaseModel):
         default_factory=ClaimProvenance,
         description="Extraction/classification provenance for audit and metrics.",
     )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 D3 — preserved from the source ``ExtractedClaim``."
+            " Allows downstream auditing to see which v2 grammar shape "
+            "produced this routed claim."
+        ),
+    )
 
 
 class VerifiedClaim(BaseModel):
@@ -619,6 +700,18 @@ class VerifiedClaim(BaseModel):
     extracted_fields: ClaimExtractedFields = Field(
         default_factory=ClaimExtractedFields,
         description="Typed fields carried through verification.",
+    )
+    grammar: ClaimGrammar | None = Field(
+        None,
+        description=(
+            "Phase B1 P0 Stage D — preserved from the source "
+            "``ClassifiedClaim`` / ``ExtractedClaim`` so downstream "
+            "metric aggregators can distinguish per-grammar shape "
+            "(pathway_membership vs metabolite_pathway_link, both of "
+            "which collapse to ClaimType.BIOLOGICAL). Stamped by the "
+            "dispatcher post-layer-call; layers themselves do not have "
+            "to know about it. None for v1 (legacy free-text) claims."
+        ),
     )
     evidence_refs: list[EvidenceRef] = Field(
         default_factory=list,
@@ -716,6 +809,13 @@ class ClaimMetrics(BaseModel):
     unsupported_claims: int = 0
     unverifiable_claims: int = 0
     error_claims: int = 0
+    dropped_by_grammar: int = 0
+    """Phase B1 D2: count of claims rejected by ``verifier.grammar.validate``
+    before reaching any verifier layer. NOT part of the ``total_claims``
+    denominator — the supported / unsupported / contradicted /
+    unverifiable rate denominators are ``total_claims`` (post-grammar),
+    matching the v2 metric definition in
+    ``docs/claim_grammar_v2.md``."""
     supported_ratio: float | None = None
     contradiction_rate: float | None = None
     unverifiable_rate: float | None = None
@@ -795,6 +895,26 @@ class VerifiedIdentification(BaseModel):
         None,
         description="Aggregate claim-level metrics computed from the verifier output.",
     )
+    dropped_claims: list[DroppedClaim] = Field(
+        default_factory=list,
+        description=(
+            "Phase B1 D2: claims the grammar v2 extractor rejected. NOT "
+            "scored. Surfaced so feedback hints (D4) can quote them back "
+            "to the LLM and so the audit trail records what the LLM "
+            "actually emitted before grammar filtering."
+        ),
+    )
+    task_outcome: TaskOutcome = Field(
+        default=TaskOutcome.NORMAL,
+        description=(
+            "Phase B1 D4: peer-rank task-level outcome. Default NORMAL "
+            "keeps every legacy verdict-replay bit-identical. Set by "
+            "``verifier/task_outcome.py:detect_task_outcome``. D5 "
+            "aggregator buckets per-task numbers by this field so LLM "
+            "honest refusal does not pollute the NORMAL-task ratio "
+            "denominators."
+        ),
+    )
     overall_verdict: Literal[
         "verified",
         "partially_verified",
@@ -839,4 +959,51 @@ class VerifiedIdentification(BaseModel):
     generated_at: datetime = Field(
         ...,
         description="UTC timestamp at which ``verify()`` returned.",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Phase B1 D2 — dropped-by-grammar bookkeeping
+# ---------------------------------------------------------------------------
+
+
+class DroppedClaim(BaseModel):
+    """A claim object that the grammar v2 extractor refused.
+
+    Dropped claims are NOT routed to a verifier layer; they are bucketed
+    under ``dropped_by_grammar`` in the verdict metric and excluded from
+    the supported / unsupported / contradicted / unverifiable_v0
+    denominator. The point of keeping them around (rather than
+    silently discarding) is so feedback hints (D4) can quote the
+    rejected text back to the LLM.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    claim_text: str = Field(
+        ...,
+        description="Verbatim ``claim_text`` from the LLM JSON output.",
+    )
+    grammar_attempt: str | None = Field(
+        None,
+        description=(
+            "The ``grammar`` value the LLM declared, if any. None when the "
+            "field was missing entirely or was non-string."
+        ),
+    )
+    drop_reason: str = Field(
+        ...,
+        description=(
+            "Human-readable explanation from "
+            "``verifier.grammar.validate``. Used as the basis for the "
+            "feedback-hint sent back to the LLM in the next iteration."
+        ),
+    )
+    raw_object: dict | None = Field(
+        None,
+        description=(
+            "Original LLM-emitted dict for the dropped claim, kept so a "
+            "future audit can replay the validation pass without re-"
+            "running the LLM."
+        ),
     )

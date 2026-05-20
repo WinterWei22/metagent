@@ -1,0 +1,28 @@
+{
+  "seed": 0,
+  "n_task": 63,
+  "outcome_counts": {
+    "empty_system_failure": 7,
+    "normal": 54,
+    "empty_unknown": 2
+  },
+  "metrics_normal_only": {
+    "supported_mean": 0.9531418684196462,
+    "contradicted_mean": 0.0035353535353535356,
+    "unverifiable_v0_mean": 0.040096066484955374,
+    "dropped_by_grammar_mean": 0.0
+  },
+  "wall_seconds": {
+    "mean": 293.4952380952381,
+    "median": 263.5,
+    "min": 30.6,
+    "max": 738.1
+  },
+  "feedback_iter_distribution": {
+    "0": 63,
+    "1": 0,
+    "2": 0
+  },
+  "n_feedback_iter_above_zero": 0,
+  "deprecation_warnings": 0
+}

@@ -229,6 +229,7 @@ def run_sub6a(
                     model=model,
                     trace_id=task["task_id"],
                     caller=caller,
+                    response_format={"type": "json_object"},
                     **_chat_kwargs(provider),
                 )
                 llm_calls = 1

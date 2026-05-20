@@ -35,6 +35,7 @@ from verifier.schemas import (
     ClaimSubtype,
     ClaimType,
     ClaimVerdict,
+    DroppedClaim,
     VerifiedClaim,
 )
 
@@ -57,11 +58,15 @@ def _claim_id_for(claim: VerifiedClaim, *, pass_id: str, idx: int) -> str:
 _NEUTRAL_VERDICTS: frozenset[ClaimVerdict] = frozenset(
     {
         ClaimVerdict.SUPPORTED,
-        ClaimVerdict.UNVERIFIABLE_V0,
         ClaimVerdict.ERROR,
         ClaimVerdict.NEEDS_HUMAN_REVIEW,
     }
 )
+"""Phase B1 D4: ``UNVERIFIABLE_V0`` removed from this set so UNV claims
+also get a feedback hint and are visible to the next iteration. The
+remaining members are SUPPORTED (already correct, nothing to do),
+ERROR (verifier crash, the LLM can't fix), and NEEDS_HUMAN_REVIEW
+(escape hatch for tools-disagree on Layer F)."""
 
 
 def _pathway_phrase(claim: VerifiedClaim) -> str | None:
@@ -266,12 +271,43 @@ def _extract_search_query(claim: VerifiedClaim) -> str:
     return " ".join(words[:6])
 
 
+def _hint_for_unverifiable(claim: VerifiedClaim) -> str:
+    """Phase B1 D4: UNV used to be neutral — now we tell the LLM the
+    verifier had no tool to check the claim, and ask for a rewrite or
+    drop. Branch on the most common Sub-6 routes so the suggestion is
+    grammar-shape-aware."""
+    ctype = claim.claim_type
+    if ctype == ClaimType.OTHER:
+        # D3-only path: abstract single-compound regulatory sentences.
+        return (
+            "Claim was classified as OTHER — abstract single-compound "
+            "regulation with no specific pathway or enzyme endpoint. "
+            "Rewrite as one of the 4 grammar shapes "
+            "(pathway_membership / metabolite_pathway_link / "
+            "pathway_enrichment / driver_metabolite) with concrete "
+            "fields, or drop the claim."
+        )
+    if ctype == ClaimType.PATHWAY_RELATIONSHIP:
+        return (
+            "Verifier has no pathway-hierarchy table to score "
+            "upstream/downstream / cross-talk relationships. Restate "
+            "as a concrete metabolite_pathway_link with a named "
+            "enzyme/reaction, or drop."
+        )
+    return (
+        "Verifier had no tool to check this claim. Either rewrite as "
+        "one of the 4 grammar shapes with all required fields populated, "
+        "or drop the claim."
+    )
+
+
 def generate_feedback_hint(claim: VerifiedClaim) -> str | None:
     """Return an LLM-facing actionable hint, or ``None`` for neutral verdicts.
 
-    Returns ``None`` when the verdict is one of SUPPORTED /
-    UNVERIFIABLE_V0 / ERROR / NEEDS_HUMAN_REVIEW — the agent cannot act
-    on those.
+    Phase B1 D4: ``UNVERIFIABLE_V0`` was removed from the neutral set
+    so the agent now sees a hint for those too — see
+    :func:`_hint_for_unverifiable`. The neutral set is now {SUPPORTED,
+    ERROR, NEEDS_HUMAN_REVIEW}.
     """
     if claim.verdict in _NEUTRAL_VERDICTS:
         return None
@@ -279,7 +315,151 @@ def generate_feedback_hint(claim: VerifiedClaim) -> str | None:
         return _hint_for_contradicted(claim)
     if claim.verdict == ClaimVerdict.UNSUPPORTED:
         return _hint_for_unsupported(claim)
+    if claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+        return _hint_for_unverifiable(claim)
     return None  # defensive — covers any future verdict additions
+
+
+# ---------------------------------------------------------------------------
+# Phase B1 D4 — per-drop_reason hint templates for grammar-dropped claims
+# ---------------------------------------------------------------------------
+# DroppedClaim does not have a verdict; it never reached the verifier.
+# The drop_reason string carries the reason from
+# ``verifier.grammar.validate``. Each template returns a short
+# actionable hint the next iteration's prompt can paste verbatim.
+
+_DROP_REASON_TEMPLATES: tuple[tuple[str, str], ...] = (
+    (
+        "banned hedge:",
+        "Claim '{text}' was dropped because it uses speculative language "
+        "({offending}). Rewrite with concrete grounding from your tool "
+        "results, or omit the claim.",
+    ),
+    (
+        "banned directional:",
+        "Claim '{text}' was dropped: direction-without-evidence "
+        "({offending}) is not verifiable. If you have the supporting "
+        "signal_compound_ids, restate as a driver_metabolite claim. "
+        "Otherwise omit.",
+    ),
+    (
+        "banned abstract:",
+        "Claim '{text}' was dropped: abstract textbook phrasing "
+        "({offending}). Rewrite citing a specific pathway name and a "
+        "specific metabolite from your differential set, or omit.",
+    ),
+    (
+        "banned meta:",
+        "Claim '{text}' was dropped: limitations / meta language "
+        "({offending}). Do not write self-limiting prose; just stop "
+        "when you have nothing concrete to add.",
+    ),
+    (
+        "banned tool-roundtrip",
+        "Claim '{text}' was dropped: ID/formula echo is not a "
+        "pathway-level conclusion. If the ID is needed, place it in "
+        "the appropriate structured field "
+        "(enzyme_or_reaction / term_id / signal_compound_ids) and "
+        "rewrite the sentence as one of the 4 grammar shapes; "
+        "otherwise omit.",
+    ),
+    (
+        "required field",
+        "Claim shape '{grammar}' requires field '{field}'. Provide the "
+        "field or omit the claim.",
+    ),
+    (
+        "schema validation failed",
+        "Claim '{text}' did not match the pydantic schema for shape "
+        "'{grammar}': {raw_reason}. Fix the field shapes or omit.",
+    ),
+    (
+        "grammar=",
+        "The claim's ``grammar`` field was not one of the 4 allowed "
+        "values. Allowed: pathway_membership, metabolite_pathway_link, "
+        "pathway_enrichment, driver_metabolite.",
+    ),
+    (
+        "claim_text",
+        "Claim was missing or had an empty ``claim_text``. Always emit "
+        "the verbatim sentence on every claim entry, even if the "
+        "structured fields seem to convey the same information.",
+    ),
+)
+
+
+def _extract_offending_token(drop_reason: str) -> str:
+    """Pull the bracketed token out of '...: <token>' style reasons."""
+    if ":" not in drop_reason:
+        return ""
+    tail = drop_reason.split(":", 1)[1].strip()
+    # Strip surrounding quotes if pydantic-style ``'foo'``.
+    if len(tail) >= 2 and tail[0] in "\"'" and tail[-1] in "\"'":
+        return tail[1:-1]
+    return tail
+
+
+def generate_drop_hint(dropped: DroppedClaim) -> str:
+    """Return an LLM-facing actionable hint for a grammar-dropped claim.
+
+    Looks up the first matching prefix in ``_DROP_REASON_TEMPLATES`` and
+    formats it with the dropped claim's metadata. Falls back to a
+    generic shape suggestion if no template matches (which should be
+    rare — the prefixes cover every drop_reason emitted by
+    ``verifier.grammar.validate`` as of Phase B1 D2/D3).
+    """
+    reason = (dropped.drop_reason or "").strip()
+    text = (dropped.claim_text or "(empty)").replace("\n", " ").strip()
+    if len(text) > 200:
+        text = text[:197] + "..."
+    grammar = dropped.grammar_attempt or "?"
+    offending = _extract_offending_token(reason)
+
+    for prefix, template in _DROP_REASON_TEMPLATES:
+        if reason.lower().startswith(prefix):
+            # Template-side keys we know we may use.
+            return template.format(
+                text=text,
+                grammar=grammar,
+                offending=offending,
+                raw_reason=reason,
+                # If the template references {field}, supply the
+                # offending token as the field name (drop_reason for
+                # missing fields looks like "required field 'subject'
+                # missing").
+                field=offending or "?",
+            )
+    # Generic fallback.
+    return (
+        f"Claim '{text}' was dropped (reason: {reason}). Rewrite as "
+        "one of the 4 grammar shapes with all required fields, or omit."
+    )
+
+
+# ---------------------------------------------------------------------------
+# Phase B1 D4 — task-level Mode B (EMPTY_HONEST_REFUSAL) hint
+# ---------------------------------------------------------------------------
+
+
+def generate_refusal_hint() -> str:
+    """Return the prompt block the next feedback iteration should send
+    when the previous run produced no claims due to total tool failure
+    (TaskOutcome.EMPTY_HONEST_REFUSAL).
+
+    Static text — no per-task customisation needed; the LLM already
+    knows which tools it tried and what failed.
+    """
+    return (
+        "All tool calls in the previous attempt failed. Try:\n"
+        " (1) re-running query_ramp_enrichment with a smaller "
+        "metabolite subset (e.g. 3-5 compounds at a time);\n"
+        " (2) calling query_kegg_path with explicit compound names "
+        "rather than IDs;\n"
+        " (3) or, if no tool can return data, emit a single empty "
+        "JSON object with task_outcome explanation in narrative_text "
+        "and an empty claims list.\n"
+        "Do NOT fabricate claims without tool grounding."
+    )
 
 
 # ---------------------------------------------------------------------------

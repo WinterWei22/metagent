@@ -69,6 +69,9 @@ class Sub6BAgentResult:
     force_finalised: bool = False  # True if narrative came from finalise pass, not natural termination
     tool_calls_log: list[dict] = field(default_factory=list)
     error: str | None = None
+    # Phase B1 D4 — True iff the Mode A inner retry fired this run.
+    # Default False so legacy callers / tests do not need to pass it.
+    inner_retry_used: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -76,12 +79,48 @@ class Sub6BAgentResult:
 # ---------------------------------------------------------------------------
 
 DEFAULT_MAX_TURNS = 5
-DEFAULT_TOTAL_TIMEOUT = 120.0  # seconds
+DEFAULT_TOTAL_TIMEOUT = 120.0  # seconds — ReAct between-turn budget
+# Phase B1 D4 — task-level wall-clock cap. Bounds the entire run
+# (ReAct loop + finalise + inner retry). When exceeded the runner
+# returns empty narrative + an explicit error tag so downstream
+# task_outcome detection buckets it as EMPTY_SYSTEM_FAILURE. NOT a
+# raise — D5 smoke needs to see and report the timeout, not crash.
+DEFAULT_TASK_TOTAL_TIMEOUT = 1200.0
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+# Phase B1 D4 — Mode A retry trigger.
+# A finalise output qualifies for Mode A inner retry when it is empty
+# OR fails JSON parsing OR parses but lacks the expected schema shape
+# (no ``claims`` field — usually means the LLM emitted a bare
+# narrative). The retry's job is to give the LLM one more stochastic
+# sample at producing valid output; it does NOT address Mode B (LLM
+# emitted valid JSON with claims=[] for honest reasons).
+def _is_valid_json_payload(text: str) -> bool:
+    """True iff ``text`` looks like a parseable v2 grammar narrative.
+
+    Tolerant: accepts surrounding whitespace and the same markdown
+    fences that ``verifier.claim_extractor._try_parse_grammar_payload``
+    handles. The point is to avoid the inner retry firing on a clearly
+    valid output just because it's not bit-exactly JSON-strict.
+    """
+    if not text or not text.strip():
+        return False
+    import json as _json
+    import re as _re
+
+    candidate = _re.sub(r"^```(?:json|JSON)?\s*|\s*```$", "", text, flags=_re.MULTILINE).strip()
+    if not candidate.startswith("{"):
+        return False
+    try:
+        obj = _json.loads(candidate)
+    except _json.JSONDecodeError:
+        return False
+    return isinstance(obj, dict) and "claims" in obj
 
 
 def _argument_str(tool_call: dict) -> str:
@@ -145,6 +184,7 @@ def run_sub6b_react(
     temperature: float = 0.0,
     max_turns: int = DEFAULT_MAX_TURNS,
     total_timeout: float = DEFAULT_TOTAL_TIMEOUT,
+    task_total_timeout: float = DEFAULT_TASK_TOTAL_TIMEOUT,
     caller: str = "sub6b_agent_a1",
 ) -> Sub6BAgentResult:
     """Run one Sub-6B task with a ReAct loop.
@@ -237,12 +277,34 @@ def run_sub6b_react(
     # We force a final narrative whenever the loop ended without one and the
     # error (if any) was not a hard LLM/network failure. This guarantees
     # downstream verifier sees *some* narrative per task.
+    # Phase B1 D4 — task-level wall guard. If we have already burned the
+    # whole task budget, skip finalise + retry rather than risk a
+    # runaway. Sub6BAgentResult.error tags it so the downstream
+    # task_outcome detector sees the empty narrative and buckets as
+    # EMPTY_SYSTEM_FAILURE.
+    if (time.perf_counter() - t0) > task_total_timeout:
+        elapsed = time.perf_counter() - t0
+        return Sub6BAgentResult(
+            task_id=task_id,
+            narrative="",
+            elapsed_seconds=elapsed,
+            llm_model=model,
+            metabolite_count=len(metabolites),
+            n_turns=n_turns,
+            n_tool_calls=n_tool_calls,
+            force_finalised=False,
+            tool_calls_log=tool_calls_log,
+            error="task_total_timeout_before_finalise",
+            inner_retry_used=False,
+        )
+
     needs_finalise = (
         err is None
         and not narrative
         and (n_turns > 0 or timed_out)
     )
     force_finalised = False
+    inner_retry_used = False
     if needs_finalise:
         force_finalised = True
         nudge = (
@@ -261,8 +323,38 @@ def run_sub6b_react(
                 provider=provider,
                 trace_id=task_id,
                 caller=f"{caller}_finalise",
+                response_format={"type": "json_object"},
             )
             narrative = (final_msg.get("content") or "").strip()
+            # Phase B1 D4 — Inner retry for Mode A (empty / unparseable
+            # finalise). Single attempt only, budget = 1 per task; not
+            # counted against max_turns. Retries the finalise call with
+            # the same messages so a fresh stochastic sample gets a shot.
+            if not _is_valid_json_payload(narrative):
+                inner_retry_used = True
+                logger.info(
+                    "ReAct finalise empty/unparseable for %s — Mode A "
+                    "inner retry (budget=1)",
+                    task_id,
+                )
+                try:
+                    final_msg = finalise_chat_fn(
+                        messages,
+                        tools=TOOL_DEFINITIONS_OPENAI,
+                        tool_choice="none",
+                        temperature=temperature,
+                        model=model,
+                        provider=provider,
+                        trace_id=task_id,
+                        caller=f"{caller}_finalise_retry",
+                        response_format={"type": "json_object"},
+                    )
+                    narrative = (final_msg.get("content") or "").strip()
+                except Exception as exc:
+                    logger.warning(
+                        "ReAct finalise inner retry failed for %s: %s",
+                        task_id, exc,
+                    )
             if timed_out:
                 err = "timeout_fallback_used"
             elif not narrative:
@@ -283,6 +375,7 @@ def run_sub6b_react(
         force_finalised=force_finalised,
         tool_calls_log=tool_calls_log,
         error=err,
+        inner_retry_used=inner_retry_used,
     )
 
 

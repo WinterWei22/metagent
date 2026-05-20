@@ -9,11 +9,21 @@ from verifier.schemas import ClaimMetrics, ClaimVerdict, VerifiedClaim
 def compute_claim_metrics(
     claims_v1: list[VerifiedClaim],
     claims_v2: list[VerifiedClaim],
+    *,
+    dropped_by_grammar: int = 0,
 ) -> ClaimMetrics:
     """Compute first-pass claim metrics.
 
     Metrics default to ``claims_v2`` because that is the user-visible,
     post-rewrite claim set. When v2 is empty, v1 is used as a fallback.
+
+    Phase B1 D2: ``dropped_by_grammar`` carries the count of claims
+    the grammar extractor rejected before verifier layers ran. It is
+    surfaced as a peer of supported / unsupported / contradicted /
+    unverifiable counts; the rate denominators (``supported_ratio``
+    etc.) remain ``total_claims`` (= post-grammar count), so a v1
+    verdict-file replay with ``dropped_by_grammar=0`` reports
+    identical ratios to v1.
     """
     claims = claims_v2 or claims_v1
     total = len(claims)
@@ -40,6 +50,7 @@ def compute_claim_metrics(
         unsupported_claims=unsupported,
         unverifiable_claims=unverifiable,
         error_claims=errors,
+        dropped_by_grammar=dropped_by_grammar,
         supported_ratio=confidence_components.get("supported_ratio"),
         contradiction_rate=confidence_components.get("contradiction_rate"),
         unverifiable_rate=confidence_components.get("unverifiable_rate"),

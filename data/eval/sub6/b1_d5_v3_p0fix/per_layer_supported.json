@@ -1,0 +1,96 @@
+{
+  "per_seed": {
+    "seed_0": {
+      "biological_sub6_6c": {
+        "n_claims": 331,
+        "n_supported": 331,
+        "ratio_aggregate": 1.0,
+        "ratio_per_task_mean": 1.0,
+        "n_tasks_with_layer": 57
+      },
+      "driver_metabolite_6b": {
+        "n_claims": 51,
+        "n_supported": 37,
+        "ratio_aggregate": 0.7254901960784313,
+        "ratio_per_task_mean": 0.6959459459459459,
+        "n_tasks_with_layer": 37
+      },
+      "set_enrichment_6a": {
+        "n_claims": 103,
+        "n_supported": 102,
+        "ratio_aggregate": 0.9902912621359223,
+        "ratio_per_task_mean": 0.9818181818181818,
+        "n_tasks_with_layer": 55
+      }
+    },
+    "seed_1": {
+      "biological_sub6_6c": {
+        "n_claims": 359,
+        "n_supported": 358,
+        "ratio_aggregate": 0.9972144846796658,
+        "ratio_per_task_mean": 0.9982078853046594,
+        "n_tasks_with_layer": 62
+      },
+      "driver_metabolite_6b": {
+        "n_claims": 61,
+        "n_supported": 42,
+        "ratio_aggregate": 0.6885245901639344,
+        "ratio_per_task_mean": 0.706140350877193,
+        "n_tasks_with_layer": 38
+      },
+      "set_enrichment_6a": {
+        "n_claims": 108,
+        "n_supported": 101,
+        "ratio_aggregate": 0.9351851851851852,
+        "ratio_per_task_mean": 0.953551912568306,
+        "n_tasks_with_layer": 61
+      }
+    },
+    "seed_2": {
+      "biological_sub6_6c": {
+        "n_claims": 362,
+        "n_supported": 362,
+        "ratio_aggregate": 1.0,
+        "ratio_per_task_mean": 1.0,
+        "n_tasks_with_layer": 62
+      },
+      "driver_metabolite_6b": {
+        "n_claims": 61,
+        "n_supported": 46,
+        "ratio_aggregate": 0.7540983606557377,
+        "ratio_per_task_mean": 0.765,
+        "n_tasks_with_layer": 40
+      },
+      "set_enrichment_6a": {
+        "n_claims": 109,
+        "n_supported": 106,
+        "ratio_aggregate": 0.9724770642201835,
+        "ratio_per_task_mean": 0.9699453551912568,
+        "n_tasks_with_layer": 61
+      }
+    }
+  },
+  "n3_total": {
+    "biological_sub6_6c": {
+      "n_claims": 1052,
+      "n_supported": 1051,
+      "ratio_aggregate": 0.9990494296577946,
+      "ratio_per_task_mean": 0.9993861264579497,
+      "n_tasks_with_layer": 181
+    },
+    "driver_metabolite_6b": {
+      "n_claims": 173,
+      "n_supported": 125,
+      "ratio_aggregate": 0.7225433526011561,
+      "ratio_per_task_mean": 0.7233333333333334,
+      "n_tasks_with_layer": 115
+    },
+    "set_enrichment_6a": {
+      "n_claims": 320,
+      "n_supported": 309,
+      "ratio_aggregate": 0.965625,
+      "ratio_per_task_mean": 0.967984934086629,
+      "n_tasks_with_layer": 177
+    }
+  }
+}

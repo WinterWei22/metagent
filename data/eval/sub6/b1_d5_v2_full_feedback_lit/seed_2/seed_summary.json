@@ -1,0 +1,40 @@
+{
+  "seed": 2,
+  "n_task": 63,
+  "outcome_counts": {
+    "empty_system_failure": 3,
+    "normal": 57,
+    "empty_unknown": 3
+  },
+  "metrics_normal_only": {
+    "supported_mean": 0.9510157970684286,
+    "contradicted_mean": 0.0017543859649122807,
+    "unsupported_mean": 0.005917571707045391,
+    "unverifiable_v0_mean": 0.041312245259613675,
+    "dropped_by_grammar_mean": 0.003898635477582846
+  },
+  "wall_seconds": {
+    "n": 63,
+    "min": 50.317487915977836,
+    "max": 503.9231827761978,
+    "mean": 241.62617911404325,
+    "median": 232.03267826326191,
+    "p95": 404.4826310239732,
+    "total": 15222.449284184724
+  },
+  "feedback_iter_distribution": {
+    "0": 12,
+    "1": 37,
+    "2": 14
+  },
+  "n_feedback_iter_above_zero": 51,
+  "deprecation_warnings": 0,
+  "termination_reason_distribution": {
+    "early_exit_no_revisions": 12,
+    "no_actionable_claims_after_iter": 46,
+    "max_iterations_reached": 5
+  },
+  "quality_rollback_count": 1,
+  "inner_retry_count": 65,
+  "tool_call_total": 1034
+}

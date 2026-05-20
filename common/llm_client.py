@@ -314,6 +314,7 @@ def chat(
     caller: str | None = None,
     max_retries: int | None = None,
     retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
+    response_format: dict | None = None,
 ) -> str:
     """Call MiniMax, return the assistant's content with <think> blocks stripped.
 
@@ -326,6 +327,11 @@ def chat(
     ``max_retries=DEFAULT_MAX_RETRIES`` (=3 unless ``METAGENT_LLM_MAX_RETRIES``
     overrides). Callers that need fail-fast (e.g. unit tests) can pass
     ``max_retries=0``.
+
+    ``response_format`` (Phase B1 D0 infra): passthrough to the underlying
+    ChatCompletion. Set to ``{"type": "json_object"}`` to request strict
+    JSON output. Verified working against MiniMax M2.7 and viviai-relayed
+    Opus/GPT. Default ``None`` keeps every legacy caller bit-identical.
     """
     raw = chat_raw(
         messages,
@@ -337,6 +343,7 @@ def chat(
         caller=caller,
         max_retries=max_retries,
         retry_backoff_seconds=retry_backoff_seconds,
+        response_format=response_format,
     )
     return strip_thinking(raw["choices"][0]["message"]["content"])
 
@@ -354,6 +361,7 @@ def chat_raw(
     tool_choice: str | dict | None = None,
     max_retries: int | None = None,
     retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
+    response_format: dict | None = None,
 ) -> dict:
     """Call MiniMax / OpenAI-compat, return the full response dict.
 
@@ -427,6 +435,14 @@ def chat_raw(
                 create_kwargs["tools"] = tools
                 if tool_choice is not None:
                     create_kwargs["tool_choice"] = tool_choice
+            if response_format is not None:
+                # Phase B1 D0 infra: passthrough for ``response_format``.
+                # Both providers accept the OpenAI-style
+                # ``{"type": "json_object"}`` payload — MiniMax M2.7
+                # documents it as "JSON output mode" and viviai relays
+                # untouched. Caller is responsible for matching the
+                # prompt to the requested format.
+                create_kwargs["response_format"] = response_format
             response = _create_with_retry(
                 openai,
                 create_kwargs,
@@ -617,6 +633,7 @@ def chat_with_tools(
     caller: str | None = None,
     max_retries: int | None = None,
     retry_backoff_seconds: list[float] | tuple[float, ...] | None = None,
+    response_format: dict | None = None,
 ) -> dict:
     """Single-turn function-calling chat. Returns the assistant message dict.
 
@@ -672,6 +689,7 @@ def chat_with_tools(
         tool_choice=tool_choice,
         max_retries=max_retries,
         retry_backoff_seconds=retry_backoff_seconds,
+        response_format=response_format,
     )
     msg = _to_plain(response["choices"][0]["message"])
     # Strip MiniMax-style ``<think>...</think>`` reasoning blocks from
