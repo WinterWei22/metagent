@@ -262,3 +262,24 @@ INV side (parent 3ffe621):
 - B1-side prep doc (uncommitted): `metagent_day1_v5/reports/agent/phase_b1_merge_prep.md`
 - Baseline pytest logs: `/tmp/baseline_b1.log` (B1 ed6243b), `/tmp/baseline_inv.log` (INV 3ffe621)
 - Post-merge pytest log: `/tmp/postmerge_final.log` (metagent-v2 8ce5ad9 + sqlite symlinks)
+
+---
+
+## 9 · Source-branch freeze record (post-merge addendum 2026-05-21)
+
+Two annotated tags pin the source-branch HEADs at the merge point so
+they remain reachable even if the branches are later moved or deleted:
+
+| Tag | → commit | Source branch |
+|---|---|---|
+| `metagent-v2-base-b1` | `ed6243b` | `feature/agent-phase-b1` |
+| `metagent-v2-base-investigation` | `3ffe621` | `feature/investigation-concord` |
+
+Both branches are **frozen** as of merge day. Policy:
+
+- No further commits on `feature/agent-phase-b1` or `feature/investigation-concord`.
+- All post-merge work happens on `metagent-v2` (or branches forked from it).
+- Source-branch worktrees (`metagent_day1_v5` for B1, `metagent_day1_v5_investigation` for INV) may stay on disk — the INV worktree is the canonical chebi/metanetx sqlite home (see §4 / `scripts/concord/setup_metagent_v2_env.sh`).
+
+This freeze is also recorded in the auto-memory store
+(`memory/project_metagent_v2_merge.md`) so future sessions inherit it.
