@@ -76,6 +76,16 @@ def concord_result_to_b1_narrative(
     failed-claims VerifiedIdentification, which is the correct outcome
     representation).
 
+    Note (W10 D3 P0-C): when ``result.final_narrative_text`` is itself
+    a grammar-v2 JSON object (ConcordMet's system prompt mandates this
+    shape), B1's `verify_sub6` → `_extract_classify` routes through
+    ``extract_claims_from_json`` for a zero-LLM-call extract path. This
+    behaviour is inherited from B1 D2 commit ``2354011`` in
+    ``verifier/agent.py:_extract_classify`` and regression-locked by
+    ``tests/concord/test_d3_zero_llm_extract_invariant.py`` — do not
+    bypass `_extract_classify`'s JSON-first routing without updating
+    that test.
+
     `task` is accepted for symmetry / future extension (e.g. injecting
     enrichment-result context into the prose) but unused in v0.
     """
