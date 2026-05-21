@@ -12,7 +12,14 @@ Use this file as the starting point for Phase B2 / B3 / A4 scoping.
 
 ## P0 — should fix before next phase
 
-### 1. `grammar` field passthrough is broken in production
+### 1. `grammar` field passthrough is broken in production — **[RESOLVED 2026-05-20, commit `ed6243b`]**
+
+> Closed by Stage D commit `ed6243b` ("fix(verifier): grammar field
+> passthrough to VerifiedClaim"). The fix added the `grammar` field on
+> `VerifiedClaim` (`verifier/schemas.py:704`) and a private helper
+> `_stamp_grammar_from_classified` (`verifier/agent.py:372`) wired into
+> the dispatcher; regression test landed in
+> `tests/test_d4_feedback_dispatcher.py:558`.
 
 **Where:** all 189 D5 v2 runs.
 **Discovered in:** `phase_b1_d5_eval.md` per-grammar breakdown step
@@ -51,6 +58,11 @@ narrative.
 
 **Priority:** P0 — it's a silent observability bug that hides D3/D4
 correctness regressions. Could land in B2 first commit.
+
+**Status:** **CLOSED** by commit `ed6243b` (Stage D, 2026-05-20). All
+post-merge `verify_sub6` runs now carry `VerifiedClaim.grammar` through
+classifier → dispatcher → metric aggregator. Deprecation-warning
+telemetry is honest again.
 
 ---
 
@@ -216,17 +228,17 @@ These were debts before but resolved within B1:
 - **D4** — TaskOutcome enum + deprecation warnings + feedback hint per-drop_reason + inner/outer retry
 - **D5 hotfix** — `_react_loop` inner retry coverage (cut EMPTY 24 % → 15 %)
 - **D6 Step Q** — clean apples-to-apples baseline interpretation
+- **Stage D (2026-05-20, commit `ed6243b`)** — P0 #1 grammar passthrough fix + regression test (see top of file)
 
 ---
 
 ## Summary
 
-B1 closes with **2 P0 items** (grammar passthrough silent bug,
-documentation framing of "regression"), 3 P1 (aggregator missing
-data, dead legacy classifier, per-grammar sub-routing),
-3 P2 (RaMP warning, MiniMax noise, dead Layer D), and 3 P3
-(paper-time discussion items).
+B1 closes with **1 P0 item open + 1 P0 closed** (grammar passthrough
+silent bug **CLOSED by commit `ed6243b`**; documentation framing of
+"regression" still open), 3 P1 (aggregator missing data, dead legacy
+classifier, per-grammar sub-routing), 3 P2 (RaMP warning, MiniMax noise,
+dead Layer D), and 3 P3 (paper-time discussion items).
 
-Recommend next phase opens with P0 #1 (grammar passthrough fix +
-regression test) as the first commit — it's a 1-day fix that unlocks
-honest deprecation-warning telemetry for any subsequent verifier work.
+The metagent-v2 W10 sprint (started 2026-05-21) opens on the remaining
+debt: see `reports/agent/metagent_v2_w10_plan.md` for prioritisation.
