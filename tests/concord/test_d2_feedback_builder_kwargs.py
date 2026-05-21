@@ -132,3 +132,78 @@ def test_default_feedback_builder_emits_unverifiable_hint_when_present():
         "feedback prompt must report n_unverifiable=1 when one UV claim is "
         f"present in claims_v1. Output was:\n{out[:500]}"
     )
+
+
+# ---------------------------------------------------------------------------
+# W10 D2.5 RED — contradicted / unsupported filter enum-equality fix
+#
+# D2 RED inadvertently surfaced that the pre-existing contradicted /
+# unsupported filter pattern in _resolve_default_feedback_builder uses
+# `str(c.verdict).lower() == ClaimVerdict.X.value`. On Python 3.11+ this
+# never matches because `str(Enum)` now returns "ClassName.MEMBER" not
+# the value. The filter returned empty list regardless of actual claim
+# verdicts — the strong suspect for W9 D5's reported 11.1% iter-2
+# quality degradation, since the feedback prompt's contradicted_block /
+# unsupported_block were always "(none)" even when claims_v1 contained
+# CONTRADICTED / UNSUPPORTED entries.
+#
+# D2 P0-B fixed only the UV / dropped axes (its scope). These two RED
+# tests pin the remaining two axes; the GREEN commit will switch both
+# filters to enum equality (`c.verdict == ClaimVerdict.X`), matching
+# the pattern P0-B introduced for UV.
+# ---------------------------------------------------------------------------
+
+
+def test_default_feedback_builder_accepts_contradicted_claims():
+    """W10 D2.5 RED #1 — CONTRADICTED filter must use enum equality.
+
+    Without the fix, str(c.verdict).lower() returns
+    "claimverdict.contradicted" which never equals
+    ClaimVerdict.CONTRADICTED.value ("contradicted"), so the
+    contradicted kwarg arrives empty.
+    """
+    contradicted_claim = _make_claim("C1", "wrong formula claim", ClaimVerdict.CONTRADICTED)
+    supported_claim = _make_claim("S1", "well-grounded claim", ClaimVerdict.SUPPORTED)
+    verdict = _verdict_stub(
+        claims_v1=[contradicted_claim, supported_claim], dropped_claims=[]
+    )
+
+    builder = _resolve_default_feedback_builder()
+    with patch(
+        "evaluation.sub6.run_sub6b_react_feedback.build_feedback_message",
+        return_value="<rendered>",
+    ) as mock_build:
+        builder(verdict)
+
+    kwargs = mock_build.call_args.kwargs
+    contradicteds = kwargs.get("contradicted") or []
+    cont_ids = [getattr(c, "claim_id", None) for c in contradicteds]
+    assert "C1" in cont_ids, (
+        f"CONTRADICTED claim missing from contradicted kwarg, got ids={cont_ids}"
+    )
+
+
+def test_default_feedback_builder_accepts_unsupported_claims():
+    """W10 D2.5 RED #2 — UNSUPPORTED filter must use enum equality.
+
+    Same root cause as the contradicted case above; same fix.
+    """
+    unsupported_claim = _make_claim("U1", "unsupported pathway claim", ClaimVerdict.UNSUPPORTED)
+    supported_claim = _make_claim("S1", "well-grounded claim", ClaimVerdict.SUPPORTED)
+    verdict = _verdict_stub(
+        claims_v1=[unsupported_claim, supported_claim], dropped_claims=[]
+    )
+
+    builder = _resolve_default_feedback_builder()
+    with patch(
+        "evaluation.sub6.run_sub6b_react_feedback.build_feedback_message",
+        return_value="<rendered>",
+    ) as mock_build:
+        builder(verdict)
+
+    kwargs = mock_build.call_args.kwargs
+    unsupporteds = kwargs.get("unsupported") or []
+    unsup_ids = [getattr(c, "claim_id", None) for c in unsupporteds]
+    assert "U1" in unsup_ids, (
+        f"UNSUPPORTED claim missing from unsupported kwarg, got ids={unsup_ids}"
+    )
