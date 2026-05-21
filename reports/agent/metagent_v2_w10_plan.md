@@ -122,3 +122,43 @@ P2-B (cross-check) ── after P0-B (uses TaskOutcome from both sides) ── D
 - B1-side prep: `reports/agent/phase_b1_merge_prep.md`
 - W9 framework health v2: `reports/agent/concord_sprint_w9_framework_health.md`
 - B1 followup debt: `reports/agent/phase_b1_followup_debt.md`
+
+---
+
+## 7 · P0-C status — closed via regression lock (not new wire) — 2026-05-21
+
+Pre-implementation recon during W10 D3 revealed that
+`verifier/agent.py:_extract_classify` (B1 D2 commit `2354011`) already
+implements the JSON-first extract routing. The W10 plan v1 description
+of P0-C as a "wire" was prep-doc misclassification: §7.3 of
+`merge_prep_b1_into_concord.md` missed the existing implementation.
+
+P0-C is hereby closed via regression-lock tests
+(`tests/concord/test_d3_zero_llm_extract_invariant.py`, RED commit
+`9b0f899`) confirming:
+
+  - zero-LLM extract for grammar-v2 JSON narratives
+    (test_grammar_v2_json_narrative_triggers_zero_llm_extract)
+  - dropped claim surfacing to `VerifiedIdentification.dropped_claims`
+    (test_grammar_v2_json_dropped_claims_surface_to_verdict)
+  - backward-compat fallthrough for legacy prose narratives
+    (test_non_json_narrative_falls_through_to_llm_extract)
+
+Anchor comment added to `concord/agent/verifier_adapter.py`
+(`concord_result_to_b1_narrative` docstring, commit `48a71dd`) so
+future readers re-architecting the narrative → verify_sub6 boundary
+are pointed at the regression test.
+
+No production code changed by P0-C. Cost-saving claim corrected:
+the expected ~5% cost reduction was ALREADY REALIZED in W9 D5 runs
+($22) — not a delta the D4 Path X rerun will demonstrate.
+
+Break-verification: confirmed that `extract_calls = 1` (instead of 0)
+in the JSON-success branch of `_extract_classify` makes tests #1 and #2
+FAIL with the right reason; reverted before the RED commit, git diff
+verifier/agent.py is empty.
+
+W10 D3 sprint outcome: 2 commits (RED + GREEN/anchor + this plan update),
+0 production behavior change, 3 regression-locked invariants, 0 strict
+TDD slip (invariant-lock variant, audit-acceptable because the RED
+commit body honestly states "currently passes due to B1 D2 implementation").
