@@ -840,12 +840,27 @@ def _resolve_default_feedback_builder() -> Callable[[Any], str]:
         annotated = annotate_claims(claims, pass_id="v1")
         contradicted = [c for c in annotated if str(getattr(c, "verdict", "")).lower() == ClaimVerdict.CONTRADICTED.value]
         unsupported = [c for c in annotated if str(getattr(c, "verdict", "")).lower() == ClaimVerdict.UNSUPPORTED.value]
+        # W10 D2 P0-B: forward UV claims + grammar-dropped claims so D4's
+        # richer feedback template (n_unverifiable / unverifiable_block /
+        # n_dropped_by_grammar / dropped_block) surfaces full diagnostics
+        # to iter ≥ 1. Both kwargs default to None on the B1 side; passing
+        # actual lists keeps the contract symmetric across all 4 categories.
+        # Note: uses enum equality (not str().lower() like the contradicted/
+        # unsupported lines above), because Python 3.11+ changed `str(Enum)`
+        # to return "ClassName.MEMBER" rather than the value. The
+        # contradicted/unsupported lines are kept as-is to scope this
+        # commit to wire-only; their filter pattern is a separate
+        # pre-existing issue to address in a follow-up sprint.
+        unverifiable = [c for c in annotated if getattr(c, "verdict", None) == ClaimVerdict.UNVERIFIABLE_V0]
+        dropped = list(getattr(verdict, "dropped_claims", None) or [])
         # Source narrative is not strictly required by B1's template, but
         # passing it gives the LLM context for the re-write. We don't have
         # it cleanly available here without threading; pass empty.
         return build_feedback_message(
             contradicted=contradicted,
             unsupported=unsupported,
+            unverifiable=unverifiable,
+            dropped=dropped,
             original_narrative="",
         )
     return _builder

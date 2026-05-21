@@ -11,41 +11,22 @@ side" so:
   - and any future B1-side type drift is absorbed here with a single
     file change.
 
-Why not import a B1 TaskOutcome enum: the B1 D4 spec defines
-`verifier.schemas.TaskOutcome` but that enum is **not yet merged into
-the feature/investigation-concord branch** (B1 D4 lives on
-`feature/agent-phase-b1`). Rather than wait, we own a
-`ConcordTaskOutcome` enum here with the same 4 string values; once B1
-D4 lands, the enum can be re-exported or aliased without touching
-callers.
+W10 D2 P2-A: B1 D4's `verifier.schemas.TaskOutcome` enum merged into
+`metagent-v2` (merge commit 8ce5ad9). The original `ConcordTaskOutcome`
+shim defined here had byte-identical 4 string values and was retained
+"until B1 D4 lands"; that condition is now satisfied, so
+`ConcordTaskOutcome` becomes a plain alias for B1's `TaskOutcome`. All
+existing callers (`task_outcome_str_to_enum`, `tests/concord/test_verifier_adapter.py`)
+continue to import the name from this module unchanged.
 """
 from __future__ import annotations
 
-from enum import Enum
 from typing import Any
 
 from schemas.sub6_report import SubsixSourceReport
+from verifier.schemas import TaskOutcome as ConcordTaskOutcome
 
 from concord.agent.react_runner import ConcordReactResult
-
-
-# ---------------------------------------------------------------------------
-# (C) ConcordMet task-outcome enum (B1 D4 TaskOutcome parity)
-# ---------------------------------------------------------------------------
-
-
-class ConcordTaskOutcome(str, Enum):
-    """ConcordReactResult.task_outcome typed enum.
-
-    Mirrors the four values B1 D4 spec assigns to
-    `verifier.schemas.TaskOutcome` so once that enum lands on
-    `feature/investigation-concord` this class can become a thin alias.
-    """
-
-    NORMAL = "normal"
-    EMPTY_HONEST_REFUSAL = "empty_honest_refusal"
-    EMPTY_SYSTEM_FAILURE = "empty_system_failure"
-    EMPTY_UNKNOWN = "empty_unknown"
 
 
 def task_outcome_str_to_enum(outcome_str: str) -> ConcordTaskOutcome:
