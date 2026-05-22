@@ -1,0 +1,673 @@
+{
+  "C1": [
+    {
+      "claim_id": "v1:c001",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed8",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "The three paradigms converged on two distinct biological themes",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c019",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "Estrone appears in the metabolites_hit list from both RaMP and Mummichog",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Three independent enrichment paradigms converge on tryptophan metabolism as the dominant perturbed pathway",
+      "evidence_short": "METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds."
+    },
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Three independent enrichment paradigms converge on androgen and estrogen metabolism",
+      "evidence_short": "METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds."
+    },
+    {
+      "claim_id": "v1:c003",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "claim_type": "GROUNDED",
+      "claim_text": "RaMP multi-database ORA supports the finding",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Three complementary enrichment paradigms converge on pyrimidine metabolism as the dominant disturbed pathway",
+      "evidence_short": "METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds."
+    },
+    {
+      "claim_id": "v1:c021",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "Mummichog provides orthogonal empirical support",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Eight differentially abundant metabolites converge on arachidonic acid metabolism and downstream eicosanoid biosynthesis",
+      "evidence_short": "METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds."
+    },
+    {
+      "claim_id": "v1:c031",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Three independent enrichment analyses converge on a lipid-eicosanoid biological signal",
+      "evidence_short": "METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds."
+    },
+    {
+      "claim_id": "v1:c010",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed5",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "Five sex-steroid metabolites drove the convergence",
+      "evidence_short": ""
+    }
+  ],
+  "C2": [
+    {
+      "claim_id": "v1:c042",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "D-glucose shows no consistent cross-paradigm enrichment",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c021",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "N-acetylgalactosamine shows no enrichment in Mummichog analysis",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c027",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "claim_type": "GROUNDED",
+      "claim_text": "Guanidinoacetic acid and oxalic acid are not enriched in the ORA top results",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c017",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "N-acetylgalactosamine shows no enrichment in MetaboAnalystR PSEA",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c016",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "1,2,3-trihydroxybenzene shows no enrichment in MetaboAnalystR PSEA",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c022",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "Elemental iron shows no enrichment in Mummichog analysis",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c024",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "1,2,3-trihydroxybenzene shows no enrichment in RaMP analysis",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c016",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "claim_type": "GROUNDED",
+      "claim_text": "CDP does not appear in the ORA hit list",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c023",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "fructose 1-phosphate did not map to the galactose cluster in any tool",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c018",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "Elemental iron shows no enrichment in MetaboAnalystR PSEA",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    }
+  ],
+  "C3": [
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+      "claim_type": "GROUNDED",
+      "claim_text": "RaMP multi-database ORA returns three WikiPathways hits",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c004",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_type": "GROUNDED",
+      "claim_text": "RaMP ORA captured dehydroepiandrosterone",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c030",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "claim_type": "GROUNDED",
+      "claim_text": "The mummichog hit expanded to five compounds",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c025",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "Mummichog returned zero resolved results",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c009",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+      "claim_type": "GROUNDED",
+      "claim_text": "The overlap is 11 of 12 input features.",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c028",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "MetaboAnalystR resolved with results",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c024",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "The primary driver cluster consists of six arachidonic acid oxygenated metabolites",
+      "evidence_short": "Layer 6b found no driver compound names / IDs in the claim. The classifier may have misrouted a non-driver claim, or the names need a different extrac"
+    },
+    {
+      "claim_id": "v1:c003",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed4",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Galactosemia has FDR = 1.43Ã10â»Â¹Â¹",
+      "evidence_short": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather "
+    },
+    {
+      "claim_id": "v1:c010",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "Four input metabolites drive the enrichment",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c010",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "claim_type": "GROUNDED",
+      "claim_text": "Mummichog overlap is 11 out of 11 metabolites",
+      "evidence_short": ""
+    }
+  ],
+  "C4": [
+    {
+      "claim_id": "v1:c027",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed5",
+      "claim_type": "OTHER",
+      "claim_text": "Tetrahydrobiopterin is consistent with but not definitively linked to the steroid signal in this dataset",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c006",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+      "claim_type": "GROUNDED",
+      "claim_text": "The top-ranked hits are driven by glutathione and phosphoserine co-enrichment",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c022",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+      "claim_type": "OTHER",
+      "claim_text": "Phenytoin is treated as a background signal",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c027",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "N-formyl-L-glutamic acid and pyrroline hydroxycarboxylic acid suggest broader amino-acid and redox stress",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c031",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "The five non-steroid metabolites may represent treatment-specific secondary perturbations",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c034",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "The perturbation is potentially consistent with an intervention that impairs galactose-to-glucose interconversion",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c028",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "claim_type": "FACTUAL",
+      "claim_text": "Methylmalonic acid lacks confirmed membership in the eicosanoid synthesis roster",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c030",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "claim_type": "FACTUAL",
+      "claim_text": "6-methylmercaptopurine lacks confirmed membership in the eicosanoid synthesis roster",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c039",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Squalene is consistent with a side-arm of the broader metabolic perturbation",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c033",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "The perturbation is potentially consistent with galactosemia",
+      "evidence_short": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather "
+    }
+  ],
+  "C5": [
+    {
+      "claim_id": "v1:c019",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Arachidonic acid feeds the cytochrome-P450 epoxygenase branch",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c025",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "claim_type": "GROUNDED",
+      "claim_text": "The convergence across ORA, KEGG PSEA and m/z-network ranking constitutes a strong consensus finding",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c041",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "5-HETE branches from arachidonic acid via 5-LOX",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c026",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Elevation of 15d-PGJ2 implicates oxidative-stress-responsive Nrf2 activation",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c031",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "The compensatory anti-oxidative response co-occurs with elevated cyclopentenone prostaglandins",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c019",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+      "claim_type": "PATHWAY_RELATIONSHIP",
+      "claim_text": "Cystathionine is an intermediate linking glycine to the methionine-cysteine-sulfur axis",
+      "evidence_short": "Layer 6d could not detect a recognised relationship keyword (upstream / downstream / cross-talk / shared)."
+    },
+    {
+      "claim_id": "v1:c034",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed2",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Acrolein, doxycycline, and milrinone belong to distinct biological processes or reflect off-target drug effects",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c030",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Cystathionine is the direct trans-sulfuration node linking homocysteine to cysteine",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c049",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "claim_type": "OTHER",
+      "claim_text": "Lipoic acid contributes to sulfur-cofactor biology",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c024",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "The metabolites span the 5-LOX branch",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    }
+  ],
+  "C6": [
+    {
+      "claim_id": "v1:c008",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed6",
+      "claim_type": "FACTUAL",
+      "claim_text": "17Î²-hydroxy-5Î±-androstan-3-one is also known as dihydrotestosterone",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c014",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed7",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Norepinephrine is a canonical product of the tyrosine to L-DOPA to dopamine to norepinephrine cascade",
+      "evidence_short": "Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope."
+    },
+    {
+      "claim_id": "v1:c033",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_type": "FACTUAL",
+      "claim_text": "N-acetylgalactosamine has InChIKey OVRNDRQMDRJTHS",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c016",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "claim_type": "OTHER",
+      "claim_text": "S-adenosylmethionine is a universal methyl donor",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c029",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "claim_type": "FACTUAL",
+      "claim_text": "Phosphorylcholine has KEGG ID C00588",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c034",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_type": "FACTUAL",
+      "claim_text": "N-acetylgalactosamine resolved via InChIKey to N-acetyl-D-glucosamine",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c019",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+      "claim_type": "OTHER",
+      "claim_text": "Benzo[a]pyrene-7,8-dihydrodiol-9,10-oxide is a known pre-carcinogen",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c053",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "claim_type": "OTHER",
+      "claim_text": "Lipoate is the essential cofactor for pyruvate dehydrogenase complex",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c027",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "claim_type": "FACTUAL",
+      "claim_text": "3,4-dihydroxybenzeneacetic acid and 4-hydroxybenzoic acid are non-eicosanoid phenyl derivatives",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c029",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "claim_type": "OTHER",
+      "claim_text": "Acetylcysteine is an electrophilic scavenger",
+      "evidence_short": ""
+    }
+  ],
+  "C7": [
+    {
+      "claim_id": "v1:c006",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+      "claim_type": "FACTUAL",
+      "claim_text": "8(S)-HPETE maps to KEGG ID C14823",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c011",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "claim_type": "FACTUAL",
+      "claim_text": "17Î²-hydroxy-5Î±-androstan-3-one has CHEBI ID CHEBI:16330",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c020",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "claim_type": "FACTUAL",
+      "claim_text": "Coumarin has CHEBI ID 28794",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c009",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed6",
+      "claim_type": "FACTUAL",
+      "claim_text": "Androst-4-ene-3,17-dione has KEGG ID C00280",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c031",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "Pyrocatechol appears in Dopamine Î²-hydroxylase deficiency",
+      "evidence_short": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather "
+    },
+    {
+      "claim_id": "v1:c010",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+      "claim_type": "GROUNDED",
+      "claim_text": "MUMM:galactose_metabolism has p=0.0052",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c030",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "claim_type": "BIOLOGICAL",
+      "claim_text": "3,4-dihydroxyphenylacetaldehyde appears in Dopamine Î²-hydroxylase deficiency",
+      "evidence_short": "Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather "
+    },
+    {
+      "claim_id": "v1:c040",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "claim_type": "FACTUAL",
+      "claim_text": "Dopamine has KEGG ID C03758",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c012",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "CDP mapped to MUMM:n_glycan_biosynthesis at rank-6",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c033",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "FACTUAL",
+      "claim_text": "Coumarin has KEGG identifier C05851",
+      "evidence_short": ""
+    }
+  ],
+  "C8": [
+    {
+      "claim_id": "v1:c026",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+      "claim_type": "OTHER",
+      "claim_text": "3-methyladenine is treated as a background signal",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c025",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "FACTUAL",
+      "claim_text": "N-formyl-L-glutamic acid has KEGG identifier C01045",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c026",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "FACTUAL",
+      "claim_text": "Pyrroline hydroxycarboxylic acid has KEGG identifier C04281",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c001",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "The three paradigms are RaMP multi-database ORA, MetaboAnalystR KEGG-set enrichment, and Mummichog m/z-direct activity scoring",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c006",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "FACTUAL",
+      "claim_text": "Dihydrouracil has CHEBI identifier 15901",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c027",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "claim_type": "FACTUAL",
+      "claim_text": "Mummichog links coumarin to the CYP2A6 reaction",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c021",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+      "claim_type": "GROUNDED",
+      "claim_text": "N-acetylgalactosamine appears in peripheral hits",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c020",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+      "claim_type": "GROUNDED",
+      "claim_text": "coumarin appears in peripheral hits",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c005",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "claim_type": "FACTUAL",
+      "claim_text": "Dihydrouracil has KEGG identifier C00429",
+      "evidence_short": ""
+    }
+  ],
+  "C9": [
+    {
+      "claim_id": "v1:c000",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "claim_type": "SET_ENRICHMENT",
+      "claim_text": "The differentially abundant metabolites map onto a single dominant biological axis",
+      "evidence_short": "Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+    },
+    {
+      "claim_id": "v1:c023",
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "Dehydroascorbic acid does not meet enrichment thresholds in any paradigm",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c020",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed9",
+      "claim_type": "OTHER",
+      "claim_text": "L-Glutamic acid and dihydrolipoate support the glutamate dehydrogenase equilibrium",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c029",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "claim_type": "GROUNDED",
+      "claim_text": "Threonine has molecular formula C4H9NO3",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c020",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+      "claim_type": "GROUNDED",
+      "claim_text": "The mummichog result corroborates the involvement of homocysteine",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c011",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "Tyramine is a driver metabolite of the enrichment",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c012",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "claim_type": "DRIVER_METABOLITE",
+      "claim_text": "Pyrocatechol is a driver metabolite of the enrichment",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c006",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "claim_type": "FACTUAL",
+      "claim_text": "2,5-dihydroxybenzoic acid has KEGG ID C00628",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c040",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "claim_type": "FACTUAL",
+      "claim_text": "15(S)-HETE corresponds to KEGG:C04742",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c026",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+      "claim_type": "GROUNDED",
+      "claim_text": "Five metabolites resolved to clean ChEBI canonical forms with no InChIKey conflicts",
+      "evidence_short": ""
+    }
+  ],
+  "UNCLASSIFIED": [
+    {
+      "claim_id": "v1:c040",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "Squalene did not replicate in the ORA tools",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c010",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+      "claim_type": "CONSISTENCY",
+      "claim_text": "The analysis demonstrates network-level activity independent of prior annotation.",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c039",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed3",
+      "claim_type": "FACTUAL",
+      "claim_text": "Ureidosuccinic acid is N-carbamoyl-L-aspartic acid",
+      "evidence_short": ""
+    },
+    {
+      "claim_id": "v1:c033",
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "claim_type": "GROUNDED",
+      "claim_text": "L-glutamic acid has molecular formula C5H9NO4",
+      "evidence_short": ""
+    }
+  ]
+}
