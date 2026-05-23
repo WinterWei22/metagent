@@ -165,6 +165,36 @@ def verify_set_enrichment(
                 pathway_name=pathway_name or p.get("pathway_name"),
             )
 
+    # W12 C7 Stage 2.5: token-Jaccard fuzzy on content tokens (post
+    # stop-word strip). Catches "Arachidonic acid eicosanoid biosynthesis"
+    # ↔ "Arachidonic acid metabolism" (Jaccard 2/3 ≈ 0.67) which the
+    # substring sweep misses because neither is a substring of the other.
+    # Threshold 0.5 matches the Concord W6 default. Operates on the
+    # claim's lifted pathway_name only (not the raw claim_text) to keep
+    # false-positive risk low.
+    if pathway_name:
+        from verifier.helpers.fuzzy_match import token_jaccard
+        for i, p in enumerate(top_pathways[:_TOP_K_TOLERATED]):
+            canon_name = p.get("pathway_name") or ""
+            if not canon_name:
+                continue
+            score = token_jaccard(pathway_name, canon_name)
+            if score >= 0.5:
+                # Reuse 'substring_either' method label (existing Literal
+                # value on EnrichmentContext.pathway_match_method) — the
+                # token-Jaccard pass is conceptually a generalised fuzzy
+                # match. Trace summary distinguishes the two via the
+                # explicit score it carries.
+                return _verdict_for_rank(
+                    claim,
+                    matched=p,
+                    rank=i + 1,
+                    method="substring_either",
+                    matched_top=matched_top,
+                    pathway_id=pathway_id,
+                    pathway_name=pathway_name,
+                )
+
     if not pathway_id and not pathway_name:
         return _unverifiable(
             claim,

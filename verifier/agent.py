@@ -617,6 +617,7 @@ def _verify_per_claim_sub6(
     """
     from verifier.layers.biological_sub6 import verify_biological_sub6
     from verifier.layers.driver_metabolite import verify_driver_metabolite
+    from verifier.layers.factual_sub6 import verify_factual_sub6
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
 
@@ -627,6 +628,13 @@ def _verify_per_claim_sub6(
         _maybe_warn_v1_legacy_in_v2_path(c, where="sub6")
         if c.claim_type == ClaimType.SET_ENRICHMENT:
             out.append(verify_set_enrichment(c, source_report))
+        elif c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED):
+            # W12 C7 — route metabolite-ID claims to the Sub-6 friendly
+            # factual_sub6 layer. The original fall-through path below
+            # produces an informationally empty UV because B1 D2's
+            # Layer A / Layer B require IdentificationReport-shaped
+            # candidate pools, which SubsixSourceReport does not provide.
+            out.append(verify_factual_sub6(c, source_report))
         elif c.claim_type == ClaimType.DRIVER_METABOLITE:
             out.append(
                 verify_driver_metabolite(
