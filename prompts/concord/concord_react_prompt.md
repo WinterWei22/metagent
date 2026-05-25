@@ -101,6 +101,22 @@ Your final assistant message MUST be a single fenced JSON object with this shape
 
 Use the four `claim_type` values exactly as written. **Do not** add free-text claims outside this structure: the verifier ignores them. **Do not** hedge with "may be involved" / "potentially" / "could play a role" — those phrases are dropped at grammar level and waste your output budget. State concrete claims; if you are not sure, omit.
 
+## BANNED PHRASES — DO NOT WRITE
+
+Avoid template boilerplate, meta-filler, and self-reference. The
+following phrases (in any language) are automatically dropped by the
+verifier as **noise pattern** claims, count as zero contribution toward
+the supported total, and waste your output budget:
+
+- "以上是分析结果" / "总结如下" / "如上所述" / "进一步研究需要"
+- "in summary" / "in conclusion" / "to summarise"
+- "as mentioned above" / "see above" / "as previously stated"
+- "future work" / "further research is needed" / "further research suggests"
+- "as a metabolomics analyst" / "you are a metabolomics expert"
+
+Every claim must reference a concrete metabolite, pathway, tool result,
+or numeric evidence. Filler sentences are not claims.
+
 ## USER
 
 A metabolomics study identified the following metabolites as significantly differentially abundant between control and treatment groups:

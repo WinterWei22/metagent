@@ -348,6 +348,18 @@ trust in the result before reading the verdict table."""
 # ---------------------------------------------------------------------------
 
 
+class DroppedReason(str, Enum):
+    """Enumerated drop-reason categories for grammar-level filtering.
+
+    W14.A: introduced alongside the noise-pattern check. ``drop_reason``
+    on :class:`ValidationResult` remains a free-form ``str | None`` for
+    backward compatibility; new code SHOULD format the string with the
+    enum value (e.g. ``f"{DroppedReason.NOISE_PATTERN}: {label}"``).
+    """
+
+    NOISE_PATTERN = "noise_pattern"
+
+
 class ValidationResult(BaseModel):
     """Outcome of running a candidate claim through the grammar check.
 
@@ -551,6 +563,19 @@ def validate(claim_obj: dict) -> ValidationResult:
             drop_reason="claim_text missing or empty",
         )
     text = raw_text.strip()
+
+    # W14.A — noise pattern check BEFORE banned-hedge check so meta-
+    # filler / template-boilerplate / self-reference surfaces with the
+    # explicit ``noise pattern`` drop_reason rather than coincidentally
+    # tripping a hedge match on overlapping text.
+    from verifier.helpers.noise_pattern import is_noise_claim
+    noise_label = is_noise_claim(text)
+    if noise_label is not None:
+        return ValidationResult(
+            is_valid=False,
+            grammar=grammar,
+            drop_reason=f"{DroppedReason.NOISE_PATTERN.value}: {noise_label}",
+        )
 
     banned_hit = _find_banned_substring(text)
     if banned_hit is not None:
