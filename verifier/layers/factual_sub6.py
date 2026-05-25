@@ -78,6 +78,44 @@ _ID_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
         r"\b(?:KEGG(?:\s+ID)?|KEGG\s+compound)\s*[:=]?\s*(C\d{5})\b",
         re.IGNORECASE,
     )),
+    # -----------------------------------------------------------------
+    # W13.A — extended surface forms (append-only; do not reorder above)
+    # -----------------------------------------------------------------
+    # KEGG drug D-prefix (e.g. "KEGG ID D00188" for pantothenate)
+    ("kegg_id", re.compile(
+        r"\b(?:KEGG(?:\s+ID)?|KEGG\s+compound|KEGG\s+drug)\s*[:=]?\s*(D\d{5})\b",
+        re.IGNORECASE,
+    )),
+    # Bare KEGG-style ID in parentheses ("L-tyrosine (C00082)")
+    # The leading '(' acts as the boundary so we don't match arbitrary
+    # 'C12345' inside running text. Accept C- and D-prefix.
+    ("kegg_id", re.compile(r"\(([CD]\d{5})\)")),
+    # PubChem CID — "PubChem CID 6057" with the full keyword
+    ("pubchem_cid", re.compile(
+        r"\bPubChem\s*CID:?\s*(\d{1,9})\b",
+        re.IGNORECASE,
+    )),
+    # PubChem CID — bare "CID 6057" with just CID keyword
+    ("pubchem_cid", re.compile(
+        r"\bCID:?\s*(\d{1,9})\b",
+    )),
+    # PubChem CID — URL form
+    # "pubchem.ncbi.nlm.nih.gov/compound/6057" with or without scheme
+    ("pubchem_cid", re.compile(
+        r"pubchem\.ncbi\.nlm\.nih\.gov/compound/(\d+)",
+        re.IGNORECASE,
+    )),
+    # ChEBI with underscore separator: "CHEBI_17895"
+    ("chebi_id", re.compile(
+        r"\bCHEBI_(\d+)\b",
+        re.IGNORECASE,
+    )),
+    # ChEBI IRI form: "http://purl.obolibrary.org/obo/CHEBI_17895"
+    ("chebi_id", re.compile(
+        r"obo/CHEBI_(\d+)",
+        re.IGNORECASE,
+    )),
+    # -----------------------------------------------------------------
     # Bare InChIKey 14-block at end of claim (fallback for "X has InChIKey Y" where
     # the keyword form already matched above; this is only reached if no other id
     # found). Must come last.
@@ -128,12 +166,26 @@ def _load_curated() -> list[dict]:
 
 
 def _find_by_subject(pool: list[dict], subject: str) -> dict | None:
-    """Case-insensitive exact-name match against a metabolite pool."""
+    """Case-insensitive exact-name match against a metabolite pool.
+
+    W13.A fallback: when exact-match fails, retry with subject-name
+    normalisation (Greek-letter → Roman, NFKD-strip accents, whitespace
+    → hyphen). See verifier/helpers/subject_normalizer.py.
+    """
     if not subject:
         return None
     target = subject.strip().lower()
     for m in pool:
         if (m.get("name") or "").strip().lower() == target:
+            return m
+    # W13.A — normalised-form fallback
+    from verifier.helpers.subject_normalizer import normalize_subject_name
+    target_norm = normalize_subject_name(subject)
+    if not target_norm:
+        return None
+    for m in pool:
+        name = m.get("name") or ""
+        if normalize_subject_name(name) == target_norm:
             return m
     return None
 
@@ -167,6 +219,17 @@ def _compare_id(
         if not field_val:
             return None, None
         return _norm_chebi(id_value) == _norm_chebi(str(field_val)), str(field_val)
+
+    if id_type == "pubchem_cid":
+        # W13.A — PubChem CID comparison. Curated pool stores as int;
+        # differential_metabolites fixtures use str. Normalise to str
+        # without leading zeros so "0006057" matches "6057".
+        field_val = metabolite.get("pubchem_cid")
+        if field_val is None or field_val == "":
+            return None, None
+        claimed = str(id_value).strip().lstrip("0") or "0"
+        field_norm = str(field_val).strip().lstrip("0") or "0"
+        return claimed == field_norm, str(field_val)
 
     if id_type in ("inchikey", "inchikey_short"):
         ik_full = metabolite.get("inchikey") or ""
