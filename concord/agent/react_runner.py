@@ -47,7 +47,7 @@ DEFAULT_MAX_REACT_TURNS = 8
 
 # Feedback loop iterations. Sub-6B established 2 is a good ceiling
 # (W7+W6 numbers); W8 keeps the same ceiling.
-DEFAULT_MAX_FEEDBACK_ITERS = 2
+DEFAULT_MAX_FEEDBACK_ITERS = 1  # W14.B (was 2 W8-W13); see commit body for justification
 
 # Inner-retry budget when finalise produces empty / unparseable output.
 # Mirrors B1 D4 component 4a.
