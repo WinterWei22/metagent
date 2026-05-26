@@ -196,35 +196,218 @@ def extract_uv_claim_pool(trace_dir: Path) -> list[dict]:
     return pool
 
 
+# ---------------------------------------------------------------------------
+# D2 — LLM classifier (attribution + W11 9-cat bucket, single pass)
+# ---------------------------------------------------------------------------
+
+_SYSTEM_PROMPT_W15 = """You are auditing UV (unverifiable_v0) claims from MetAgent. For each
+claim, output TWO labels.
+
+==== Label 1: attribution (producer_fault | verifier_gap | both) ====
+
+producer_fault: ReAct should NOT have written this claim.
+  - Meta-filler / boilerplate ("In summary,", "Based on the analysis,...")
+  - Template fragment leaking ("[METABOLITE]", "TBD")
+  - Self-reference ("As mentioned earlier", "X is in the input set")
+  - Pure hallucination with no tool-output basis
+  - Prompt fragment echo
+  - Wrong-namespace mis-label (e.g. "X has HMDB ID C00112" — C-prefix is KEGG)
+
+verifier_gap: Claim is legitimate and tool-derivable, verifier cannot check.
+  - No verifier layer covers this claim type / data source
+  - Required external data absent (e.g. KEGG REACTION for "X converts Y to Z")
+  - Cross-method consensus statements with no consensus checker
+  - Statistical citations (p-values, fold changes) with no signal verifier
+  - MUMM: / LM: namespace pathway claims (layers don't parse these)
+  - Disease/clinical-significance claims (outside Sub-6 v0 scope per evidence)
+
+both: Partial producer issue AND verifier can't catch even tightened form.
+  - Loose phrasing AND no layer handles even the strict form
+  - Mixed claims (half checkable, half not)
+  - Name-only metabolite references where IDs would help BUT verifier also
+    has no name-lookup
+
+==== DISAMBIGUATION RULE (critical, W15 v2) ====
+
+Default to a SINGLE label (producer_fault OR verifier_gap).
+Only assign `both` when BOTH conditions are SIMULTANEOUSLY true:
+
+  (a) The claim's phrasing is genuinely loose/improvable (not just
+      slightly informal) — could be tightened to remove a producer
+      concern; AND
+  (b) Even AFTER tightening, NO current verifier layer/data source
+      could check the tightened form.
+
+If only (a) is true → producer_fault
+If only (b) is true → verifier_gap
+If neither         → re-examine: this should not be UV at all
+
+==== Label 2: w11_bucket (C1..C9) ====
+
+C1 cross_method_consensus  — claim cites multi-method agreement / convergence
+C2 method_disagreement     — claim flags discrepancy between methods
+C3 signal_evidence         — numeric / statistical evidence (p, fold, count)
+C4 uncertainty_qualifier   — hedged language ("high confidence", "weak")
+C5 intermediate_biology    — reaction step, upstream/downstream, enzyme function
+C6 literature_reference    — canonical fact / "known to be" / "as reported"
+C7 namespace_form          — claim with non-canonical namespace IDs (MUMM, LM,
+                             wrong-prefix HMDB/KEGG/CHEBI confusion)
+C8 empty_or_noise          — degenerate, near-empty, prompt fragment, repetition
+C9 other                   — none of C1-C8
+
+Output STRICT JSON list (no prose, no fences), one entry per input claim, same
+order as input. Each entry: {"claim_id": "...", "attribution": "...",
+"w11_bucket": "...", "rationale": "..."}.
+"""
+
+_BATCH_SIZE = 20
+_JSON_FENCE_RE = re.compile(r"```(?:json)?\s*(\[.*?\])\s*```", re.DOTALL)
+
+
+def _parse_llm_json_list(text: str) -> list[dict]:
+    """Extract JSON list from LLM response (handles fenced or bare JSON)."""
+    m = _JSON_FENCE_RE.search(text)
+    if m:
+        text = m.group(1)
+    text = text.strip().lstrip("`").rstrip("`")
+    if text.startswith("json\n"):
+        text = text[5:]
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        m = re.search(r"(\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\])", text, re.DOTALL)
+        if m:
+            try:
+                return json.loads(m.group(1))
+            except json.JSONDecodeError:
+                pass
+    return []
+
+
+def _build_user_message(batch: list[dict]) -> str:
+    lines = ["Classify these claims. Return JSON list — claim_id + attribution + "
+             "w11_bucket + one-sentence rationale.\n"]
+    for i, c in enumerate(batch, 1):
+        lines.append(
+            f"{i}. claim_id={c['claim_id']!r}\n"
+            f"   claim_text={c['claim_text'][:300]!r}\n"
+            f"   claim_type={c['claim_type']!r}\n"
+            f"   verifier_layer={c['verifier_layer']!r}\n"
+            f"   evidence={c['evidence'][:200]!r}\n"
+        )
+    return "\n".join(lines)
+
+
+def classify_uv_pool(pool: list[dict]) -> list[dict]:
+    """Run MiniMax classifier on the full UV pool. Returns list of dicts
+    with each input claim merged with LLM-output labels.
+    """
+    from common.llm_client import chat
+    import time
+
+    classified: list[dict] = []
+    n_batches = (len(pool) + _BATCH_SIZE - 1) // _BATCH_SIZE
+    t0 = time.time()
+    failed_batches = 0
+    for bi in range(n_batches):
+        batch = pool[bi * _BATCH_SIZE:(bi + 1) * _BATCH_SIZE]
+        user_msg = _build_user_message(batch)
+        try:
+            response = chat(
+                messages=[
+                    {"role": "system", "content": _SYSTEM_PROMPT_W15},
+                    {"role": "user", "content": user_msg},
+                ],
+                model="MiniMax-M2.7",
+                temperature=0.0,
+                trace_id=f"w15_uv_attribution.batch_{bi:03d}",
+                caller="w15_uv_attribution",
+                response_format={"type": "json_object"},
+            )
+        except Exception as exc:
+            print(f"  batch {bi+1}/{n_batches} ERROR: {exc}")
+            failed_batches += 1
+            for c in batch:
+                classified.append({**c, "attribution": "UNCLASSIFIED",
+                                   "w11_bucket": "UNCLASSIFIED",
+                                   "rationale": f"batch_error: {exc!r}"})
+            continue
+
+        parsed = _parse_llm_json_list(response)
+        cid_map = {e.get("claim_id"): e for e in parsed if isinstance(e, dict)}
+        for c in batch:
+            row = cid_map.get(c["claim_id"]) or {}
+            classified.append({
+                **c,
+                "attribution": str(row.get("attribution", "UNCLASSIFIED")),
+                "w11_bucket": str(row.get("w11_bucket", "UNCLASSIFIED")),
+                "rationale": str(row.get("rationale", "")),
+            })
+
+        if (bi + 1) % 5 == 0 or (bi + 1) == n_batches:
+            print(f"  batch {bi+1}/{n_batches} done  fail={failed_batches}  "
+                  f"elapsed={time.time()-t0:.0f}s")
+    return classified
+
+
 def main() -> int:
-    """D1 entry point — extract pool, write to disk, report count."""
+    """D2 entry — extract + classify + aggregate (D1 extract reused)."""
+    from collections import Counter
     out_dir = (
         Path(__file__).resolve().parents[2]
         / "data" / "metagent" / "w15_uv_attribution"
     )
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    pool = extract_uv_claim_pool(_W14_TRACE_DIR)
-    print(f"Extracted {len(pool)} UV claims from {_W14_TRACE_DIR}")
+    pool_path = out_dir / "uv_claim_pool.jsonl"
+    if pool_path.is_file():
+        pool = [json.loads(l) for l in pool_path.open()]
+        print(f"Loaded {len(pool)} UV claims from cached {pool_path}")
+    else:
+        pool = extract_uv_claim_pool(_W14_TRACE_DIR)
+        with pool_path.open("w", encoding="utf-8") as f:
+            for c in pool:
+                f.write(json.dumps(c, ensure_ascii=False) + "\n")
+        print(f"Extracted {len(pool)} UV claims; wrote {pool_path}")
 
-    out_path = out_dir / "uv_claim_pool.jsonl"
-    with out_path.open("w", encoding="utf-8") as f:
-        for c in pool:
+    print()
+    print(f"Running MiniMax-M2.7 classifier on {len(pool)} claims...")
+    classified = classify_uv_pool(pool)
+
+    # Raw output
+    raw_path = out_dir / "attribution_raw.jsonl"
+    with raw_path.open("w", encoding="utf-8") as f:
+        for c in classified:
             f.write(json.dumps(c, ensure_ascii=False) + "\n")
-    print(f"Wrote {out_path}")
+    print(f"Wrote {raw_path}")
 
-    # Brief breakdown by claim_type + verifier_layer for D1 sanity
-    from collections import Counter
-    type_ctr = Counter(c.get("claim_type") for c in pool)
-    layer_ctr = Counter(c.get("verifier_layer") for c in pool)
+    # CSV
+    import csv
+    csv_path = out_dir / "attribution.csv"
+    with csv_path.open("w", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["claim_id", "task_id_tail", "claim_type", "verifier_layer",
+                    "attribution", "w11_bucket", "claim_text", "rationale"])
+        for c in classified:
+            w.writerow([c["claim_id"], c["task_id"][-25:],
+                        c.get("claim_type"), c.get("verifier_layer"),
+                        c.get("attribution"), c.get("w11_bucket"),
+                        c.get("claim_text", "")[:300],
+                        c.get("rationale", "")[:200]])
+    print(f"Wrote {csv_path}")
+
+    # Summary
+    n = len(classified)
+    ctr_attr = Counter(c["attribution"] for c in classified)
+    ctr_w11 = Counter(c["w11_bucket"] for c in classified)
     print()
-    print("UV breakdown by claim_type:")
-    for k, n in type_ctr.most_common():
-        print(f"  {k:<25} {n:>4}")
+    print(f"Attribution distribution (n={n}):")
+    for k, v in ctr_attr.most_common():
+        print(f"  {k:<20} {v:>4} ({100*v/n:.1f}%)")
     print()
-    print("UV breakdown by verifier_layer:")
-    for k, n in layer_ctr.most_common():
-        print(f"  {k:<25} {n:>4}")
+    print(f"W11 9-cat bucket distribution:")
+    for k, v in ctr_w11.most_common():
+        print(f"  {k:<20} {v:>4} ({100*v/n:.1f}%)")
     return 0
 
 
