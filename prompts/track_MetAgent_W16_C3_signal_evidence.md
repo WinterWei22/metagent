@@ -73,8 +73,9 @@ project_metagent_v2_merge.md
 docs/decisions/2026-05-26_uv_root_cause_attribution_framework.md   # W15 框架
 data/metagent/w15_uv_attribution/summary.md                        # W15 v2 数据(D2 已产出)
 data/metagent/w15_uv_attribution/attribution_v2.csv                # 重分类 raw
-prompts/track_MetAgent_W14_noise_prompt_iter2_cap.md               # 最近一个 sprint 结构参考
-prompts/track_MetAgent_W12_C7_namespace_fix.md                     # factual_sub6 同款 pattern 参考
+prompts/track_CONCORD_W14_noise_prompt_iter2_cap.md                # 最近 sprint 结构参考(命名 CONCORD_ 是历史前缀,内容已是 MetAgent)
+prompts/track_CONCORD_W12_C7_namespace_fix.md                      # factual_sub6 同款 pattern 参考(命名 CONCORD_ 同上)
+prompts/track_MetAgent_W15_uv_attribution_audit.md                 # W15 attribution sprint 参考
 verifier/layers/factual_sub6.py                                    # W12 写的新层(本 sprint 抄架构)
 verifier/agent.py                                                  # dispatcher,看 _verify_per_claim_sub6
 verifier/grammar.py                                                # ClaimType 枚举位置
