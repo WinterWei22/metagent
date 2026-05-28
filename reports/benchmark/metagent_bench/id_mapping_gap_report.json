@@ -1,0 +1,47 @@
+{
+  "dataset": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5/build/metagent_bench.jsonl",
+  "local_mapping_resources": {
+    "Huckvale_2023_KEGG_benchmark": true,
+    "RaMP": false,
+    "RefMet": false,
+    "metLinkR": false
+  },
+  "mapping_status": "blocked_without_refmet_ramp_for_canonical_unification",
+  "metabolite_id_mentions": {
+    "HMDB": 15,
+    "Human1": 2925,
+    "KEGG": 14,
+    "Recon2.2": 1600
+  },
+  "metabolite_id_tasks": {
+    "HMDB": 1,
+    "Human1": 117,
+    "KEGG": 2,
+    "Recon2.2": 64
+  },
+  "noncanonical_metabolite_id_mentions": {
+    "Human1": 2925,
+    "Recon2.2": 1600
+  },
+  "noncanonical_pathway_tasks": {
+    "Human1": 117,
+    "Recon2.2": 64
+  },
+  "pathway_ontologies": {
+    "Human1": 117,
+    "KEGG": 3,
+    "Recon2.2": 64
+  },
+  "source_id_type_mentions": {
+    "CCLE ST001142 + DepMap 22Q2|HMDB": 15,
+    "Cooke 2025 simulatedPA|Human1": 2925,
+    "Cooke 2025 simulatedPA|Recon2.2": 1600,
+    "Fuhrer & Sauer 2017|KEGG": 14
+  },
+  "source_pathway_ontologies": {
+    "CCLE ST001142 + DepMap 22Q2|KEGG": 1,
+    "Cooke 2025 simulatedPA|Human1": 117,
+    "Cooke 2025 simulatedPA|Recon2.2": 64,
+    "Fuhrer & Sauer 2017|KEGG": 2
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "dataset": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5/build/metagent_bench.jsonl",
+  "difficulty": {
+    "easy": 181,
+    "hard": 3
+  },
+  "duplicate_task_ids": [],
+  "duplicate_task_signatures": {},
+  "easy_context_present": [],
+  "hard_context_missing": [],
+  "licenses": {
+    "CC BY 4.0": 184
+  },
+  "metabolite_id_types": {
+    "HMDB": 15,
+    "Human1": 2925,
+    "KEGG": 14,
+    "Recon2.2": 1600
+  },
+  "metabolites_per_task": {
+    "max": 25,
+    "mean": 24.75,
+    "min": 5
+  },
+  "pathway_ontologies": {
+    "Human1": 117,
+    "KEGG": 3,
+    "Recon2.2": 64
+  },
+  "sources": {
+    "CCLE ST001142 + DepMap 22Q2": 1,
+    "Cooke 2025 simulatedPA": 181,
+    "Fuhrer & Sauer 2017": 2
+  },
+  "total_tasks": 184,
+  "validation_errors": 0
+}
