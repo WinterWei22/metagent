@@ -152,7 +152,14 @@ def _norm_inchikey(s: str) -> str:
 def _load_curated() -> list[dict]:
     """Lazy-load the curated mammalian compound pool. Returns [] if
     file missing — the layer then degrades to ``UNVERIFIABLE_V0`` for
-    out-of-task lookups, which is the correct behaviour."""
+    out-of-task lookups, which is the correct behaviour.
+
+    ``maxsize=1`` is intentional: the pool is ~150 compounds; loading it
+    once per Python process and keeping the parsed list in memory is
+    cheap, and the cache key (no args) collapses to a single entry. We
+    do NOT cache per-task because the pool is task-independent and
+    re-reading the JSONL on every claim would dominate the layer's
+    runtime."""
     if not _CURATED_PATH.is_file():
         return []
     out: list[dict] = []
@@ -249,11 +256,25 @@ def verify_factual_sub6(
     claim: ClassifiedClaim,
     source_report: SubsixSourceReport,
 ) -> VerifiedClaim:
-    """Verify one FACTUAL / GROUNDED metabolite-ID claim on a Sub-6 task."""
+    """Verify one FACTUAL / GROUNDED metabolite-ID claim on a Sub-6 task.
+
+    Three-stage cascade (Step 1 → 2 → 3). The cascade only falls through
+    on ``match is None`` (i.e. subject was found in a pool but the pool's
+    row had no value for the claimed identifier field). A definitive
+    SUPPORTED or CONTRADICTED short-circuits the whole function — we
+    never "double-check" against curated when differential_metabolites
+    already gave a verdict, because the task's own ground truth
+    out-ranks the generic curated pool.
+    """
     diff_metab = list(source_report.differential_metabolites or [])
 
     id_type, id_value = _extract_id(claim.claim_text)
     if id_type is None or id_value is None:
+        # No extractable ID: layer cannot judge. Returning UV (not
+        # CONTRADICTED) is per design — absence of identifier surface
+        # form is a producer-side concern, not evidence the claim is
+        # wrong. W14.A noise filter catches some of these earlier at
+        # grammar.validate().
         return _uv(
             claim,
             evidence=(
@@ -263,7 +284,10 @@ def verify_factual_sub6(
             ),
         )
 
-    # Step 1: subject lookup in differential_metabolites.
+    # Step 1 — task-local truth: subject lookup in differential_metabolites.
+    # This is the strongest signal: differential_metabolites are the
+    # task's own ground-truth compound rows (kegg_id / hmdb_id / chebi_id /
+    # inchikey curated by the benchmark builder).
     metab = _find_by_subject(diff_metab, claim.subject or "")
     if metab is not None:
         match, field_val = _compare_id(metab, id_type, id_value)
@@ -273,9 +297,14 @@ def verify_factual_sub6(
         if match is False:
             return _contradicted(claim, metab, id_type, id_value, field_val,
                                  source="differential_metabolites")
-        # match is None — subject found but ID field absent: fall through to curated
+        # match is None — subject row found but lacks the specific ID
+        # field (e.g. row has kegg_id but not chebi_id). Fall through
+        # to curated where the same name may carry the missing field.
 
-    # Step 2: curated mammalian pool fallback.
+    # Step 2 — generic curated fallback (curated_hmdb_mammalian.jsonl).
+    # Used when (a) subject is not a differential metabolite of this task
+    # but the LLM cites a common metabolite name, or (b) Step 1 found the
+    # subject but lacked the queried ID field.
     curated = _load_curated()
     metab_c = _find_by_subject(curated, claim.subject or "")
     if metab_c is not None:
@@ -286,9 +315,10 @@ def verify_factual_sub6(
         if match is False:
             return _contradicted(claim, metab_c, id_type, id_value, field_val,
                                  source="curated_hmdb_mammalian")
-        # match is None — subject in curated but the relevant field absent
+        # match is None — same condition as Step 1, but now no further
+        # pool to consult.
 
-    # Step 3: subject not found anywhere → UV.
+    # Step 3 — subject not found anywhere → UV.
     return _uv(
         claim,
         evidence=(

@@ -832,6 +832,13 @@ def _resolve_default_feedback_builder() -> Callable[[Any], str]:
         from verifier.feedback_hints import annotate_claims
         from verifier.schemas import ClaimVerdict
 
+        # ``getattr(verdict, ..., None) or []`` is intentional defensive
+        # plumbing. ``verdict`` is typed ``Any`` because the runner
+        # accepts both the real ``VerifiedIdentification`` (which always
+        # has ``claims_v1`` populated) AND a ``SimpleNamespace`` mock used
+        # by feedback-builder unit tests (which may omit the attribute or
+        # set it to None). The ``or []`` covers the "attribute exists but
+        # is None" case that getattr's default-arg form does not.
         claims = list(getattr(verdict, "claims_v1", None) or [])
         # Populate `feedback_hint` per claim using B1's drop-reason +
         # contradicted / unsupported templates. `verify_sub6()` (unlike

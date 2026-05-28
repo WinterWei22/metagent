@@ -106,23 +106,37 @@ def _slice_claims_v1(verdict_str: str) -> str:
 
 
 def _iter_claim_blocks(verdict_str: str) -> Iterable[str]:
-    """Yield each VerifiedClaim(...) block body via paren-balance scan."""
+    """Yield each VerifiedClaim(...) block body via paren-balance scan.
+
+    Why a hand-rolled scanner rather than ``re.findall``: pydantic repr
+    contains nested parens inside quoted strings (e.g. evidence with
+    "(C00082)" or "Layer 6a (substring match)"); a naive non-greedy
+    regex stops at the first ')' and truncates the block. The scanner
+    skips parens that occur inside a quoted string by toggling an
+    in-string state, the same invariant Python's tokenizer enforces.
+    """
     sl = _slice_claims_v1(verdict_str)
     for m in _CLAIM_START.finditer(sl):
+        # Start right after the opening '(' of VerifiedClaim(.
         start = m.end()
-        depth = 1
+        depth = 1            # nesting depth of un-escaped parens
         pos = start
-        in_str = False
-        str_ch = ""
+        in_str = False       # currently inside a single/double-quoted string
+        str_ch = ""          # which quote char opened the current string
         while pos < len(sl) and depth > 0:
             ch = sl[pos]
             if in_str:
+                # Inside a string: only the matching close-quote can exit;
+                # backslash + any char advances by 2 so escaped quotes
+                # ("d\\'autre") don't prematurely close the string.
                 if ch == "\\":
                     pos += 2
                     continue
                 if ch == str_ch:
                     in_str = False
             else:
+                # Outside any string: track quotes (enter string mode) and
+                # parens (track nesting depth).
                 if ch in ("'", '"'):
                     in_str = True
                     str_ch = ch
@@ -131,6 +145,8 @@ def _iter_claim_blocks(verdict_str: str) -> Iterable[str]:
                 elif ch == ")":
                     depth -= 1
                     if depth == 0:
+                        # Found the matching close-paren of this
+                        # VerifiedClaim(...). Block body is [start, pos).
                         yield sl[start:pos]
                         break
             pos += 1
