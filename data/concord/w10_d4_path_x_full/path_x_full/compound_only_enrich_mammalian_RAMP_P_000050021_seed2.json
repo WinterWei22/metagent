@@ -1,0 +1,853 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+  "iterations": [
+    {
+      "iter_idx": 0,
+      "react_result": {
+        "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+        "iterations": [
+          {
+            "iter_idx": 0,
+            "narrative_json": "",
+            "verdict_total": {},
+            "quality": 0,
+            "n_contradicted": 0,
+            "n_unsupported": 0,
+            "n_supported": 0,
+            "n_unverifiable_v0": 0,
+            "n_tool_calls": 23,
+            "n_turns": 8,
+            "force_finalised": true,
+            "feedback_prompt_used": false,
+            "verifier_failed": false,
+            "inner_retry_used": true
+          }
+        ],
+        "final_iter_idx": 0,
+        "final_narrative_json": "",
+        "final_claims": [],
+        "final_narrative_text": "",
+        "final_verdict_total": {},
+        "task_outcome": "empty_unknown",
+        "n_feedback_iterations": 0,
+        "elapsed_seconds": 244.05652737617493,
+        "llm_model": "MiniMax-M2.7",
+        "metabolite_count": 10,
+        "n_distinct_tools_called": 8,
+        "tools_called": [
+          "lookup_chebi",
+          "query_pathway_members",
+          "reconcile_inchikey",
+          "run_fella_rwr",
+          "run_metaboanalystr_psea",
+          "run_mummichog",
+          "run_ramp_enrichment",
+          "run_sspa_ora"
+        ],
+        "tool_calls_trace": [
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_1",
+            "arguments": "{\"id\":\"C00519\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_2",
+            "arguments": "{\"id\":\"C20319\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "not_found",
+              "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_3",
+            "arguments": "{\"namespace\":\"KEGG\",\"id\":\"C14853\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_4",
+            "arguments": "{\"id\":\"C05851\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_5",
+            "arguments": "{\"id\":\"C05665\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_6",
+            "arguments": "{\"id\":\"C07190\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "not_found",
+              "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_7",
+            "arguments": "{\"id\":\"C01324\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_8",
+            "arguments": "{\"id\":\"C16614\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_9",
+            "arguments": "{\"id\":\"C00928\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 1,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_53i4oarhh9p8_10",
+            "arguments": "{\"id\":\"C00051\",\"namespace\":\"KEGG\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 2,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_9j5tm43lyxc7_1",
+            "arguments": "{\"namespace\":\"INCHIKEY\",\"id\":\"MYVLYOJYVMLSFA\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "not_found",
+              "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 2,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_9j5tm43lyxc7_2",
+            "arguments": "{\"namespace\":\"INCHIKEY\",\"id\":\"PMRYVIKBURPHAH\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "not_found",
+              "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 3,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_9na1z80tjrpf_1",
+            "arguments": "{\"id\":\"N-hydroxy-4-aminobiphenyl\",\"namespace\":\"NAME\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 3,
+            "name": "lookup_chebi",
+            "tool_call_id": "call_function_9na1z80tjrpf_2",
+            "arguments": "{\"id\":\"Methimazole\",\"namespace\":\"NAME\"}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "lookup_chebi"
+            }
+          },
+          {
+            "turn": 4,
+            "name": "run_ramp_enrichment",
+            "tool_call_id": "call_function_0oll6d5zg879_1",
+            "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_ramp_enrichment",
+              "_n_pathways": 15,
+              "_n_compound_refs": 38,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "REACT:R-HSA-211859",
+                  "pathway_name": "Biological oxidations",
+                  "score": 8.971857000849503e-09,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "REACT:R-HSA-1430728",
+                  "pathway_name": "Metabolism",
+                  "score": 4.5191200424033185e-08,
+                  "rank": 1
+                },
+                {
+                  "pathway_id": "REACT:R-HSA-211945",
+                  "pathway_name": "Phase I - Functionalization of compounds",
+                  "score": 6.026161515942656e-05,
+                  "rank": 2
+                },
+                {
+                  "pathway_id": "REACT:R-HSA-71291",
+                  "pathway_name": "Metabolism of amino acids and derivatives",
+                  "score": 0.0001413628271251401,
+                  "rank": 3
+                },
+                {
+                  "pathway_id": "REACT:R-HSA-9748787",
+                  "pathway_name": "Azathioprine ADME",
+                  "score": 0.0001814057476694806,
+                  "rank": 4
+                }
+              ]
+            }
+          },
+          {
+            "turn": 4,
+            "name": "run_mummichog",
+            "tool_call_id": "call_function_0oll6d5zg879_2",
+            "arguments": "{\"top_n\":15,\"compound_ids\":[\"C00519\",\"C20319\",\"C14853\",\"C05851\",\"C05665\",\"C07190\",\"C01324\",\"C16614\",\"C00928\",\"C00051\"]}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_mummichog",
+              "_n_pathways": 15,
+              "_n_compound_refs": 25,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "MUMM:histidine_metabolism",
+                  "pathway_name": "Histidine metabolism",
+                  "score": 0.01100747836316276,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "MUMM:glycine_serine_alanine_and_threonine_metabolism",
+                  "pathway_name": "Glycine, serine, alanine and threonine metabolism",
+                  "score": 0.01100747836316276,
+                  "rank": 1
+                },
+                {
+                  "pathway_id": "MUMM:xenobiotics_metabolism",
+                  "pathway_name": "Xenobiotics metabolism",
+                  "score": 0.01100747836316276,
+                  "rank": 2
+                },
+                {
+                  "pathway_id": "MUMM:methionine_and_cysteine_metabolism",
+                  "pathway_name": "Methionine and cysteine metabolism",
+                  "score": 0.01100747836316276,
+                  "rank": 3
+                },
+                {
+                  "pathway_id": "MUMM:tyrosine_metabolism",
+                  "pathway_name": "Tyrosine metabolism",
+                  "score": 0.02764473573649273,
+                  "rank": 4
+                }
+              ]
+            }
+          },
+          {
+            "turn": 4,
+            "name": "run_fella_rwr",
+            "tool_call_id": "call_function_0oll6d5zg879_3",
+            "arguments": "{\"compound_ids\":[\"C00519\",\"C20319\",\"C14853\",\"C05851\",\"C05665\",\"C07190\",\"C01324\",\"C16614\",\"C00928\",\"C00051\"],\"top_n\":15}",
+            "cached": false,
+            "payload_summary": {
+              "error": "wrapper_runtime_error",
+              "fallback_suggested": "FELLA R subprocess errored at runtime (currently 'argument is of length zero' on every sub6b-v3 task — W9 D4 stretch target); skip the network/diffusion paradigm and rely on ORA + mummichog",
+              "_tool_name": "run_fella_rwr"
+            }
+          },
+          {
+            "turn": 5,
+            "name": "run_sspa_ora",
+            "tool_call_id": "call_function_bfaeesp438hx_1",
+            "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+            "cached": false,
+            "payload_summary": {
+              "error": "wrapper_unavailable",
+              "fallback_suggested": "use run_ramp_enrichment (multi-DB ORA, broader namespace coverage) or run_metaboanalystr_psea (KEGG-specific ORA) instead",
+              "_tool_name": "run_sspa_ora"
+            }
+          },
+          {
+            "turn": 5,
+            "name": "run_metaboanalystr_psea",
+            "tool_call_id": "call_function_bfaeesp438hx_2",
+            "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_metaboanalystr_psea",
+              "_n_pathways": 5,
+              "_n_compound_refs": 5,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "KEGG:hsa00430",
+                  "pathway_name": "hsa00430",
+                  "score": 0.0298,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "KEGG:hsa00770",
+                  "pathway_name": "hsa00770",
+                  "score": 0.0732,
+                  "rank": 1
+                },
+                {
+                  "pathway_id": "KEGG:hsa00410",
+                  "pathway_name": "hsa00410",
+                  "score": 0.0767,
+                  "rank": 2
+                },
+                {
+                  "pathway_id": "KEGG:hsa00480",
+                  "pathway_name": "hsa00480",
+                  "score": 0.1012,
+                  "rank": 3
+                },
+                {
+                  "pathway_id": "KEGG:hsa00983",
+                  "pathway_name": "hsa00983",
+                  "score": 0.1385,
+                  "rank": 4
+                }
+              ]
+            }
+          },
+          {
+            "turn": 6,
+            "name": "query_pathway_members",
+            "tool_call_id": "call_function_ldhrj4tfsl1d_1",
+            "arguments": "{\"pathway_id\":\"KEGG:hsa00430\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          },
+          {
+            "turn": 6,
+            "name": "query_pathway_members",
+            "tool_call_id": "call_function_ldhrj4tfsl1d_2",
+            "arguments": "{\"pathway_id\":\"WP:WP4504\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'WP', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          },
+          {
+            "turn": 6,
+            "name": "query_pathway_members",
+            "tool_call_id": "call_function_ldhrj4tfsl1d_3",
+            "arguments": "{\"pathway_id\":\"REACT:R-HSA-211859\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'REACT', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          },
+          {
+            "turn": 7,
+            "name": "reconcile_inchikey",
+            "tool_call_id": "call_function_dychorqnstyi_1",
+            "arguments": "{\"refs\":[{\"kegg_compound_id\":\"C00519\",\"inchikey\":\"VVIUBCNYACGLLV-UHFFFAOYSA-N\",\"display_name\":\"hypotaurine\",\"primary_id\":\"CHEBI:16668\"},{\"inchikey\":\"RWSXRVCMGQZWBV-WDSKDSINSA-N\",\"display_name\":\"glutathione\",\"primary_id\":\"CHEBI:16856\",\"kegg_compound_id\":\"C00051\"},{\"inchikey\":\"ZYGHJZDHTFUPRJ-UHFFFAOYSA-N\",\"display_name\":\"coumarin\",\"primary_id\":\"CHEBI:28794\",\"kegg_compound_id\":\"C05851\"},{\"inchikey\":\"PCXDJQZLDDHMGX-UHFFFAOYSA-N\",\"display_name\":\"3-aminopropanal\",\"primary_id\":\"CHEBI:18090\",\"kegg_compound_id\":\"C05665\"},{\"primary_id\":\"CHEBI:50673\",\"kegg_compound_id\":\"C07190\",\"inchikey\":\"PMRYVIKBURPHAH-UHFFFAOYSA-N\",\"display_name\":\"methimazole\"},{\"inchikey\":\"UIJIQXGRFSPYQW-UHFFFAOYSA-N\",\"display_name\":\"6-methylthiopurine\",\"primary_id\":\"CHEBI:28279\",\"kegg_compound_id\":\"C16614\"},{\"inchikey\":\"DGVVWUTYPXICAM-UHFFFAOYSA-N\",\"display_name\":\"mercaptoethanol\",\"primary_id\":\"CHEBI:41218\",\"kegg_compound_id\":\"C00928\"},{\"primary_id\":\"CHEBI:15858\",\"kegg_compound_id\":\"C01324\",\"inchikey\":\"CPELXLSAUQHCOX-UHFFFAOYSA-M\",\"display_name\":\"bromide\"},{\"inchikey\":\"MYVLYOJYVMLSFA-UHFFFAOYSA-N\",\"display_name\":\"N-hydroxy-4-aminobiphenyl\",\"primary_id\":\"CHEBI:16580\",\"kegg_compound_id\":\"C20319\"},{\"inchikey\":\"DQEPMTIXHXSFOR-UHFFFAOYSA-N\",\"display_name\":\"benzo[a]pyrene diol epoxide I\",\"primary_id\":\"CHEBI:30614\",\"kegg_compound_id\":\"C14853\"}]}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "reconcile_inchikey",
+              "_n_input_refs": 10
+            }
+          }
+        ],
+        "error": null,
+        "rollback_reason": null,
+        "termination_reason": null
+      },
+      "verification": {
+        "ok": true,
+        "verdict": null,
+        "error": null,
+        "n_supported": 0,
+        "n_unsupported": 0,
+        "n_contradicted": 0,
+        "n_unverifiable_v0": 0
+      }
+    }
+  ],
+  "final_iter_idx": 0,
+  "n_feedback_iterations": 0,
+  "rollback_reason": null,
+  "final_react_result": {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+    "iterations": [
+      {
+        "iter_idx": 0,
+        "narrative_json": "",
+        "verdict_total": {},
+        "quality": 0,
+        "n_contradicted": 0,
+        "n_unsupported": 0,
+        "n_supported": 0,
+        "n_unverifiable_v0": 0,
+        "n_tool_calls": 23,
+        "n_turns": 8,
+        "force_finalised": true,
+        "feedback_prompt_used": false,
+        "verifier_failed": false,
+        "inner_retry_used": true
+      }
+    ],
+    "final_iter_idx": 0,
+    "final_narrative_json": "",
+    "final_claims": [],
+    "final_narrative_text": "",
+    "final_verdict_total": {},
+    "task_outcome": "empty_unknown",
+    "n_feedback_iterations": 0,
+    "elapsed_seconds": 244.05652737617493,
+    "llm_model": "MiniMax-M2.7",
+    "metabolite_count": 10,
+    "n_distinct_tools_called": 8,
+    "tools_called": [
+      "lookup_chebi",
+      "query_pathway_members",
+      "reconcile_inchikey",
+      "run_fella_rwr",
+      "run_metaboanalystr_psea",
+      "run_mummichog",
+      "run_ramp_enrichment",
+      "run_sspa_ora"
+    ],
+    "tool_calls_trace": [
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_1",
+        "arguments": "{\"id\":\"C00519\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_2",
+        "arguments": "{\"id\":\"C20319\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "not_found",
+          "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_3",
+        "arguments": "{\"namespace\":\"KEGG\",\"id\":\"C14853\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_4",
+        "arguments": "{\"id\":\"C05851\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_5",
+        "arguments": "{\"id\":\"C05665\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_6",
+        "arguments": "{\"id\":\"C07190\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "not_found",
+          "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_7",
+        "arguments": "{\"id\":\"C01324\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_8",
+        "arguments": "{\"id\":\"C16614\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_9",
+        "arguments": "{\"id\":\"C00928\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 1,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_53i4oarhh9p8_10",
+        "arguments": "{\"id\":\"C00051\",\"namespace\":\"KEGG\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 2,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_9j5tm43lyxc7_1",
+        "arguments": "{\"namespace\":\"INCHIKEY\",\"id\":\"MYVLYOJYVMLSFA\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "not_found",
+          "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 2,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_9j5tm43lyxc7_2",
+        "arguments": "{\"namespace\":\"INCHIKEY\",\"id\":\"PMRYVIKBURPHAH\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "not_found",
+          "fallback_suggested": "try search_literature for biological context, or reconcile_inchikey if you have multiple ID variants",
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 3,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_9na1z80tjrpf_1",
+        "arguments": "{\"id\":\"N-hydroxy-4-aminobiphenyl\",\"namespace\":\"NAME\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 3,
+        "name": "lookup_chebi",
+        "tool_call_id": "call_function_9na1z80tjrpf_2",
+        "arguments": "{\"id\":\"Methimazole\",\"namespace\":\"NAME\"}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "lookup_chebi"
+        }
+      },
+      {
+        "turn": 4,
+        "name": "run_ramp_enrichment",
+        "tool_call_id": "call_function_0oll6d5zg879_1",
+        "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_ramp_enrichment",
+          "_n_pathways": 15,
+          "_n_compound_refs": 38,
+          "_pathway_peek": [
+            {
+              "pathway_id": "REACT:R-HSA-211859",
+              "pathway_name": "Biological oxidations",
+              "score": 8.971857000849503e-09,
+              "rank": 0
+            },
+            {
+              "pathway_id": "REACT:R-HSA-1430728",
+              "pathway_name": "Metabolism",
+              "score": 4.5191200424033185e-08,
+              "rank": 1
+            },
+            {
+              "pathway_id": "REACT:R-HSA-211945",
+              "pathway_name": "Phase I - Functionalization of compounds",
+              "score": 6.026161515942656e-05,
+              "rank": 2
+            },
+            {
+              "pathway_id": "REACT:R-HSA-71291",
+              "pathway_name": "Metabolism of amino acids and derivatives",
+              "score": 0.0001413628271251401,
+              "rank": 3
+            },
+            {
+              "pathway_id": "REACT:R-HSA-9748787",
+              "pathway_name": "Azathioprine ADME",
+              "score": 0.0001814057476694806,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      {
+        "turn": 4,
+        "name": "run_mummichog",
+        "tool_call_id": "call_function_0oll6d5zg879_2",
+        "arguments": "{\"top_n\":15,\"compound_ids\":[\"C00519\",\"C20319\",\"C14853\",\"C05851\",\"C05665\",\"C07190\",\"C01324\",\"C16614\",\"C00928\",\"C00051\"]}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_mummichog",
+          "_n_pathways": 15,
+          "_n_compound_refs": 25,
+          "_pathway_peek": [
+            {
+              "pathway_id": "MUMM:histidine_metabolism",
+              "pathway_name": "Histidine metabolism",
+              "score": 0.01100747836316276,
+              "rank": 0
+            },
+            {
+              "pathway_id": "MUMM:glycine_serine_alanine_and_threonine_metabolism",
+              "pathway_name": "Glycine, serine, alanine and threonine metabolism",
+              "score": 0.01100747836316276,
+              "rank": 1
+            },
+            {
+              "pathway_id": "MUMM:xenobiotics_metabolism",
+              "pathway_name": "Xenobiotics metabolism",
+              "score": 0.01100747836316276,
+              "rank": 2
+            },
+            {
+              "pathway_id": "MUMM:methionine_and_cysteine_metabolism",
+              "pathway_name": "Methionine and cysteine metabolism",
+              "score": 0.01100747836316276,
+              "rank": 3
+            },
+            {
+              "pathway_id": "MUMM:tyrosine_metabolism",
+              "pathway_name": "Tyrosine metabolism",
+              "score": 0.02764473573649273,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      {
+        "turn": 4,
+        "name": "run_fella_rwr",
+        "tool_call_id": "call_function_0oll6d5zg879_3",
+        "arguments": "{\"compound_ids\":[\"C00519\",\"C20319\",\"C14853\",\"C05851\",\"C05665\",\"C07190\",\"C01324\",\"C16614\",\"C00928\",\"C00051\"],\"top_n\":15}",
+        "cached": false,
+        "payload_summary": {
+          "error": "wrapper_runtime_error",
+          "fallback_suggested": "FELLA R subprocess errored at runtime (currently 'argument is of length zero' on every sub6b-v3 task — W9 D4 stretch target); skip the network/diffusion paradigm and rely on ORA + mummichog",
+          "_tool_name": "run_fella_rwr"
+        }
+      },
+      {
+        "turn": 5,
+        "name": "run_sspa_ora",
+        "tool_call_id": "call_function_bfaeesp438hx_1",
+        "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+        "cached": false,
+        "payload_summary": {
+          "error": "wrapper_unavailable",
+          "fallback_suggested": "use run_ramp_enrichment (multi-DB ORA, broader namespace coverage) or run_metaboanalystr_psea (KEGG-specific ORA) instead",
+          "_tool_name": "run_sspa_ora"
+        }
+      },
+      {
+        "turn": 5,
+        "name": "run_metaboanalystr_psea",
+        "tool_call_id": "call_function_bfaeesp438hx_2",
+        "arguments": "{\"compound_ids\":[\"CHEBI:16668\",\"CHEBI:16580\",\"CHEBI:30614\",\"CHEBI:28794\",\"CHEBI:18090\",\"CHEBI:50673\",\"CHEBI:15858\",\"CHEBI:28279\",\"CHEBI:41218\",\"CHEBI:16856\"],\"top_n\":15}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_metaboanalystr_psea",
+          "_n_pathways": 5,
+          "_n_compound_refs": 5,
+          "_pathway_peek": [
+            {
+              "pathway_id": "KEGG:hsa00430",
+              "pathway_name": "hsa00430",
+              "score": 0.0298,
+              "rank": 0
+            },
+            {
+              "pathway_id": "KEGG:hsa00770",
+              "pathway_name": "hsa00770",
+              "score": 0.0732,
+              "rank": 1
+            },
+            {
+              "pathway_id": "KEGG:hsa00410",
+              "pathway_name": "hsa00410",
+              "score": 0.0767,
+              "rank": 2
+            },
+            {
+              "pathway_id": "KEGG:hsa00480",
+              "pathway_name": "hsa00480",
+              "score": 0.1012,
+              "rank": 3
+            },
+            {
+              "pathway_id": "KEGG:hsa00983",
+              "pathway_name": "hsa00983",
+              "score": 0.1385,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      {
+        "turn": 6,
+        "name": "query_pathway_members",
+        "tool_call_id": "call_function_ldhrj4tfsl1d_1",
+        "arguments": "{\"pathway_id\":\"KEGG:hsa00430\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      },
+      {
+        "turn": 6,
+        "name": "query_pathway_members",
+        "tool_call_id": "call_function_ldhrj4tfsl1d_2",
+        "arguments": "{\"pathway_id\":\"WP:WP4504\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'WP', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      },
+      {
+        "turn": 6,
+        "name": "query_pathway_members",
+        "tool_call_id": "call_function_ldhrj4tfsl1d_3",
+        "arguments": "{\"pathway_id\":\"REACT:R-HSA-211859\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'REACT', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      },
+      {
+        "turn": 7,
+        "name": "reconcile_inchikey",
+        "tool_call_id": "call_function_dychorqnstyi_1",
+        "arguments": "{\"refs\":[{\"kegg_compound_id\":\"C00519\",\"inchikey\":\"VVIUBCNYACGLLV-UHFFFAOYSA-N\",\"display_name\":\"hypotaurine\",\"primary_id\":\"CHEBI:16668\"},{\"inchikey\":\"RWSXRVCMGQZWBV-WDSKDSINSA-N\",\"display_name\":\"glutathione\",\"primary_id\":\"CHEBI:16856\",\"kegg_compound_id\":\"C00051\"},{\"inchikey\":\"ZYGHJZDHTFUPRJ-UHFFFAOYSA-N\",\"display_name\":\"coumarin\",\"primary_id\":\"CHEBI:28794\",\"kegg_compound_id\":\"C05851\"},{\"inchikey\":\"PCXDJQZLDDHMGX-UHFFFAOYSA-N\",\"display_name\":\"3-aminopropanal\",\"primary_id\":\"CHEBI:18090\",\"kegg_compound_id\":\"C05665\"},{\"primary_id\":\"CHEBI:50673\",\"kegg_compound_id\":\"C07190\",\"inchikey\":\"PMRYVIKBURPHAH-UHFFFAOYSA-N\",\"display_name\":\"methimazole\"},{\"inchikey\":\"UIJIQXGRFSPYQW-UHFFFAOYSA-N\",\"display_name\":\"6-methylthiopurine\",\"primary_id\":\"CHEBI:28279\",\"kegg_compound_id\":\"C16614\"},{\"inchikey\":\"DGVVWUTYPXICAM-UHFFFAOYSA-N\",\"display_name\":\"mercaptoethanol\",\"primary_id\":\"CHEBI:41218\",\"kegg_compound_id\":\"C00928\"},{\"primary_id\":\"CHEBI:15858\",\"kegg_compound_id\":\"C01324\",\"inchikey\":\"CPELXLSAUQHCOX-UHFFFAOYSA-M\",\"display_name\":\"bromide\"},{\"inchikey\":\"MYVLYOJYVMLSFA-UHFFFAOYSA-N\",\"display_name\":\"N-hydroxy-4-aminobiphenyl\",\"primary_id\":\"CHEBI:16580\",\"kegg_compound_id\":\"C20319\"},{\"inchikey\":\"DQEPMTIXHXSFOR-UHFFFAOYSA-N\",\"display_name\":\"benzo[a]pyrene diol epoxide I\",\"primary_id\":\"CHEBI:30614\",\"kegg_compound_id\":\"C14853\"}]}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "reconcile_inchikey",
+          "_n_input_refs": 10
+        }
+      }
+    ],
+    "error": null,
+    "rollback_reason": null,
+    "termination_reason": null
+  },
+  "final_verdict": {
+    "ok": true,
+    "verdict": null,
+    "error": null,
+    "n_supported": 0,
+    "n_unsupported": 0,
+    "n_contradicted": 0,
+    "n_unverifiable_v0": 0
+  }
+}
