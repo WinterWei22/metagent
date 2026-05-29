@@ -620,36 +620,38 @@ def _verify_per_claim_sub6(
     from verifier.layers.factual_sub6 import verify_factual_sub6
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
+    from verifier.layers.signal_sub6 import verify_signal_sub6
 
     out: list[VerifiedClaim] = []
     for c in classified:
         # Phase B1 D4 — log when a v2-grammar claim arrives with an
         # unexpected v1 type (smoke stop condition).
         _maybe_warn_v1_legacy_in_v2_path(c, where="sub6")
+        verified_claim: VerifiedClaim
         if c.claim_type == ClaimType.SET_ENRICHMENT:
-            out.append(verify_set_enrichment(c, source_report))
+            verified_claim = verify_set_enrichment(c, source_report)
         elif c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED):
             # W12 C7 — route metabolite-ID claims to the Sub-6 friendly
             # factual_sub6 layer. The original fall-through path below
             # produces an informationally empty UV because B1 D2's
             # Layer A / Layer B require IdentificationReport-shaped
             # candidate pools, which SubsixSourceReport does not provide.
-            out.append(verify_factual_sub6(c, source_report))
+            verified_claim = verify_factual_sub6(c, source_report)
         elif c.claim_type == ClaimType.DRIVER_METABOLITE:
-            out.append(
+            verified_claim = (
                 verify_driver_metabolite(
                     c, source_report, lookup=driver_lookup,
                 )
             )
         elif c.claim_type == ClaimType.PATHWAY_RELATIONSHIP:
-            out.append(
+            verified_claim = (
                 verify_pathway_relationship(
                     c, source_report,
                     db_path=ramp_db_path, conn=ramp_conn,
                 )
             )
         elif c.claim_type == ClaimType.BIOLOGICAL:
-            out.append(
+            verified_claim = (
                 verify_biological_sub6(
                     c, source_report,
                     db_path=ramp_db_path, conn=ramp_conn,
@@ -662,33 +664,39 @@ def _verify_per_claim_sub6(
             # changes. The first differential_spectra row is used as the
             # spectrum proxy — see Phase 6.3 report §10 for the
             # per-claim-spectrum-routing future-work caveat.
-            out.append(layer_f.verify_peak_mechanistic(c, source_report))
+            verified_claim = layer_f.verify_peak_mechanistic(c, source_report)
         else:
             # Spectrum-centric layers cannot consume SubsixSourceReport;
             # surface as UNVERIFIABLE_V0 with explicit reasoning. Phase
             # B1 D4 keeps this v1-legacy fallback alive but
             # ``_maybe_warn_v1_legacy_in_v2_path`` above logs whenever a
             # v2 claim lands here so the ablation can audit drift.
-            out.append(
-                VerifiedClaim(
-                    claim_id=c.claim_id,
-                    claim_text=c.claim_text,
-                    claim_type=c.claim_type,
-                    claim_subtype=c.claim_subtype,
-                    subject=c.subject,
-                    subject_kind=c.subject_kind,
-                    candidate_ref=c.candidate_ref,
-                    verdict=ClaimVerdict.UNVERIFIABLE_V0,
-                    evidence=(
-                        f"Sub-6 verifier does not support claim_type "
-                        f"{c.claim_type.value!r}: existing layer requires "
-                        "IdentificationReport (spectrum-centric), but "
-                        "Sub-6 supplies SubsixSourceReport. Treated as "
-                        "declared limitation."
-                    ),
-                    extracted_fields=c.extracted_fields,
-                    verifier_layer="verify_sub6",
-                    trace_summary=f"sub6 cannot verify {c.claim_type.value}",
-                )
+            verified_claim = VerifiedClaim(
+                claim_id=c.claim_id,
+                claim_text=c.claim_text,
+                claim_type=c.claim_type,
+                claim_subtype=c.claim_subtype,
+                subject=c.subject,
+                subject_kind=c.subject_kind,
+                candidate_ref=c.candidate_ref,
+                verdict=ClaimVerdict.UNVERIFIABLE_V0,
+                evidence=(
+                    f"Sub-6 verifier does not support claim_type "
+                    f"{c.claim_type.value!r}: existing layer requires "
+                    "IdentificationReport (spectrum-centric), but "
+                    "Sub-6 supplies SubsixSourceReport. Treated as "
+                    "declared limitation."
+                ),
+                extracted_fields=c.extracted_fields,
+                verifier_layer="verify_sub6",
+                trace_summary=f"sub6 cannot verify {c.claim_type.value}",
             )
+        if (
+            c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED, ClaimType.OTHER)
+            and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0
+        ):
+            signal_claim = verify_signal_sub6(c, source_report)
+            if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                verified_claim = signal_claim
+        out.append(verified_claim)
     return _stamp_grammar_from_classified(out, classified)
