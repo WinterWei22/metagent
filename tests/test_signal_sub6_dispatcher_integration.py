@@ -1,9 +1,17 @@
 """W16 D2 RED - Sub-6 dispatcher catch-all for signal_sub6."""
 from __future__ import annotations
 
+import pytest
+
 from schemas.sub6_report import SubsixSourceReport
 from verifier.agent import _verify_per_claim_sub6
 from verifier.schemas import ClaimExtractedFields, ClaimType, ClaimVerdict, ClassifiedClaim
+
+
+_DISPATCHER_DISABLED_REASON = (
+    "W16 dispatcher disabled 2026-06-08 pending W18 beta rebuild; "
+    "see reports/agent/w16_signal_sub6_d4_diagnostic.md"
+)
 
 
 def _claim(text: str, claim_type: ClaimType) -> ClassifiedClaim:
@@ -53,18 +61,21 @@ def _dispatch_one(claim: ClassifiedClaim):
     return out[0]
 
 
+@pytest.mark.skip(reason=_DISPATCHER_DISABLED_REASON)
 def test_dispatcher_routes_signal_like_grounded_claim_to_signal_sub6():
     result = _dispatch_one(_claim("Tyrosine metabolism has p-value 8.40e-5", ClaimType.GROUNDED))
     assert result.verifier_layer == "signal_sub6"
     assert result.verdict == ClaimVerdict.SUPPORTED
 
 
+@pytest.mark.skip(reason=_DISPATCHER_DISABLED_REASON)
 def test_dispatcher_routes_signal_like_factual_claim_to_signal_sub6_after_factual_sub6_miss():
     result = _dispatch_one(_claim("Tyrosine metabolism has FDR < 1e-8", ClaimType.FACTUAL))
     assert result.verifier_layer == "signal_sub6"
     assert result.verdict == ClaimVerdict.SUPPORTED
 
 
+@pytest.mark.skip(reason=_DISPATCHER_DISABLED_REASON)
 def test_dispatcher_routes_signal_like_other_claim_to_signal_sub6_before_fallback():
     result = _dispatch_one(_claim("Tyrosine metabolism has p-value 8.40e-5", ClaimType.OTHER))
     assert result.verifier_layer == "signal_sub6"

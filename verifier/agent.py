@@ -620,7 +620,6 @@ def _verify_per_claim_sub6(
     from verifier.layers.factual_sub6 import verify_factual_sub6
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
-    from verifier.layers.signal_sub6 import verify_signal_sub6
 
     out: list[VerifiedClaim] = []
     for c in classified:
@@ -691,12 +690,17 @@ def _verify_per_claim_sub6(
                 verifier_layer="verify_sub6",
                 trace_summary=f"sub6 cannot verify {c.claim_type.value}",
             )
-        if (
-            c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED, ClaimType.OTHER)
-            and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0
-        ):
-            signal_claim = verify_signal_sub6(c, source_report)
-            if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
-                verified_claim = signal_claim
+        # [W16-ROLLBACK 2026-06-08] signal_sub6 catch-all disabled pending W18 beta
+        # rebuild with source-aware conservative behavior. See:
+        #   reports/agent/w16_signal_sub6_d4_diagnostic.md
+        #   feedback_multi_paradigm_data_carrier_audit
+        # Re-enable only after signal_sub6 honors method/source compatibility.
+        # if (
+        #     c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED, ClaimType.OTHER)
+        #     and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0
+        # ):
+        #     signal_claim = verify_signal_sub6(c, source_report)
+        #     if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+        #         verified_claim = signal_claim
         out.append(verified_claim)
     return _stamp_grammar_from_classified(out, classified)
