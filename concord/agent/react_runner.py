@@ -124,6 +124,7 @@ class ConcordReactResult:
     n_distinct_tools_called: int = 0
     tools_called: list[str] = field(default_factory=list)
     tool_calls_trace: list[dict[str, Any]] = field(default_factory=list)
+    enrichment_carriers: dict[str, Any] = field(default_factory=dict)
     error: str | None = None
     rollback_reason: str | None = None
     termination_reason: str | None = None
@@ -418,6 +419,7 @@ class ConcordReactRunner:
         deadline = started + self.task_timeout_seconds
 
         tool_calls_trace: list[dict[str, Any]] = []
+        enrichment_carriers: dict[str, Any] = {}
         n_turns = 0
         n_tool_calls = 0
         force_finalised = False
@@ -475,6 +477,7 @@ class ConcordReactRunner:
                 for tc in tool_calls:
                     n_tool_calls += 1
                     result = dispatch(tc)
+                    _store_enrichment_carrier(enrichment_carriers, result.tool_name, result.payload)
                     tool_calls_trace.append({
                         "turn": n_turns,
                         "name": result.tool_name,
@@ -573,6 +576,7 @@ class ConcordReactRunner:
             n_distinct_tools_called=len(distinct_tools),
             tools_called=distinct_tools,
             tool_calls_trace=tool_calls_trace,
+            enrichment_carriers=enrichment_carriers,
             error=error,
             termination_reason=termination_reason,
         )
@@ -718,7 +722,10 @@ class ConcordReactRunner:
 
         # Adapter step — surface adapter failures as outcome.error
         try:
-            source_report = sub6b_task_to_subsix_source_report(task)
+            source_report = sub6b_task_to_subsix_source_report({
+                **task,
+                **react_result.enrichment_carriers,
+            })
         except Exception as exc:
             return VerificationOutcome(
                 ok=False, verdict=None,
@@ -960,3 +967,21 @@ def _payload_summary(payload: dict[str, Any]) -> dict[str, Any]:
                 for p in pathways
             ]
     return out
+
+
+def _store_enrichment_carrier(
+    carriers: dict[str, Any],
+    tool_name: str,
+    payload: dict[str, Any],
+) -> None:
+    if not payload.get("ok") or not isinstance(payload.get("result"), dict):
+        return
+    result = payload["result"]
+    if tool_name == "run_mummichog":
+        carriers["mummichog_enrichment_result"] = result
+    elif tool_name == "run_metaboanalystr_psea":
+        carriers.setdefault("metaboanalystr_enrichment_result", {})["psea"] = result
+    elif tool_name == "run_sspa_ora":
+        carriers["sspa_enrichment_result"] = result
+    elif tool_name == "run_fella_rwr":
+        carriers.setdefault("fella_enrichment_result", {})["rwr"] = result

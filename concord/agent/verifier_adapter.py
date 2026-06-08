@@ -108,6 +108,14 @@ _SUBSIX_REQUIRED_KEYS = (
 )
 
 
+_SUBSIX_OPTIONAL_CARRIER_KEYS = (
+    "mummichog_enrichment_result",
+    "metaboanalystr_enrichment_result",
+    "sspa_enrichment_result",
+    "fella_enrichment_result",
+)
+
+
 def sub6b_task_to_subsix_source_report(
     task: dict[str, Any],
 ) -> SubsixSourceReport:
@@ -135,7 +143,7 @@ def sub6b_task_to_subsix_source_report(
         # only short-circuit here so the error mentions ALL missing
         # keys, not just the first one pydantic stops on.
         return SubsixSourceReport(**{
-            k: task.get(k) for k in _SUBSIX_REQUIRED_KEYS + (
+            k: task.get(k) for k in _SUBSIX_REQUIRED_KEYS + _SUBSIX_OPTIONAL_CARRIER_KEYS + (
                 "domain", "differential_metabolites", "differential_spectra",
             )
         })
@@ -151,4 +159,5 @@ def sub6b_task_to_subsix_source_report(
         differential_metabolites=task.get("differential_metabolites"),
         differential_spectra=task.get("differential_spectra"),
         compound_lookup=task.get("compound_lookup"),
+        **{k: task.get(k) for k in _SUBSIX_OPTIONAL_CARRIER_KEYS},
     )

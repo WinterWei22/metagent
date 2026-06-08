@@ -104,6 +104,18 @@ def _fake_enrichment_payload() -> dict[str, Any]:
     }
 
 
+def _fake_payload_for_method(method: str, pathway_id: str) -> dict[str, Any]:
+    return {
+        "ok": True,
+        "result": {
+            "method": method,
+            "pathways": [{"pathway_id": pathway_id, "rank": 1}],
+            "schema_version": "concordmet_v0.3.1",
+        },
+        "_n_pathways": 1,
+    }
+
+
 _VALID_FINAL_JSON = json.dumps({
     "narrative_text": "Eicosanoid synthesis (WP:WP167) dominates the signal.",
     "claims": [
@@ -208,6 +220,42 @@ def test_run_task_happy_path_tool_call_then_finalise(monkeypatch, fake_task):
     assert len(result.final_claims) == 2
     assert {c["claim_type"] for c in result.final_claims} <= GRAMMAR_V2_CLAIM_TYPES
     assert "Eicosanoid synthesis" in result.final_narrative_text
+
+
+def test_run_task_preserves_method_keyed_enrichment_carriers(monkeypatch, fake_task):
+    """Successful non-RaMP tool payloads stay available for verifier carriers."""
+    from concord.agent import tool_dispatcher as td
+    from concord.agent import react_runner as rr
+
+    payloads = {
+        "run_mummichog": _fake_payload_for_method("mummichog", "MUMM:test"),
+        "run_metaboanalystr_psea": _fake_payload_for_method("metaboanalystr_psea", "KEGG:test"),
+    }
+    monkeypatch.setattr(
+        rr, "dispatch",
+        lambda tc: td.DispatchResult(
+            tool_name=tc["function"]["name"],
+            tool_call_id=tc["id"],
+            payload=payloads[tc["function"]["name"]],
+        ),
+    )
+
+    chat = FakeChat([
+        {
+            "role": "assistant",
+            "content": None,
+            "tool_calls": [
+                _make_tool_call("run_mummichog", {"mz_values": [100.0]}, "call_1"),
+                _make_tool_call("run_metaboanalystr_psea", {"compound_ids": ["C00001"]}, "call_2"),
+            ],
+        },
+        {"role": "assistant", "content": f"```json\n{_VALID_FINAL_JSON}\n```"},
+    ])
+    runner = ConcordReactRunner(chat_with_tools=chat, llm_model="fake-model")
+    result = runner.run_task(fake_task)
+
+    assert result.enrichment_carriers["mummichog_enrichment_result"] == payloads["run_mummichog"]["result"]
+    assert result.enrichment_carriers["metaboanalystr_enrichment_result"]["psea"] == payloads["run_metaboanalystr_psea"]["result"]
 
 
 def test_run_task_inner_retry_recovers_from_invalid_finalise(monkeypatch, fake_task):
