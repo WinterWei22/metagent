@@ -86,6 +86,18 @@ def test_cost_cap_exceeded_returns_uv_without_calling_judge():
     assert calls == []
 
 
+def test_successful_judge_call_records_estimated_cost():
+    layer = _layer()
+    tracker = layer.JudgeCostTracker(cap_usd=2.0, spent_usd=0.0)
+    layer.verify_llm_judge_sub6(
+        claim={"claim_text": "MUMM:tyrosine_metabolism has p = 0.01", "claim_type": ClaimType.GROUNDED},
+        source_report={"mummichog_enrichment_result": {"pathways": [{"pathway_id": "MUMM:tyrosine_metabolism", "p_value": 0.01}]}},
+        judge_call=lambda *_args, **_kwargs: {"verdict": "SUPPORTED", "confidence": 0.91, "evidence_pointer": "mummichog_enrichment_result.pathways[0].p_value", "rationale": "matches p-value"},
+        cost_tracker=tracker,
+    )
+    assert tracker.spent_usd > 0.0
+
+
 def test_malformed_judge_response_returns_uv():
     layer = _layer()
     verdict = layer.verify_llm_judge_sub6(

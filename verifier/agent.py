@@ -618,11 +618,13 @@ def _verify_per_claim_sub6(
     from verifier.layers.biological_sub6 import verify_biological_sub6
     from verifier.layers.driver_metabolite import verify_driver_metabolite
     from verifier.layers.factual_sub6 import verify_factual_sub6
+    from verifier.layers.llm_judge_sub6 import JudgeCostTracker
     from verifier.layers.llm_judge_sub6 import verify_llm_judge_sub6 as _verify_llm_judge_sub6_default
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
 
     out: list[VerifiedClaim] = []
+    judge_cost_tracker = JudgeCostTracker()
     for c in classified:
         # Phase B1 D4 — log when a v2-grammar claim arrives with an
         # unexpected v1 type (smoke stop condition).
@@ -709,7 +711,7 @@ def _verify_per_claim_sub6(
             if judge_func is None and os.environ.get("METAGENT_ENABLE_LLM_JUDGE_SUB6") == "1":
                 judge_func = _verify_llm_judge_sub6_default
             if judge_func is not None:
-                judge_claim = judge_func(c, source_report)
+                judge_claim = judge_func(c, source_report, cost_tracker=judge_cost_tracker)
                 if judge_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
                     verified_claim = judge_claim
         out.append(verified_claim)

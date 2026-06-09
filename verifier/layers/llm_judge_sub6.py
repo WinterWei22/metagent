@@ -18,6 +18,7 @@ JUDGE_CONFIDENCE_THRESHOLD = 0.85
 CONTRADICTED_CONFIDENCE_THRESHOLD = 0.90
 SIGNAL_SUB6_CATCH_ALL_ENABLED = False
 LAYER_NAME = "llm_judge_sub6"
+ESTIMATED_JUDGE_CALL_COST_USD = 0.0021
 
 JudgeCall = Callable[..., Any]
 
@@ -35,6 +36,8 @@ def verify_llm_judge_sub6(
         return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "LLM-judge cost cap exceeded")
     call = judge_call or _default_judge_call
     parsed = parse_judge_response(call(claim=claim, source_report=source_report))
+    if cost_tracker:
+        cost_tracker.record(ESTIMATED_JUDGE_CALL_COST_USD)
     if parsed.confidence < 0.50 or parsed.verdict == ClaimVerdict.UNVERIFIABLE_V0:
         return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, parsed.rationale)
     if parsed.confidence < JUDGE_CONFIDENCE_THRESHOLD:
@@ -147,6 +150,7 @@ def _verified(
 
 __all__ = [
     "CONTRADICTED_CONFIDENCE_THRESHOLD",
+    "ESTIMATED_JUDGE_CALL_COST_USD",
     "JUDGE_CONFIDENCE_THRESHOLD",
     "JUDGE_ELIGIBLE_TYPES",
     "JudgeCostTracker",

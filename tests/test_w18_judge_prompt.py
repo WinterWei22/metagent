@@ -33,6 +33,19 @@ def test_prompt_uses_medium_scope_enum_member_names():
     assert "FACTUAL" in prompt
 
 
+def test_prompt_contains_v4_edge_case_rules():
+    mod = _prompt_module()
+    prompt = mod.build_llm_judge_prompt(
+        claim_text="Reactome hits are present",
+        claim_type=ClaimType.GROUNDED,
+        source_report_excerpt={},
+    )
+    assert "EDGE-1" in prompt
+    assert "Reactome" in prompt
+    assert "Identifier-as-content" in prompt
+    assert "Mummichog rank" in prompt
+
+
 def test_source_report_excerpt_is_bounded_for_token_budget():
     mod = _prompt_module()
     excerpt = mod.build_source_report_excerpt({"large": "x" * 100_000}, max_chars=12_000)
