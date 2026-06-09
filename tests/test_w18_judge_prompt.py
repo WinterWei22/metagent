@@ -1,0 +1,39 @@
+from __future__ import annotations
+
+import importlib
+
+from verifier.schemas import ClaimType
+
+
+def _prompt_module():
+    return importlib.import_module("verifier.helpers.llm_judge_prompt")
+
+
+def test_prompt_contains_claim_text_source_excerpt_and_rubric():
+    mod = _prompt_module()
+    prompt = mod.build_llm_judge_prompt(
+        claim_text="MUMM:tyrosine_metabolism has p = 0.01",
+        claim_type=ClaimType.GROUNDED,
+        source_report_excerpt={"mummichog_enrichment_result": {"pathways": []}},
+    )
+    assert "MUMM:tyrosine_metabolism has p = 0.01" in prompt
+    assert "mummichog_enrichment_result" in prompt
+    assert "judge_strict" in prompt
+
+
+def test_prompt_uses_medium_scope_enum_member_names():
+    mod = _prompt_module()
+    prompt = mod.build_llm_judge_prompt(
+        claim_text="Tyrosine metabolism is enriched",
+        claim_type=ClaimType.BIOLOGICAL,
+        source_report_excerpt={},
+    )
+    assert "GROUNDED" in prompt
+    assert "BIOLOGICAL" in prompt
+    assert "FACTUAL" in prompt
+
+
+def test_source_report_excerpt_is_bounded_for_token_budget():
+    mod = _prompt_module()
+    excerpt = mod.build_source_report_excerpt({"large": "x" * 100_000}, max_chars=12_000)
+    assert len(excerpt) <= 12_000
