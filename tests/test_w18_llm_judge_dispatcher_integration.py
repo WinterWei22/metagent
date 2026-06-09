@@ -57,3 +57,55 @@ def test_factual_sub6_route_is_preserved_before_llm_judge():
     ordered_layers = adapter.sub6_dispatch_order_for(ClaimType.FACTUAL)
     assert "factual_sub6" in ordered_layers
     assert ordered_layers.index("factual_sub6") < ordered_layers.index("llm_judge_sub6")
+
+
+def test_verify_per_claim_sub6_calls_llm_judge_after_uv(monkeypatch):
+    agent = importlib.import_module("verifier.agent")
+    calls = []
+
+    def fake_judge(claim, source_report, **_kwargs):
+        calls.append(claim.claim_text)
+        return _verified(claim, ClaimVerdict.SUPPORTED, "judge supported")
+
+    monkeypatch.setattr(agent, "verify_llm_judge_sub6", fake_judge, raising=False)
+    factual = importlib.import_module("verifier.layers.factual_sub6")
+    monkeypatch.setattr(
+        factual,
+        "verify_factual_sub6",
+        lambda claim, source_report: _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "uv"),
+    )
+
+    result = agent._verify_per_claim_sub6(
+        [_claim("MUMM:x has p = 0.01", ClaimType.GROUNDED)],
+        source_report={},
+        ramp_db_path=None,
+        ramp_conn=None,
+        driver_lookup=None,
+    )
+
+    assert calls == ["MUMM:x has p = 0.01"]
+    assert result[0].verdict == ClaimVerdict.SUPPORTED
+
+
+def _claim(text: str, claim_type: ClaimType):
+    from verifier.schemas import ClassifiedClaim
+
+    return ClassifiedClaim(
+        claim_id="c1",
+        claim_text=text,
+        claim_type=claim_type,
+        classifier_source="rule",
+    )
+
+
+def _verified(claim, verdict: ClaimVerdict, evidence: str):
+    from verifier.schemas import VerifiedClaim
+
+    return VerifiedClaim(
+        claim_id=claim.claim_id,
+        claim_text=claim.claim_text,
+        claim_type=claim.claim_type,
+        verdict=verdict,
+        evidence=evidence,
+        verifier_layer="llm_judge_sub6",
+    )

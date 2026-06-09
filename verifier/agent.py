@@ -618,6 +618,7 @@ def _verify_per_claim_sub6(
     from verifier.layers.biological_sub6 import verify_biological_sub6
     from verifier.layers.driver_metabolite import verify_driver_metabolite
     from verifier.layers.factual_sub6 import verify_factual_sub6
+    from verifier.layers.llm_judge_sub6 import verify_llm_judge_sub6 as _verify_llm_judge_sub6_default
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
 
@@ -702,5 +703,14 @@ def _verify_per_claim_sub6(
         #     signal_claim = verify_signal_sub6(c, source_report)
         #     if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
         #         verified_claim = signal_claim
+        # [verifier-modify-warning] W18 D3: post-UV LLM-judge route.
+        if verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+            judge_func = globals().get("verify_llm_judge_sub6")
+            if judge_func is None and os.environ.get("METAGENT_ENABLE_LLM_JUDGE_SUB6") == "1":
+                judge_func = _verify_llm_judge_sub6_default
+            if judge_func is not None:
+                judge_claim = judge_func(c, source_report)
+                if judge_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                    verified_claim = judge_claim
         out.append(verified_claim)
     return _stamp_grammar_from_classified(out, classified)
