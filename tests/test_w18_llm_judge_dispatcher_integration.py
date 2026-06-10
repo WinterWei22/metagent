@@ -87,6 +87,35 @@ def test_verify_per_claim_sub6_calls_llm_judge_after_uv(monkeypatch):
     assert result[0].verdict == ClaimVerdict.SUPPORTED
 
 
+def test_verify_per_claim_sub6_skips_llm_judge_on_non_final_iteration(monkeypatch):
+    agent = importlib.import_module("verifier.agent")
+    calls = []
+
+    def fake_judge(claim, source_report, **_kwargs):
+        calls.append(claim.claim_text)
+        return _verified(claim, ClaimVerdict.SUPPORTED, "judge supported")
+
+    monkeypatch.setattr(agent, "verify_llm_judge_sub6", fake_judge, raising=False)
+    factual = importlib.import_module("verifier.layers.factual_sub6")
+    monkeypatch.setattr(
+        factual,
+        "verify_factual_sub6",
+        lambda claim, source_report: _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "uv"),
+    )
+
+    result = agent._verify_per_claim_sub6(
+        [_claim("MUMM:x has p = 0.01", ClaimType.GROUNDED)],
+        source_report={},
+        ramp_db_path=None,
+        ramp_conn=None,
+        driver_lookup=None,
+        is_final_iteration=False,
+    )
+
+    assert calls == []
+    assert result[0].verdict == ClaimVerdict.UNVERIFIABLE_V0
+
+
 def test_verify_per_claim_sub6_reuses_one_judge_cost_tracker(monkeypatch):
     agent = importlib.import_module("verifier.agent")
     tracker_ids = []

@@ -620,7 +620,13 @@ class ConcordReactRunner:
 
         # iter 0
         r0 = self.run_task(task, trace_id=f"{trace_id}.iter0")
-        v0 = self.verify_with_b1(r0, task, trace_id=f"{trace_id}.iter0.verify")
+        iter0_is_final = self.max_feedback_iters == 0
+        v0 = self.verify_with_b1(
+            r0,
+            task,
+            trace_id=f"{trace_id}.iter0.verify",
+            is_final_iteration=iter0_is_final,
+        )
         iterations.append((r0, v0))
 
         if v0.quality == 0 or self.max_feedback_iters == 0:
@@ -649,7 +655,12 @@ class ConcordReactRunner:
             rk = self.run_task(
                 task, trace_id=f"{trace_id}.iter{k}", feedback_user_msg=hint,
             )
-            vk = self.verify_with_b1(rk, task, trace_id=f"{trace_id}.iter{k}.verify")
+            vk = self.verify_with_b1(
+                rk,
+                task,
+                trace_id=f"{trace_id}.iter{k}.verify",
+                is_final_iteration=(k == self.max_feedback_iters),
+            )
             iterations.append((rk, vk))
 
         # Final selection: prefer the latest if it monotonically beat both
@@ -686,6 +697,7 @@ class ConcordReactRunner:
         task: dict[str, Any],
         *,
         trace_id: str | None = None,
+        is_final_iteration: bool = True,
     ) -> "VerificationOutcome":
         """Run the finalised narrative through B1 `verify_sub6()`.
 
@@ -739,6 +751,7 @@ class ConcordReactRunner:
                 narrative,
                 source_report,
                 trace_id=tid,
+                is_final_iteration=is_final_iteration,
             )
         except Exception as exc:
             return VerificationOutcome(

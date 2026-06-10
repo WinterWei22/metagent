@@ -537,6 +537,7 @@ def verify_sub6(
     ramp_db_path: str | None = None,
     ramp_conn=None,
     driver_lookup: dict[str, str] | None = None,
+    is_final_iteration: bool = True,
 ) -> VerifiedIdentification:
     """Stage-cascaded verification for Sub-6 enrichment narratives.
 
@@ -582,6 +583,7 @@ def verify_sub6(
         ramp_db_path=ramp_db_path,
         ramp_conn=ramp_conn,
         driver_lookup=driver_lookup,
+        is_final_iteration=is_final_iteration,
     )
     consistency, calls, w = layer_d.detect_consistency_contradictions(
         classified, trace_id=f"{trace_id}.s3"
@@ -609,6 +611,7 @@ def _verify_per_claim_sub6(
     ramp_db_path: str | None,
     ramp_conn,
     driver_lookup: dict[str, str] | None,
+    is_final_iteration: bool = True,
 ) -> list[VerifiedClaim]:
     """Dispatch each Sub-6 claim to its layer.
 
@@ -706,7 +709,7 @@ def _verify_per_claim_sub6(
         #     if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
         #         verified_claim = signal_claim
         # [verifier-modify-warning] W18 D3: post-UV LLM-judge route.
-        if verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+        if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
             judge_func = globals().get("verify_llm_judge_sub6")
             if judge_func is None and os.environ.get("METAGENT_ENABLE_LLM_JUDGE_SUB6") == "1":
                 judge_func = _verify_llm_judge_sub6_default

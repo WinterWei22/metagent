@@ -137,6 +137,20 @@ def test_verify_with_b1_happy_path_counts_verdicts(fake_concord_result, fake_v3_
     assert "arachidonic acid metabolism" in (narrative_arg or "").lower()
 
 
+def test_verify_with_b1_passes_final_iteration_flag(fake_concord_result, fake_v3_task):
+    """W18 D3.5: non-final verifier passes must not run LLM judge."""
+    fake_verifier = MagicMock(return_value=_make_fake_verifier_result())
+    runner = ConcordReactRunner(verifier_fn=fake_verifier)
+
+    runner.verify_with_b1(
+        fake_concord_result,
+        fake_v3_task,
+        is_final_iteration=False,
+    )
+
+    assert fake_verifier.call_args.kwargs["is_final_iteration"] is False
+
+
 def test_verify_with_b1_no_verifier_fn_raises(fake_concord_result, fake_v3_task):
     """Calling verify_with_b1 without injecting a verifier_fn must fail loudly —
     the default (None) means D4 wiring is incomplete."""
