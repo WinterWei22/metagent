@@ -7,7 +7,11 @@ from verifier.helpers.contradicted_validator import validate_contradicted_pointe
 from verifier.helpers.judge_cost_cap import JudgeCostTracker
 from verifier.helpers.judge_response_parser import parse_judge_response
 from verifier.helpers.judge_trace import write_judge_trace
-from verifier.helpers.llm_judge_prompt import build_llm_judge_prompt, build_source_report_excerpt
+from verifier.helpers.llm_judge_prompt import (
+    LLM_JUDGE_SYSTEM_PROMPT,
+    build_llm_judge_prompt,
+    build_source_report_excerpt,
+)
 from verifier.schemas import ClaimType, ClaimVerdict, VerifiedClaim
 
 
@@ -111,7 +115,10 @@ def _default_judge_call(*, claim: Any, source_report: Any) -> str:
         source_report_excerpt=build_source_report_excerpt(source_report),
     )
     return chat(
-        [{"role": "user", "content": prompt}],
+        [
+            {"role": "system", "content": LLM_JUDGE_SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
         temperature=0.0,
         max_tokens=1000,
         trace_id="w18.llm_judge_sub6",

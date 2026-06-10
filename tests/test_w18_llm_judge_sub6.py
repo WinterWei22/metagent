@@ -157,3 +157,33 @@ def test_quality_scores_match_verdict_policy():
     assert layer.quality_score_for_verdict(ClaimVerdict.NEEDS_HUMAN_REVIEW) == 0.6
     assert layer.quality_score_for_verdict(ClaimVerdict.CONTRADICTED) == 0.0
     assert layer.quality_score_for_verdict(ClaimVerdict.UNVERIFIABLE_V0) == 0.0
+
+
+def test_default_judge_call_uses_system_json_only_instruction(monkeypatch):
+    layer = _layer()
+    captured = {}
+
+    def fake_chat(messages, **kwargs):
+        captured["messages"] = messages
+        captured["kwargs"] = kwargs
+        return {
+            "verdict": "UNVERIFIABLE_V0",
+            "confidence": 0.95,
+            "evidence_pointer": "source_report_excerpt",
+            "rationale": "contract check",
+        }
+
+    import common.llm_client as llm_client
+
+    monkeypatch.setattr(llm_client, "chat", fake_chat)
+    response = layer._default_judge_call(
+        claim={"claim_text": "MUMM:x has p = 0.01", "claim_type": ClaimType.GROUNDED},
+        source_report={"task_id": "task-1"},
+    )
+
+    assert response["verdict"] == "UNVERIFIABLE_V0"
+    assert captured["messages"][0]["role"] == "system"
+    assert "Output ONLY" in captured["messages"][0]["content"]
+    assert "Do NOT include thinking" in captured["messages"][0]["content"]
+    assert captured["messages"][1]["role"] == "user"
+    assert captured["kwargs"]["response_format"] == {"type": "json_object"}

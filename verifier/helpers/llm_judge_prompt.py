@@ -12,6 +12,13 @@ JUDGE_ELIGIBLE_TYPES = {
     ClaimType.FACTUAL,
 }
 
+LLM_JUDGE_SYSTEM_PROMPT = (
+    "You are a precise metabolomics claim verifier. Output ONLY a single "
+    "JSON object matching the requested schema. Do NOT include thinking, "
+    "reasoning, prose, explanation, <think> blocks, or markdown fences "
+    "before or after the JSON."
+)
+
 
 def build_source_report_excerpt(source_report: Any, max_chars: int = 12_000) -> str:
     if hasattr(source_report, "model_dump"):
@@ -50,5 +57,8 @@ def build_llm_judge_prompt(
         "EDGE-5: Direct Mummichog rank, score, p-value, or pathway ID claims with populated mummichog_enrichment_result carrier can be SUPPORTED.\n"
         f"claim_type: {claim_type.name}\n"
         f"claim_text: {claim_text}\n"
-        f"source_report_excerpt: {excerpt}"
+        f"source_report_excerpt: {excerpt}\n"
+        'IMPORTANT: Output ONLY the JSON object. No <think> blocks. No prose. No markdown fences. '
+        'Just: {"verdict":"UNVERIFIABLE_V0","confidence":0.0,'
+        '"evidence_pointer":"source_report_excerpt","rationale":"..."}'
     )

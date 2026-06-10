@@ -65,3 +65,19 @@ def test_source_report_excerpt_is_bounded_for_token_budget():
     mod = _prompt_module()
     excerpt = mod.build_source_report_excerpt({"large": "x" * 100_000}, max_chars=12_000)
     assert len(excerpt) <= 12_000
+
+
+def test_prompt_demands_json_only_without_think_or_fences():
+    mod = _prompt_module()
+    prompt = mod.build_llm_judge_prompt(
+        claim_text="MUMM:tyrosine_metabolism has p = 0.01",
+        claim_type=ClaimType.GROUNDED,
+        source_report_excerpt={"mummichog_enrichment_result": {"pathways": []}},
+    )
+    assert "Output ONLY" in prompt
+    assert "No <think>" in prompt
+    assert "No markdown fences" in prompt
+    assert '{"verdict":' in prompt
+    assert '"confidence":' in prompt
+    assert '"evidence_pointer":' in prompt
+    assert '"rationale":' in prompt
