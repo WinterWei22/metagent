@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import json
 from typing import Any
 
+from verifier.helpers.build_judge_excerpt import build_judge_excerpt
 from verifier.schemas import ClaimType
 
 
@@ -21,11 +21,7 @@ LLM_JUDGE_SYSTEM_PROMPT = (
 
 
 def build_source_report_excerpt(source_report: Any, max_chars: int = 12_000) -> str:
-    if hasattr(source_report, "model_dump"):
-        payload = source_report.model_dump(mode="json")
-    else:
-        payload = source_report
-    text = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
+    text = build_judge_excerpt(source_report)
     return text[:max_chars]
 
 
@@ -38,7 +34,7 @@ def build_llm_judge_prompt(
     excerpt = (
         source_report_excerpt
         if isinstance(source_report_excerpt, str)
-        else build_source_report_excerpt(source_report_excerpt)
+        else build_judge_excerpt(source_report_excerpt)
     )
     eligible = ", ".join(sorted(claim_type.name for claim_type in JUDGE_ELIGIBLE_TYPES))
     return (
