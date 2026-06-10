@@ -122,7 +122,7 @@ def test_verify_per_claim_sub6_reuses_one_judge_cost_tracker(monkeypatch):
     cost_cap.reset_run_level_tracker(run_id="test", cap_usd=2.0)
     tracker_ids = []
 
-    def fake_judge(claim, source_report, *, cost_tracker):
+    def fake_judge(claim, source_report, *, cost_tracker, **_kwargs):
         tracker_ids.append(id(cost_tracker))
         cost_tracker.record(0.5)
         return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "still uv")
@@ -151,11 +151,92 @@ def test_verify_per_claim_sub6_reuses_one_judge_cost_tracker(monkeypatch):
     assert len(set(tracker_ids)) == 1
 
 
-def _claim(text: str, claim_type: ClaimType):
+def test_verify_per_claim_sub6_passes_iteration_and_claim_id_to_judge(monkeypatch):
+    agent = importlib.import_module("verifier.agent")
+    seen = []
+
+    def fake_judge(claim, source_report, *, cost_tracker, iteration):
+        seen.append((claim.claim_id, iteration))
+        return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "still uv")
+
+    monkeypatch.setattr(agent, "verify_llm_judge_sub6", fake_judge, raising=False)
+    factual = importlib.import_module("verifier.layers.factual_sub6")
+    monkeypatch.setattr(
+        factual,
+        "verify_factual_sub6",
+        lambda claim, source_report: _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "uv"),
+    )
+
+    agent._verify_per_claim_sub6(
+        [_claim("MUMM:x has p = 0.01", ClaimType.GROUNDED)],
+        source_report={},
+        ramp_db_path=None,
+        ramp_conn=None,
+        driver_lookup=None,
+        is_final_iteration=True,
+        iteration=1,
+    )
+
+    assert seen == [("MUMM:x has p = 0.01", 1)]
+
+
+def test_verify_sub6_parses_iteration_from_trace_id_for_judge(monkeypatch):
+    agent = importlib.import_module("verifier.agent")
+    seen = []
+
+    monkeypatch.setattr(
+        agent,
+        "_extract_classify",
+        lambda *_args, **_kwargs: (
+            [_claim(None, "MUMM:x has p = 0.01", ClaimType.GROUNDED)],
+            0,
+            [],
+            [],
+        ),
+    )
+    monkeypatch.setattr(
+        agent.layer_d,
+        "detect_consistency_contradictions",
+        lambda *_args, **_kwargs: ([], 0, []),
+    )
+
+    def fake_judge(claim, source_report, *, cost_tracker, iteration):
+        seen.append((claim.claim_id, iteration))
+        return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "still uv")
+
+    monkeypatch.setattr(agent, "verify_llm_judge_sub6", fake_judge, raising=False)
+    factual = importlib.import_module("verifier.layers.factual_sub6")
+    monkeypatch.setattr(
+        factual,
+        "verify_factual_sub6",
+        lambda claim, source_report: _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, "uv"),
+    )
+
+    agent.verify_sub6(
+        "narrative",
+        {},
+        trace_id="concord_w10_d4.task-1.iter1.verify",
+        is_final_iteration=True,
+    )
+
+    assert seen == [("claim-0", 1)]
+
+
+def _claim(*args):
     from verifier.schemas import ClassifiedClaim
 
+    if len(args) == 2:
+        claim_id = args[0]
+        text = args[0]
+        claim_type = args[1]
+    elif len(args) == 3:
+        claim_id = args[0]
+        text = args[1]
+        claim_type = args[2]
+    else:
+        raise TypeError(args)
     return ClassifiedClaim(
-        claim_id=text,
+        claim_id=claim_id,
         claim_text=text,
         claim_type=claim_type,
         classifier_source="rule",
