@@ -98,6 +98,39 @@ def test_successful_judge_call_records_estimated_cost():
     assert tracker.spent_usd > 0.0
 
 
+def test_successful_judge_call_writes_trace(tmp_path):
+    layer = _layer()
+    trace_path = tmp_path / "judge_trace.jsonl"
+
+    verdict = layer.verify_llm_judge_sub6(
+        claim={
+            "claim_id": "claim-1",
+            "claim_text": "MUMM:tyrosine_metabolism has p = 0.01",
+            "claim_type": ClaimType.GROUNDED,
+        },
+        source_report={"task_id": "task-1"},
+        judge_call=lambda *_args, **_kwargs: {
+            "verdict": "SUPPORTED",
+            "confidence": 0.91,
+            "evidence_pointer": "mummichog_enrichment_result.pathways[0].p_value",
+            "rationale": "matches p-value",
+        },
+        trace_path=trace_path,
+        iteration=1,
+    )
+
+    import json
+
+    row = json.loads(trace_path.read_text(encoding="utf-8").strip())
+    assert verdict.verdict == ClaimVerdict.SUPPORTED
+    assert row["task_id"] == "task-1"
+    assert row["iteration"] == 1
+    assert row["claim_id"] == "claim-1"
+    assert row["verdict"] == "SUPPORTED"
+    assert row["parser_success"] is True
+    assert row["cost_usd"] > 0.0
+
+
 def test_malformed_judge_response_returns_uv():
     layer = _layer()
     verdict = layer.verify_llm_judge_sub6(

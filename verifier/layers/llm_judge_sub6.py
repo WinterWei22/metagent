@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Callable
 
 from verifier.helpers.contradicted_validator import validate_contradicted_pointer
 from verifier.helpers.judge_cost_cap import JudgeCostTracker
 from verifier.helpers.judge_response_parser import parse_judge_response
+from verifier.helpers.judge_trace import write_judge_trace
 from verifier.helpers.llm_judge_prompt import build_llm_judge_prompt, build_source_report_excerpt
 from verifier.schemas import ClaimType, ClaimVerdict, VerifiedClaim
 
@@ -28,6 +30,8 @@ def verify_llm_judge_sub6(
     source_report: Any,
     judge_call: JudgeCall | None = None,
     cost_tracker: JudgeCostTracker | None = None,
+    trace_path: str | Path | None = None,
+    iteration: int | None = None,
 ) -> VerifiedClaim:
     claim_type = _claim_type_of(claim)
     if claim_type not in JUDGE_ELIGIBLE_TYPES:
@@ -38,6 +42,13 @@ def verify_llm_judge_sub6(
     parsed = parse_judge_response(call(claim=claim, source_report=source_report))
     if cost_tracker:
         cost_tracker.record(ESTIMATED_JUDGE_CALL_COST_USD)
+    _write_trace(
+        claim=claim,
+        source_report=source_report,
+        parsed=parsed,
+        trace_path=trace_path,
+        iteration=iteration,
+    )
     if parsed.confidence < 0.50 or parsed.verdict == ClaimVerdict.UNVERIFIABLE_V0:
         return _verified(claim, ClaimVerdict.UNVERIFIABLE_V0, parsed.rationale)
     if parsed.confidence < JUDGE_CONFIDENCE_THRESHOLD:
@@ -124,6 +135,45 @@ def _claim_value(claim: Any, name: str) -> Any:
     if isinstance(claim, dict):
         return claim.get(name)
     return getattr(claim, name, None)
+
+
+def _source_value(source_report: Any, name: str) -> Any:
+    if isinstance(source_report, dict):
+        return source_report.get(name)
+    return getattr(source_report, name, None)
+
+
+def _write_trace(
+    *,
+    claim: Any,
+    source_report: Any,
+    parsed: Any,
+    trace_path: str | Path | None,
+    iteration: int | None,
+) -> None:
+    write_judge_trace(
+        path=trace_path,
+        task_id=_source_value(source_report, "task_id"),
+        iteration=iteration,
+        claim_id=_claim_value(claim, "claim_id"),
+        claim_type=_claim_type_of(claim),
+        verdict=_trace_verdict_label(parsed.verdict),
+        parser_success=not (
+            parsed.verdict == ClaimVerdict.UNVERIFIABLE_V0
+            and parsed.confidence == 0.0
+            and parsed.evidence_pointer == ""
+        ),
+        cost_usd=ESTIMATED_JUDGE_CALL_COST_USD,
+        confidence=parsed.confidence,
+    )
+
+
+def _trace_verdict_label(verdict: ClaimVerdict) -> str:
+    if verdict == ClaimVerdict.UNVERIFIABLE_V0:
+        return "UV"
+    if verdict == ClaimVerdict.NEEDS_HUMAN_REVIEW:
+        return "HEDGED"
+    return verdict.name
 
 
 def _verified(
