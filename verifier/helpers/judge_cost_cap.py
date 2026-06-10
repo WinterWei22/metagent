@@ -18,3 +18,21 @@ class JudgeCostTracker:
     def reset_for_run(self, run_id: str | None = None) -> None:
         self.spent_usd = 0.0
         self.run_id = run_id
+
+
+_RUN_LEVEL_TRACKER = JudgeCostTracker()
+
+
+def get_run_level_tracker() -> JudgeCostTracker:
+    return _RUN_LEVEL_TRACKER
+
+
+def reset_run_level_tracker(
+    *,
+    run_id: str | None = None,
+    cap_usd: float | None = None,
+) -> JudgeCostTracker:
+    if cap_usd is not None:
+        _RUN_LEVEL_TRACKER.cap_usd = cap_usd
+    _RUN_LEVEL_TRACKER.reset_for_run(run_id=run_id)
+    return _RUN_LEVEL_TRACKER

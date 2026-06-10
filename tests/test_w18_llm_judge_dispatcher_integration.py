@@ -118,6 +118,8 @@ def test_verify_per_claim_sub6_skips_llm_judge_on_non_final_iteration(monkeypatc
 
 def test_verify_per_claim_sub6_reuses_one_judge_cost_tracker(monkeypatch):
     agent = importlib.import_module("verifier.agent")
+    cost_cap = importlib.import_module("verifier.helpers.judge_cost_cap")
+    cost_cap.reset_run_level_tracker(run_id="test", cap_usd=2.0)
     tracker_ids = []
 
     def fake_judge(claim, source_report, *, cost_tracker):

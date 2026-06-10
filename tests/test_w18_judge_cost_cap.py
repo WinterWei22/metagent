@@ -25,3 +25,20 @@ def test_cost_tracker_reset_is_per_path_x_run():
     tracker.reset_for_run(run_id="task-2")
     assert tracker.spent_usd == 0.0
     assert tracker.run_id == "task-2"
+
+
+def test_run_level_tracker_is_shared_until_reset():
+    mod = _cost_module()
+    tracker_a = mod.reset_run_level_tracker(run_id="path-x", cap_usd=0.5)
+    tracker_a.record(0.25)
+
+    tracker_b = mod.get_run_level_tracker()
+    assert tracker_b is tracker_a
+    assert tracker_b.spent_usd == 0.25
+    assert tracker_b.can_call(estimated_increment_usd=0.25) is True
+    assert tracker_b.can_call(estimated_increment_usd=0.26) is False
+
+    tracker_c = mod.reset_run_level_tracker(run_id="path-x-next", cap_usd=0.5)
+    assert tracker_c is tracker_a
+    assert tracker_c.run_id == "path-x-next"
+    assert tracker_c.spent_usd == 0.0

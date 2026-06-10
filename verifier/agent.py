@@ -621,13 +621,13 @@ def _verify_per_claim_sub6(
     from verifier.layers.biological_sub6 import verify_biological_sub6
     from verifier.layers.driver_metabolite import verify_driver_metabolite
     from verifier.layers.factual_sub6 import verify_factual_sub6
-    from verifier.layers.llm_judge_sub6 import JudgeCostTracker
+    from verifier.helpers.judge_cost_cap import get_run_level_tracker
     from verifier.layers.llm_judge_sub6 import verify_llm_judge_sub6 as _verify_llm_judge_sub6_default
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
 
     out: list[VerifiedClaim] = []
-    judge_cost_tracker = JudgeCostTracker()
+    judge_cost_tracker = get_run_level_tracker()
     for c in classified:
         # Phase B1 D4 — log when a v2-grammar claim arrives with an
         # unexpected v1 type (smoke stop condition).
