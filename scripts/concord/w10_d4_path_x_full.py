@@ -45,6 +45,7 @@ from pathlib import Path
 from typing import Any
 
 from common.llm_client import chat_with_tools as _llm_chat
+from verifier.helpers.judge_cost_cap import reset_run_level_tracker
 from verifier.agent import verify_sub6 as _b1_verify_sub6
 
 from concord.agent.react_runner import ConcordReactRunner
@@ -224,6 +225,7 @@ def main() -> int:
     parser.add_argument("--provider", default="minimax")
     parser.add_argument("--max-react-turns", type=int, default=8)
     parser.add_argument("--max-feedback-iters", type=int, default=2)
+    parser.add_argument("--judge-cost-cap-usd", type=float, default=2.0)
     parser.add_argument(
         "--llm-log", type=Path,
         default=Path(os.environ.get("METAGENT_LLM_LOG_PATH")
@@ -254,6 +256,10 @@ def main() -> int:
     n_tasks = len(tasks)
     task_ids = [t["task_id"] for t in tasks]
     logging.info("Loaded %d tasks from %s", n_tasks, args.benchmark)
+    reset_run_level_tracker(
+        run_id=str(args.output),
+        cap_usd=args.judge_cost_cap_usd,
+    )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.full_dir.mkdir(parents=True, exist_ok=True)
