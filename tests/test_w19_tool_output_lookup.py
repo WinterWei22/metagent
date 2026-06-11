@@ -128,3 +128,42 @@ def test_overlap_match_uses_auxiliary_scores():
     )
     assert evidence.status == "match"
     assert evidence.source_field == "mummichog_enrichment_result.pathways[0].auxiliary_scores.overlap_size"
+
+
+def test_rounded_numeric_claim_matches_carrier_value():
+    report = {
+        "mummichog_enrichment_result": {
+            "pathways": [
+                {
+                    "pathway_id": "MUMM:galactose_metabolism",
+                    "score": 0.016973363582892195,
+                    "score_type": "p_value",
+                }
+            ]
+        }
+    }
+    evidence = _lookup().lookup_tool_output_evidence(
+        "Mummichog returns MUMM:galactose_metabolism with p-value 0.017",
+        report,
+    )
+    assert evidence.status == "match"
+
+
+def test_rank_claim_allows_one_based_language_for_zero_based_carrier_rank():
+    report = {
+        "mummichog_enrichment_result": {
+            "pathways": [
+                {
+                    "pathway_id": "MUMM:galactose_metabolism",
+                    "rank": 0,
+                    "score": 0.016973363582892195,
+                    "score_type": "p_value",
+                }
+            ]
+        }
+    }
+    evidence = _lookup().lookup_tool_output_evidence(
+        "Mummichog ranks MUMM:galactose_metabolism 1st with p-value 0.017",
+        report,
+    )
+    assert evidence.status == "match"

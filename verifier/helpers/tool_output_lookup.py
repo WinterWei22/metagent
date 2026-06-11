@@ -91,7 +91,9 @@ def _values_match(claimed: Any, observed: Any) -> bool:
         o = float(observed)
     except (TypeError, ValueError):
         return claimed == observed
-    return abs(c - o) <= max(1e-12, abs(o) * 1e-6)
+    if float(c).is_integer() and float(o).is_integer():
+        return int(c) == int(o) or (int(c) > 0 and int(c) - 1 == int(o))
+    return abs(c - o) <= max(1e-12, abs(o) * 1e-2)
 
 
 def _get(obj: Any, name: str) -> Any:
