@@ -641,6 +641,7 @@ def _verify_per_claim_sub6(
     from verifier.layers.llm_judge_sub6 import verify_llm_judge_sub6 as _verify_llm_judge_sub6_default
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
+    from verifier.layers.tool_output_sub6 import verify_tool_output_sub6 as _verify_tool_output_sub6_default
 
     out: list[VerifiedClaim] = []
     judge_cost_tracker = get_run_level_tracker()
@@ -725,6 +726,12 @@ def _verify_per_claim_sub6(
         #     signal_claim = verify_signal_sub6(c, source_report)
         #     if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
         #         verified_claim = signal_claim
+        # [verifier-modify-warning] W19 D3: post-UV ReAct tool-output route.
+        if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+            tool_output_func = globals().get("verify_tool_output_sub6") or _verify_tool_output_sub6_default
+            tool_output_claim = tool_output_func(c_for_trace, source_report)
+            if tool_output_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                verified_claim = tool_output_claim
         # [verifier-modify-warning] W18 D3: post-UV LLM-judge route.
         if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
             judge_func = globals().get("verify_llm_judge_sub6")
