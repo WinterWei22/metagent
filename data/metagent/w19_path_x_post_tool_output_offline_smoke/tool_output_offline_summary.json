@@ -1,0 +1,24 @@
+{
+  "baseline_clean_results": "data/metagent/w18_path_x_post_llm_judge_full63_d5_clean/path_x_full63_results.jsonl",
+  "baseline_total_claims_used": 1140,
+  "counts": {
+    "claims": 708,
+    "contradicted": 13,
+    "missing_full": 0,
+    "supported": 44,
+    "tasks": 59,
+    "tool_hits_tasks": 26,
+    "uv": 651
+  },
+  "full_dump_roots": [
+    "data/metagent/w18_path_x_post_llm_judge_full63_d5/path_x_full",
+    "data/metagent/w18_path_x_post_llm_judge_full63_d5_rerun30/path_x_full"
+  ],
+  "mode": "offline_replay_projection_no_llm",
+  "notes": [
+    "No LLM/API calls were made; cost_usd=0.0.",
+    "Projection applies W19 tool-output layer to final raw claims and carriers from W18 clean tasks.",
+    "This is not a final Path-X rerun metric because original per-claim UV status is not clean JSON in the full dumps."
+  ],
+  "projected_uv_drop_pp_upper_bound": 5.0
+}
