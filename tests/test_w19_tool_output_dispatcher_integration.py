@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from verifier.agent import _verify_per_claim_sub6
 from verifier.schemas import ClaimType, ClaimVerdict, ClassifiedClaim, VerifiedClaim
 
@@ -139,3 +141,44 @@ def test_signal_sub6_catch_all_remains_disabled():
     from verifier.layers.llm_judge_sub6 import SIGNAL_SUB6_CATCH_ALL_ENABLED
 
     assert SIGNAL_SUB6_CATCH_ALL_ENABLED is False
+
+
+def test_tool_output_dispatcher_writes_trace_jsonl(monkeypatch, tmp_path):
+    trace_path = tmp_path / "tool_output_trace.jsonl"
+
+    def fake_existing_uv(claim, source_report):
+        return VerifiedClaim(
+            claim_id=claim.claim_id,
+            claim_text=claim.claim_text,
+            claim_type=claim.claim_type,
+            verdict=ClaimVerdict.UNVERIFIABLE_V0,
+            evidence="existing layer uv",
+            verifier_layer="factual_sub6",
+        )
+
+    monkeypatch.setenv("METAGENT_TOOL_OUTPUT_TRACE_PATH", str(trace_path))
+    monkeypatch.setattr("verifier.layers.factual_sub6.verify_factual_sub6", fake_existing_uv)
+    verified = _verify_per_claim_sub6(
+        [_claim("RaMP ORA produces an FDR of 1.65e-12")],
+        _source_report(),
+        ramp_db_path=None,
+        ramp_conn=None,
+        driver_lookup=None,
+        is_final_iteration=True,
+        iteration=1,
+    )
+    assert verified[0].verdict == ClaimVerdict.SUPPORTED
+    rows = [json.loads(line) for line in trace_path.read_text().splitlines()]
+    assert rows == [
+        {
+            "task_id": "task-1",
+            "iteration": 1,
+            "claim_id": "claim-1",
+            "claim_type": "grounded_claim",
+            "method": "ramp",
+            "status": "match",
+            "verdict": "supported",
+            "source_field": "ramp_enrichment_result.top_pathways[0].fdr",
+            "cost_usd": 0.0,
+        }
+    ]

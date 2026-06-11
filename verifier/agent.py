@@ -728,8 +728,25 @@ def _verify_per_claim_sub6(
         #         verified_claim = signal_claim
         # [verifier-modify-warning] W19 D3: post-UV ReAct tool-output route.
         if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+            from verifier.helpers.tool_output_lookup import lookup_tool_output_evidence
+            from verifier.helpers.tool_output_trace import write_tool_output_trace
+
             tool_output_func = globals().get("verify_tool_output_sub6") or _verify_tool_output_sub6_default
             tool_output_claim = tool_output_func(c_for_trace, source_report)
+            tool_output_trace_path = os.environ.get("METAGENT_TOOL_OUTPUT_TRACE_PATH")
+            if tool_output_trace_path:
+                tool_output_evidence = lookup_tool_output_evidence(c_for_trace.claim_text, source_report)
+                write_tool_output_trace(
+                    path=tool_output_trace_path,
+                    task_id=_source_report_task_id(source_report),
+                    iteration=iteration,
+                    claim_id=c_for_trace.claim_id,
+                    claim_type=c_for_trace.claim_type.value,
+                    method=tool_output_evidence.method,
+                    status=tool_output_evidence.status,
+                    verdict=tool_output_claim.verdict.value,
+                    source_field=tool_output_evidence.source_field,
+                )
             if tool_output_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
                 verified_claim = tool_output_claim
         # [verifier-modify-warning] W18 D3: post-UV LLM-judge route.
@@ -748,3 +765,11 @@ def _verify_per_claim_sub6(
                     verified_claim = judge_claim
         out.append(verified_claim)
     return _stamp_grammar_from_classified(out, classified)
+
+
+def _source_report_task_id(source_report: Any) -> str | None:
+    if isinstance(source_report, dict):
+        value = source_report.get("task_id")
+    else:
+        value = getattr(source_report, "task_id", None)
+    return str(value) if value is not None else None
