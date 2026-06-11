@@ -32,6 +32,8 @@ def test_claim_table_severity_mapping():
     claims = [
         VerifiedClaim(claim_text="u", claim_type=ClaimType.GROUNDED,
                       verdict=ClaimVerdict.UNVERIFIABLE_V0, evidence="u"),
+        VerifiedClaim(claim_text="h", claim_type=ClaimType.GROUNDED,
+                      verdict=ClaimVerdict.NEEDS_HUMAN_REVIEW, evidence="h"),
         VerifiedClaim(claim_text="n", claim_type=ClaimType.GROUNDED,
                       verdict=ClaimVerdict.UNSUPPORTED, evidence="n"),
         VerifiedClaim(claim_text="c", claim_type=ClaimType.GROUNDED,
@@ -41,6 +43,7 @@ def test_claim_table_severity_mapping():
     ]
     table = build_claim_table(claims, pass_id="v2")
     assert [row.severity for row in table.rows] == [
+        "minor",
         "minor",
         "major",
         "critical",

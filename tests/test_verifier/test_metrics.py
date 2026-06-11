@@ -89,6 +89,27 @@ def test_all_unverifiable_confidence_is_low():
     assert metrics.verification_confidence == 0.2
 
 
+def test_needs_human_review_is_separate_non_uv_bucket():
+    metrics = compute_claim_metrics(
+        claims_v1=[],
+        claims_v2=[
+            _vc(ClaimVerdict.SUPPORTED),
+            _vc(ClaimVerdict.NEEDS_HUMAN_REVIEW),
+            _vc(ClaimVerdict.UNVERIFIABLE_V0),
+        ],
+    )
+
+    assert metrics.total_claims == 3
+    assert metrics.supported_claims == 1
+    assert metrics.unverifiable_claims == 1
+    assert metrics.supported_ratio == 1 / 3
+    assert metrics.unverifiable_rate == 1 / 3
+    assert (
+        metrics.per_type_verdict_counts["grounded_claim"]["needs_human_review"]
+        == 1
+    )
+
+
 def test_empty_claims_confidence_is_none():
     metrics = compute_claim_metrics(claims_v1=[], claims_v2=[])
     assert metrics.verification_confidence is None
