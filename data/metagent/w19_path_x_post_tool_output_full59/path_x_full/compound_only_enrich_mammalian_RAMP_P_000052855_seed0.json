@@ -1,0 +1,2545 @@
+{
+  "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+  "iterations": [
+    {
+      "iter_idx": 0,
+      "react_result": {
+        "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+        "iterations": [
+          {
+            "iter_idx": 0,
+            "narrative_json": "{\n  \"narrative_text\": \"The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.\",\n  \"claims\": [\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\",\n      \"evidence_method\": \"run_ramp_enrichment\",\n      \"rank\": 1,\n      \"score\": 7.989698481273704e-16,\n      \"score_type\": \"fdr\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"pathway_name\": \"Steroid hormone biosynthesis\",\n      \"evidence_method\": \"run_metaboanalystr_psea\",\n      \"rank\": 1,\n      \"score\": 8.391e-06,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"MUMM:androgen_and_estrogen_biosynthesis_and_metabolism\",\n      \"pathway_name\": \"Androgen and estrogen biosynthesis and metabolism\",\n      \"evidence_method\": \"run_mummichog\",\n      \"rank\": 1,\n      \"score\": 0.00016805310478111083,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:28689\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16422\",\n      \"compound_name\": \"androst-4-ene-3,17-dione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17347\",\n      \"compound_name\": \"testosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16469\",\n      \"compound_name\": \"17β-estradiol\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17263\",\n      \"compound_name\": \"estrone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B conversions\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C00280\",\n      \"compound_name\": \"androstenedione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B1/B3\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C00951\",\n      \"compound_name\": \"estradiol\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"product\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"substrate\"\n    }\n  ]\n}",
+            "verdict_total": {},
+            "quality": 0,
+            "n_contradicted": 0,
+            "n_unsupported": 0,
+            "n_supported": 0,
+            "n_unverifiable_v0": 0,
+            "n_tool_calls": 8,
+            "n_turns": 4,
+            "force_finalised": false,
+            "feedback_prompt_used": false,
+            "verifier_failed": false,
+            "inner_retry_used": false
+          }
+        ],
+        "final_iter_idx": 0,
+        "final_narrative_json": "{\n  \"narrative_text\": \"The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.\",\n  \"claims\": [\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\",\n      \"evidence_method\": \"run_ramp_enrichment\",\n      \"rank\": 1,\n      \"score\": 7.989698481273704e-16,\n      \"score_type\": \"fdr\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"pathway_name\": \"Steroid hormone biosynthesis\",\n      \"evidence_method\": \"run_metaboanalystr_psea\",\n      \"rank\": 1,\n      \"score\": 8.391e-06,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"MUMM:androgen_and_estrogen_biosynthesis_and_metabolism\",\n      \"pathway_name\": \"Androgen and estrogen biosynthesis and metabolism\",\n      \"evidence_method\": \"run_mummichog\",\n      \"rank\": 1,\n      \"score\": 0.00016805310478111083,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:28689\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16422\",\n      \"compound_name\": \"androst-4-ene-3,17-dione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17347\",\n      \"compound_name\": \"testosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16469\",\n      \"compound_name\": \"17β-estradiol\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17263\",\n      \"compound_name\": \"estrone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B conversions\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C00280\",\n      \"compound_name\": \"androstenedione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B1/B3\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C00951\",\n      \"compound_name\": \"estradiol\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"product\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"substrate\"\n    }\n  ]\n}",
+        "final_claims": [
+          {
+            "claim_type": "PATHWAY_ENRICHMENT",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway",
+            "evidence_method": "run_ramp_enrichment",
+            "rank": 1,
+            "score": 7.989698481273704e-16,
+            "score_type": "fdr"
+          },
+          {
+            "claim_type": "PATHWAY_ENRICHMENT",
+            "pathway_id": "KEGG:hsa00140",
+            "pathway_name": "Steroid hormone biosynthesis",
+            "evidence_method": "run_metaboanalystr_psea",
+            "rank": 1,
+            "score": 8.391e-06,
+            "score_type": "p_value"
+          },
+          {
+            "claim_type": "PATHWAY_ENRICHMENT",
+            "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+            "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+            "evidence_method": "run_mummichog",
+            "rank": 1,
+            "score": 0.00016805310478111083,
+            "score_type": "p_value"
+          },
+          {
+            "claim_type": "PATHWAY_MEMBERSHIP",
+            "compound_id": "CHEBI:28689",
+            "compound_name": "dehydroepiandrosterone",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway"
+          },
+          {
+            "claim_type": "PATHWAY_MEMBERSHIP",
+            "compound_id": "CHEBI:16422",
+            "compound_name": "androst-4-ene-3,17-dione",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway"
+          },
+          {
+            "claim_type": "PATHWAY_MEMBERSHIP",
+            "compound_id": "CHEBI:17347",
+            "compound_name": "testosterone",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway"
+          },
+          {
+            "claim_type": "PATHWAY_MEMBERSHIP",
+            "compound_id": "CHEBI:16469",
+            "compound_name": "17β-estradiol",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway"
+          },
+          {
+            "claim_type": "PATHWAY_MEMBERSHIP",
+            "compound_id": "CHEBI:17263",
+            "compound_name": "estrone",
+            "pathway_id": "WP:WP5368",
+            "pathway_name": "Sulfatase and aromatase pathway"
+          },
+          {
+            "claim_type": "DRIVER_METABOLITE",
+            "compound_id": "KEGG:C01227",
+            "compound_name": "dehydroepiandrosterone",
+            "pathway_id": "WP:WP5368",
+            "signal_compound_ids": [
+              "KEGG:C01227",
+              "KEGG:C00280",
+              "KEGG:C00535",
+              "KEGG:C00468",
+              "KEGG:C00951"
+            ],
+            "enzyme_or_reaction": "CYP19A1 (aromatase) / HSD17B conversions"
+          },
+          {
+            "claim_type": "DRIVER_METABOLITE",
+            "compound_id": "KEGG:C00280",
+            "compound_name": "androstenedione",
+            "pathway_id": "WP:WP5368",
+            "signal_compound_ids": [
+              "KEGG:C01227",
+              "KEGG:C00280",
+              "KEGG:C00535",
+              "KEGG:C00468",
+              "KEGG:C00951"
+            ],
+            "enzyme_or_reaction": "CYP19A1 (aromatase) / HSD17B1/B3"
+          },
+          {
+            "claim_type": "METABOLITE_PATHWAY_LINK",
+            "compound_id": "KEGG:C00951",
+            "compound_name": "estradiol",
+            "pathway_id": "KEGG:hsa00140",
+            "relationship": "product"
+          },
+          {
+            "claim_type": "METABOLITE_PATHWAY_LINK",
+            "compound_id": "KEGG:C01227",
+            "compound_name": "dehydroepiandrosterone",
+            "pathway_id": "KEGG:hsa00140",
+            "relationship": "substrate"
+          }
+        ],
+        "final_narrative_text": "The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.",
+        "final_verdict_total": {},
+        "task_outcome": "normal",
+        "n_feedback_iterations": 0,
+        "elapsed_seconds": 185.77773427963257,
+        "llm_model": "MiniMax-M2.7",
+        "metabolite_count": 8,
+        "n_distinct_tools_called": 6,
+        "tools_called": [
+          "query_pathway_members",
+          "run_fella_rwr",
+          "run_metaboanalystr_psea",
+          "run_mummichog",
+          "run_ramp_enrichment",
+          "run_sspa_ora"
+        ],
+        "tool_calls_trace": [
+          {
+            "turn": 1,
+            "name": "run_ramp_enrichment",
+            "tool_call_id": "chatcmpl-tool-a76ef4d6b2d7701e",
+            "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_ramp_enrichment",
+              "_n_pathways": 15,
+              "_n_compound_refs": 69,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "WP:WP5368",
+                  "pathway_name": "Sulfatase and aromatase pathway",
+                  "score": 7.989698481273704e-16,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "SMPDB:SMP00356",
+                  "pathway_name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+                  "score": 6.44105615292815e-15,
+                  "rank": 1
+                },
+                {
+                  "pathway_id": "SMPDB:SMP00068",
+                  "pathway_name": "Androgen and Estrogen Metabolism",
+                  "score": 6.44105615292815e-15,
+                  "rank": 2
+                },
+                {
+                  "pathway_id": "KEGG:map00150",
+                  "pathway_name": "Androgen and Estrogen Metabolism",
+                  "score": 6.44105615292815e-15,
+                  "rank": 3
+                },
+                {
+                  "pathway_id": "SMPDB:SMP00565",
+                  "pathway_name": "Aromatase deficiency",
+                  "score": 6.44105615292815e-15,
+                  "rank": 4
+                }
+              ]
+            }
+          },
+          {
+            "turn": 1,
+            "name": "run_mummichog",
+            "tool_call_id": "chatcmpl-tool-865e341b561f475b",
+            "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_mummichog",
+              "_n_pathways": 15,
+              "_n_compound_refs": 49,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+                  "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+                  "score": 0.00016805310478111083,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "MUMM:c21_steroid_hormone_biosynthesis_and_metabolism",
+                  "pathway_name": "C21-steroid hormone biosynthesis and metabolism",
+                  "score": 0.00016805310478111083,
+                  "rank": 1
+                },
+                {
+                  "pathway_id": "MUMM:aspartate_and_asparagine_metabolism",
+                  "pathway_name": "Aspartate and asparagine metabolism",
+                  "score": 0.03302243508948828,
+                  "rank": 2
+                },
+                {
+                  "pathway_id": "MUMM:tryptophan_metabolism",
+                  "pathway_name": "Tryptophan metabolism",
+                  "score": 0.040584824804638264,
+                  "rank": 3
+                },
+                {
+                  "pathway_id": "MUMM:tyrosine_metabolism",
+                  "pathway_name": "Tyrosine metabolism",
+                  "score": 0.04066885135702882,
+                  "rank": 4
+                }
+              ]
+            }
+          },
+          {
+            "turn": 1,
+            "name": "run_fella_rwr",
+            "tool_call_id": "chatcmpl-tool-8e076f79a588deb2",
+            "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+            "cached": false,
+            "payload_summary": {
+              "error": "wrapper_runtime_error",
+              "fallback_suggested": "FELLA R subprocess errored at runtime (currently 'argument is of length zero' on every sub6b-v3 task — W9 D4 stretch target); skip the network/diffusion paradigm and rely on ORA + mummichog",
+              "_tool_name": "run_fella_rwr"
+            }
+          },
+          {
+            "turn": 2,
+            "name": "run_sspa_ora",
+            "tool_call_id": "chatcmpl-tool-989d8993f0772e80",
+            "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+            "cached": false,
+            "payload_summary": {
+              "error": "wrapper_unavailable",
+              "fallback_suggested": "use run_ramp_enrichment (multi-DB ORA, broader namespace coverage) or run_metaboanalystr_psea (KEGG-specific ORA) instead",
+              "_tool_name": "run_sspa_ora"
+            }
+          },
+          {
+            "turn": 2,
+            "name": "run_metaboanalystr_psea",
+            "tool_call_id": "chatcmpl-tool-aabd98269a918a0e",
+            "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+            "cached": false,
+            "payload_summary": {
+              "ok": true,
+              "_tool_name": "run_metaboanalystr_psea",
+              "_n_pathways": 2,
+              "_n_compound_refs": 6,
+              "_pathway_peek": [
+                {
+                  "pathway_id": "KEGG:hsa00140",
+                  "pathway_name": "hsa00140",
+                  "score": 8.391e-06,
+                  "rank": 0
+                },
+                {
+                  "pathway_id": "KEGG:hsa00380",
+                  "pathway_name": "hsa00380",
+                  "score": 0.1672,
+                  "rank": 1
+                }
+              ]
+            }
+          },
+          {
+            "turn": 3,
+            "name": "query_pathway_members",
+            "tool_call_id": "chatcmpl-tool-b22188fa0f6dfe36",
+            "arguments": "{\"pathway_id\": \"WP:WP5368\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'WP', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          },
+          {
+            "turn": 3,
+            "name": "query_pathway_members",
+            "tool_call_id": "chatcmpl-tool-97e8c64b6f242d1f",
+            "arguments": "{\"pathway_id\": \"KEGG:hsa00140\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          },
+          {
+            "turn": 3,
+            "name": "query_pathway_members",
+            "tool_call_id": "chatcmpl-tool-b42c7d6c4316cfc2",
+            "arguments": "{\"pathway_id\": \"KEGG:map00150\"}",
+            "cached": false,
+            "payload_summary": {
+              "error": "data_not_available",
+              "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+              "_tool_name": "query_pathway_members"
+            }
+          }
+        ],
+        "enrichment_carriers": {
+          "mummichog_enrichment_result": {
+            "method": "mummichog",
+            "pathway_db": "mummichog_mfn",
+            "pathways": [
+              {
+                "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+                "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+                "pathway_id_native": "Androgen and estrogen biosynthesis and metabolism",
+                "pathway_db": "kegg",
+                "score": 0.00016805310478111083,
+                "score_type": "p_value",
+                "rank": 0,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16422",
+                    "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                    "display_name": "androst-4-ene-3,17-dione",
+                    "chebi_id": "CHEBI:16422",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00280",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:17263",
+                    "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                    "display_name": "estrone",
+                    "chebi_id": "CHEBI:17263",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00468",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:17347",
+                    "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                    "display_name": "testosterone",
+                    "chebi_id": "CHEBI:17347",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00535",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:15994",
+                    "inchikey": "RAJWOBJTTGJROA-WZNAKSSCSA-N",
+                    "display_name": "5α-androstane-3,17-dione",
+                    "chebi_id": "CHEBI:15994",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00674",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:16469",
+                    "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                    "display_name": "17β-estradiol",
+                    "chebi_id": "CHEBI:16469",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00951",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:28689",
+                    "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                    "display_name": "dehydroepiandrosterone",
+                    "chebi_id": "CHEBI:28689",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01227",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:16985",
+                    "inchikey": "RAJWOBJTTGJROA-QJISAEMRSA-N",
+                    "display_name": "5β-androstane-3,17-dione",
+                    "chebi_id": "CHEBI:16985",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03772",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:27771",
+                    "inchikey": "QQIVKFZWLZJXJT-DNKQKWOHSA-N",
+                    "display_name": "16α-hydroxydehydroepiandrosterone",
+                    "chebi_id": "CHEBI:27771",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05139",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:27974",
+                    "inchikey": "PROQIPRRNZUXQM-ZXXIGWHRSA-N",
+                    "display_name": "estriol",
+                    "chebi_id": "CHEBI:27974",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05141",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:798",
+                    "inchikey": "YLTCTXBDDHSLCS-KOUJMVCDSA-N",
+                    "display_name": "19-hydroxytestosterone",
+                    "chebi_id": "CHEBI:798",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05294",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:28744",
+                    "inchikey": "DILDHNKDVHLEQB-XSSYPUMDSA-N",
+                    "display_name": "2-hydroxy-17β-estradiol",
+                    "chebi_id": "CHEBI:28744",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05301",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:34477",
+                    "inchikey": "XSEGWEUVSZRCBC-ZVBLRVHNSA-N",
+                    "display_name": "6β-hydroxytestosterone",
+                    "chebi_id": "CHEBI:34477",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C14497",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:81471",
+                    "inchikey": "OLPSAOWBSPXZEA-JIEICEMKSA-N",
+                    "display_name": "7α-hydroxydehydroepiandrosterone",
+                    "chebi_id": "CHEBI:81471",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C18045",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:81481",
+                    "inchikey": "YQDZGFAYWGWSJK-SLMGBJJTSA-N",
+                    "display_name": "11β-hydroxytestosterone",
+                    "chebi_id": "CHEBI:81481",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C18075",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 11,
+                "n_metabolites_input": 11,
+                "auxiliary_scores": {
+                  "overlap_size": 11.0,
+                  "pathway_size": 11.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:c21_steroid_hormone_biosynthesis_and_metabolism",
+                "pathway_name": "C21-steroid hormone biosynthesis and metabolism",
+                "pathway_id_native": "C21-steroid hormone biosynthesis and metabolism",
+                "pathway_db": "kegg",
+                "score": 0.00016805310478111083,
+                "score_type": "p_value",
+                "rank": 1,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16422",
+                    "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                    "display_name": "androst-4-ene-3,17-dione",
+                    "chebi_id": "CHEBI:16422",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00280",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:17263",
+                    "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                    "display_name": "estrone",
+                    "chebi_id": "CHEBI:17263",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00468",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:17347",
+                    "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                    "display_name": "testosterone",
+                    "chebi_id": "CHEBI:17347",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00535",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:15994",
+                    "inchikey": "RAJWOBJTTGJROA-WZNAKSSCSA-N",
+                    "display_name": "5α-androstane-3,17-dione",
+                    "chebi_id": "CHEBI:15994",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00674",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:16469",
+                    "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                    "display_name": "17β-estradiol",
+                    "chebi_id": "CHEBI:16469",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00951",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:28689",
+                    "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                    "display_name": "dehydroepiandrosterone",
+                    "chebi_id": "CHEBI:28689",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01227",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:16985",
+                    "inchikey": "RAJWOBJTTGJROA-QJISAEMRSA-N",
+                    "display_name": "5β-androstane-3,17-dione",
+                    "chebi_id": "CHEBI:16985",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03772",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:27771",
+                    "inchikey": "QQIVKFZWLZJXJT-DNKQKWOHSA-N",
+                    "display_name": "16α-hydroxydehydroepiandrosterone",
+                    "chebi_id": "CHEBI:27771",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05139",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:27974",
+                    "inchikey": "PROQIPRRNZUXQM-ZXXIGWHRSA-N",
+                    "display_name": "estriol",
+                    "chebi_id": "CHEBI:27974",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05141",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:798",
+                    "inchikey": "YLTCTXBDDHSLCS-KOUJMVCDSA-N",
+                    "display_name": "19-hydroxytestosterone",
+                    "chebi_id": "CHEBI:798",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05294",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:28744",
+                    "inchikey": "DILDHNKDVHLEQB-XSSYPUMDSA-N",
+                    "display_name": "2-hydroxy-17β-estradiol",
+                    "chebi_id": "CHEBI:28744",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05301",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:34477",
+                    "inchikey": "XSEGWEUVSZRCBC-ZVBLRVHNSA-N",
+                    "display_name": "6β-hydroxytestosterone",
+                    "chebi_id": "CHEBI:34477",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C14497",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:81471",
+                    "inchikey": "OLPSAOWBSPXZEA-JIEICEMKSA-N",
+                    "display_name": "7α-hydroxydehydroepiandrosterone",
+                    "chebi_id": "CHEBI:81471",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C18045",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:81481",
+                    "inchikey": "YQDZGFAYWGWSJK-SLMGBJJTSA-N",
+                    "display_name": "11β-hydroxytestosterone",
+                    "chebi_id": "CHEBI:81481",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C18075",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 11,
+                "n_metabolites_input": 11,
+                "auxiliary_scores": {
+                  "overlap_size": 11.0,
+                  "pathway_size": 11.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:aspartate_and_asparagine_metabolism",
+                "pathway_name": "Aspartate and asparagine metabolism",
+                "pathway_id_native": "Aspartate and asparagine metabolism",
+                "pathway_db": "kegg",
+                "score": 0.03302243508948828,
+                "score_type": "p_value",
+                "rank": 2,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16724",
+                    "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                    "display_name": "4-hydroxybutyrate",
+                    "chebi_id": "CHEBI:16724",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00989",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:10983",
+                    "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                    "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:10983",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01089",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:11047",
+                    "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                    "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:11047",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03197",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:1148",
+                    "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                    "display_name": "2-hydroxybutyric acid",
+                    "chebi_id": "CHEBI:1148",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05984",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:37373",
+                    "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                    "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                    "chebi_id": "CHEBI:37373",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C06001",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 2,
+                "n_metabolites_input": 2,
+                "auxiliary_scores": {
+                  "overlap_size": 2.0,
+                  "pathway_size": 2.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:tryptophan_metabolism",
+                "pathway_name": "Tryptophan metabolism",
+                "pathway_id_native": "Tryptophan metabolism",
+                "pathway_db": "kegg",
+                "score": 0.040584824804638264,
+                "score_type": "p_value",
+                "rank": 3,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:18086",
+                    "inchikey": "WHOOUMGHGSPMGR-UHFFFAOYSA-N",
+                    "display_name": "indol-3-ylacetaldehyde",
+                    "chebi_id": "CHEBI:18086",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00637",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 4,
+                "n_metabolites_input": 3,
+                "auxiliary_scores": {
+                  "overlap_size": 3.0,
+                  "pathway_size": 4.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:tyrosine_metabolism",
+                "pathway_name": "Tyrosine metabolism",
+                "pathway_id_native": "Tyrosine metabolism",
+                "pathway_db": "kegg",
+                "score": 0.04066885135702882,
+                "score_type": "p_value",
+                "rank": 4,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 1,
+                "n_metabolites_input": 1,
+                "auxiliary_scores": {
+                  "overlap_size": 1.0,
+                  "pathway_size": 1.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:propanoate_metabolism",
+                "pathway_name": "Propanoate metabolism",
+                "pathway_id_native": "Propanoate metabolism",
+                "pathway_db": "kegg",
+                "score": 0.042853541719183263,
+                "score_type": "p_value",
+                "rank": 5,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16724",
+                    "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                    "display_name": "4-hydroxybutyrate",
+                    "chebi_id": "CHEBI:16724",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00989",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:10983",
+                    "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                    "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:10983",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01089",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:11047",
+                    "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                    "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:11047",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03197",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:1148",
+                    "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                    "display_name": "2-hydroxybutyric acid",
+                    "chebi_id": "CHEBI:1148",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05984",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:37373",
+                    "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                    "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                    "chebi_id": "CHEBI:37373",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C06001",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 3,
+                "n_metabolites_input": 2,
+                "auxiliary_scores": {
+                  "overlap_size": 2.0,
+                  "pathway_size": 3.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:valine_leucine_and_isoleucine_degradation",
+                "pathway_name": "Valine, leucine and isoleucine degradation",
+                "pathway_id_native": "Valine, leucine and isoleucine degradation",
+                "pathway_db": "kegg",
+                "score": 0.042853541719183263,
+                "score_type": "p_value",
+                "rank": 6,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16724",
+                    "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                    "display_name": "4-hydroxybutyrate",
+                    "chebi_id": "CHEBI:16724",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00989",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:10983",
+                    "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                    "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:10983",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01089",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:11047",
+                    "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                    "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:11047",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03197",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:1148",
+                    "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                    "display_name": "2-hydroxybutyric acid",
+                    "chebi_id": "CHEBI:1148",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05984",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:37373",
+                    "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                    "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                    "chebi_id": "CHEBI:37373",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C06001",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 3,
+                "n_metabolites_input": 2,
+                "auxiliary_scores": {
+                  "overlap_size": 2.0,
+                  "pathway_size": 3.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:butanoate_metabolism",
+                "pathway_name": "Butanoate metabolism",
+                "pathway_id_native": "Butanoate metabolism",
+                "pathway_db": "kegg",
+                "score": 0.042853541719183263,
+                "score_type": "p_value",
+                "rank": 7,
+                "metabolites_hit": [
+                  {
+                    "primary_id": "CHEBI:16724",
+                    "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                    "display_name": "4-hydroxybutyrate",
+                    "chebi_id": "CHEBI:16724",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C00989",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:10983",
+                    "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                    "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:10983",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C01089",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:11047",
+                    "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                    "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                    "chebi_id": "CHEBI:11047",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C03197",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:1148",
+                    "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                    "display_name": "2-hydroxybutyric acid",
+                    "chebi_id": "CHEBI:1148",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C05984",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  },
+                  {
+                    "primary_id": "CHEBI:37373",
+                    "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                    "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                    "chebi_id": "CHEBI:37373",
+                    "lipidmaps_id": null,
+                    "hmdb_id": null,
+                    "kegg_compound_id": "KEGG:C06001",
+                    "pubchem_cid": null,
+                    "metanetx_id": null
+                  }
+                ],
+                "n_metabolites_in_pathway": 3,
+                "n_metabolites_input": 2,
+                "auxiliary_scores": {
+                  "overlap_size": 2.0,
+                  "pathway_size": 3.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:vitamin_d3_cholecalciferol_metabolism",
+                "pathway_name": "Vitamin D3 (cholecalciferol) metabolism",
+                "pathway_id_native": "Vitamin D3 (cholecalciferol) metabolism",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 8,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:hyaluronan_metabolism",
+                "pathway_name": "Hyaluronan Metabolism",
+                "pathway_id_native": "Hyaluronan Metabolism",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 9,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:n_glycan_biosynthesis",
+                "pathway_name": "N-Glycan biosynthesis",
+                "pathway_id_native": "N-Glycan biosynthesis",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 10,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:glycolysis_and_gluconeogenesis",
+                "pathway_name": "Glycolysis and Gluconeogenesis",
+                "pathway_id_native": "Glycolysis and Gluconeogenesis",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 11,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:glycosphingolipid_biosynthesis_ganglioseries",
+                "pathway_name": "Glycosphingolipid biosynthesis - ganglioseries",
+                "pathway_id_native": "Glycosphingolipid biosynthesis - ganglioseries",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 12,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:r_group_synthesis",
+                "pathway_name": "R Group Synthesis",
+                "pathway_id_native": "R Group Synthesis",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 13,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              },
+              {
+                "pathway_id": "MUMM:c5_branched_dibasic_acid_metabolism",
+                "pathway_name": "C5-Branched dibasic acid metabolism",
+                "pathway_id_native": "C5-Branched dibasic acid metabolism",
+                "pathway_db": "kegg",
+                "score": 0.04688681623392992,
+                "score_type": "p_value",
+                "rank": 14,
+                "metabolites_hit": [],
+                "n_metabolites_in_pathway": 0,
+                "n_metabolites_input": 0,
+                "auxiliary_scores": {
+                  "overlap_size": 0.0,
+                  "pathway_size": 0.0
+                }
+              }
+            ],
+            "parameters": {
+              "mode": "positive",
+              "ref_db": "mfn",
+              "permutations": 100,
+              "instrument_ppm": 10,
+              "force_primary_ion": true
+            },
+            "tool_version": "mummichog-2.7.0",
+            "db_release": "human_mfn_mfn",
+            "n_input": 266,
+            "n_input_resolved": 0,
+            "wall_time_sec": 11.877806901931763,
+            "schema_version": "concordmet_v0.3.1",
+            "tautomer_canonicalized": false,
+            "chebi_canonicalized": true,
+            "notes": "mummichog v2.7.0 + human_mfn; ref_db=mfn"
+          },
+          "metaboanalystr_enrichment_result": {
+            "psea": {
+              "method": "psea_marx",
+              "pathway_db": "kegg",
+              "pathways": [
+                {
+                  "pathway_id": "KEGG:hsa00140",
+                  "pathway_name": "hsa00140",
+                  "pathway_id_native": "hsa00140",
+                  "pathway_db": "kegg",
+                  "score": 8.391e-06,
+                  "score_type": "p_value",
+                  "rank": 0,
+                  "metabolites_hit": [
+                    {
+                      "primary_id": "CHEBI:28689",
+                      "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                      "display_name": "dehydroepiandrosterone",
+                      "chebi_id": "CHEBI:28689",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C01227",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    },
+                    {
+                      "primary_id": "CHEBI:17347",
+                      "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                      "display_name": "testosterone",
+                      "chebi_id": "CHEBI:17347",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C00535",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    },
+                    {
+                      "primary_id": "CHEBI:16422",
+                      "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                      "display_name": "androst-4-ene-3,17-dione",
+                      "chebi_id": "CHEBI:16422",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C00280",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    },
+                    {
+                      "primary_id": "CHEBI:17263",
+                      "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                      "display_name": "estrone",
+                      "chebi_id": "CHEBI:17263",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C00468",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    },
+                    {
+                      "primary_id": "CHEBI:16469",
+                      "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                      "display_name": "17β-estradiol",
+                      "chebi_id": "CHEBI:16469",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C00951",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    }
+                  ],
+                  "n_metabolites_in_pathway": 87,
+                  "n_metabolites_input": 5,
+                  "auxiliary_scores": {
+                    "expected": 0.3825,
+                    "p_value_raw": 8.391e-06
+                  }
+                },
+                {
+                  "pathway_id": "KEGG:hsa00380",
+                  "pathway_name": "hsa00380",
+                  "pathway_id_native": "hsa00380",
+                  "pathway_db": "kegg",
+                  "score": 0.1672,
+                  "score_type": "p_value",
+                  "rank": 1,
+                  "metabolites_hit": [
+                    {
+                      "primary_id": "CHEBI:18086",
+                      "inchikey": "WHOOUMGHGSPMGR-UHFFFAOYSA-N",
+                      "display_name": "indol-3-ylacetaldehyde",
+                      "chebi_id": "CHEBI:18086",
+                      "lipidmaps_id": null,
+                      "hmdb_id": null,
+                      "kegg_compound_id": "KEGG:C00637",
+                      "pubchem_cid": null,
+                      "metanetx_id": null
+                    }
+                  ],
+                  "n_metabolites_in_pathway": 41,
+                  "n_metabolites_input": 1,
+                  "auxiliary_scores": {
+                    "expected": 0.1803,
+                    "p_value_raw": 0.1672
+                  }
+                }
+              ],
+              "parameters": {
+                "library": "kegg",
+                "id_type": "hmdb"
+              },
+              "tool_version": "4.2.0",
+              "db_release": "kegg",
+              "n_input": 7,
+              "n_input_resolved": 7,
+              "wall_time_sec": 18.156985759735107,
+              "schema_version": "concordmet_v0.3.1",
+              "tautomer_canonicalized": false,
+              "chebi_canonicalized": true,
+              "notes": "metaboanalystr metaboanalystr_psea lib=kegg"
+            }
+          }
+        },
+        "error": null,
+        "rollback_reason": null,
+        "termination_reason": "normal_finalise"
+      },
+      "verification": {
+        "ok": true,
+        "verdict": "trace_id='concord_w10_d4.compound_only_enrich_mammalian_RAMP_P_000052855_seed0.iter0.verify' source_llm_output='The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.' rewritten_output='The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.' claims_v1=[] claims_v2=[] claim_tables=[VerifiedClaimTable(pass_id='v1', rows=[]), VerifiedClaimTable(pass_id='v2', rows=[])] claim_metrics=ClaimMetrics(total_claims=0, supported_claims=0, contradicted_claims=0, unsupported_claims=0, unverifiable_claims=0, error_claims=0, dropped_by_grammar=0, supported_ratio=None, contradiction_rate=None, unverifiable_rate=None, claim_precision=None, rewrite_improvement=None, per_type_verdict_counts={}, per_subtype_verdict_counts={}, per_candidate_support_counts={}, peak_claim_coverage=None, tool_call_counts={}, verification_confidence=None, confidence_components={}) dropped_claims=[] task_outcome=<TaskOutcome.EMPTY_SYSTEM_FAILURE: 'empty_system_failure'> overall_verdict='failed' verification_warnings=[\"VERIFICATION_PARSE_FAILED at stage1: Stage 1 extractor produced no parseable JSON list. First 200 chars of response: ''\"] llm_call_count=1 generated_at=datetime.datetime(2026, 6, 12, 2, 32, 0, 41714, tzinfo=datetime.timezone.utc)",
+        "error": null,
+        "n_supported": 0,
+        "n_unsupported": 0,
+        "n_contradicted": 0,
+        "n_unverifiable_v0": 0
+      }
+    }
+  ],
+  "final_iter_idx": 0,
+  "n_feedback_iterations": 0,
+  "rollback_reason": null,
+  "final_react_result": {
+    "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+    "iterations": [
+      {
+        "iter_idx": 0,
+        "narrative_json": "{\n  \"narrative_text\": \"The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.\",\n  \"claims\": [\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\",\n      \"evidence_method\": \"run_ramp_enrichment\",\n      \"rank\": 1,\n      \"score\": 7.989698481273704e-16,\n      \"score_type\": \"fdr\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"pathway_name\": \"Steroid hormone biosynthesis\",\n      \"evidence_method\": \"run_metaboanalystr_psea\",\n      \"rank\": 1,\n      \"score\": 8.391e-06,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"MUMM:androgen_and_estrogen_biosynthesis_and_metabolism\",\n      \"pathway_name\": \"Androgen and estrogen biosynthesis and metabolism\",\n      \"evidence_method\": \"run_mummichog\",\n      \"rank\": 1,\n      \"score\": 0.00016805310478111083,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:28689\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16422\",\n      \"compound_name\": \"androst-4-ene-3,17-dione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17347\",\n      \"compound_name\": \"testosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16469\",\n      \"compound_name\": \"17β-estradiol\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17263\",\n      \"compound_name\": \"estrone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B conversions\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C00280\",\n      \"compound_name\": \"androstenedione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B1/B3\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C00951\",\n      \"compound_name\": \"estradiol\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"product\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"substrate\"\n    }\n  ]\n}",
+        "verdict_total": {},
+        "quality": 0,
+        "n_contradicted": 0,
+        "n_unsupported": 0,
+        "n_supported": 0,
+        "n_unverifiable_v0": 0,
+        "n_tool_calls": 8,
+        "n_turns": 4,
+        "force_finalised": false,
+        "feedback_prompt_used": false,
+        "verifier_failed": false,
+        "inner_retry_used": false
+      }
+    ],
+    "final_iter_idx": 0,
+    "final_narrative_json": "{\n  \"narrative_text\": \"The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.\",\n  \"claims\": [\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\",\n      \"evidence_method\": \"run_ramp_enrichment\",\n      \"rank\": 1,\n      \"score\": 7.989698481273704e-16,\n      \"score_type\": \"fdr\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"pathway_name\": \"Steroid hormone biosynthesis\",\n      \"evidence_method\": \"run_metaboanalystr_psea\",\n      \"rank\": 1,\n      \"score\": 8.391e-06,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_ENRICHMENT\",\n      \"pathway_id\": \"MUMM:androgen_and_estrogen_biosynthesis_and_metabolism\",\n      \"pathway_name\": \"Androgen and estrogen biosynthesis and metabolism\",\n      \"evidence_method\": \"run_mummichog\",\n      \"rank\": 1,\n      \"score\": 0.00016805310478111083,\n      \"score_type\": \"p_value\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:28689\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16422\",\n      \"compound_name\": \"androst-4-ene-3,17-dione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17347\",\n      \"compound_name\": \"testosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:16469\",\n      \"compound_name\": \"17β-estradiol\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"PATHWAY_MEMBERSHIP\",\n      \"compound_id\": \"CHEBI:17263\",\n      \"compound_name\": \"estrone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"pathway_name\": \"Sulfatase and aromatase pathway\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B conversions\"\n    },\n    {\n      \"claim_type\": \"DRIVER_METABOLITE\",\n      \"compound_id\": \"KEGG:C00280\",\n      \"compound_name\": \"androstenedione\",\n      \"pathway_id\": \"WP:WP5368\",\n      \"signal_compound_ids\": [\"KEGG:C01227\", \"KEGG:C00280\", \"KEGG:C00535\", \"KEGG:C00468\", \"KEGG:C00951\"],\n      \"enzyme_or_reaction\": \"CYP19A1 (aromatase) / HSD17B1/B3\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C00951\",\n      \"compound_name\": \"estradiol\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"product\"\n    },\n    {\n      \"claim_type\": \"METABOLITE_PATHWAY_LINK\",\n      \"compound_id\": \"KEGG:C01227\",\n      \"compound_name\": \"dehydroepiandrosterone\",\n      \"pathway_id\": \"KEGG:hsa00140\",\n      \"relationship\": \"substrate\"\n    }\n  ]\n}",
+    "final_claims": [
+      {
+        "claim_type": "PATHWAY_ENRICHMENT",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway",
+        "evidence_method": "run_ramp_enrichment",
+        "rank": 1,
+        "score": 7.989698481273704e-16,
+        "score_type": "fdr"
+      },
+      {
+        "claim_type": "PATHWAY_ENRICHMENT",
+        "pathway_id": "KEGG:hsa00140",
+        "pathway_name": "Steroid hormone biosynthesis",
+        "evidence_method": "run_metaboanalystr_psea",
+        "rank": 1,
+        "score": 8.391e-06,
+        "score_type": "p_value"
+      },
+      {
+        "claim_type": "PATHWAY_ENRICHMENT",
+        "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+        "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+        "evidence_method": "run_mummichog",
+        "rank": 1,
+        "score": 0.00016805310478111083,
+        "score_type": "p_value"
+      },
+      {
+        "claim_type": "PATHWAY_MEMBERSHIP",
+        "compound_id": "CHEBI:28689",
+        "compound_name": "dehydroepiandrosterone",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway"
+      },
+      {
+        "claim_type": "PATHWAY_MEMBERSHIP",
+        "compound_id": "CHEBI:16422",
+        "compound_name": "androst-4-ene-3,17-dione",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway"
+      },
+      {
+        "claim_type": "PATHWAY_MEMBERSHIP",
+        "compound_id": "CHEBI:17347",
+        "compound_name": "testosterone",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway"
+      },
+      {
+        "claim_type": "PATHWAY_MEMBERSHIP",
+        "compound_id": "CHEBI:16469",
+        "compound_name": "17β-estradiol",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway"
+      },
+      {
+        "claim_type": "PATHWAY_MEMBERSHIP",
+        "compound_id": "CHEBI:17263",
+        "compound_name": "estrone",
+        "pathway_id": "WP:WP5368",
+        "pathway_name": "Sulfatase and aromatase pathway"
+      },
+      {
+        "claim_type": "DRIVER_METABOLITE",
+        "compound_id": "KEGG:C01227",
+        "compound_name": "dehydroepiandrosterone",
+        "pathway_id": "WP:WP5368",
+        "signal_compound_ids": [
+          "KEGG:C01227",
+          "KEGG:C00280",
+          "KEGG:C00535",
+          "KEGG:C00468",
+          "KEGG:C00951"
+        ],
+        "enzyme_or_reaction": "CYP19A1 (aromatase) / HSD17B conversions"
+      },
+      {
+        "claim_type": "DRIVER_METABOLITE",
+        "compound_id": "KEGG:C00280",
+        "compound_name": "androstenedione",
+        "pathway_id": "WP:WP5368",
+        "signal_compound_ids": [
+          "KEGG:C01227",
+          "KEGG:C00280",
+          "KEGG:C00535",
+          "KEGG:C00468",
+          "KEGG:C00951"
+        ],
+        "enzyme_or_reaction": "CYP19A1 (aromatase) / HSD17B1/B3"
+      },
+      {
+        "claim_type": "METABOLITE_PATHWAY_LINK",
+        "compound_id": "KEGG:C00951",
+        "compound_name": "estradiol",
+        "pathway_id": "KEGG:hsa00140",
+        "relationship": "product"
+      },
+      {
+        "claim_type": "METABOLITE_PATHWAY_LINK",
+        "compound_id": "KEGG:C01227",
+        "compound_name": "dehydroepiandrosterone",
+        "pathway_id": "KEGG:hsa00140",
+        "relationship": "substrate"
+      }
+    ],
+    "final_narrative_text": "The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.",
+    "final_verdict_total": {},
+    "task_outcome": "normal",
+    "n_feedback_iterations": 0,
+    "elapsed_seconds": 185.77773427963257,
+    "llm_model": "MiniMax-M2.7",
+    "metabolite_count": 8,
+    "n_distinct_tools_called": 6,
+    "tools_called": [
+      "query_pathway_members",
+      "run_fella_rwr",
+      "run_metaboanalystr_psea",
+      "run_mummichog",
+      "run_ramp_enrichment",
+      "run_sspa_ora"
+    ],
+    "tool_calls_trace": [
+      {
+        "turn": 1,
+        "name": "run_ramp_enrichment",
+        "tool_call_id": "chatcmpl-tool-a76ef4d6b2d7701e",
+        "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_ramp_enrichment",
+          "_n_pathways": 15,
+          "_n_compound_refs": 69,
+          "_pathway_peek": [
+            {
+              "pathway_id": "WP:WP5368",
+              "pathway_name": "Sulfatase and aromatase pathway",
+              "score": 7.989698481273704e-16,
+              "rank": 0
+            },
+            {
+              "pathway_id": "SMPDB:SMP00356",
+              "pathway_name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+              "score": 6.44105615292815e-15,
+              "rank": 1
+            },
+            {
+              "pathway_id": "SMPDB:SMP00068",
+              "pathway_name": "Androgen and Estrogen Metabolism",
+              "score": 6.44105615292815e-15,
+              "rank": 2
+            },
+            {
+              "pathway_id": "KEGG:map00150",
+              "pathway_name": "Androgen and Estrogen Metabolism",
+              "score": 6.44105615292815e-15,
+              "rank": 3
+            },
+            {
+              "pathway_id": "SMPDB:SMP00565",
+              "pathway_name": "Aromatase deficiency",
+              "score": 6.44105615292815e-15,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      {
+        "turn": 1,
+        "name": "run_mummichog",
+        "tool_call_id": "chatcmpl-tool-865e341b561f475b",
+        "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_mummichog",
+          "_n_pathways": 15,
+          "_n_compound_refs": 49,
+          "_pathway_peek": [
+            {
+              "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+              "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+              "score": 0.00016805310478111083,
+              "rank": 0
+            },
+            {
+              "pathway_id": "MUMM:c21_steroid_hormone_biosynthesis_and_metabolism",
+              "pathway_name": "C21-steroid hormone biosynthesis and metabolism",
+              "score": 0.00016805310478111083,
+              "rank": 1
+            },
+            {
+              "pathway_id": "MUMM:aspartate_and_asparagine_metabolism",
+              "pathway_name": "Aspartate and asparagine metabolism",
+              "score": 0.03302243508948828,
+              "rank": 2
+            },
+            {
+              "pathway_id": "MUMM:tryptophan_metabolism",
+              "pathway_name": "Tryptophan metabolism",
+              "score": 0.040584824804638264,
+              "rank": 3
+            },
+            {
+              "pathway_id": "MUMM:tyrosine_metabolism",
+              "pathway_name": "Tyrosine metabolism",
+              "score": 0.04066885135702882,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      {
+        "turn": 1,
+        "name": "run_fella_rwr",
+        "tool_call_id": "chatcmpl-tool-8e076f79a588deb2",
+        "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+        "cached": false,
+        "payload_summary": {
+          "error": "wrapper_runtime_error",
+          "fallback_suggested": "FELLA R subprocess errored at runtime (currently 'argument is of length zero' on every sub6b-v3 task — W9 D4 stretch target); skip the network/diffusion paradigm and rely on ORA + mummichog",
+          "_tool_name": "run_fella_rwr"
+        }
+      },
+      {
+        "turn": 2,
+        "name": "run_sspa_ora",
+        "tool_call_id": "chatcmpl-tool-989d8993f0772e80",
+        "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+        "cached": false,
+        "payload_summary": {
+          "error": "wrapper_unavailable",
+          "fallback_suggested": "use run_ramp_enrichment (multi-DB ORA, broader namespace coverage) or run_metaboanalystr_psea (KEGG-specific ORA) instead",
+          "_tool_name": "run_sspa_ora"
+        }
+      },
+      {
+        "turn": 2,
+        "name": "run_metaboanalystr_psea",
+        "tool_call_id": "chatcmpl-tool-aabd98269a918a0e",
+        "arguments": "{\"compound_ids\": [\"C01227\", \"C00637\", \"C00280\", \"C05377\", \"C06001\", \"C00951\", \"C00468\", \"C00535\"], \"top_n\": 15}",
+        "cached": false,
+        "payload_summary": {
+          "ok": true,
+          "_tool_name": "run_metaboanalystr_psea",
+          "_n_pathways": 2,
+          "_n_compound_refs": 6,
+          "_pathway_peek": [
+            {
+              "pathway_id": "KEGG:hsa00140",
+              "pathway_name": "hsa00140",
+              "score": 8.391e-06,
+              "rank": 0
+            },
+            {
+              "pathway_id": "KEGG:hsa00380",
+              "pathway_name": "hsa00380",
+              "score": 0.1672,
+              "rank": 1
+            }
+          ]
+        }
+      },
+      {
+        "turn": 3,
+        "name": "query_pathway_members",
+        "tool_call_id": "chatcmpl-tool-b22188fa0f6dfe36",
+        "arguments": "{\"pathway_id\": \"WP:WP5368\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'WP', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      },
+      {
+        "turn": 3,
+        "name": "query_pathway_members",
+        "tool_call_id": "chatcmpl-tool-97e8c64b6f242d1f",
+        "arguments": "{\"pathway_id\": \"KEGG:hsa00140\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      },
+      {
+        "turn": 3,
+        "name": "query_pathway_members",
+        "tool_call_id": "chatcmpl-tool-b42c7d6c4316cfc2",
+        "arguments": "{\"pathway_id\": \"KEGG:map00150\"}",
+        "cached": false,
+        "payload_summary": {
+          "error": "data_not_available",
+          "fallback_suggested": "pathway_members.sqlite only indexes HUMAN1 + RECON2; for namespace 'KEGG', inspect the `metabolites_hit` list inside an EnrichmentResult (e.g. from run_ramp_enrichment) — it carries the method-specific compound roster",
+          "_tool_name": "query_pathway_members"
+        }
+      }
+    ],
+    "enrichment_carriers": {
+      "mummichog_enrichment_result": {
+        "method": "mummichog",
+        "pathway_db": "mummichog_mfn",
+        "pathways": [
+          {
+            "pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+            "pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+            "pathway_id_native": "Androgen and estrogen biosynthesis and metabolism",
+            "pathway_db": "kegg",
+            "score": 0.00016805310478111083,
+            "score_type": "p_value",
+            "rank": 0,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16422",
+                "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                "display_name": "androst-4-ene-3,17-dione",
+                "chebi_id": "CHEBI:16422",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00280",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:17263",
+                "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                "display_name": "estrone",
+                "chebi_id": "CHEBI:17263",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00468",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:17347",
+                "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                "display_name": "testosterone",
+                "chebi_id": "CHEBI:17347",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00535",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:15994",
+                "inchikey": "RAJWOBJTTGJROA-WZNAKSSCSA-N",
+                "display_name": "5α-androstane-3,17-dione",
+                "chebi_id": "CHEBI:15994",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00674",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:16469",
+                "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                "display_name": "17β-estradiol",
+                "chebi_id": "CHEBI:16469",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00951",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:28689",
+                "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                "display_name": "dehydroepiandrosterone",
+                "chebi_id": "CHEBI:28689",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01227",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:16985",
+                "inchikey": "RAJWOBJTTGJROA-QJISAEMRSA-N",
+                "display_name": "5β-androstane-3,17-dione",
+                "chebi_id": "CHEBI:16985",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03772",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:27771",
+                "inchikey": "QQIVKFZWLZJXJT-DNKQKWOHSA-N",
+                "display_name": "16α-hydroxydehydroepiandrosterone",
+                "chebi_id": "CHEBI:27771",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05139",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:27974",
+                "inchikey": "PROQIPRRNZUXQM-ZXXIGWHRSA-N",
+                "display_name": "estriol",
+                "chebi_id": "CHEBI:27974",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05141",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:798",
+                "inchikey": "YLTCTXBDDHSLCS-KOUJMVCDSA-N",
+                "display_name": "19-hydroxytestosterone",
+                "chebi_id": "CHEBI:798",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05294",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:28744",
+                "inchikey": "DILDHNKDVHLEQB-XSSYPUMDSA-N",
+                "display_name": "2-hydroxy-17β-estradiol",
+                "chebi_id": "CHEBI:28744",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05301",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:34477",
+                "inchikey": "XSEGWEUVSZRCBC-ZVBLRVHNSA-N",
+                "display_name": "6β-hydroxytestosterone",
+                "chebi_id": "CHEBI:34477",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C14497",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:81471",
+                "inchikey": "OLPSAOWBSPXZEA-JIEICEMKSA-N",
+                "display_name": "7α-hydroxydehydroepiandrosterone",
+                "chebi_id": "CHEBI:81471",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C18045",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:81481",
+                "inchikey": "YQDZGFAYWGWSJK-SLMGBJJTSA-N",
+                "display_name": "11β-hydroxytestosterone",
+                "chebi_id": "CHEBI:81481",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C18075",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 11,
+            "n_metabolites_input": 11,
+            "auxiliary_scores": {
+              "overlap_size": 11.0,
+              "pathway_size": 11.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:c21_steroid_hormone_biosynthesis_and_metabolism",
+            "pathway_name": "C21-steroid hormone biosynthesis and metabolism",
+            "pathway_id_native": "C21-steroid hormone biosynthesis and metabolism",
+            "pathway_db": "kegg",
+            "score": 0.00016805310478111083,
+            "score_type": "p_value",
+            "rank": 1,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16422",
+                "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                "display_name": "androst-4-ene-3,17-dione",
+                "chebi_id": "CHEBI:16422",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00280",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:17263",
+                "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                "display_name": "estrone",
+                "chebi_id": "CHEBI:17263",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00468",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:17347",
+                "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                "display_name": "testosterone",
+                "chebi_id": "CHEBI:17347",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00535",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:15994",
+                "inchikey": "RAJWOBJTTGJROA-WZNAKSSCSA-N",
+                "display_name": "5α-androstane-3,17-dione",
+                "chebi_id": "CHEBI:15994",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00674",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:16469",
+                "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                "display_name": "17β-estradiol",
+                "chebi_id": "CHEBI:16469",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00951",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:28689",
+                "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                "display_name": "dehydroepiandrosterone",
+                "chebi_id": "CHEBI:28689",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01227",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:16985",
+                "inchikey": "RAJWOBJTTGJROA-QJISAEMRSA-N",
+                "display_name": "5β-androstane-3,17-dione",
+                "chebi_id": "CHEBI:16985",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03772",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:27771",
+                "inchikey": "QQIVKFZWLZJXJT-DNKQKWOHSA-N",
+                "display_name": "16α-hydroxydehydroepiandrosterone",
+                "chebi_id": "CHEBI:27771",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05139",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:27974",
+                "inchikey": "PROQIPRRNZUXQM-ZXXIGWHRSA-N",
+                "display_name": "estriol",
+                "chebi_id": "CHEBI:27974",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05141",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:798",
+                "inchikey": "YLTCTXBDDHSLCS-KOUJMVCDSA-N",
+                "display_name": "19-hydroxytestosterone",
+                "chebi_id": "CHEBI:798",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05294",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:28744",
+                "inchikey": "DILDHNKDVHLEQB-XSSYPUMDSA-N",
+                "display_name": "2-hydroxy-17β-estradiol",
+                "chebi_id": "CHEBI:28744",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05301",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:34477",
+                "inchikey": "XSEGWEUVSZRCBC-ZVBLRVHNSA-N",
+                "display_name": "6β-hydroxytestosterone",
+                "chebi_id": "CHEBI:34477",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C14497",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:81471",
+                "inchikey": "OLPSAOWBSPXZEA-JIEICEMKSA-N",
+                "display_name": "7α-hydroxydehydroepiandrosterone",
+                "chebi_id": "CHEBI:81471",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C18045",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:81481",
+                "inchikey": "YQDZGFAYWGWSJK-SLMGBJJTSA-N",
+                "display_name": "11β-hydroxytestosterone",
+                "chebi_id": "CHEBI:81481",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C18075",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 11,
+            "n_metabolites_input": 11,
+            "auxiliary_scores": {
+              "overlap_size": 11.0,
+              "pathway_size": 11.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:aspartate_and_asparagine_metabolism",
+            "pathway_name": "Aspartate and asparagine metabolism",
+            "pathway_id_native": "Aspartate and asparagine metabolism",
+            "pathway_db": "kegg",
+            "score": 0.03302243508948828,
+            "score_type": "p_value",
+            "rank": 2,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16724",
+                "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                "display_name": "4-hydroxybutyrate",
+                "chebi_id": "CHEBI:16724",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00989",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:10983",
+                "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:10983",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01089",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:11047",
+                "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:11047",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03197",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:1148",
+                "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                "display_name": "2-hydroxybutyric acid",
+                "chebi_id": "CHEBI:1148",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05984",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:37373",
+                "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                "chebi_id": "CHEBI:37373",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C06001",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 2,
+            "n_metabolites_input": 2,
+            "auxiliary_scores": {
+              "overlap_size": 2.0,
+              "pathway_size": 2.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:tryptophan_metabolism",
+            "pathway_name": "Tryptophan metabolism",
+            "pathway_id_native": "Tryptophan metabolism",
+            "pathway_db": "kegg",
+            "score": 0.040584824804638264,
+            "score_type": "p_value",
+            "rank": 3,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:18086",
+                "inchikey": "WHOOUMGHGSPMGR-UHFFFAOYSA-N",
+                "display_name": "indol-3-ylacetaldehyde",
+                "chebi_id": "CHEBI:18086",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00637",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 4,
+            "n_metabolites_input": 3,
+            "auxiliary_scores": {
+              "overlap_size": 3.0,
+              "pathway_size": 4.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:tyrosine_metabolism",
+            "pathway_name": "Tyrosine metabolism",
+            "pathway_id_native": "Tyrosine metabolism",
+            "pathway_db": "kegg",
+            "score": 0.04066885135702882,
+            "score_type": "p_value",
+            "rank": 4,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 1,
+            "n_metabolites_input": 1,
+            "auxiliary_scores": {
+              "overlap_size": 1.0,
+              "pathway_size": 1.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:propanoate_metabolism",
+            "pathway_name": "Propanoate metabolism",
+            "pathway_id_native": "Propanoate metabolism",
+            "pathway_db": "kegg",
+            "score": 0.042853541719183263,
+            "score_type": "p_value",
+            "rank": 5,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16724",
+                "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                "display_name": "4-hydroxybutyrate",
+                "chebi_id": "CHEBI:16724",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00989",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:10983",
+                "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:10983",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01089",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:11047",
+                "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:11047",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03197",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:1148",
+                "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                "display_name": "2-hydroxybutyric acid",
+                "chebi_id": "CHEBI:1148",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05984",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:37373",
+                "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                "chebi_id": "CHEBI:37373",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C06001",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 3,
+            "n_metabolites_input": 2,
+            "auxiliary_scores": {
+              "overlap_size": 2.0,
+              "pathway_size": 3.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:valine_leucine_and_isoleucine_degradation",
+            "pathway_name": "Valine, leucine and isoleucine degradation",
+            "pathway_id_native": "Valine, leucine and isoleucine degradation",
+            "pathway_db": "kegg",
+            "score": 0.042853541719183263,
+            "score_type": "p_value",
+            "rank": 6,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16724",
+                "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                "display_name": "4-hydroxybutyrate",
+                "chebi_id": "CHEBI:16724",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00989",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:10983",
+                "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:10983",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01089",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:11047",
+                "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:11047",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03197",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:1148",
+                "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                "display_name": "2-hydroxybutyric acid",
+                "chebi_id": "CHEBI:1148",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05984",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:37373",
+                "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                "chebi_id": "CHEBI:37373",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C06001",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 3,
+            "n_metabolites_input": 2,
+            "auxiliary_scores": {
+              "overlap_size": 2.0,
+              "pathway_size": 3.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:butanoate_metabolism",
+            "pathway_name": "Butanoate metabolism",
+            "pathway_id_native": "Butanoate metabolism",
+            "pathway_db": "kegg",
+            "score": 0.042853541719183263,
+            "score_type": "p_value",
+            "rank": 7,
+            "metabolites_hit": [
+              {
+                "primary_id": "CHEBI:16724",
+                "inchikey": "SJZRECIVHVDYJC-UHFFFAOYSA-M",
+                "display_name": "4-hydroxybutyrate",
+                "chebi_id": "CHEBI:16724",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C00989",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:10983",
+                "inchikey": "WHBMMWSBFZVSSR-GSVOUGTGSA-M",
+                "display_name": "(<i>R</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:10983",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C01089",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:11047",
+                "inchikey": "WHBMMWSBFZVSSR-VKHMYHEASA-M",
+                "display_name": "(<i>S</i>)-3-hydroxybutyrate",
+                "chebi_id": "CHEBI:11047",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C03197",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:1148",
+                "inchikey": "AFENDNXGAFYKQO-UHFFFAOYSA-N",
+                "display_name": "2-hydroxybutyric acid",
+                "chebi_id": "CHEBI:1148",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C05984",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              },
+              {
+                "primary_id": "CHEBI:37373",
+                "inchikey": "DBXBTMSZEOQQDU-VKHMYHEASA-N",
+                "display_name": "(<i>S</i>)-3-hydroxyisobutyric acid",
+                "chebi_id": "CHEBI:37373",
+                "lipidmaps_id": null,
+                "hmdb_id": null,
+                "kegg_compound_id": "KEGG:C06001",
+                "pubchem_cid": null,
+                "metanetx_id": null
+              }
+            ],
+            "n_metabolites_in_pathway": 3,
+            "n_metabolites_input": 2,
+            "auxiliary_scores": {
+              "overlap_size": 2.0,
+              "pathway_size": 3.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:vitamin_d3_cholecalciferol_metabolism",
+            "pathway_name": "Vitamin D3 (cholecalciferol) metabolism",
+            "pathway_id_native": "Vitamin D3 (cholecalciferol) metabolism",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 8,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:hyaluronan_metabolism",
+            "pathway_name": "Hyaluronan Metabolism",
+            "pathway_id_native": "Hyaluronan Metabolism",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 9,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:n_glycan_biosynthesis",
+            "pathway_name": "N-Glycan biosynthesis",
+            "pathway_id_native": "N-Glycan biosynthesis",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 10,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:glycolysis_and_gluconeogenesis",
+            "pathway_name": "Glycolysis and Gluconeogenesis",
+            "pathway_id_native": "Glycolysis and Gluconeogenesis",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 11,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:glycosphingolipid_biosynthesis_ganglioseries",
+            "pathway_name": "Glycosphingolipid biosynthesis - ganglioseries",
+            "pathway_id_native": "Glycosphingolipid biosynthesis - ganglioseries",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 12,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:r_group_synthesis",
+            "pathway_name": "R Group Synthesis",
+            "pathway_id_native": "R Group Synthesis",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 13,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          },
+          {
+            "pathway_id": "MUMM:c5_branched_dibasic_acid_metabolism",
+            "pathway_name": "C5-Branched dibasic acid metabolism",
+            "pathway_id_native": "C5-Branched dibasic acid metabolism",
+            "pathway_db": "kegg",
+            "score": 0.04688681623392992,
+            "score_type": "p_value",
+            "rank": 14,
+            "metabolites_hit": [],
+            "n_metabolites_in_pathway": 0,
+            "n_metabolites_input": 0,
+            "auxiliary_scores": {
+              "overlap_size": 0.0,
+              "pathway_size": 0.0
+            }
+          }
+        ],
+        "parameters": {
+          "mode": "positive",
+          "ref_db": "mfn",
+          "permutations": 100,
+          "instrument_ppm": 10,
+          "force_primary_ion": true
+        },
+        "tool_version": "mummichog-2.7.0",
+        "db_release": "human_mfn_mfn",
+        "n_input": 266,
+        "n_input_resolved": 0,
+        "wall_time_sec": 11.877806901931763,
+        "schema_version": "concordmet_v0.3.1",
+        "tautomer_canonicalized": false,
+        "chebi_canonicalized": true,
+        "notes": "mummichog v2.7.0 + human_mfn; ref_db=mfn"
+      },
+      "metaboanalystr_enrichment_result": {
+        "psea": {
+          "method": "psea_marx",
+          "pathway_db": "kegg",
+          "pathways": [
+            {
+              "pathway_id": "KEGG:hsa00140",
+              "pathway_name": "hsa00140",
+              "pathway_id_native": "hsa00140",
+              "pathway_db": "kegg",
+              "score": 8.391e-06,
+              "score_type": "p_value",
+              "rank": 0,
+              "metabolites_hit": [
+                {
+                  "primary_id": "CHEBI:28689",
+                  "inchikey": "FMGSKLZLMKYGDP-USOAJAOKSA-N",
+                  "display_name": "dehydroepiandrosterone",
+                  "chebi_id": "CHEBI:28689",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C01227",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                },
+                {
+                  "primary_id": "CHEBI:17347",
+                  "inchikey": "MUMGGOZAMZWBJJ-DYKIIFRCSA-N",
+                  "display_name": "testosterone",
+                  "chebi_id": "CHEBI:17347",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C00535",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                },
+                {
+                  "primary_id": "CHEBI:16422",
+                  "inchikey": "AEMFNILZOJDQLW-QAGGRKNESA-N",
+                  "display_name": "androst-4-ene-3,17-dione",
+                  "chebi_id": "CHEBI:16422",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C00280",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                },
+                {
+                  "primary_id": "CHEBI:17263",
+                  "inchikey": "DNXHEGUUPJUMQT-CBZIJGRNSA-N",
+                  "display_name": "estrone",
+                  "chebi_id": "CHEBI:17263",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C00468",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                },
+                {
+                  "primary_id": "CHEBI:16469",
+                  "inchikey": "VOXZDWNPVJITMN-ZBRFXRBCSA-N",
+                  "display_name": "17β-estradiol",
+                  "chebi_id": "CHEBI:16469",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C00951",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                }
+              ],
+              "n_metabolites_in_pathway": 87,
+              "n_metabolites_input": 5,
+              "auxiliary_scores": {
+                "expected": 0.3825,
+                "p_value_raw": 8.391e-06
+              }
+            },
+            {
+              "pathway_id": "KEGG:hsa00380",
+              "pathway_name": "hsa00380",
+              "pathway_id_native": "hsa00380",
+              "pathway_db": "kegg",
+              "score": 0.1672,
+              "score_type": "p_value",
+              "rank": 1,
+              "metabolites_hit": [
+                {
+                  "primary_id": "CHEBI:18086",
+                  "inchikey": "WHOOUMGHGSPMGR-UHFFFAOYSA-N",
+                  "display_name": "indol-3-ylacetaldehyde",
+                  "chebi_id": "CHEBI:18086",
+                  "lipidmaps_id": null,
+                  "hmdb_id": null,
+                  "kegg_compound_id": "KEGG:C00637",
+                  "pubchem_cid": null,
+                  "metanetx_id": null
+                }
+              ],
+              "n_metabolites_in_pathway": 41,
+              "n_metabolites_input": 1,
+              "auxiliary_scores": {
+                "expected": 0.1803,
+                "p_value_raw": 0.1672
+              }
+            }
+          ],
+          "parameters": {
+            "library": "kegg",
+            "id_type": "hmdb"
+          },
+          "tool_version": "4.2.0",
+          "db_release": "kegg",
+          "n_input": 7,
+          "n_input_resolved": 7,
+          "wall_time_sec": 18.156985759735107,
+          "schema_version": "concordmet_v0.3.1",
+          "tautomer_canonicalized": false,
+          "chebi_canonicalized": true,
+          "notes": "metaboanalystr metaboanalystr_psea lib=kegg"
+        }
+      }
+    },
+    "error": null,
+    "rollback_reason": null,
+    "termination_reason": "normal_finalise"
+  },
+  "final_verdict": {
+    "ok": true,
+    "verdict": "trace_id='concord_w10_d4.compound_only_enrich_mammalian_RAMP_P_000052855_seed0.iter0.verify' source_llm_output='The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.' rewritten_output='The differential metabolome is dominated by steroid hormone biosynthesis and interconversion, with convergent evidence from three independent paradigms (RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and mummichog m/z-network analysis). Five C19/C18 steroid intermediates are the primary driver metabolites: dehydroepiandrosterone (KEGG:C01227), androstenedione (KEGG:C00280), testosterone (KEGG:C00535), estrone (KEGG:C00468), and estradiol (KEGG:C00951). These five compounds achieve a top-ranked hit across every tool — RaMP ORA reports the Sulfatase and aromatase pathway (WP:WP5368, FDR 7.99×10⁻¹⁶, 5/14 pathway members) and the Androgen and Estrogen Metabolism KEGG map (map00150, FDR 6.44×10⁻¹⁵, 5/27); MetaboAnalystR PSEA confirms steroid hormone biosynthesis (KEGG:hsa00140, p=8.39×10⁻⁶, 5/87); mummichog reports androgen and estrogen biosynthesis and metabolism (MUMM:androgen_and_estrogen_biosynthesis_and_metabolism, p=1.68×10⁻⁴, 11/11 network nodes). The consistent 5-compound overlap across all methods points to a coordinated perturbation of the aromatase (CYP19A1) and 17β-HSD axis. Three peripheral compounds — indoleacetaldehyde (tryptophan metabolism), menadione (no enrichment), and (S)-3-hydroxyisobutyric acid (valine/propanoate metabolism) — appear at marginal significance and likely reflect secondary metabolic consequences of the primary steroid imbalance.' claims_v1=[] claims_v2=[] claim_tables=[VerifiedClaimTable(pass_id='v1', rows=[]), VerifiedClaimTable(pass_id='v2', rows=[])] claim_metrics=ClaimMetrics(total_claims=0, supported_claims=0, contradicted_claims=0, unsupported_claims=0, unverifiable_claims=0, error_claims=0, dropped_by_grammar=0, supported_ratio=None, contradiction_rate=None, unverifiable_rate=None, claim_precision=None, rewrite_improvement=None, per_type_verdict_counts={}, per_subtype_verdict_counts={}, per_candidate_support_counts={}, peak_claim_coverage=None, tool_call_counts={}, verification_confidence=None, confidence_components={}) dropped_claims=[] task_outcome=<TaskOutcome.EMPTY_SYSTEM_FAILURE: 'empty_system_failure'> overall_verdict='failed' verification_warnings=[\"VERIFICATION_PARSE_FAILED at stage1: Stage 1 extractor produced no parseable JSON list. First 200 chars of response: ''\"] llm_call_count=1 generated_at=datetime.datetime(2026, 6, 12, 2, 32, 0, 41714, tzinfo=datetime.timezone.utc)",
+    "error": null,
+    "n_supported": 0,
+    "n_unsupported": 0,
+    "n_contradicted": 0,
+    "n_unverifiable_v0": 0
+  }
+}

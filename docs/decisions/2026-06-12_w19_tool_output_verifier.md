@@ -18,7 +18,7 @@ The initial KEGG REST audit found only 10 strict claims out of 624 W18 residual 
 
 ## D4 Phase 1 result
 
-The 5-task real Path-X smoke completed successfully but stopped before full-59.
+The 5-task real Path-X smoke completed successfully and initially stopped before full-59 because attribution was ambiguous. The user then explicitly approved full-59 as a system rerun.
 
 - 5 / 5 tasks valid.
 - 0 crashes.
@@ -35,11 +35,31 @@ The apparent UV drop passes the numeric smoke threshold, but attribution fails: 
 
 Because the approval file required stopping on any hard-gate ambiguity, full-59 was not run.
 
+## Full-59 result
+
+Full-59 was subsequently run after explicit user approval.
+
+- 59 / 59 valid tasks.
+- 0 crashes.
+- 0 iter-2 triggers.
+- Wall time: 125.8 min.
+- Actual MiniMax cost from JSONL token counts: $6.4428.
+- W19 D4 cumulative real-run cost including 5-task smoke: $6.9563.
+- W18 clean UV rate: 36.86%.
+- W19 full-59 UV rate: 42.12%.
+- UV change: -5.26pp drop, i.e. UV increased.
+- W18 pathway bridge: 52 / 59 = 88.1%.
+- W19 pathway bridge: 51 / 59 = 86.4%.
+- Final-iteration W19 trace: 14 supported, 6 contradicted, 362 unverifiable_v0.
+
+Decision: W19 is BELOW-TARGET. The layer is technically valid and cheap, but the full system rerun did not lower UV.
+
 ## Lessons
 
 - Helper-level trace tests are insufficient; the dispatcher must prove it writes trace rows in real routing.
 - Direct tool-output verification is high precision but low recall when final narratives do not preserve numeric tool-output claims.
 - Rerun metrics must be separated from layer-attributable metrics.
+- A full rerun can expose the opposite of a 5-task smoke signal; use the full result for close-out if both exist.
 - Rank claims need explicit one-based/zero-based tolerance.
 - Numeric p-value/FDR claims need rounding tolerance to avoid false CONTRADICTED verdicts.
 
@@ -54,8 +74,8 @@ Because the approval file required stopping on any hard-gate ambiguity, full-59 
 
 ## Progress Plain Summary
 
-W19 的方向从 KEGG 改成先查 ReAct 自己工具输出,这个决策是合理的,因为当时看到的上限更高。但真实小跑后发现最终答案里很少留下这种可查的数字句子。
+W19 的方向从 KEGG 改成先查 ReAct 自己工具输出,这个决策当时有依据。但完整 59 个任务跑完后,UV 没降,反而升了。
 
 ## Next Plain Summary
 
-所以 W19 现在适合部分收尾,不要把它包装成已经成功降 UV。W20 更应该处理那些这层完全查不到的剩余 claim,而不是继续扩大一个命中很少的查表层。
+所以 W19 应该按 below-target 收尾,不要包装成成功。W20 更应该处理这层查不到的剩余 claim,而不是继续扩大一个命中很少的查表层。

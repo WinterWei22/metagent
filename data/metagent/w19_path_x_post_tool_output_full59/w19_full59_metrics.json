@@ -1,0 +1,58 @@
+{
+  "cost": {
+    "calls": 924,
+    "completion_tokens": 2431295,
+    "cost_usd": 6.4428,
+    "errors": 0,
+    "prompt_tokens": 11750829
+  },
+  "trace_all_verdicts": {
+    "contradicted": 12,
+    "supported": 26,
+    "unverifiable_v0": 661
+  },
+  "trace_final_methods": {
+    "None": 361,
+    "metaboanalystr": 3,
+    "mummichog": 14,
+    "ramp": 4
+  },
+  "trace_final_status": {
+    "absent": 1,
+    "match": 14,
+    "mismatch": 6,
+    "unparsed": 361
+  },
+  "trace_final_verdicts": {
+    "contradicted": 6,
+    "supported": 14,
+    "unverifiable_v0": 362
+  },
+  "uv_drop_pp": -5.26,
+  "w18": {
+    "contradicted": 44,
+    "crash": 0,
+    "denom": 1850,
+    "iter2": 0,
+    "pathway_accuracy_pct": 88.1,
+    "pathway_bridge_count": 52,
+    "supported": 698,
+    "unsupported": 426,
+    "uv": 682,
+    "uv_rate_pct": 36.86,
+    "valid": 59
+  },
+  "w19": {
+    "contradicted": 45,
+    "crash": 0,
+    "denom": 2011,
+    "iter2": 0,
+    "pathway_accuracy_pct": 86.4,
+    "pathway_bridge_count": 51,
+    "supported": 706,
+    "unsupported": 413,
+    "uv": 847,
+    "uv_rate_pct": 42.12,
+    "valid": 59
+  }
+}
