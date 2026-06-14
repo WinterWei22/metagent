@@ -1,0 +1,25 @@
+{
+  "n_tasks": 59,
+  "n_crash": 0,
+  "n_valid": 59,
+  "by_iter_outcome": {
+    "normal": 98
+  },
+  "early_exit_iter0": 20,
+  "n_feedback_iter1": 39,
+  "n_feedback_iter2": 0,
+  "rollback_total": 8,
+  "rollback_feedback_made_it_worse": 8,
+  "rollback_iter2_degraded": 0,
+  "framework_signal_bridge_in_iters": 51,
+  "framework_signal_bridge_lost_to_rollback": 24,
+  "framework_signal_best_ne_final": 10,
+  "tool_call_max_distribution": {
+    "max": 21,
+    "p95": 18.0,
+    "median": 10.0,
+    "n_over_25": 0
+  },
+  "mean_wall_seconds_per_task": 190.6362696785038,
+  "total_wall_seconds": 15227.477605819702
+}

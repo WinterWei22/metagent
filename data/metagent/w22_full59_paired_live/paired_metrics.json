@@ -1,0 +1,67 @@
+{
+  "arms": {
+    "prose": {
+      "contradicted_rate_honest": 0.046341,
+      "dropped": 0,
+      "needs_human_review_rate_honest": 0.0,
+      "source_claims": 410,
+      "supported_rate_honest": 0.365854,
+      "tasks": 59,
+      "unlanded_rate_honest": 0.295122,
+      "unsupported_rate_honest": 0.292683,
+      "uv_rate_honest": 0.295122,
+      "verdict_counts": {
+        "contradicted": 19,
+        "supported": 150,
+        "unsupported": 120,
+        "unverifiable_v0": 121
+      },
+      "verified_claims": 410
+    },
+    "structured_method_aware": {
+      "contradicted_rate_honest": 0.022147,
+      "dropped": 70,
+      "needs_human_review_rate_honest": 0.0,
+      "source_claims": 587,
+      "supported_rate_honest": 0.58092,
+      "tasks": 59,
+      "unlanded_rate_honest": 0.231687,
+      "unsupported_rate_honest": 0.052811,
+      "uv_rate_honest": 0.112436,
+      "verdict_counts": {
+        "contradicted": 13,
+        "supported": 341,
+        "unsupported": 31,
+        "unverifiable_v0": 66
+      },
+      "verified_claims": 451
+    }
+  },
+  "comparison": {
+    "supported_gain_pp_structured_minus_prose": 21.51,
+    "unlanded_change_pp_structured_minus_prose": -6.34,
+    "uv_change_pp_structured_minus_prose": -18.27
+  },
+  "input": {
+    "actual_cost_usd": 3.386362,
+    "cached_tokens": 5649172,
+    "completion_tokens": 748862,
+    "cost_rate": "$0.30/M prompt + $1.20/M completion",
+    "live_dump_dir": "data/metagent/w22_full59_paired_live/path_x_full",
+    "llm_errors": 0,
+    "llm_log": "logs/concord/w22_full59_paired_live.jsonl",
+    "llm_rows": 573,
+    "models": [
+      "MiniMax-M2.7-highspeed"
+    ],
+    "prompt_tokens": 8292424,
+    "tasks": 59,
+    "total_tokens": 9041286
+  },
+  "per_task_delta": {
+    "mean_supported_gain_pp": 19.08,
+    "mean_unlanded_change_pp": -4.72,
+    "tasks_with_supported_gain": 40,
+    "tasks_with_supported_loss": 17
+  }
+}
