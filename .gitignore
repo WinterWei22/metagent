@@ -62,3 +62,6 @@ conversation/
 # Scratch / working notes (not version-controlled)
 /record_0610.md
 /project_overview/
+
+# Generated result reports (not version-controlled; regeneratable from runs)
+reports/
