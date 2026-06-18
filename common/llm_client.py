@@ -31,17 +31,16 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 MINIMAX_BASE_URL = "https://api.minimaxi.com/v1"
-_DEFAULT_MINIMAX_MODEL = "MiniMax-M2.7"
+_DEFAULT_MINIMAX_MODEL = "MiniMax-M2.7-highspeed"
 
-# Provider switch (env-driven). Default is the historical MiniMax path so
-# every existing test/runner stays bit-identical. Set
-# `METAGENT_LLM_PROVIDER=openai` to route via an OpenAI-compatible endpoint
-# (real OpenAI, viviai.cc relay, Azure OAI, etc.).
-PROVIDER = (os.environ.get("METAGENT_LLM_PROVIDER") or "minimax").strip().lower()
+# Provider switch (env-driven). The active project default is the
+# OpenAI-compatible relay route; set `METAGENT_LLM_PROVIDER=minimax` to use
+# MiniMax explicitly.
+PROVIDER = (os.environ.get("METAGENT_LLM_PROVIDER") or "openai").strip().lower()
 
 # OpenAI-compat config (only consulted when PROVIDER=='openai').
 _OPENAI_BASE_URL = (
-    os.environ.get("METAGENT_OPENAI_BASE_URL") or "https://api.openai.com/v1"
+    os.environ.get("METAGENT_OPENAI_BASE_URL") or "https://api.viviai.cc/v1"
 ).rstrip("/")
 _OPENAI_DEFAULT_MODEL = os.environ.get("METAGENT_OPENAI_MODEL") or "gpt-5.5"
 
@@ -52,6 +51,16 @@ DEFAULT_MODEL = (
 # Use a per-provider default; runtime callers can still pass max_tokens
 # explicitly to override.
 DEFAULT_MAX_TOKENS = 16_384 if PROVIDER == "openai" else 127_900
+
+
+def _runtime_provider(provider: str | None = None) -> str:
+    return (provider or os.environ.get("METAGENT_LLM_PROVIDER") or PROVIDER).strip().lower()
+
+
+def _runtime_default_model(provider: str) -> str:
+    if provider == "openai":
+        return os.environ.get("METAGENT_OPENAI_MODEL") or _OPENAI_DEFAULT_MODEL
+    return os.environ.get("METAGENT_MINIMAX_MODEL") or _DEFAULT_MINIMAX_MODEL
 
 # ---------------------------------------------------------------------------
 # Call logging
@@ -308,7 +317,7 @@ def chat(
     *,
     temperature: float = 0.0,
     max_tokens: int | None = None,
-    model: str = DEFAULT_MODEL,
+    model: str | None = None,
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
@@ -353,7 +362,7 @@ def chat_raw(
     *,
     temperature: float = 0.0,
     max_tokens: int | None = None,
-    model: str = DEFAULT_MODEL,
+    model: str | None = None,
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,
@@ -378,7 +387,9 @@ def chat_raw(
     so unit tests that inject mock failures fail-fast and remain
     deterministic.
     """
-    active_provider = (provider or PROVIDER).strip().lower()
+    active_provider = _runtime_provider(provider)
+    if model is None:
+        model = _runtime_default_model(active_provider)
     if max_tokens is None:
         max_tokens = 16_384 if active_provider == "openai" else DEFAULT_MAX_TOKENS
     if max_retries is None:
@@ -627,7 +638,7 @@ def chat_with_tools(
     tool_choice: str | dict = "auto",
     temperature: float = 0.0,
     max_tokens: int | None = None,
-    model: str = DEFAULT_MODEL,
+    model: str | None = None,
     provider: str | None = None,
     trace_id: str | None = None,
     caller: str | None = None,

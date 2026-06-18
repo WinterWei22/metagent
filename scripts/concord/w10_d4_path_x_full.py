@@ -14,7 +14,7 @@ Differences from W9 D5 driver:
   - Output dir:          data/concord/w10_d4_path_x_full/
   - LLM call log:        logs/concord/w10_d4_path_x.jsonl
   - Terminal verdict:    "W10 D4" framing
-Everything else (K=10 concurrent, MiniMax-M2.7, max_react_turns=8,
+Everything else (K=10 concurrent, MiniMax-M2.7-highspeed, max_react_turns=8,
 max_feedback_iters=2, benchmark md5) is identical to W9 D5.
 
 W10 prompt stop-conditions (D4 spec):
@@ -182,7 +182,7 @@ def _aggregate_token_usage(llm_log: Path, task_ids: list[str]) -> dict[str, Any]
         i = max(0, min(len(xs) - 1, int(round(q * (len(xs) - 1)))))
         return int(xs[i])
 
-    saturate_threshold = 120_000  # MiniMax-M2.7 ~128k tokens; flag ≥120k
+    saturate_threshold = 120_000  # MiniMax-M2.7-highspeed ~128k tokens; flag ≥120k
     n_saturate = sum(1 for t in totals_list if t >= saturate_threshold)
     return {
         "present": True,
@@ -221,8 +221,8 @@ def main() -> int:
     parser.add_argument("--k-concurrent", type=int, default=_DEFAULT_K)
     parser.add_argument("--limit", type=int, default=None,
                          help="Cap task count for smoke testing the driver.")
-    parser.add_argument("--llm", default="MiniMax-M2.7")
-    parser.add_argument("--provider", default="minimax")
+    parser.add_argument("--llm", default="gpt-5.5")
+    parser.add_argument("--provider", default="openai")
     parser.add_argument("--max-react-turns", type=int, default=8)
     parser.add_argument("--max-feedback-iters", type=int, default=2)
     parser.add_argument("--judge-cost-cap-usd", type=float, default=2.0)

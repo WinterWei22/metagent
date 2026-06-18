@@ -107,11 +107,11 @@ def main() -> int:
         help="W8 ceiling = 8",
     )
     parser.add_argument(
-        "--model", default="MiniMax-M2.7",
+        "--model", default="gpt-5.5",
         help="LLM model name passed to common.llm_client",
     )
     parser.add_argument(
-        "--provider", default="minimax",
+        "--provider", default="openai",
         help="LLM provider — 'minimax' or 'openai'",
     )
     args = parser.parse_args()

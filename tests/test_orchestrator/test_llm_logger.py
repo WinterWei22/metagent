@@ -51,7 +51,9 @@ def test_llm_logger_appends_jsonl(tmp_log: Path) -> None:
     assert rec["response_cleaned"] == "hello there"
     assert rec["mock"] is True
     assert rec["error"] is None
-    assert rec["model"] == llm_client.DEFAULT_MODEL
+    assert rec["model"] == llm_client._runtime_default_model(
+        llm_client._runtime_provider()
+    )
     assert rec["max_tokens"] == llm_client.DEFAULT_MAX_TOKENS
     assert rec["temperature"] == 0.0
     assert isinstance(rec["elapsed_ms"], int) and rec["elapsed_ms"] >= 0

@@ -23,7 +23,7 @@ factual_sub6 can deliver. Compare against W12 D5 实际 -1.5pp to gauge
 how much of the gap is "subject not in pool" vs "no ID extractable
 at all".
 
-Cost: ~$0.30 at MiniMax-M2.7. ~12 batches of 20 claims.
+Cost: ~$0.30 at MiniMax-M2.7-highspeed. ~12 batches of 20 claims.
 
 Run:
     PYTHONPATH=. METAGENT_LLM_LOG_PATH=logs/concord/w12_d_reclassify.jsonl \\
@@ -143,7 +143,7 @@ def main() -> int:
                     {"role": "system", "content": _SYSTEM_PROMPT},
                     {"role": "user", "content": user_msg},
                 ],
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
                 temperature=0.0,
                 trace_id=f"w12_d_reclassify.batch_{bi:03d}",
                 caller="w12_d_reclassify",

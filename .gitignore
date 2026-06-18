@@ -52,3 +52,13 @@ data/concord/chebi.sqlite
 
 # Sprint W4: MetaNetX sqlite (regenerate via `python -m concord.etl.metanetx_etl`)
 data/concord/metanetx.sqlite
+
+# MetAgent run outputs (regeneratable run dumps; ~700MB)
+data/metagent/
+
+# Cross-session conversation logs (working channel, not version-controlled)
+conversation/
+
+# Scratch / working notes (not version-controlled)
+/record_0610.md
+/project_overview/

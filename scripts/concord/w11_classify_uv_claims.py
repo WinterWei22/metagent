@@ -1,13 +1,13 @@
 """W11 UV diagnosis — Step 2: LLM-assisted categorization of 1102 UV claims.
 
 Reads data/concord/w11_uv_diagnosis/uv_claims_raw.jsonl, batches into
-20-claim chunks, calls MiniMax-M2.7 to classify each claim into one of
+20-claim chunks, calls MiniMax-M2.7-highspeed to classify each claim into one of
 9 categories (C1..C9), writes data/concord/w11_uv_diagnosis/uv_classified.jsonl.
 
 The system prompt + category definitions live in
 data/concord/w11_uv_diagnosis/llm_prompt_used.md (kept for reproducibility).
 
-Cost budget: $3 ceiling per W11 spec. Estimated MiniMax-M2.7 cost ~$0.07.
+Cost budget: $3 ceiling per W11 spec. Estimated MiniMax-M2.7-highspeed cost ~$0.07.
 
 Run:
     PYTHONPATH=. python scripts/concord/w11_classify_uv_claims.py
@@ -156,7 +156,7 @@ def main() -> int:
                     {"role": "system", "content": _SYSTEM_PROMPT},
                     {"role": "user", "content": user_msg},
                 ],
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
                 temperature=0.0,
                 trace_id=trace_id,
                 caller="w11_uv_classify",

@@ -116,6 +116,46 @@ def test_per_task_signals_three_iter_with_bridge_at_iter2():
     assert sig["per_iter"][2]["any_claim_matches_gt_pathway_id"] is True
 
 
+def test_run_path_x_batch_structured_eval_flag_sets_env(monkeypatch, tmp_path):
+    """W22: eval runner can opt into structured verification without changing default."""
+    import evaluation.concord.path_x as path_x
+
+    seen = {}
+
+    class _FakeRunner:
+        def __init__(self, **_kwargs):
+            seen["init_env"] = path_x.os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS")
+
+        def run_task_with_feedback(self, task):
+            seen["run_env"] = path_x.os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS")
+            react = _make_react_result("narrative", [], task_id=task["task_id"])
+            verification = VerificationOutcome(ok=True, verdict=None, error=None)
+            return ConcordFeedbackResult(
+                task_id=task["task_id"],
+                iterations=[FeedbackIterationRecord(iter_idx=0, react_result=react, verification=verification)],
+                final_iter_idx=0,
+                n_feedback_iterations=0,
+                final_react_result=react,
+                final_verdict=verification,
+            )
+
+    benchmark = tmp_path / "tasks.jsonl"
+    benchmark.write_text('{"task_id":"t1","ground_truth_pathway":{}}\n')
+    monkeypatch.setattr(path_x, "ConcordReactRunner", _FakeRunner)
+
+    path_x.run_path_x_batch(
+        benchmark=benchmark,
+        out_jsonl=tmp_path / "out.jsonl",
+        out_summary_json=tmp_path / "summary.json",
+        out_full_dir=None,
+        enable_structured_verifier=True,
+    )
+
+    assert seen["init_env"] == "1"
+    assert seen["run_env"] == "1"
+    assert path_x.os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS") is None
+
+
 def test_per_task_signals_no_bridge_no_rollback():
     """Task where all iters write the same claims, no bridging, no rollback."""
     from evaluation.concord.path_x import _per_task_signals

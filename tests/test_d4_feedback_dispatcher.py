@@ -459,7 +459,7 @@ def test_feedback_react_loop_fires_inner_retry_on_empty_finalise(
         messages=[{"role": "user", "content": "start"}],
         chat_with_tools_fn=_react_with_tool_then_empty,
         finalise_chat_fn=_empty_finalise,
-        model="MiniMax-M2.7",
+        model="MiniMax-M2.7-highspeed",
         provider="minimax",
         temperature=0.0,
         max_turns=2,

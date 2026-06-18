@@ -1,81 +1,137 @@
-# W19 Tool-output Verifier Decision Draft
+# W19 Tool-output Verifier Decision
 
 ## Decision
 
-W19 pivoted from KEGG REST to a verifier-side tool-output layer that checks whether ReAct's own reported numeric tool outputs match stored carrier data.
+W19 pivoted from KEGG REST to a verifier-side layer that checks ReAct's own reported tool-output claims against stored carrier data.
 
-## Why the pivot happened
+Close-out decision: **INCONCLUSIVE**.
 
-The initial KEGG REST audit found only 10 strict claims out of 624 W18 residual claims, for a ceiling of about 0.32pp. The ReAct tool-output audit found 55 strict claims and a 2.94pp ceiling, with 90.0% spot-check agreement, so W19 prioritized the local deterministic layer and deferred KEGG REST to W20.
+The W19 layer is retained because it is technically valid and has small positive coverage. It is not counted as a successful UV-reduction sprint because the measurable signal was below ReAct rerun variance.
+
+## Why The Pivot Happened
+
+The initial KEGG REST audit found only 10 strict claims out of 624 W18 residual claims, for a ceiling of about 0.32pp. The ReAct tool-output audit found 55 strict claims out of 624, for a 2.94pp ceiling and a target around 1.76pp.
+
+The pivot was approved because tool-output checks use data already produced by ReAct and stored by W17 carriers. This matched the verifier goal: check whether ReAct's own claims are supported by ReAct's own tool evidence before introducing another external KB.
 
 ## Scope
 
-- Verify direct numeric/rank/overlap claims from RaMP, Mummichog, and MetaboAnalystR carriers.
-- Run only after existing verifier layers leave a claim UV.
-- Run only on final iteration in the production dispatcher.
+W19 verifies direct numeric, rank, overlap, and pathway-tool claims from:
+
+- RaMP
+- Mummichog
+- MetaboAnalystR
+
+Dispatcher constraints:
+
+- Run only after existing verifier layers leave a claim `UNVERIFIABLE_V0`.
+- Run only on the final iteration.
 - Do not introduce a new verdict enum.
-- Treat missing carriers or unparsed claims as UV, not CONTRADICTED.
+- Treat missing carriers or unparsed claims as `UNVERIFIABLE_V0`, not `CONTRADICTED`.
+- Preserve trace JSONL through the main dispatcher.
 
-## D4 Phase 1 result
+## Implementation
 
-The 5-task real Path-X smoke completed successfully and initially stopped before full-59 because attribution was ambiguous. The user then explicitly approved full-59 as a system rerun.
+Implemented components:
 
-- 5 / 5 tasks valid.
-- 0 crashes.
-- 0 iter-2 triggers.
-- MiniMax cost from JSONL token counts: $0.5135.
-- W18 same-task UV rate: 44.93%.
-- W19 same-task UV rate: 36.96%.
-- Apparent UV drop: 7.97pp.
-- Final-iteration W19 trace: 34 UV, 0 SUPPORTED, 0 CONTRADICTED.
+- `verifier/helpers/tool_output_claim_parser.py`
+- `verifier/helpers/tool_output_lookup.py`
+- `verifier/helpers/tool_output_trace.py`
+- `verifier/helpers/tool_output_crash_preservation.py`
+- `verifier/layers/tool_output_sub6.py`
+- Dispatcher route in `verifier/agent.py`
 
-## Interpretation
+Test coverage:
 
-The apparent UV drop passes the numeric smoke threshold, but attribution fails: final-iteration W19 trace produced no positive direct hits. The improvement is therefore likely caused by ReAct rerun variance and changed final claim text rather than the new deterministic verifier layer.
+- parser tests
+- lookup tests
+- layer tests
+- dispatcher integration tests
+- trace and cost tests
+- crash-preservation tests
 
-Because the approval file required stopping on any hard-gate ambiguity, full-59 was not run.
+Important implementation fix:
 
-## Full-59 result
+- `cecd4c2c fix(verifier): W19 tool-output tolerate rounded metrics`
+- This added tolerance for rounded metrics and 1-based vs 0-based rank wording.
 
-Full-59 was subsequently run after explicit user approval.
+## D4 Results
 
-- 59 / 59 valid tasks.
-- 0 crashes.
-- 0 iter-2 triggers.
-- Wall time: 125.8 min.
-- Actual MiniMax cost from JSONL token counts: $6.4428.
-- W19 D4 cumulative real-run cost including 5-task smoke: $6.9563.
-- W18 clean UV rate: 36.86%.
-- W19 full-59 UV rate: 42.12%.
-- UV change: -5.26pp drop, i.e. UV increased.
-- W18 pathway bridge: 52 / 59 = 88.1%.
-- W19 pathway bridge: 51 / 59 = 86.4%.
-- Final-iteration W19 trace: 14 supported, 6 contradicted, 362 unverifiable_v0.
+### 5-task real smoke
 
-Decision: W19 is BELOW-TARGET. The layer is technically valid and cheap, but the full system rerun did not lower UV.
+- Valid tasks: 5 / 5
+- Crashes: 0
+- Iter-2 triggers: 0
+- MiniMax cost from JSONL token counts: $0.5135
+- W18 same-task UV rate: 44.93%
+- W19 same-task UV rate: 36.96%
+- Apparent UV drop: 7.97pp
+- Final-iteration W19 trace: 34 UV, 0 supported, 0 contradicted
+
+Interpretation: the system smoke looked numerically better, but attribution failed because W19 produced no final positive direct hits in that 5-task run.
+
+### Full-59 real rerun
+
+- Valid tasks: 59 / 59
+- Crashes: 0
+- Iter-2 triggers: 0
+- Wall time: 125.8 min
+- Actual MiniMax cost from JSONL token counts: $6.4428
+- W19 D4 cumulative real-run cost including 5-task smoke: $6.9563
+- W18 clean UV rate: 36.86%
+- W19 full-59 UV rate: 42.12%
+- UV increased by 5.26pp
+- W18 pathway bridge: 52 / 59 = 88.1%
+- W19 pathway bridge: 51 / 59 = 86.4%
+- Final-iteration W19 trace: 14 supported, 6 contradicted, 362 UV
+
+## D4.5 Regression Diagnosis
+
+W19 D4.5 checked whether W19 UV results prevented W18 LLM-judge fall-through.
+
+Findings:
+
+- Same-text `SUPPORTED -> UNVERIFIABLE_V0`: 0
+- Same-text `CONTRADICTED -> UNVERIFIABLE_V0`: 0
+- W19 trace-UV rows present in final crosswalk: 642
+- W19 trace-UV rows ending as supported/contradicted: 99
+- Dispatcher code path still checks W18 LLM-judge after W19 returns UV
+
+Conclusion: no dispatcher short-circuit bug was found. The regression is best explained by ReAct rerun variance and claim-set churn. W19's final positive signal was about 20 claims over 59 tasks, roughly 1pp scale, and was not large enough to survive a roughly 5pp rerun variance band.
 
 ## Lessons
 
-- Helper-level trace tests are insufficient; the dispatcher must prove it writes trace rows in real routing.
-- Direct tool-output verification is high precision but low recall when final narratives do not preserve numeric tool-output claims.
-- Rerun metrics must be separated from layer-attributable metrics.
-- A full rerun can expose the opposite of a 5-task smoke signal; use the full result for close-out if both exist.
+- Rerun metrics and layer-attributable metrics must be reported separately.
+- A true ReAct rerun can change the claim denominator enough to swamp a narrow verifier layer.
+- Tool-output verification is high precision but low recall when final narratives do not preserve direct numeric tool claims.
+- Dispatcher-level trace writing must be tested, not just helper-level trace writing.
 - Rank claims need explicit one-based/zero-based tolerance.
-- Numeric p-value/FDR claims need rounding tolerance to avoid false CONTRADICTED verdicts.
+- Numeric p-value/FDR claims need rounding tolerance to avoid false contradiction.
+- Future UV sprint targets below 5pp need variance controls before they can be interpreted.
 
-## W20 checklist
+## W20 Recommendation
 
-- Decide whether KEGG REST should target the 569 ReAct-tool-output-uncoverable residual claims.
-- Require structured evidence extraction that final narratives can actually reference.
+W20 should control ReAct variance before evaluating another UV-reduction layer.
+
+Recommended options:
+
+- Paired comparison: run both verifier variants over the same saved ReAct outputs.
+- Seed lock where possible.
+- Multi-run averaging when true ReAct reruns are required.
+- Report baseline rerun variance in close-out if no paired replay is available.
+
+For KEGG REST or any external KB layer:
+
+- Require a strict ceiling above the ReAct variance band, or combine KB sources until expected coverage is above 5pp.
 - Keep final-iteration-only dispatch.
-- Keep trace JSONL mandatory and wired through the main dispatcher.
-- Separate replay/layer attribution metrics from true rerun metrics.
+- Keep trace JSONL mandatory.
+- Preserve W18 LLM-judge fall-through.
 - Do not add a new `ClaimVerdict` unless aggregate semantics are defined first.
 
 ## Progress Plain Summary
 
-W19 的方向从 KEGG 改成先查 ReAct 自己工具输出,这个决策当时有依据。但完整 59 个任务跑完后,UV 没降,反而升了。
+W19 先不做 KEGG,改成查 ReAct 自己工具输出,这个选择当时是合理的。实现也跑通了,但完整重跑时信号太小,被 ReAct 自己的波动盖住。
 
 ## Next Plain Summary
 
-所以 W19 应该按 below-target 收尾,不要包装成成功。W20 更应该处理这层查不到的剩余 claim,而不是继续扩大一个命中很少的查表层。
+W20 不能只看一次重跑的 UV 数字。要么先把同一批 ReAct 输出固定住再比较 verifier,要么选一个预期降幅明显超过 5 个百分点的知识库方案。

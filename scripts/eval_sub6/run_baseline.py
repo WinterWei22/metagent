@@ -21,7 +21,7 @@ if _REPO_ROOT not in sys.path:
 
 
 NARRATIVE_LLM_ROUTES: dict[str, dict[str, str]] = {
-    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7"},
+    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7-highspeed"},
     "gpt55": {"provider": "openai", "model": "gpt-5.5"},
     "opus47": {"provider": "openai", "model": "claude-opus-4-7"},
 }

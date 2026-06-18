@@ -122,7 +122,7 @@ def fake_concord_result() -> ConcordReactResult:
         final_narrative_json="<see iterations[0].narrative_json>",
         task_outcome="normal",
         elapsed_seconds=194.2,
-        llm_model="MiniMax-M2.7",
+        llm_model="MiniMax-M2.7-highspeed",
         metabolite_count=9,
         n_distinct_tools_called=7,
         tools_called=["lookup_chebi", "query_pathway_members",

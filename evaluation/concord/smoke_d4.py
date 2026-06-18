@@ -93,8 +93,8 @@ def main() -> int:
     parser.add_argument("--task-id", required=True)
     parser.add_argument("--benchmark", type=Path, default=_DEFAULT_BENCHMARK)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--model", default="MiniMax-M2.7")
-    parser.add_argument("--provider", default="minimax")
+    parser.add_argument("--model", default="gpt-5.5")
+    parser.add_argument("--provider", default="openai")
     parser.add_argument("--max-feedback-iters", type=int, default=2)
     args = parser.parse_args()
 

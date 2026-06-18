@@ -155,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
         help="Parallel task pool size (D0a). 1 = sequential; "
              "5 = recommended for MiniMax pilots; >10 risks rate-limit.",
     )
-    parser.add_argument("--model", default="MiniMax-M2.7")
+    parser.add_argument("--model", default="MiniMax-M2.7-highspeed")
     parser.add_argument(
         "--provider", default="minimax", choices=("minimax", "openai"),
     )
@@ -185,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  D4 non-LM:      {n_d4}")
     print(f"  fresh non-LM:   {len(task_ids) - n_lm - n_d4}")
 
-    _resolve_api_key("minimax", "MiniMax-M2.7")
+    _resolve_api_key("minimax", "MiniMax-M2.7-highspeed")
 
     out_root = Path(args.out_dir)
     driver_lookup = _build_driver_lookup(Path(args.curated))

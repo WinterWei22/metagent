@@ -20,7 +20,7 @@ Output:
   data/concord/w14_uv_reclassify/c8c9_strict_vs_valid.jsonl
   data/concord/w14_uv_reclassify/ceiling_summary.json
 
-Cost: ~$0.30 at MiniMax-M2.7. ~3 batches of 50.
+Cost: ~$0.30 at MiniMax-M2.7-highspeed. ~3 batches of 50.
 
 Run:
     PYTHONPATH=. METAGENT_LLM_LOG_PATH=logs/concord/w14_c8c9_reclassify.jsonl \\
@@ -132,7 +132,7 @@ def main() -> int:
                     {"role": "system", "content": _SYSTEM_PROMPT},
                     {"role": "user", "content": user_msg},
                 ],
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
                 temperature=0.0,
                 trace_id=f"w14_c8c9_reclassify.batch_{bi:03d}",
                 caller="w14_c8c9_reclassify",

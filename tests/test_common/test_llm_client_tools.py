@@ -136,7 +136,7 @@ class TestProviderRouting:
                 tools=TOOL_DEFINITIONS_OPENAI,
                 tool_choice="auto",
                 provider="minimax",
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
             )
         assert "tools" in captured
         assert captured["tool_choice"] == "auto"
@@ -171,8 +171,24 @@ class TestProviderRouting:
                 [{"role": "user", "content": "hi"}],
                 tools=TOOL_DEFINITIONS_OPENAI,
                 provider="minimax",
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
             )
+        assert "max_tokens" in captured
+        assert "max_completion_tokens" not in captured
+
+    def test_runtime_env_provider_selects_minimax_default_model(self):
+        """W22 D6: verifier env override must affect model when caller omits it."""
+        captured, fake_create = self._capture_create_kwargs()
+        with patch.object(llm_client, "_configure_openai") as cfg, \
+             patch.dict(os.environ, {
+                 "METAGENT_LLM_PROVIDER": "minimax",
+                 "METAGENT_MINIMAX_MODEL": "MiniMax-M2.7-highspeed",
+                 "MINIMAX_API_KEY": "test-key",
+             }):
+            cfg.return_value.ChatCompletion.create = fake_create
+            llm_client.chat_raw([{"role": "user", "content": "hi"}])
+
+        assert captured["model"] == "MiniMax-M2.7-highspeed"
         assert "max_tokens" in captured
         assert "max_completion_tokens" not in captured
 
@@ -185,7 +201,7 @@ class TestProviderRouting:
             llm_client.chat_raw(
                 [{"role": "user", "content": "hi"}],
                 provider="minimax",
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
             )
         assert "tools" not in captured
         assert "tool_choice" not in captured
@@ -318,7 +334,7 @@ class TestCreateWithRetry:
             cfg.return_value.ChatCompletion.create = flaky_create
             out = llm_client.chat(
                 [{"role": "user", "content": "hi"}],
-                provider="minimax", model="MiniMax-M2.7",
+                provider="minimax", model="MiniMax-M2.7-highspeed",
                 max_retries=3,
                 retry_backoff_seconds=[0.0, 0.0, 0.0],
             )
@@ -343,7 +359,7 @@ class TestCreateWithRetry:
             cfg.return_value.ChatCompletion.create = always_fail
             llm_client.chat(
                 [{"role": "user", "content": "hi"}],
-                provider="minimax", model="MiniMax-M2.7",
+                provider="minimax", model="MiniMax-M2.7-highspeed",
                 max_retries=3,
                 retry_backoff_seconds=[0.0, 0.0, 0.0],
             )
@@ -367,7 +383,7 @@ class TestCreateWithRetry:
             cfg.return_value.ChatCompletion.create = auth_fail
             llm_client.chat(
                 [{"role": "user", "content": "hi"}],
-                provider="minimax", model="MiniMax-M2.7",
+                provider="minimax", model="MiniMax-M2.7-highspeed",
                 max_retries=3,
                 retry_backoff_seconds=[0.0, 0.0, 0.0],
             )
@@ -392,7 +408,7 @@ class TestCreateWithRetry:
             cfg.return_value.ChatCompletion.create = flaky_create
             llm_client.chat(
                 [{"role": "user", "content": "hi"}],
-                provider="minimax", model="MiniMax-M2.7",
+                provider="minimax", model="MiniMax-M2.7-highspeed",
                 max_retries=0,
             )
         assert attempts["n"] == 1
@@ -422,7 +438,7 @@ class TestCreateWithRetry:
             msg = llm_client.chat_with_tools(
                 [{"role": "user", "content": "hi"}],
                 tools=TOOL_DEFINITIONS_OPENAI,
-                provider="minimax", model="MiniMax-M2.7",
+                provider="minimax", model="MiniMax-M2.7-highspeed",
                 max_retries=3,
                 retry_backoff_seconds=[0.0, 0.0, 0.0],
             )

@@ -21,6 +21,7 @@ continue to import the name from this module unchanged.
 """
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from schemas.sub6_report import SubsixSourceReport
@@ -91,6 +92,111 @@ def concord_result_to_b1_narrative(
     """
     del task  # reserved for future use
     return (result.final_narrative_text or "").strip()
+
+
+def concord_result_to_b1_structured_payload(
+    result: ConcordReactResult,
+    task: dict[str, Any],
+) -> str:
+    """Return a JSON verifier payload carrying narrative text and claims.
+
+    This is intentionally separate from ``concord_result_to_b1_narrative`` so
+    the default prose path remains byte-for-byte compatible until an explicit
+    eval/live feature flag is approved.
+    """
+    del task  # reserved for future use
+    payload = {
+        "narrative_text": (result.final_narrative_text or "").strip(),
+        "claims": [
+            converted
+            for claim in (result.final_claims or [])
+            if (converted := _react_claim_to_verifier_grammar(claim)) is not None
+        ],
+    }
+    return json.dumps(payload, ensure_ascii=False)
+
+
+def _react_claim_to_verifier_grammar(claim: dict[str, Any]) -> dict[str, Any] | None:
+    if claim.get("grammar"):
+        return dict(claim)
+
+    claim_type = claim.get("claim_type")
+    if claim_type == "PATHWAY_ENRICHMENT":
+        term_id = str(claim.get("pathway_id") or "").strip()
+        term_name = str(claim.get("pathway_name") or term_id).strip()
+        if not term_id or not term_name:
+            return None
+        out: dict[str, Any] = {
+            "grammar": "pathway_enrichment",
+            "claim_text": _claim_text(claim, _enrichment_claim_text(claim, term_id, term_name)),
+            "term_id": term_id,
+            "term_name": term_name,
+            "term_type": "pathway",
+        }
+        score_type = str(claim.get("score_type") or "").lower()
+        if score_type in {"fdr", "q_value", "q-value"}:
+            out["fdr"] = claim.get("score")
+        elif score_type in {"p_value", "p-value", "p"}:
+            out["p_value"] = claim.get("score")
+        for key in ("evidence_method", "rank", "score", "score_type", "pathway_id", "pathway_name"):
+            if key in claim:
+                out[key] = claim[key]
+        return out
+    if claim_type == "PATHWAY_MEMBERSHIP":
+        subject = str(claim.get("compound_name") or claim.get("compound_id") or "").strip()
+        pathway_name = str(claim.get("pathway_name") or claim.get("pathway_id") or "").strip()
+        if not subject or not pathway_name:
+            return None
+        return {
+            "grammar": "pathway_membership",
+            "claim_text": _claim_text(claim, f"{subject} is a member of {pathway_name}."),
+            "subject": subject,
+            "pathway_name": pathway_name,
+        }
+    if claim_type == "DRIVER_METABOLITE":
+        subject = str(claim.get("compound_name") or claim.get("compound_id") or "").strip()
+        pathway_name = str(claim.get("pathway_name") or claim.get("pathway_id") or "").strip()
+        signals = [str(x) for x in (claim.get("signal_compound_ids") or []) if str(x).strip()]
+        if not subject or not pathway_name or not signals:
+            return None
+        return {
+            "grammar": "driver_metabolite",
+            "claim_text": _claim_text(claim, f"{subject} drives {pathway_name}."),
+            "subject": subject,
+            "pathway_name": pathway_name,
+            "signal_compound_ids": signals,
+        }
+    if claim_type == "METABOLITE_PATHWAY_LINK":
+        subject = str(claim.get("compound_name") or claim.get("compound_id") or "").strip()
+        pathway_name = str(claim.get("pathway_name") or claim.get("pathway_id") or "").strip()
+        endpoint = str(claim.get("enzyme_or_reaction") or "").strip()
+        if not subject or not pathway_name or not endpoint:
+            return None
+        return {
+            "grammar": "metabolite_pathway_link",
+            "claim_text": _claim_text(claim, f"{subject} participates in {pathway_name} via {endpoint}."),
+            "subject": subject,
+            "pathway_name": pathway_name,
+            "enzyme_or_reaction": endpoint,
+        }
+    return None
+
+
+def _claim_text(claim: dict[str, Any], fallback: str) -> str:
+    text = claim.get("claim_text")
+    return str(text).strip() if isinstance(text, str) and text.strip() else fallback
+
+
+def _enrichment_claim_text(claim: dict[str, Any], term_id: str, term_name: str) -> str:
+    method = str(claim.get("evidence_method") or "tool")
+    rank = claim.get("rank")
+    score = claim.get("score")
+    score_type = str(claim.get("score_type") or "score")
+    if rank is not None and score is not None:
+        return f"{method} ranks {term_id} ({term_name}) at rank {rank} with {score_type} {score:.6g}."
+    if rank is not None:
+        return f"{method} ranks {term_id} ({term_name}) at rank {rank}."
+    return f"{term_name} is enriched in the pathway analysis result."
 
 
 # ---------------------------------------------------------------------------

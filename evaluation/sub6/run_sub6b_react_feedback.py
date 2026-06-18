@@ -561,7 +561,7 @@ def run_sub6b_react_feedback(
     verifier_fn: VerifierFn,
     chat_with_tools_fn: ChatWithToolsFn | None = None,
     finalise_chat_fn: ChatWithToolsFn | None = None,
-    model: str = "MiniMax-M2.7",
+    model: str = "MiniMax-M2.7-highspeed",
     provider: str = "minimax",
     temperature: float = 0.0,
     max_react_turns: int = DEFAULT_MAX_REACT_TURNS,
@@ -861,7 +861,7 @@ def run_sub6b_feedback_from_narrative(
     iter0_n_tool_calls: int = 0,
     iter0_n_turns: int = 0,
     iter0_force_finalised: bool = False,
-    model: str = "MiniMax-M2.7",
+    model: str = "MiniMax-M2.7-highspeed",
     provider: str = "minimax",
     temperature: float = 0.0,
     max_react_turns: int = DEFAULT_MAX_REACT_TURNS,
@@ -1132,7 +1132,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tasks", required=True, help="Sub-6B v3 jsonl")
     p.add_argument("--out", required=True, help="Output jsonl (single line)")
     p.add_argument("--persist-dir", default="data/eval/sub6/v4_a2/persist")
-    p.add_argument("--model", default="MiniMax-M2.7")
+    p.add_argument("--model", default="MiniMax-M2.7-highspeed")
     p.add_argument("--provider", default="minimax")
     p.add_argument("--max-react-turns", type=int, default=DEFAULT_MAX_REACT_TURNS)
     p.add_argument("--max-feedback-iters", type=int, default=DEFAULT_MAX_FEEDBACK_ITERS)

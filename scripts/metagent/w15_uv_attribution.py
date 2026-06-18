@@ -2,7 +2,7 @@
 
 Pure audit, no production code modify. Pulls every UNVERIFIABLE_V0 claim
 from the W14 close-out Path X trace, labels each one
-{producer_fault, verifier_gap, both} via MiniMax-M2.7, and produces a
+{producer_fault, verifier_gap, both} via MiniMax-M2.7-highspeed, and produces a
 CSV + summary.md with bucket-level ratio + ranked W16+ candidates.
 
 Architecture (per W15 spec §2):
@@ -334,7 +334,7 @@ def classify_uv_pool(pool: list[dict]) -> list[dict]:
                     {"role": "system", "content": _SYSTEM_PROMPT_W15},
                     {"role": "user", "content": user_msg},
                 ],
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
                 temperature=0.0,
                 trace_id=f"w15_uv_attribution.batch_{bi:03d}",
                 caller="w15_uv_attribution",
@@ -387,7 +387,7 @@ def main() -> int:
         print(f"Extracted {len(pool)} UV claims; wrote {pool_path}")
 
     print()
-    print(f"Running MiniMax-M2.7 classifier on {len(pool)} claims...")
+    print(f"Running MiniMax-M2.7-highspeed classifier on {len(pool)} claims...")
     classified = classify_uv_pool(pool)
 
     # Raw output

@@ -25,6 +25,7 @@ Pathway matching:
 from __future__ import annotations
 
 import re
+import os
 from typing import Any
 
 from schemas.sub6_report import SubsixSourceReport
@@ -80,6 +81,13 @@ def verify_set_enrichment(
     source_report: SubsixSourceReport,
 ) -> VerifiedClaim:
     """Verify one SET_ENRICHMENT claim against the task's enrichment result."""
+    if os.environ.get("METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT") == "1":
+        from verifier.helpers.method_aware_enrichment import verify_method_aware_enrichment
+
+        method_aware = verify_method_aware_enrichment(claim, source_report)
+        if method_aware is not None:
+            return method_aware
+
     top_pathways = _extract_top_pathways(source_report)
     if not top_pathways:
         return _unverifiable(

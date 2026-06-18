@@ -11,6 +11,7 @@ Tests use a fake `verifier_fn` injection to avoid real B1 LLM calls
 from __future__ import annotations
 
 import json
+import os
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -80,7 +81,7 @@ def fake_concord_result() -> ConcordReactResult:
         final_claims=[],
         task_outcome="normal",
         elapsed_seconds=194.2,
-        llm_model="MiniMax-M2.7",
+        llm_model="MiniMax-M2.7-highspeed",
     )
 
 
@@ -135,6 +136,66 @@ def test_verify_with_b1_happy_path_counts_verdicts(fake_concord_result, fake_v3_
     call_args = fake_verifier.call_args
     narrative_arg, *_ = call_args.args if call_args.args else (None,)
     assert "arachidonic acid metabolism" in (narrative_arg or "").lower()
+
+
+def test_verify_with_b1_structured_eval_flag_passes_json_payload(fake_concord_result, fake_v3_task, monkeypatch):
+    """W22: eval can opt into structured claims without changing default behavior."""
+    fake_concord_result.final_claims = [
+        {
+            "claim_type": "PATHWAY_ENRICHMENT",
+            "pathway_id": "KEGG:map00260",
+            "pathway_name": "Glycine, serine and threonine metabolism",
+            "evidence_method": "run_ramp_enrichment",
+            "rank": 1,
+            "score": 1e-6,
+            "score_type": "fdr",
+        }
+    ]
+    monkeypatch.setenv("METAGENT_VERIFY_STRUCTURED_CLAIMS", "1")
+    fake_verifier = MagicMock(return_value=_make_fake_verifier_result())
+    runner = ConcordReactRunner(verifier_fn=fake_verifier)
+
+    outcome = runner.verify_with_b1(fake_concord_result, fake_v3_task)
+
+    assert outcome.ok is True
+    narrative_arg = fake_verifier.call_args.args[0]
+    parsed = json.loads(narrative_arg)
+    assert parsed["claims"][0]["grammar"] == "pathway_enrichment"
+    assert parsed["claims"][0]["evidence_method"] == "run_ramp_enrichment"
+
+
+def test_verify_with_b1_sets_verifier_llm_env_from_runner_and_restores(fake_concord_result, fake_v3_task, monkeypatch):
+    """W22 D6: verifier-internal LLM calls must follow the eval provider/model."""
+    monkeypatch.setenv("METAGENT_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("METAGENT_OPENAI_MODEL", "gpt-5.5")
+    monkeypatch.setenv("METAGENT_VERIFY_STRUCTURED_CLAIMS", "1")
+    seen = {}
+
+    def _recording_verifier(*_args, **_kwargs):
+        import os
+
+        seen["provider"] = os.environ.get("METAGENT_LLM_PROVIDER")
+        seen["minimax_model"] = os.environ.get("METAGENT_MINIMAX_MODEL")
+        seen["openai_model"] = os.environ.get("METAGENT_OPENAI_MODEL")
+        return _make_fake_verifier_result()
+
+    runner = ConcordReactRunner(
+        verifier_fn=_recording_verifier,
+        llm_provider="minimax",
+        llm_model="MiniMax-M2.7-highspeed",
+    )
+
+    outcome = runner.verify_with_b1(fake_concord_result, fake_v3_task)
+
+    assert outcome.ok is True
+    assert seen == {
+        "provider": "minimax",
+        "minimax_model": "MiniMax-M2.7-highspeed",
+        "openai_model": "gpt-5.5",
+    }
+    assert os.environ["METAGENT_LLM_PROVIDER"] == "openai"
+    assert os.environ["METAGENT_OPENAI_MODEL"] == "gpt-5.5"
+    assert os.environ.get("METAGENT_MINIMAX_MODEL") is None
 
 
 def test_verify_with_b1_passes_final_iteration_flag(fake_concord_result, fake_v3_task):

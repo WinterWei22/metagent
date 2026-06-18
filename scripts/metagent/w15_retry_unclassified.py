@@ -74,7 +74,7 @@ def main() -> int:
                     {"role": "system", "content": _SYSTEM_PROMPT_W15},
                     {"role": "user", "content": user_msg},
                 ],
-                model="MiniMax-M2.7",
+                model="MiniMax-M2.7-highspeed",
                 temperature=0.0,
                 trace_id=f"w15_uv_attribution_retry.batch_{bi:02d}",
                 caller="w15_uv_attribution_retry",

@@ -20,6 +20,7 @@ import argparse
 import dataclasses
 import json
 import logging
+import os
 import sys
 import time
 from pathlib import Path
@@ -182,52 +183,63 @@ def run_path_x_batch(
     out_jsonl: Path,
     out_summary_json: Path,
     out_full_dir: Path | None = None,
-    llm_model: str = "MiniMax-M2.7",
-    llm_provider: str = "minimax",
+    llm_model: str = "gpt-5.5",
+    llm_provider: str = "openai",
+    enable_structured_verifier: bool = False,
 ) -> dict[str, Any]:
     tasks = _load_tasks(benchmark, task_ids, limit)
-    runner = ConcordReactRunner(
-        chat_with_tools=_llm_chat,
-        verifier_fn=_b1_verify_sub6,
-        llm_model=llm_model,
-        llm_provider=llm_provider,
-    )
-
+    old_structured = os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS")
+    if enable_structured_verifier:
+        os.environ["METAGENT_VERIFY_STRUCTURED_CLAIMS"] = "1"
     out_jsonl.parent.mkdir(parents=True, exist_ok=True)
     if out_full_dir is not None:
         out_full_dir.mkdir(parents=True, exist_ok=True)
     per_task_signals: list[dict[str, Any]] = []
     started = time.time()
-    with out_jsonl.open("w") as out:
-        for i, task in enumerate(tasks):
-            t0 = time.time()
-            tid = task["task_id"]
-            logging.info("[%d/%d] %s", i + 1, len(tasks), tid)
-            try:
-                fb = runner.run_task_with_feedback(task)
-            except Exception as exc:
-                logging.exception("task %s crashed: %s", tid, exc)
-                signals = {
-                    "task_id": tid,
-                    "framework_signal_crash": f"{type(exc).__name__}: {exc}",
-                    "wall_seconds": time.time() - t0,
-                }
+    try:
+        runner = ConcordReactRunner(
+            chat_with_tools=_llm_chat,
+            verifier_fn=_b1_verify_sub6,
+            llm_model=llm_model,
+            llm_provider=llm_provider,
+        )
+
+        with out_jsonl.open("w") as out:
+            for i, task in enumerate(tasks):
+                t0 = time.time()
+                tid = task["task_id"]
+                logging.info("[%d/%d] %s", i + 1, len(tasks), tid)
+                try:
+                    fb = runner.run_task_with_feedback(task)
+                except Exception as exc:
+                    logging.exception("task %s crashed: %s", tid, exc)
+                    signals = {
+                        "task_id": tid,
+                        "framework_signal_crash": f"{type(exc).__name__}: {exc}",
+                        "wall_seconds": time.time() - t0,
+                    }
+                    per_task_signals.append(signals)
+                    out.write(json.dumps(signals) + "\n"); out.flush()
+                    continue
+                signals = _per_task_signals(task, fb)
                 per_task_signals.append(signals)
                 out.write(json.dumps(signals) + "\n"); out.flush()
-                continue
-            signals = _per_task_signals(task, fb)
-            per_task_signals.append(signals)
-            out.write(json.dumps(signals) + "\n"); out.flush()
-            if out_full_dir is not None:
-                full_path = out_full_dir / f"{tid}.json"
-                full_path.write_text(json.dumps(
-                    dataclasses.asdict(fb), ensure_ascii=False,
-                    indent=2, default=str,
-                ))
-            logging.info("[%d/%d] %s done in %.1fs final_iter=%s rollback=%s",
-                         i + 1, len(tasks), tid, time.time() - t0,
-                         signals.get("final_iter_idx"),
-                         signals.get("rollback_reason"))
+                if out_full_dir is not None:
+                    full_path = out_full_dir / f"{tid}.json"
+                    full_path.write_text(json.dumps(
+                        dataclasses.asdict(fb), ensure_ascii=False,
+                        indent=2, default=str,
+                    ))
+                logging.info("[%d/%d] %s done in %.1fs final_iter=%s rollback=%s",
+                             i + 1, len(tasks), tid, time.time() - t0,
+                             signals.get("final_iter_idx"),
+                             signals.get("rollback_reason"))
+    finally:
+        if enable_structured_verifier:
+            if old_structured is None:
+                os.environ.pop("METAGENT_VERIFY_STRUCTURED_CLAIMS", None)
+            else:
+                os.environ["METAGENT_VERIFY_STRUCTURED_CLAIMS"] = old_structured
 
     elapsed = time.time() - started
     summary = aggregate_path_x(per_task_signals)
@@ -306,8 +318,10 @@ def main() -> int:
                          help="Use the D5 5-task stratified sample (lipid + steroid + other).")
     parser.add_argument("--task-id", action="append", default=None,
                          help="Run a specific task_id (repeatable).")
-    parser.add_argument("--model", default="MiniMax-M2.7")
-    parser.add_argument("--provider", default="minimax")
+    parser.add_argument("--model", default="gpt-5.5")
+    parser.add_argument("--provider", default="openai")
+    parser.add_argument("--enable-structured-verifier", action="store_true",
+                         help="W22 eval opt-in: verify final_claims[] JSON with method-aware enrichment.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO,
@@ -325,6 +339,7 @@ def main() -> int:
         out_full_dir=args.out_full_dir,
         llm_model=args.model,
         llm_provider=args.provider,
+        enable_structured_verifier=args.enable_structured_verifier,
     )
     print(f"\n=== Path X (LLM-agent) — {summary['n_tasks']} tasks ===")
     print(json.dumps(summary, indent=2))

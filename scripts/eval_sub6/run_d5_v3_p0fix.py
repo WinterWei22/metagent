@@ -176,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-react-turns", type=int, default=DEFAULT_MAX_REACT_TURNS)
     p.add_argument("--max-feedback-iters", type=int, default=DEFAULT_MAX_FEEDBACK_ITERS)
     p.add_argument("--total-timeout", type=float, default=DEFAULT_TOTAL_TIMEOUT)
-    p.add_argument("--model", default="MiniMax-M2.7")
+    p.add_argument("--model", default="MiniMax-M2.7-highspeed")
     p.add_argument("--provider", default="minimax", choices=("minimax", "openai"))
     p.add_argument("--task-id", action="append", help="Optional whitelist (debug)")
     args = p.parse_args(argv)
