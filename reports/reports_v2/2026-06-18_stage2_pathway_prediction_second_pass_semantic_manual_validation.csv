@@ -1,0 +1,21 @@
+task_id,stratum,gt_name,primary_name,primary_semantic_match,topk_semantic_match,manual_verdict,manual_note
+hmdb_ramp_easy_kegg_RAMP_P_000000003_rep1,hmdb_ramp_pathway_membership,Histidine metabolism,Histidine metabolism,True,True,TP,Exact normalized histidine metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000026_rep0,hmdb_ramp_pathway_membership,Methionine Metabolism,Methionine Metabolism,True,True,TP,Exact normalized methionine metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000026_rep1,hmdb_ramp_pathway_membership,Methionine Metabolism,Methionine and cysteine metabolism,True,True,TP,Methionine and cysteine metabolism is the KEGG sulfur-amino-acid pathway containing methionine metabolism.
+hmdb_ramp_easy_kegg_RAMP_P_000000038_rep1,hmdb_ramp_pathway_membership,Ketone Body Metabolism,Ketone Body Metabolism,True,True,TP,Exact ketone body metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000116_rep0,hmdb_ramp_pathway_membership,Arginine and proline metabolism,Arginine and Proline Metabolism,True,True,TP,Case-only normalized arginine/proline match.
+hmdb_ramp_easy_kegg_RAMP_P_000000158_rep0,hmdb_ramp_pathway_membership,"Alanine, aspartate and glutamate metabolism","Alanine, aspartate and glutamate metabolism",True,True,TP,Exact alanine/aspartate/glutamate pathway match.
+hmdb_ramp_easy_kegg_RAMP_P_000000163_rep0,hmdb_ramp_pathway_membership,Citric Acid Cycle,Citric Acid Cycle,True,True,TP,Exact citric acid cycle match.
+hmdb_ramp_easy_kegg_RAMP_P_000000163_rep1,hmdb_ramp_pathway_membership,Citric Acid Cycle,Citric Acid Cycle,True,True,TP,Exact citric acid cycle match.
+hmdb_ramp_easy_kegg_RAMP_P_000000173_rep0,hmdb_ramp_pathway_membership,Glycolysis / Gluconeogenesis,Glycolysis and Gluconeogenesis,True,True,TP,Glycolysis and gluconeogenesis is the same slash-separated pathway label.
+hmdb_ramp_easy_kegg_RAMP_P_000000173_rep1,hmdb_ramp_pathway_membership,Glycolysis / Gluconeogenesis,Glycolysis / Gluconeogenesis,True,True,TP,Exact glycolysis/gluconeogenesis match.
+hmdb_ramp_easy_kegg_RAMP_P_000000301_rep0,hmdb_ramp_pathway_membership,Butyrate Metabolism,Butyrate Metabolism,True,True,TP,Exact butyrate metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000303_rep1,hmdb_ramp_pathway_membership,Amino Sugar Metabolism,Amino Sugar Metabolism,True,True,TP,Exact amino sugar metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000345_rep0,hmdb_ramp_pathway_membership,Fatty acid Metabolism,Fatty acid degradation,True,True,TP,Fatty acid degradation is a main operational subpathway of the broad fatty acid metabolism GT.
+hmdb_ramp_easy_kegg_RAMP_P_000000345_rep1,hmdb_ramp_pathway_membership,Fatty acid Metabolism,saturated_fatty_acids_beta_oxidation,True,True,TP,Saturated fatty acid beta-oxidation is a main fatty-acid metabolism subpathway.
+hmdb_ramp_easy_kegg_RAMP_P_000000365_rep0,hmdb_ramp_pathway_membership,Nicotinate and nicotinamide metabolism,Nicotinate and nicotinamide metabolism,True,True,TP,Exact nicotinate/nicotinamide metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000365_rep1,hmdb_ramp_pathway_membership,Nicotinate and nicotinamide metabolism,Nicotinate and nicotinamide metabolism,True,True,TP,Exact nicotinate/nicotinamide metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000407_rep0,hmdb_ramp_pathway_membership,D-Arginine and D-Ornithine Metabolism,D-Arginine and D-Ornithine Metabolism,True,True,TP,Exact D-arginine/D-ornithine metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000407_rep1,hmdb_ramp_pathway_membership,D-Arginine and D-Ornithine Metabolism,D-Arginine and D-Ornithine Metabolism,True,True,TP,Exact D-arginine/D-ornithine metabolism match.
+hmdb_ramp_easy_kegg_RAMP_P_000000446_rep0,hmdb_ramp_pathway_membership,Biosynthesis of unsaturated fatty acids,Biosynthesis of unsaturated fatty acids,True,True,TP,Exact unsaturated fatty acid biosynthesis match.
+hmdb_ramp_easy_kegg_RAMP_P_000000446_rep1,hmdb_ramp_pathway_membership,Biosynthesis of unsaturated fatty acids,Fatty acid degradation,True,True,FP,Fatty acid degradation is neighboring but not semantically equivalent to unsaturated fatty acid biosynthesis.

@@ -1,0 +1,65 @@
+{
+  "overall": {
+    "tasks": 163,
+    "prediction_ok": 159,
+    "primary_id_exact": 0,
+    "primary_id_exact_rate": 0.0,
+    "primary_name_exact": 63,
+    "primary_name_exact_rate": 0.386503,
+    "primary_semantic_match": 81,
+    "primary_semantic_match_rate": 0.496933,
+    "topk_id_exact": 0,
+    "topk_id_exact_rate": 0.0,
+    "topk_name_exact": 82,
+    "topk_name_exact_rate": 0.503067,
+    "topk_semantic_match": 97,
+    "topk_semantic_match_rate": 0.595092,
+    "abstain": 1,
+    "abstain_rate": 0.006135
+  },
+  "by_stratum": {
+    "hmdb_ramp_pathway_membership": {
+      "tasks": 100,
+      "prediction_ok": 99,
+      "primary_id_exact": 0,
+      "primary_id_exact_rate": 0.0,
+      "primary_name_exact": 30,
+      "primary_name_exact_rate": 0.3,
+      "primary_semantic_match": 41,
+      "primary_semantic_match_rate": 0.41,
+      "topk_id_exact": 0,
+      "topk_id_exact_rate": 0.0,
+      "topk_name_exact": 40,
+      "topk_name_exact_rate": 0.4,
+      "topk_semantic_match": 51,
+      "topk_semantic_match_rate": 0.51,
+      "abstain": 1,
+      "abstain_rate": 0.01
+    },
+    "sub6_hmdb_ramp_enrichment": {
+      "tasks": 63,
+      "prediction_ok": 60,
+      "primary_id_exact": 0,
+      "primary_id_exact_rate": 0.0,
+      "primary_name_exact": 33,
+      "primary_name_exact_rate": 0.52381,
+      "primary_semantic_match": 40,
+      "primary_semantic_match_rate": 0.634921,
+      "topk_id_exact": 0,
+      "topk_id_exact_rate": 0.0,
+      "topk_name_exact": 42,
+      "topk_name_exact_rate": 0.666667,
+      "topk_semantic_match": 46,
+      "topk_semantic_match_rate": 0.730159,
+      "abstain": 0,
+      "abstain_rate": 0.0
+    }
+  },
+  "llm_cost": {
+    "log_path": "logs/concord/pathway_prediction_second_pass_full163.jsonl",
+    "rows": 159,
+    "prompt_tokens": 227792,
+    "completion_tokens": 119151,
+    "actual_cost_usd": 0.211319
+  }
+}

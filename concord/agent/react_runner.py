@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import time
 from dataclasses import dataclass, field
@@ -31,6 +32,8 @@ from concord.agent.tool_dispatcher import (
     get_tool_specs,
     reset_call_cache,
 )
+from common import llm_client
+from concord.agent.pathway_prediction import generate_pathway_prediction_second_pass
 
 
 logger = logging.getLogger(__name__)
@@ -58,12 +61,10 @@ DEFAULT_INNER_FINALISE_RETRIES = 1
 # (mummichog + MetaboAnalystR + FELLA all Docker-bound).
 DEFAULT_TASK_TIMEOUT_SECONDS = 1200.0
 
-# Defaults for the LLM provider — sub6b v3 baseline. The user-side W7
-# OQ-9 noted that only `MINIMAX_API_KEY` is configured locally; if a
-# smoke run fails on MiniMax, the caller can swap `chat_with_tools` /
-# `llm_model` / `provider` for the GPT-4o fallback path.
-DEFAULT_LLM_MODEL = "MiniMax-M2.7"
-DEFAULT_LLM_PROVIDER = "minimax"
+# Defaults for the active LLM provider. MiniMax remains available via explicit
+# llm_model / provider overrides.
+DEFAULT_LLM_MODEL = "gpt-5.5"
+DEFAULT_LLM_PROVIDER = "openai"
 
 # Grammar v2 final-message — the four `claim_type` values the system
 # prompt instructs the LLM to emit. Used for structural validation only;
@@ -115,6 +116,7 @@ class ConcordReactResult:
     final_narrative_json: str = ""
     final_claims: list[dict[str, Any]] = field(default_factory=list)
     final_narrative_text: str = ""
+    pathway_prediction: dict[str, Any] | None = None
     final_verdict_total: dict[str, int] = field(default_factory=dict)
     task_outcome: str = "normal"  # B1 D4 TaskOutcome enum, str form
     n_feedback_iterations: int = 0
@@ -543,14 +545,24 @@ class ConcordReactRunner:
             task_outcome = "normal" if n_claims > 0 else "empty_honest_refusal"
             final_narrative_text = (final_parsed.get("narrative_text") or "").strip()
             final_claims = list(final_parsed.get("claims") or [])
+            pathway_prediction = generate_pathway_prediction_second_pass(
+                claims=final_claims,
+                narrative_text=final_narrative_text,
+                chat_fn=llm_client.chat,
+                model=self.llm_model,
+                provider=self.llm_provider,
+                trace_id=f"{trace_id}.pathway_prediction" if trace_id else None,
+            )
         elif timed_out or error:
             task_outcome = "empty_system_failure"
             final_narrative_text = ""
             final_claims = []
+            pathway_prediction = None
         else:
             task_outcome = "empty_unknown"
             final_narrative_text = ""
             final_claims = []
+            pathway_prediction = None
 
         iteration = ConcordIterationRecord(
             iter_idx=0,
@@ -568,6 +580,7 @@ class ConcordReactRunner:
             final_narrative_json=final_json_text,
             final_narrative_text=final_narrative_text,
             final_claims=final_claims,
+            pathway_prediction=pathway_prediction,
             task_outcome=task_outcome,
             n_feedback_iterations=0,
             elapsed_seconds=elapsed,
@@ -721,10 +734,16 @@ class ConcordReactRunner:
         # "" wastes 1-7 LLM calls on a known-empty input.
         from concord.agent.verifier_adapter import (
             concord_result_to_b1_narrative,
+            concord_result_to_b1_structured_payload,
             sub6b_task_to_subsix_source_report,
         )
 
-        narrative = concord_result_to_b1_narrative(react_result, task)
+        use_structured = os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS") == "1"
+        narrative = (
+            concord_result_to_b1_structured_payload(react_result, task)
+            if use_structured
+            else concord_result_to_b1_narrative(react_result, task)
+        )
         if not narrative:
             return VerificationOutcome(
                 ok=True, verdict=None, error=None,
@@ -746,6 +765,17 @@ class ConcordReactRunner:
 
         # Run B1 verifier — surface its internal failures the same way
         tid = trace_id or f"concord_w8_d4.{react_result.task_id}.verify"
+        old_method_flag = os.environ.get("METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT")
+        old_provider = os.environ.get("METAGENT_LLM_PROVIDER")
+        old_minimax_model = os.environ.get("METAGENT_MINIMAX_MODEL")
+        old_openai_model = os.environ.get("METAGENT_OPENAI_MODEL")
+        if use_structured:
+            os.environ["METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT"] = "1"
+        os.environ["METAGENT_LLM_PROVIDER"] = self.llm_provider
+        if self.llm_provider == "minimax":
+            os.environ["METAGENT_MINIMAX_MODEL"] = self.llm_model
+        elif self.llm_provider == "openai":
+            os.environ["METAGENT_OPENAI_MODEL"] = self.llm_model
         try:
             verdict = self.verifier_fn(
                 narrative,
@@ -758,6 +788,24 @@ class ConcordReactRunner:
                 ok=False, verdict=None,
                 error=f"verifier_raised: {type(exc).__name__}: {exc}",
             )
+        finally:
+            if use_structured:
+                if old_method_flag is None:
+                    os.environ.pop("METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT", None)
+                else:
+                    os.environ["METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT"] = old_method_flag
+            if old_provider is None:
+                os.environ.pop("METAGENT_LLM_PROVIDER", None)
+            else:
+                os.environ["METAGENT_LLM_PROVIDER"] = old_provider
+            if old_minimax_model is None:
+                os.environ.pop("METAGENT_MINIMAX_MODEL", None)
+            else:
+                os.environ["METAGENT_MINIMAX_MODEL"] = old_minimax_model
+            if old_openai_model is None:
+                os.environ.pop("METAGENT_OPENAI_MODEL", None)
+            else:
+                os.environ["METAGENT_OPENAI_MODEL"] = old_openai_model
 
         # Verdict-count extraction strategy (defensive — B1's
         # VerifiedIdentification has multiple aggregate shapes across

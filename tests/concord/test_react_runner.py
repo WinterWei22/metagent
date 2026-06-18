@@ -222,6 +222,55 @@ def test_run_task_happy_path_tool_call_then_finalise(monkeypatch, fake_task):
     assert "Eicosanoid synthesis" in result.final_narrative_text
 
 
+def test_run_task_generates_pathway_prediction_in_second_pass(monkeypatch, fake_task):
+    """The main ReAct JSON stays baseline-only; pathway_prediction is added
+    after claims are fixed by a separate LLM call."""
+    from concord.agent import react_runner as rr
+
+    monkeypatch.setattr(rr, "dispatch", lambda tc: None)
+
+    captured: dict[str, Any] = {}
+
+    def fake_generate(*, claims, narrative_text, chat_fn, model, provider, trace_id):
+        del chat_fn
+        captured["claims"] = list(claims)
+        captured["narrative_text"] = narrative_text
+        captured["model"] = model
+        captured["provider"] = provider
+        captured["trace_id"] = trace_id
+        return {
+            "primary": {
+                "pathway_id": "WP:WP167",
+                "pathway_name": "Eicosanoid synthesis",
+                "pathway_source": "WikiPathways",
+                "confidence": 0.82,
+                "evidence_methods": ["run_ramp_enrichment"],
+                "supporting_claim_indices": [0],
+                "rationale": "Selected from fixed claims.",
+            },
+            "alternatives": [],
+            "abstain": False,
+            "abstain_reason": None,
+        }
+
+    monkeypatch.setattr(rr, "generate_pathway_prediction_second_pass", fake_generate)
+    chat = FakeChat([
+        {"role": "assistant", "content": f"```json\n{_VALID_FINAL_JSON}\n```"},
+    ])
+
+    runner = ConcordReactRunner(chat_with_tools=chat, llm_model="fake-model", llm_provider="minimax")
+    result = runner.run_task(fake_task, trace_id="trace.second")
+
+    assert result.task_outcome == "normal"
+    assert result.pathway_prediction is not None
+    assert result.pathway_prediction["primary"]["pathway_name"] == "Eicosanoid synthesis"
+    assert captured["claims"] == result.final_claims
+    assert captured["narrative_text"] == result.final_narrative_text
+    assert captured["model"] == "fake-model"
+    assert captured["provider"] == "minimax"
+    assert captured["trace_id"] == "trace.second.pathway_prediction"
+
+
 def test_run_task_preserves_method_keyed_enrichment_carriers(monkeypatch, fake_task):
     """Successful non-RaMP tool payloads stay available for verifier carriers."""
     from concord.agent import tool_dispatcher as td
