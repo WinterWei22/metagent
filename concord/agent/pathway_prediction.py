@@ -466,3 +466,30 @@ def _collection_gt_undercovered(gt_norm: str, pred_norm: str) -> bool:
     if len(gt_tokens) < 2:
         return False
     return not gt_tokens.issubset(pred_tokens)
+
+
+def pathway_recall_metrics(
+    predicted_names: list[str],
+    relevant_names: set[str],
+    *,
+    k: int = 3,
+) -> dict[str, Any]:
+    """recall@k / hit@k / MRR of ordered predicted pathway names against a
+    relevant-name set. All comparisons are on norm_name."""
+    rel = {norm_name(n) for n in relevant_names if n}
+    topk = [norm_name(n) for n in predicted_names[:k] if n]
+    retrieved = {n for n in topk if n in rel}
+    recall_at_k = (len(retrieved) / len(rel)) if rel else 0.0
+    hit_at_k = bool(retrieved)
+    mrr = 0.0
+    for idx, name in enumerate(topk, start=1):
+        if name in rel:
+            mrr = 1.0 / idx
+            break
+    return {
+        "recall_at_k": recall_at_k,
+        "hit_at_k": hit_at_k,
+        "mrr": mrr,
+        "n_relevant": len(rel),
+        "n_predicted_considered": len(topk),
+    }
