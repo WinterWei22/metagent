@@ -139,3 +139,46 @@ def test_default_llm_log_path_follows_out_dir_name() -> None:
     assert scorecard.default_llm_log_path(out_dir) == (
         scorecard.ROOT / "logs/concord/full344_fullpipeline_eval_gpt55_20260620.jsonl"
     )
+
+
+def test_recall_and_driver_columns_present(tmp_path: Path) -> None:
+    # minimal sidecars
+    rel = {"t1": {"source": "ramp", "relevant_names": ["tyrosine metabolism"], "size": 1}}
+    gold = {"t1": {"gold_ramp_ids": ["RAMP_C_1"]}}
+    rel_path = tmp_path / "rel.json"
+    gold_path = tmp_path / "gold.json"
+    rel_path.write_text(json.dumps(rel), encoding="utf-8")
+    gold_path.write_text(json.dumps(gold), encoding="utf-8")
+
+    prediction = {
+        "primary": {"pathway_id": "KEGG:1", "pathway_name": "Tyrosine metabolism",
+                    "supporting_claim_indices": [0]},
+        "alternatives": [],
+        "abstain": False,
+    }
+    row = scorecard.recall_driver_row(
+        task_id="t1",
+        prediction=prediction,
+        driver_predicted_ramp_ids={"RAMP_C_1"},
+        relevant_sidecar=rel,
+        gold_sidecar=gold,
+        k=3,
+    )
+    assert row["hit_at_k"] is True
+    assert row["recall_at_k"] == 1.0
+    assert row["driver_precision"] == 1.0
+    assert row["driver_recall"] == 1.0
+
+
+def test_driver_metrics_none_for_na_stratum() -> None:
+    gold = {"t2": None}
+    rel = {"t2": {"source": "human1", "relevant_names": ["x"], "size": 1}}
+    prediction = {"primary": {"pathway_id": "", "pathway_name": "X",
+                              "supporting_claim_indices": []},
+                  "alternatives": [], "abstain": False}
+    row = scorecard.recall_driver_row(
+        task_id="t2", prediction=prediction, driver_predicted_ramp_ids=set(),
+        relevant_sidecar=rel, gold_sidecar=gold, k=3,
+    )
+    assert row["driver_precision"] is None
+    assert row["driver_recall"] is None
