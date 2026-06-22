@@ -55,3 +55,32 @@ def test_relevant_set_includes_gt_dup_and_near_excludes_far_and_huge():
     assert "aspartate metabolism" in rel       # near neighbor (jaccard 0.6)
     assert "steroid biosynthesis" not in rel   # disjoint
     assert "metabolism" not in rel             # giant pathway, low jaccard
+
+
+def _members_conn() -> sqlite3.Connection:
+    conn = sqlite3.connect(":memory:")
+    conn.execute(
+        "CREATE TABLE pathway_member(pathway_namespace TEXT, pathway_label_slug TEXT, "
+        "pathway_name TEXT, member_chebi_id TEXT, member_mam_id TEXT, source TEXT)"
+    )
+    rows = []
+    for m in ["c1", "c2", "c3", "c4"]:
+        rows.append(("HUMAN1", "gt", "Acyl-CoA hydrolysis", m, m + "c", "human1"))
+    for m in ["c1", "c2", "c3", "x"]:  # jaccard 3/5 = 0.6
+        rows.append(("HUMAN1", "near", "Fatty acyl oxidation", m, m + "c", "human1"))
+    rows.append(("HUMAN1", "far", "Glycolysis", "z", "zc", "human1"))
+    rows.append(("RECON2", "other", "Acyl-CoA hydrolysis", "c1", "c1c", "recon2"))  # wrong source
+    conn.executemany("INSERT INTO pathway_member VALUES (?,?,?,?,?,?)", rows)
+    conn.commit()
+    return conn
+
+
+def test_relevant_set_modelorg_matches_name_within_source():
+    conn = _members_conn()
+    rel = prs.build_relevant_set_modelorg(
+        conn, "Acyl-CoA hydrolysis", "human1", jaccard_threshold=0.3
+    )
+    # norm_name converts hyphens to spaces: "Acyl-CoA hydrolysis" -> "acyl coa hydrolysis"
+    assert "acyl coa hydrolysis" in rel
+    assert "fatty acyl oxidation" in rel
+    assert "glycolysis" not in rel

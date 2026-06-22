@@ -82,3 +82,45 @@ def build_relevant_set_ramp(
             if nm:
                 relevant.add(norm_name(nm))
     return relevant
+
+
+def _member_key(chebi_id: "str | None", mam_id: "str | None") -> "str | None":
+    return (chebi_id or mam_id) or None
+
+
+def _members_by_name(
+    conn: sqlite3.Connection, pathway_name_norm: str, source: str
+) -> "dict[str, set[str]]":
+    """Return {normalized_pathway_name: member-key set} for one source."""
+    grouped: "dict[str, set[str]]" = {}
+    for nm, chebi, mam in conn.execute(
+        "SELECT pathway_name, member_chebi_id, member_mam_id "
+        "FROM pathway_member WHERE source=?",
+        (source,),
+    ):
+        key = _member_key(chebi, mam)
+        if key is None:
+            continue
+        grouped.setdefault(norm_name(nm), set()).add(key)
+    return grouped
+
+
+def build_relevant_set_modelorg(
+    conn: sqlite3.Connection,
+    gt_pathway_name: str,
+    source: str,
+    *,
+    jaccard_threshold: float = 0.3,
+) -> "set[str]":
+    gt_norm = norm_name(gt_pathway_name)
+    relevant: "set[str]" = {gt_norm}
+    grouped = _members_by_name(conn, gt_norm, source)
+    gt_members = grouped.get(gt_norm, set())
+    if not gt_members:
+        return relevant
+    for name_norm, members in grouped.items():
+        if name_norm == gt_norm:
+            continue
+        if jaccard(gt_members, members) >= jaccard_threshold:
+            relevant.add(name_norm)
+    return relevant
