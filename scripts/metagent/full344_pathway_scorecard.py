@@ -383,9 +383,11 @@ def markdown_report(summary: dict[str, Any], candidates: list[dict[str, Any]]) -
     ])
     clean_scope = summary["clean"]
     rd_groups = {"overall": clean_scope["overall"], **clean_scope["by_stratum"]}
+
+    def _fmt(v: Any) -> str:
+        return f"{v:.4f}" if v is not None else "N/A"
+
     for key, item in rd_groups.items():
-        def _fmt(v: Any) -> str:
-            return f"{v:.4f}" if v is not None else "N/A"
         lines.append(
             f"| {key} | {item['tasks']} | {_fmt(item.get('recall_at_k'))} | "
             f"{_fmt(item.get('hit_at_k'))} | {_fmt(item.get('mrr'))} | "
@@ -410,7 +412,7 @@ def _load_json_file(path: Path) -> dict[str, Any]:
 def _open_ramp_conn(path: Path) -> Any:
     if path.exists():
         import sqlite3
-        return sqlite3.connect(str(path))
+        return sqlite3.connect(f"file:{path}?mode=ro", uri=True)
     return None
 
 

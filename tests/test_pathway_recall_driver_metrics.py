@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from concord.agent.pathway_prediction import pathway_recall_metrics
+from concord.agent.pathway_prediction import pathway_recall_metrics, driver_pr_metrics
 
 
 def test_recall_hit_mrr_basic():
@@ -29,9 +29,6 @@ def test_recall_empty_relevant_is_zero():
     assert m["hit_at_k"] is False
     assert m["recall_at_k"] == 0.0
     assert m["mrr"] == 0.0
-
-
-from concord.agent.pathway_prediction import driver_pr_metrics
 
 
 def test_driver_pr_none_when_gold_na():

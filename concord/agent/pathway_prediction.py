@@ -473,7 +473,9 @@ def driver_pr_metrics(
     gold_ids: set[str] | None,
 ) -> dict[str, Any] | None:
     """Driver precision/recall on a shared identity key (RAMP_C ids).
-    Returns None for N/A strata (gold_ids is None)."""
+    Returns None for N/A strata (gold_ids is None).
+    Note: an empty gold set (gold_ids == set(), not None) yields precision=1.0
+    and recall=1.0 by vacuous definition — distinct from gold_ids is None (N/A)."""
     if gold_ids is None:
         return None
     hit = predicted_ids & gold_ids

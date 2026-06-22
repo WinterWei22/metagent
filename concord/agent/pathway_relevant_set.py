@@ -89,9 +89,9 @@ def _member_key(chebi_id: "str | None", mam_id: "str | None") -> "str | None":
 
 
 def _members_by_name(
-    conn: sqlite3.Connection, pathway_name_norm: str, source: str
+    conn: sqlite3.Connection, source: str
 ) -> "dict[str, set[str]]":
-    """Return {normalized_pathway_name: member-key set} for one source."""
+    """Return {normalized_pathway_name: member-key set} for all pathways in one source."""
     grouped: "dict[str, set[str]]" = {}
     for nm, chebi, mam in conn.execute(
         "SELECT pathway_name, member_chebi_id, member_mam_id "
@@ -114,7 +114,7 @@ def build_relevant_set_modelorg(
 ) -> "set[str]":
     gt_norm = norm_name(gt_pathway_name)
     relevant: "set[str]" = {gt_norm}
-    grouped = _members_by_name(conn, gt_norm, source)
+    grouped = _members_by_name(conn, source)
     gt_members = grouped.get(gt_norm, set())
     if not gt_members:
         return relevant
