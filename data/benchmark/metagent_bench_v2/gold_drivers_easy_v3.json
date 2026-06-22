@@ -623,36 +623,16 @@
    "RAMP_C_000271691"
   ]
  },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8": {
-  "gold_ramp_ids": []
- },
- "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9": {
-  "gold_ramp_ids": []
- },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9": null,
  "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
   "gold_ramp_ids": [
    "RAMP_C_000000155",

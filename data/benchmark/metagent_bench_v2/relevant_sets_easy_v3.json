@@ -2249,53 +2249,73 @@
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9": {
   "source": "ramp",
-  "relevant_names": [],
-  "size": 0
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
  },
  "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
   "source": "ramp",

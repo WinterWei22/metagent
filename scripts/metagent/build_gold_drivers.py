@@ -48,6 +48,16 @@ def build_all(benchmark_rows: list[dict], ramp_conn: sqlite3.Connection) -> dict
             continue
         gt = row["ground_truth"]["perturbed_pathway"]
         input_ids = [m["id"] for m in row["input"]["differential_metabolites"]]
+        # Check whether the GT pathway id resolves in ramp.sqlite at all.
+        # If the pathway has 0 members (e.g. non-RAMP_P_* ids like lm_pathway:*),
+        # it is unresolvable — emit None (N/A) rather than a spuriously empty gold set.
+        member_count = ramp_conn.execute(
+            "SELECT COUNT(*) FROM analytehaspathway WHERE pathwayRampId=?",
+            (gt["id"],),
+        ).fetchone()[0]
+        if member_count == 0:
+            out[task_id] = None
+            continue
         gold = build_gold_drivers_ramp(ramp_conn, input_ids, gt["id"])
         out[task_id] = {"gold_ramp_ids": sorted(gold)}
     return out

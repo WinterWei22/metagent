@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from concord.agent.pathway_prediction import norm_name
 from concord.agent.pathway_relevant_set import (
     build_relevant_set_modelorg,
     build_relevant_set_ramp,
@@ -61,6 +62,11 @@ def build_all(
         else:
             names = set()
             source = "other"
+        # Always include the GT pathway's own name — it is definitionally relevant
+        # even when its id does not resolve in any DB (e.g. non-RAMP_P_* ids).
+        gt_norm = norm_name(gt["name"])
+        if gt_norm:
+            names = names | {gt_norm}
         out[task_id] = {
             "source": source,
             "relevant_names": sorted(names),
