@@ -29,3 +29,23 @@ def test_recall_empty_relevant_is_zero():
     assert m["hit_at_k"] is False
     assert m["recall_at_k"] == 0.0
     assert m["mrr"] == 0.0
+
+
+from concord.agent.pathway_prediction import driver_pr_metrics
+
+
+def test_driver_pr_none_when_gold_na():
+    assert driver_pr_metrics({"RAMP_C_1"}, None) is None
+
+
+def test_driver_pr_basic():
+    m = driver_pr_metrics({"RAMP_C_1", "RAMP_C_9"}, {"RAMP_C_1", "RAMP_C_2"})
+    assert m["precision"] == pytest.approx(0.5)
+    assert m["recall"] == pytest.approx(0.5)
+    assert m["n_hit"] == 1
+
+
+def test_driver_pr_empty_predicted():
+    m = driver_pr_metrics(set(), {"RAMP_C_1"})
+    assert m["precision"] == 0.0
+    assert m["recall"] == 0.0

@@ -468,6 +468,30 @@ def _collection_gt_undercovered(gt_norm: str, pred_norm: str) -> bool:
     return not gt_tokens.issubset(pred_tokens)
 
 
+def driver_pr_metrics(
+    predicted_ids: set[str],
+    gold_ids: set[str] | None,
+) -> dict[str, Any] | None:
+    """Driver precision/recall on a shared identity key (RAMP_C ids).
+    Returns None for N/A strata (gold_ids is None)."""
+    if gold_ids is None:
+        return None
+    hit = predicted_ids & gold_ids
+    precision = (
+        (len(hit) / len(predicted_ids))
+        if predicted_ids
+        else (1.0 if not gold_ids else 0.0)
+    )
+    recall = (len(hit) / len(gold_ids)) if gold_ids else 1.0
+    return {
+        "precision": precision,
+        "recall": recall,
+        "n_predicted": len(predicted_ids),
+        "n_gold": len(gold_ids),
+        "n_hit": len(hit),
+    }
+
+
 def pathway_recall_metrics(
     predicted_names: list[str],
     relevant_names: set[str],
