@@ -68,6 +68,27 @@ for name in "${SQLITES[@]}"; do
 done
 
 echo
+# ---------------------------------------------------------------------------
+# V3 Part 2 (2026-06-23): unified structure index for the embedding axis.
+#
+# `metanetx_struct.sqlite` is OWNED by this worktree (NOT a symlink) and is
+# gitignored (~344 MB). It holds MNX->SMILES (full MetaNetX chem_prop, 1.43M
+# rows) + {BiGG,KEGG,HMDB,LipidMaps}->MNX bridges, so the resolver can land a
+# SMILES for GEM (Human1/Recon2.2) metabolites whose ids never reach ChEBI.
+# Build is idempotent: it downloads chem_prop.tsv from MetaNetX (~810 MB, a GET
+# with a User-Agent header — MetaNetX rejects HEAD / blank UA) into
+# data/concord/metanetx_cache/ if missing, and reuses the investigation
+# worktree's chem_xref.tsv when present.
+# ---------------------------------------------------------------------------
+STRUCT_DB="data/concord/metanetx_struct.sqlite"
+if [ -f "$STRUCT_DB" ]; then
+    echo "✓ $STRUCT_DB already built"
+else
+    echo "Building $STRUCT_DB (downloads ~810 MB chem_prop on first run)…"
+    PYTHONPATH=. python3 scripts/metagent/v3_build_structure_index.py
+fi
+
+echo
 echo "✓ metagent-v2 concord env ready. Quick check:"
 ls -la data/concord/*.sqlite 2>/dev/null | head -5
 echo

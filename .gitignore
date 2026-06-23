@@ -65,3 +65,5 @@ conversation/
 
 # Generated result reports (not version-controlled; regeneratable from runs)
 reports/
+data/concord/metanetx_cache/*.tsv
+data/concord/metanetx_cache/*.tsv.gz
