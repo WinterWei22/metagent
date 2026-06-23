@@ -20,6 +20,10 @@ from concord.agent.pathway_prediction import (
     pathway_recall_metrics,
     driver_pr_metrics,
 )
+from concord.lookup.pathway_name_matcher import PathwayNameMatcher
+
+# 模块级单例，避免每行重建 encoder（embedding 模型加载一次）
+_pathway_matcher = PathwayNameMatcher(fallback_to_token_overlap=True)
 
 
 DEFAULT_OUT_DIR = ROOT / "data/metagent/full344_fullpipeline_eval"
@@ -108,6 +112,16 @@ def rows_for_full344(
             ground_truth_pathway_id=gt_id,
             ground_truth_pathway_name=gt_name,
         )
+        # 用 PathwayNameMatcher 覆盖 semantic match（embedding 优先，fallback token overlap）
+        _pp = payload.get("pathway_prediction") or {}
+        _primary_entry = _pp.get("primary") or {}
+        _primary_name = (_primary_entry.get("pathway_name") or "") if isinstance(_primary_entry, dict) else ""
+        _alts = [e for e in (_pp.get("alternatives") or []) if isinstance(e, dict)]
+        _topk_names = [n for n in [_primary_name] + [e.get("pathway_name") or "" for e in _alts] if n]
+        if gt_name and _primary_name:
+            metrics["primary_semantic_match"] = _pathway_matcher.is_hit(_primary_name, [gt_name])
+        if gt_name and _topk_names:
+            metrics["topk_semantic_match"] = _pathway_matcher.is_hit(gt_name, _topk_names)
         contamination_reason = contamination_reason_for(status, dump_text, dump)
         primary = payload_primary(payload)
         topk = payload_topk(payload)
