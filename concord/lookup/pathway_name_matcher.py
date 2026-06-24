@@ -31,16 +31,36 @@ class PathwayMatchResult:
     threshold: float
 
 
+def _stem(tok: str) -> str:
+    """Minimal English stemming: strip common plural/inflection suffixes."""
+    if len(tok) > 4 and tok.endswith("ing"):
+        return tok[:-3]
+    if len(tok) > 3 and tok.endswith("es"):
+        return tok[:-2]
+    if len(tok) > 3 and tok.endswith("s"):
+        return tok[:-1]
+    return tok
+
+
+def _stem_tokens(toks: set[str]) -> set[str]:
+    return {_stem(t) for t in toks}
+
+
 def _token_overlap_method(query: str, candidate: str) -> tuple[bool, str]:
-    """复用 metrics.is_pathway_hit 子逻辑，返回 (hit, method_label)。"""
+    """Substring check then stemmed token-subset check.
+
+    Returns True when the shorter token set (after stemming) is a subset
+    of the longer — i.e. the prediction is a more specific sub-pathway of
+    the ground truth or vice versa.
+    """
     if not query or not candidate:
         return False, "token_overlap"
     q_norm = query.lower().strip()
     c_norm = candidate.lower().strip()
     if q_norm in c_norm or c_norm in q_norm:
         return True, "substring"
-    q_toks = _content_tokens(query)
-    c_toks = _content_tokens(candidate)
+    q_toks = _stem_tokens(_content_tokens(query))
+    c_toks = _stem_tokens(_content_tokens(candidate))
     if not q_toks or not c_toks:
         return False, "token_overlap"
     smaller, larger = (
@@ -125,39 +145,32 @@ class PathwayNameMatcher:
                 threshold=self._threshold,
             )
 
-        # 尝试 embedding 路径
+        # Token overlap always runs (never purely a fallback).
+        tok_hit, tok_method = _token_overlap_method(query, candidate)
+
+        # Embedding path — runs when encoder available.
         if self._encoder is not None:
             q_emb = self._get_embedding(query)
             c_emb = self._get_embedding(candidate)
             if q_emb and c_emb:
                 score = cosine_similarity(q_emb, c_emb)
+                emb_hit = score >= self._threshold
                 return PathwayMatchResult(
                     query=query,
                     candidate=candidate,
                     score=score,
-                    hit=score >= self._threshold,
-                    method="embedding",
+                    hit=emb_hit or tok_hit,
+                    method="embedding" if emb_hit else tok_method,
                     threshold=self._threshold,
                 )
 
-        # fallback 路径
-        if self._fallback:
-            hit, method = _token_overlap_method(query, candidate)
-            return PathwayMatchResult(
-                query=query,
-                candidate=candidate,
-                score=-1.0,
-                hit=hit,
-                method=method,
-                threshold=self._threshold,
-            )
-
+        # Encoder unavailable — token overlap only.
         return PathwayMatchResult(
             query=query,
             candidate=candidate,
             score=-1.0,
-            hit=False,
-            method="token_overlap",
+            hit=tok_hit,
+            method=tok_method,
             threshold=self._threshold,
         )
 
@@ -184,16 +197,4 @@ class PathwayNameMatcher:
         """drop-in 替换 evaluation.sub6.metrics.is_pathway_hit。"""
         if not query or not candidates:
             return False
-        # embedding 路径：任一候选超阈值即 hit
-        if self._encoder is not None:
-            q_emb = self._get_embedding(query)
-            if q_emb:
-                for c in candidates:
-                    c_emb = self._get_embedding(c)
-                    if c_emb and cosine_similarity(q_emb, c_emb) >= self._threshold:
-                        return True
-                return False
-        # fallback
-        if self._fallback:
-            return is_pathway_hit(query, candidates)
-        return False
+        return any(self.match(query, c).hit for c in candidates)
