@@ -150,6 +150,10 @@ def _validate_compound_ids(
 # env) silently falls back to the no-enrichment legacy path.
 _CHEBI_LOOKUP_SINGLETON: Any = None  # ChebiLookup | None | False (False = unavailable)
 
+# Module-level lazy singleton for the aggregated InChIKey xref table
+# (data/concord/inchikey_xref.sqlite, built by build_inchikey_xref.py).
+_INCHIKEY_XREF_SINGLETON: Any = None  # InchikeyXrefLookup | None | False
+
 
 def _get_chebi_lookup():
     """Lazy-load + cache the ChebiLookup singleton.
@@ -167,6 +171,23 @@ def _get_chebi_lookup():
         except (FileNotFoundError, ImportError):
             _CHEBI_LOOKUP_SINGLETON = False
     return _CHEBI_LOOKUP_SINGLETON if _CHEBI_LOOKUP_SINGLETON else None
+
+
+def _get_inchikey_xref():
+    """Lazy-load + cache the InchikeyXrefLookup singleton.
+
+    Returns the lookup instance if inchikey_xref.sqlite exists, else None.
+    Falls back silently when the file is absent (dev env / first run before ETL).
+    """
+    global _INCHIKEY_XREF_SINGLETON
+    if _INCHIKEY_XREF_SINGLETON is None:
+        try:
+            from concord.lookup.inchikey_xref import InchikeyXrefLookup
+            lkp = InchikeyXrefLookup()
+            _INCHIKEY_XREF_SINGLETON = lkp if lkp.available else False
+        except (ImportError, Exception):
+            _INCHIKEY_XREF_SINGLETON = False
+    return _INCHIKEY_XREF_SINGLETON if _INCHIKEY_XREF_SINGLETON else None
 
 
 def _detect_input_namespace(s: str) -> str | None:
@@ -322,24 +343,37 @@ def _legacy_single_namespace_dict(s: str, ns_hint: str | None) -> dict[str, Any]
 
 def _ids_to_refs(compound_ids: list[str]) -> list[SimpleNamespace]:
     """Build duck-typed CompoundRef objects from string IDs, enriched
-    via ChebiLookup + compound_xref so every available cross-reference
-    is populated (W9 D2a fix).
+    via the aggregated InChIKey xref table (primary path) or ChebiLookup
+    (fallback) so every available cross-reference is populated.
+
+    For InChIKey inputs the fast path queries inchikey_xref.sqlite
+    (built from ChEBI + RaMP, covering ~87% of benchmark metabolites).
+    Non-InChIKey inputs fall through to the existing ChebiLookup chain.
 
     Each ref carries: primary_id, chebi_id, hmdb_id, kegg_compound_id,
     lipidmaps_id, inchikey, display_name. PA wrappers read whichever
-    field their id_type negotiation prefers (ramp auto path: hmdb →
-    inchikey; metaboanalystr_psea: hmdb default; fella:
-    kegg_compound_id with ChEBI→KEGG xref fallback).
-
-    The enrichment is per-input (one ChEBI sqlite query + one xref
-    query per compound_id), which on a 9-compound task costs ~20 ms
-    total. Falls back silently to the legacy single-namespace shape
-    when ChEBI sqlite is unavailable or an input doesn't resolve.
+    field their id_type negotiation prefers.
     """
+    xref_lkp = _get_inchikey_xref()
     refs: list[SimpleNamespace] = []
     for raw in compound_ids:
         s = raw.strip()
         ns_hint = _detect_input_namespace(s)
+        if ns_hint == "INCHIKEY" and xref_lkp is not None:
+            rec = xref_lkp.lookup(s)
+            if rec is not None:
+                enriched = {
+                    "primary_id": rec.chebi_id or f"INCHIKEY:{s}",
+                    "chebi_id": rec.chebi_id,
+                    "hmdb_id": f"HMDB:{rec.hmdb_id}" if rec.hmdb_id and not rec.hmdb_id.startswith("HMDB:") else rec.hmdb_id,
+                    "kegg_compound_id": f"KEGG:{rec.kegg_id}" if rec.kegg_id and not rec.kegg_id.startswith("KEGG:") else rec.kegg_id,
+                    "lipidmaps_id": rec.lipidmaps_id,
+                    "inchikey": s,
+                    "display_name": "",
+                }
+                refs.append(SimpleNamespace(**enriched))
+                continue
+        # Fallback: ChEBI-based enrichment for non-InChIKey or xref miss
         enriched = _enrich_ref_via_chebi(s, ns_hint)
         refs.append(SimpleNamespace(**enriched))
     return refs

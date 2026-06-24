@@ -93,16 +93,29 @@ def render_metabolite_line(item: dict) -> str:
     """Render one bullet line. Tolerates missing optional fields.
 
     Required: ``name`` (compound name to display).
-    Optional: ``kegg_id``, ``inchikey_first_block`` (or ``inchikey``).
+
+    v4 path (SMILES-first):  ``smiles`` + ``inchikey`` are shown; ``kegg_id`` is
+    suppressed so the LLM must use InChIKey strings when calling PA tools.
+
+    v3 legacy path: ``kegg_id`` + ``inchikey_first_block`` (or ``inchikey``).
     """
     name = item.get("name") or "(unknown)"
     parts: list[str] = []
-    kegg = item.get("kegg_id")
-    if kegg:
-        parts.append(f"KEGG: {kegg}")
-    ik = item.get("inchikey_first_block") or item.get("inchikey")
-    if ik:
-        parts.append(f"InChIKey: {ik}")
+    smiles = item.get("smiles")
+    if smiles:
+        # v4 path: show SMILES + full InChIKey (agent uses InChIKey for PA tools)
+        parts.append(f"SMILES: {smiles}")
+        ik = item.get("inchikey")
+        if ik:
+            parts.append(f"InChIKey: {ik}")
+    else:
+        # v3 legacy path: KEGG ID + InChIKey block14
+        kegg = item.get("kegg_id")
+        if kegg:
+            parts.append(f"KEGG: {kegg}")
+        ik = item.get("inchikey_first_block") or item.get("inchikey")
+        if ik:
+            parts.append(f"InChIKey: {ik}")
     suffix = f" ({', '.join(parts)})" if parts else ""
     return f"  - {name}{suffix}"
 

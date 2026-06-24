@@ -53,6 +53,9 @@ data/concord/chebi.sqlite
 # Sprint W4: MetaNetX sqlite (regenerate via `python -m concord.etl.metanetx_etl`)
 data/concord/metanetx.sqlite
 
+# v3 InChIKey xref (regenerate via `python scripts/metagent/build_inchikey_xref.py`)
+data/concord/inchikey_xref.sqlite
+
 # MetAgent run outputs (regeneratable run dumps; ~700MB)
 data/metagent/
 

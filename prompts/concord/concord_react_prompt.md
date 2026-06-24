@@ -29,7 +29,7 @@ Each returns a serialised `EnrichmentResult` (schema `concordmet_v0.3.1`) with t
 
 ### Compound / ID reconciliation tools
 
-- **lookup_chebi** — resolve one identifier to a structured `CompoundRef`: namespace-prefixed primary ID, full InChIKey, chemical-class metadata, cross-DB IDs. **Accepted input shapes**: **`CHEBI:NNNNN`**, **`KEGG: Cxxxxx`** (or bare **`Cxxxxx`**), **`HMDB: HMDB…`** (or bare **`HMDB0000NNN`**), **`LIPIDMAPS: LM…`** (or bare **`LM…`**), **full 27-char InChIKey**, **compound name**, or **SMILES** (when `namespace="SMILES"` hint is passed). Call this **before** running any PA tool if input IDs are namespace-mixed and you want to align them. The PA tools accept mixed input but cleanest results come from a single namespace.
+- **lookup_chebi** — resolve one identifier to a structured `CompoundRef`: namespace-prefixed primary ID, full InChIKey, chemical-class metadata, cross-DB IDs. **Accepted input shapes**: **`CHEBI:NNNNN`**, **`KEGG: Cxxxxx`** (or bare **`Cxxxxx`**), **`HMDB: HMDB…`** (or bare **`HMDB0000NNN`**), **`LIPIDMAPS: LM…`** (or bare **`LM…`**), **full 27-char InChIKey**, **compound name**, or **SMILES** (when `namespace="SMILES"` hint is passed). Call this when you need compound metadata (name, formula, mass) or to resolve a compound **name** or **SMILES** to a structured ID. **Do NOT call this just to convert InChIKeys before PA tools — all PA tools already accept 27-char InChIKey strings directly in `compound_ids` and resolve them to KEGG/HMDB internally. Calling `lookup_chebi` on every InChIKey wastes turns.**
 - **reconcile_inchikey** — given a list of `CompoundRef`-like dicts (possibly across HMDB / LIPIDMAPS / ChEBI), return a deduplicated canonical set + a `ConflictReport` describing any structural disagreement (different InChIKey first-blocks for the "same" name). Call this when two PA tools disagree on which metabolite is in a pathway and you want to know whether it is a true biological disagreement or a namespace artefact.
 - **query_pathway_members** — given a `pathway_id` like `WP:WP167` or `KEGG:hsa00590`, return the canonical compound member list (as a set of ChEBI IDs). Call this to verify that a pathway you intend to name actually contains the driver metabolites you intend to call out — i.e., bridge from a pathway hit back to its compound roster.
 
@@ -41,10 +41,11 @@ Each returns a serialised `EnrichmentResult` (schema `concordmet_v0.3.1`) with t
 
 1. You MUST call **at least three different pathway-analysis tools** before producing the final narrative. Calling only one tool (e.g. only RaMP) reproduces the single-tool baseline and is not the agent you are. Choose tools whose paradigms complement each other (e.g. at least one ORA + one network or m/z-direct).
 2. You MUST integrate cross-paradigm results **yourself**. There is no `apply_v3_soft_union` / `compute_consensus` / `rank_pathways` tool — you are the agent that decides which pathways are real winners by reading the five EnrichmentResults and reasoning across them (rank, score, namespace consistency, biological coherence).
-3. Pass real, structurally valid IDs to the tools. KEGG: `Cxxxxx`. HMDB: `HMDB` + 7 digits. ChEBI: `CHEBI:NNNN`. LIPIDMAPS: `LM…`. The metabolite list below already contains many of these — copy them, do not invent them.
-4. If a tool returns `{"error": ...}`, read its `fallback_suggested` field and act on it (try a different identifier, switch tool, or accept the gap and proceed).
-5. Do not call the same tool with identical arguments twice — the dispatcher caches and tells you "you already called this". Switch arguments or move on.
-6. After you have enough evidence, produce a single final assistant message **with no tool_calls**. That message is your structured grammar-v2 JSON narrative. Do not mix tool_calls and narrative in the same turn.
+3. Pass real, structurally valid IDs to the tools. KEGG: `Cxxxxx`. HMDB: `HMDB` + 7 digits. ChEBI: `CHEBI:NNNN`. LIPIDMAPS: `LM…`. **InChIKey: full 27-char string (e.g. `HHLFWLYXYJOTON-UHFFFAOYSA-N`) — pass directly, no prior lookup needed.** The metabolite list below already contains many of these — copy them, do not invent them. When the input provides InChIKeys, pass them straight to PA tools as `compound_ids`; the tools resolve InChIKey → KEGG/HMDB internally in one step.
+4. **NEVER call `lookup_chebi` just to convert an InChIKey.** If the input metabolites have InChIKey strings (27-char format like `HHLFWLYXYJOTON-UHFFFAOYSA-N`), pass them **directly** to PA tools as `compound_ids`. The PA tools internally resolve InChIKey → KEGG/HMDB in one step. Calling `lookup_chebi` on every InChIKey before running PA tools wastes 10+ turns and leaves no room for actual analysis — this is the single most common failure mode. Start with PA tools immediately.
+5. If a tool returns `{"error": ...}`, read its `fallback_suggested` field and act on it (try a different identifier, switch tool, or accept the gap and proceed).
+6. Do not call the same tool with identical arguments twice — the dispatcher caches and tells you "you already called this". Switch arguments or move on.
+7. After you have enough evidence, produce a single final assistant message **with no tool_calls**. That message is your structured grammar-v2 JSON narrative. Do not mix tool_calls and narrative in the same turn.
 
 ### Decision rule — when to stop calling tools
 
@@ -125,7 +126,7 @@ A metabolomics study identified the following metabolites as significantly diffe
 
 Use the function tools to:
 
-1. Resolve / reconcile the input IDs if they are mixed-namespace (`lookup_chebi`, possibly `reconcile_inchikey`).
+1. If input metabolites have **InChIKey** strings, pass them **directly** to PA tools — do NOT call `lookup_chebi` first (see Hard Rule 4). Only call `lookup_chebi` if you need to resolve a compound **name** or **SMILES** to a structured ID, or if input IDs are mixed-namespace (KEGG/HMDB/ChEBI mixed).
 2. Run **at least three** pathway-analysis tools across complementary paradigms (e.g. one ORA + mummichog + FELLA). Compare their top pathways.
 3. For the cross-paradigm winner(s), verify driver-metabolite membership via `query_pathway_members`.
 4. Then produce the grammar-v2 JSON output (single message, no tool_calls): a 200-400 word narrative and 4-12 structured claims spanning the four `claim_type` values where appropriate.
