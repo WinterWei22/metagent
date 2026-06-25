@@ -1,0 +1,2755 @@
+{
+  "stats": {
+    "other_strata_kept": 243,
+    "kegg_kept": 40,
+    "wiki_kept": 2,
+    "wiki_removed": 18,
+    "reactome_kept": 7,
+    "reactome_removed": 32,
+    "other_onto_kept": 0
+  },
+  "total_input": 342,
+  "total_output": 292,
+  "total_removed": 50,
+  "hmdb_ramp_total": 99,
+  "hmdb_ramp_kept": 49,
+  "hmdb_ramp_removed": 50,
+  "entries": [
+    {
+      "task_id": "s4_cooke_2025_human1_group1",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Acyl-CoA hydrolysis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group3",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Alanine, aspartate and glutamate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group8",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Arachidonic acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group9",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Arginine and proline metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group11",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Ascorbate and aldarate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group19",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of phytanic acid (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group26",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Bile acid biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group28",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Biopterin metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group30",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Blood group biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group32",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "C5-branched dibasic acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group33",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Carnitine shuttle (cytosolic)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group34",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Carnitine shuttle (endoplasmic reticular)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group36",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Carnitine shuttle (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group40",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Cholesterol metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group45",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Cysteine and methionine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group47",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Drug metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group48",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Eicosanoid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group49",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Estrogen metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group52",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid activation (cytosolic)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group62",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid oxidation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group63",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Folate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group64",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Formation and hydrolysis of cholesterol esters",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group65",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fructose and mannose metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group69",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycerolipid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group71",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group75",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycosphingolipid biosynthesis-lacto and neolacto series",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group83",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Inositol phosphate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group87",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Leukotriene metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group88",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Linoleate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group90",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Lysine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group97",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Omega-3 fatty acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group101",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Pentose and glucuronate interconversions",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group102",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Pentose phosphate pathway",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group105",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Phenylalanine, tyrosine and tryptophan biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group109",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Propanoate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group110",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Prostaglandin biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group111",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Protein assembly",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group112",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Protein degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group121",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Sphingolipid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group129",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Tricarboxylic acid cycle and glyoxylate/dicarboxylate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group131",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group142",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Xenobiotics metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group82",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Histidine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group91",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Metabolism of other amino acids",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group104",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Phenylalanine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group134",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Valine, leucine, and isoleucine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group68",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glutathione metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group120",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Serotonin and melatonin biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group116",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Pyruvate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group122",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Starch and sucrose metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group31",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Butanoate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group37",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Cholesterol biosynthesis 1 (Bloch pathway)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group38",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Cholesterol biosynthesis 2",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group39",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Cholesterol biosynthesis 3 (Kandustch-Russell pathway)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group99",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Oxidative phosphorylation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group124",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Sulfur metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group41",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Chondroitin / heparan sulfate biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group42",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Chondroitin sulfate degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group73",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycosphingolipid biosynthesis-ganglio series",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group74",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycosphingolipid biosynthesis-globo series",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group76",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycosphingolipid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group85",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Keratan sulfate biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group86",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Keratan sulfate degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group93",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "N-glycan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group96",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "O-glycan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group2",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Acylglycerides metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group7",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Androgen metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group12",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of branched-chain fatty acids (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group13",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of di-unsaturated fatty acids (n-6) (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group14",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of di-unsaturated fatty acids (n-6) (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group15",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of even-chain fatty acids (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group16",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of even-chain fatty acids (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group17",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of odd-chain fatty acids (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group20",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of poly-unsaturated fatty acids (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group21",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of unsaturated fatty acids (n-7) (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group23",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of unsaturated fatty acids (n-9) (mitochondrial)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group24",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of unsaturated fatty acids (n-9) (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group22",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of unsaturated fatty acids (n-7) (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group27",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Bile acid recycling",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group50",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Ether lipid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group53",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid activation (endoplasmic reticular)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group54",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group55",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid biosynthesis (even-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group56",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid biosynthesis (odd-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group57",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid biosynthesis (unsaturated)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group58",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid desaturation (even-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group59",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid desaturation (odd-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group60",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid elongation (even-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group61",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Fatty acid elongation (odd-chain)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group67",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glucocorticoid biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group77",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Glycosylphosphatidylinositol (GPI)-anchor biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group80",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Heparan sulfate degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group98",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Omega-6 fatty acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group123",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Steroid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group29",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Biotin metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group108",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Porphyrin metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group132",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Ubiquinone synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group138",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Vitamin B6 metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group135",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Vitamin A metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group78",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Heme degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group125",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Terpenoid backbone biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group18",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta oxidation of odd-chain fatty acids (peroxisomal)",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group100",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Pantothenate and CoA biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group79",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Heme synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group106",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Phosphatidylinositol phosphate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group130",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group81",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Hippurate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group113",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Protein modification",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group89",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Lipoic acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group43",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "CoA catabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group44",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "CoA synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group137",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Vitamin B2 metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group25",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Beta-alanine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group133",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Urea cycle",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group139",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Vitamin C metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_human1_group119",
+      "stratum": "other",
+      "ontology": "Human1",
+      "gt_name": "Riboflavin metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem27",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Phosphatidylinositol phosphate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem76",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Vitamin B6 metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem70",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Galactose metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem45",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Starch and sucrose metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem9",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Ubiquinone synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem69",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Glyoxylate and dicarboxylate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem59",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Heme synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem6",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Pyrimidine catabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem17",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Cytochrome metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem85",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Androgen and estrogen synthesis and metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem30",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Citric acid cycle",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem90",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Glycosphingolipid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem40",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Triacylglycerol synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem75",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Histidine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem61",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "D-alanine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem12",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem15",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Taurine and hypotaurine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem48",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Vitamin C metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem19",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "N-glycan degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem5",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Methionine and cysteine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem38",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Purine synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem10",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Valine, leucine, and isoleucine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem36",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Nucleotide salvage pathway",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem7",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Propanoate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem39",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Keratan sulfate synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem78",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "CoA catabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem63",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Folate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem2",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Vitamin D metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem8",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem21",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Blood group synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem55",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "ROS detoxification",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem33",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Vitamin B2 metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem68",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Fructose and mannose metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem14",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Purine catabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem80",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Phenylalanine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem83",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Cysteine Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem74",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Hyaluronan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem54",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Limonene and pinene degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem79",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "NAD metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem20",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "O-glycan synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem16",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Arginine and Proline Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem3",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Lysine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem28",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Urea cycle",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem47",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "R group synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem4",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Glycine, serine, alanine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem82",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Thiamine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem22",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Glutamate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem87",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Arachidonic acid metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem67",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Keratan sulfate degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem77",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Inositol phosphate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem44",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Glutathione metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem46",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Biotin metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem23",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Pentose phosphate pathway",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem53",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Heme degradation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem49",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Pyrimidine synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem66",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "CoA synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem52",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "N-glycan synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem62",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Fatty acid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem31",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Pyruvate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem41",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Alanine and aspartate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem13",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Butanoate metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem26",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Aminosugar metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem1",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "beta-Alanine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "s4_cooke_2025_recon2_2_subsystem81",
+      "stratum": "other",
+      "ontology": "Recon2.2",
+      "gt_name": "Oxidative phosphorylation",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "Sulfatase and aromatase pathway",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed5",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Androgen and Estrogen Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053042_seed9",
+      "stratum": "other",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "Steroid biosynthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed9",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycine, serine and threonine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:smpdb",
+      "gt_name": "Celecoxib Action Pathway",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Galactose Metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "Pyrimidine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Pyrimidine catabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "Pyrimidine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Biological oxidations",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Metabolism of amino acids and derivatives",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tyrosine metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+      "stratum": "other",
+      "ontology": "RaMP:lipidmaps",
+      "gt_name": "Eicosanoid synthesis",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed2",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed3",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed4",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed6",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed7",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+      "stratum": "other",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Tryptophan metabolism",
+      "decision": "KEEP",
+      "reason": "non-hmdb_ramp stratum"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Alanine, aspartate and glutamate metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Alanine, aspartate and glutamate metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Amino Sugar Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Amino Sugar Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Arachidonic Acid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Arachidonic Acid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Arginine and proline metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Arginine and proline metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Biosynthesis of unsaturated fatty acids",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Biosynthesis of unsaturated fatty acids",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Butyrate Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Butyrate Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Caffeine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Caffeine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Citric Acid Cycle",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Citric Acid Cycle",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "D-Arginine and D-Ornithine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "D-Arginine and D-Ornithine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fatty Acid Elongation In Mitochondria",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fatty Acid Elongation In Mitochondria",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fatty acid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fatty acid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fructose and mannose metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Fructose and mannose metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glutathione metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glutathione metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycerolipid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycerolipid Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycolysis / Gluconeogenesis",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Glycolysis / Gluconeogenesis",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Histidine metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Histidine metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Ketone Body Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Ketone Body Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Lysine degradation",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Lysine degradation",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Methionine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Methionine Metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Nicotinate and nicotinamide metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:kegg",
+      "gt_name": "Nicotinate and nicotinamide metabolism",
+      "decision": "KEEP",
+      "reason": "KEGG always kept"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "5-Phosphoribose 1-diphosphate biosynthesis",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "5-Phosphoribose 1-diphosphate biosynthesis",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABC transporters in lipid homeostasis",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABC transporters in lipid homeostasis",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABC-family proteins mediated transport",
+      "decision": "REMOVE",
+      "reason": "ABC transporter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABC-family proteins mediated transport",
+      "decision": "REMOVE",
+      "reason": "ABC transporter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABO blood group biosynthesis",
+      "decision": "REMOVE",
+      "reason": "ABO blood group antigen"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ABO blood group biosynthesis",
+      "decision": "REMOVE",
+      "reason": "ABO blood group antigen"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ADORA2B mediated anti-inflammatory cytokines production",
+      "decision": "REMOVE",
+      "reason": "cytokine/cytokines"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ADORA2B mediated anti-inflammatory cytokines production",
+      "decision": "REMOVE",
+      "reason": "cytokine/cytokines"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ADP signalling through P2Y purinoceptor 12",
+      "decision": "REMOVE",
+      "reason": "signaling"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ADP signalling through P2Y purinoceptor 12",
+      "decision": "REMOVE",
+      "reason": "signaling"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ALKBH2 mediated reversal of alkylation damage",
+      "decision": "REMOVE",
+      "reason": "ALKBH alkylation repair"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ALKBH2 mediated reversal of alkylation damage",
+      "decision": "REMOVE",
+      "reason": "ALKBH alkylation repair"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ALKBH3 mediated reversal of alkylation damage",
+      "decision": "REMOVE",
+      "reason": "ALKBH alkylation repair"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "ALKBH3 mediated reversal of alkylation damage",
+      "decision": "REMOVE",
+      "reason": "ALKBH alkylation repair"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Abacavir ADME",
+      "decision": "REMOVE",
+      "reason": "ADME (pharmacokinetics)"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Abacavir ADME",
+      "decision": "REMOVE",
+      "reason": "ADME (pharmacokinetics)"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Abacavir metabolism",
+      "decision": "REMOVE",
+      "reason": "drug ADME/pharmacology"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Abacavir metabolism",
+      "decision": "REMOVE",
+      "reason": "drug ADME/pharmacology"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylation",
+      "decision": "REMOVE",
+      "reason": "acetylation PTM (exact name)"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylation",
+      "decision": "REMOVE",
+      "reason": "acetylation PTM (exact name)"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylcholine Neurotransmitter Release Cycle",
+      "decision": "REMOVE",
+      "reason": "neurotransmitter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylcholine Neurotransmitter Release Cycle",
+      "decision": "REMOVE",
+      "reason": "neurotransmitter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylcholine regulates insulin secretion",
+      "decision": "REMOVE",
+      "reason": "acetylcholine neurotransmitter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acetylcholine regulates insulin secretion",
+      "decision": "REMOVE",
+      "reason": "acetylcholine neurotransmitter"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3",
+      "decision": "REMOVE",
+      "reason": "receptor"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3",
+      "decision": "REMOVE",
+      "reason": "receptor"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activated point mutants of FGFR2",
+      "decision": "REMOVE",
+      "reason": "FGFR signaling"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activated point mutants of FGFR2",
+      "decision": "REMOVE",
+      "reason": "FGFR signaling"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of NMDA receptors and postsynaptic events",
+      "decision": "REMOVE",
+      "reason": "NMDA receptor"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of NMDA receptors and postsynaptic events",
+      "decision": "REMOVE",
+      "reason": "NMDA receptor"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of gene expression by SREBF (SREBP)",
+      "decision": "REMOVE",
+      "reason": "gene expression"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of gene expression by SREBF (SREBP)",
+      "decision": "REMOVE",
+      "reason": "gene expression"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of the phototransduction cascade",
+      "decision": "REMOVE",
+      "reason": "phototransduction"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Activation of the phototransduction cascade",
+      "decision": "REMOVE",
+      "reason": "phototransduction"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050453_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acyl chain remodeling of CL",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acyl chain remodeling of DAG and TAG",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:reactome",
+      "gt_name": "Acyl chain remodeling of DAG and TAG",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "10q22q23 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "10q22q23 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "15q11q13 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "15q11q13 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "15q25 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "15q25 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "4-hydroxytamoxifen, dexamethasone, and retinoic acids regulation of p27 expression",
+      "decision": "REMOVE",
+      "reason": "4-hydroxytamoxifen"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "4-hydroxytamoxifen, dexamethasone, and retinoic acids regulation of p27 expression",
+      "decision": "REMOVE",
+      "reason": "4-hydroxytamoxifen"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "4p16.3 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "4p16.3 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "5q35 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "5q35 copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "7-oxo-C and 7-beta-HC pathways",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "7-oxo-C and 7-beta-HC pathways",
+      "decision": "KEEP",
+      "reason": ""
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "7q11.23 distal copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "7q11.23 distal copy number variation",
+      "decision": "REMOVE",
+      "reason": "CNV pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "ACE inhibitor pathway",
+      "decision": "REMOVE",
+      "reason": "ACE inhibitor pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "ACE inhibitor pathway",
+      "decision": "REMOVE",
+      "reason": "ACE inhibitor pathway"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep0",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "ADHD and autism (ASD) pathways",
+      "decision": "REMOVE",
+      "reason": "autism"
+    },
+    {
+      "task_id": "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep1",
+      "stratum": "hmdb_ramp",
+      "ontology": "RaMP:wikipathways",
+      "gt_name": "ADHD and autism (ASD) pathways",
+      "decision": "REMOVE",
+      "reason": "autism"
+    }
+  ]
+}
