@@ -103,6 +103,36 @@ def verify_driver_metabolite(
         else (source_report.compound_lookup or _get_default_lookup())
     )
 
+    # v4 guard: when BOTH ground-truth lists are empty (v4 tasks do not
+    # pre-fill compound lists by design), the layer cannot adjudicate
+    # driver membership. Return INSUFFICIENT_EVIDENCE immediately rather
+    # than silently producing an uninformative UNSUPPORTED / UNVERIFIABLE_V0.
+    # v3 path (at least one list non-empty) is UNCHANGED.
+    signal = source_report.ground_truth_signal_compounds or []
+    noise = source_report.ground_truth_noise_compounds or []
+    if not signal and not noise:
+        return VerifiedClaim(
+            claim_id=claim.claim_id,
+            claim_text=claim.claim_text,
+            claim_type=ClaimType.DRIVER_METABOLITE,
+            claim_subtype=ClaimSubtype.DRIVER_LIST,
+            subject=claim.subject,
+            subject_kind=claim.subject_kind,
+            candidate_ref=claim.candidate_ref,
+            verdict=ClaimVerdict.INSUFFICIENT_EVIDENCE,
+            evidence=(
+                "v4 任务无预填 ground-truth signal/noise compounds（设计取舍）；"
+                "driver 判定需要这些列表，降级为 INSUFFICIENT_EVIDENCE。"
+                " v4 tasks do not pre-fill ground_truth_signal_compounds / "
+                "ground_truth_noise_compounds; driver membership cannot be "
+                "adjudicated without these lists."
+            ),
+            extracted_fields=claim.extracted_fields,
+            verifier_layer="driver_metabolite",
+            trace_summary="v4 no ground-truth compounds → INSUFFICIENT_EVIDENCE",
+            enrichment_context=EnrichmentContext(),
+        )
+
     claimed_names = _extract_driver_names(claim, effective_lookup)
     if not claimed_names:
         return _unverifiable(
