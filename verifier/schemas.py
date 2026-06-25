@@ -816,6 +816,7 @@ class ClaimMetrics(BaseModel):
     unsupported_claims: int = 0
     unverifiable_claims: int = 0
     error_claims: int = 0
+    insufficient_evidence_claims: int = 0
     dropped_by_grammar: int = 0
     """Phase B1 D2: count of claims rejected by ``verifier.grammar.validate``
     before reaching any verifier layer. NOT part of the ``total_claims``

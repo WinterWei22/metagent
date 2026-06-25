@@ -435,7 +435,10 @@ def _aggregate_verdict(
         # confidently say "verified". Treat as partially_verified rather
         # than failed — the caller still gets the surviving evidence.
         return "partially_verified"
-    if has_unsupported or has_unverifiable or has_needs_review:
+    has_insufficient_evidence = any(
+        c.verdict == ClaimVerdict.INSUFFICIENT_EVIDENCE for c in claims
+    )
+    if has_unsupported or has_unverifiable or has_needs_review or has_insufficient_evidence:
         # NEEDS_HUMAN_REVIEW from Layer F's cross-validation: the
         # consensus could not arbitrate between SIRIUS and CFM-ID, so
         # the claim's status is suspended pending review. Maps to

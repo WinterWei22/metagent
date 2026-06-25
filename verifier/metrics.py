@@ -34,6 +34,7 @@ def compute_claim_metrics(
     unsupported = verdict_counts[ClaimVerdict.UNSUPPORTED]
     unverifiable = verdict_counts[ClaimVerdict.UNVERIFIABLE_V0]
     errors = verdict_counts[ClaimVerdict.ERROR]
+    insufficient_evidence = verdict_counts[ClaimVerdict.INSUFFICIENT_EVIDENCE]
 
     judged_denominator = supported + contradicted + unsupported
 
@@ -50,6 +51,7 @@ def compute_claim_metrics(
         unsupported_claims=unsupported,
         unverifiable_claims=unverifiable,
         error_claims=errors,
+        insufficient_evidence_claims=insufficient_evidence,
         dropped_by_grammar=dropped_by_grammar,
         supported_ratio=confidence_components.get("supported_ratio"),
         contradiction_rate=confidence_components.get("contradiction_rate"),
