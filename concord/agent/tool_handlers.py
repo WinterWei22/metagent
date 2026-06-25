@@ -390,6 +390,27 @@ def _top_n_or_default(arguments: dict[str, Any], default: int = 10) -> int:
 
 
 # ---------------------------------------------------------------------------
+# KEGG namespace normalization helper
+# ---------------------------------------------------------------------------
+
+
+def _normalize_kegg_id(pathway_id: str) -> str:
+    """Normalize KEGG:map00XXX → KEGG:hsa00XXX; leave other IDs unchanged.
+
+    RaMP-DB sometimes returns generic KEGG reference pathway IDs with the
+    ``map`` prefix (e.g. ``KEGG:map00250``) instead of the human-specific
+    ``hsa`` prefix used by Mummichog and SSPA (e.g. ``KEGG:hsa00250``).
+    This discrepancy prevents the LLM agent from recognising cross-tool
+    convergence.  Applying this function to every pathway_id emitted by
+    the RaMP handler normalises the namespace so all KEGG IDs share a
+    consistent ``hsa``-prefixed form.
+    """
+    if pathway_id.startswith("KEGG:map"):
+        return "KEGG:hsa" + pathway_id[len("KEGG:map"):]
+    return pathway_id
+
+
+# ---------------------------------------------------------------------------
 # 5 PA handlers (sspa / ramp / metaboanalystr / mummichog / fella)
 # ---------------------------------------------------------------------------
 
@@ -564,6 +585,12 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
     # dict whose top-level `pathways` key is empty.
     enriched = normalize_ramp_output(raw, top_n=top_n)
     result_dict = dataclasses.asdict(enriched)
+    # Normalize KEGG:map00XXX → KEGG:hsa00XXX so the LLM agent can
+    # correctly detect cross-tool convergence with Mummichog / SSPA output
+    # that already uses the hsa-prefixed human pathway form.
+    for p in result_dict.get("pathways") or []:
+        if isinstance(p.get("pathway_id"), str):
+            p["pathway_id"] = _normalize_kegg_id(p["pathway_id"])
     # W9 D2c: escalate wrapper-internal error sentinels (notes / error)
     escalated = _maybe_escalate_wrapper_error("run_ramp_enrichment", result_dict)
     if escalated is not None:
