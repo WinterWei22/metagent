@@ -63,7 +63,11 @@ def _report() -> SubsixSourceReport:
     )
 
 
-def test_explicit_method_keeps_legacy_ramp_behavior_when_flag_off() -> None:
+def test_explicit_method_with_mummichog_pool_hit_is_supported_when_flag_off() -> None:
+    # Task 4 (D1.2): multisource pool is now active even when
+    # METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT=0. A claim with
+    # pathway_id="MUMM:tyrosine_metabolism" hits the mummichog pool →
+    # SUPPORTED (was CONTRADICTED under the pre-Task-4 RaMP-only path).
     result = verify_set_enrichment(
         _claim(
             "Mummichog returns MUMM:tyrosine_metabolism at rank 1 with p=2.52e-04.",
@@ -75,7 +79,7 @@ def test_explicit_method_keeps_legacy_ramp_behavior_when_flag_off() -> None:
         _report(),
     )
 
-    assert result.verdict == ClaimVerdict.CONTRADICTED
+    assert result.verdict == ClaimVerdict.SUPPORTED
     assert result.verifier_layer == "set_enrichment"
 
 

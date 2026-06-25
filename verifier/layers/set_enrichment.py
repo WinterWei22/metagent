@@ -88,6 +88,14 @@ def verify_set_enrichment(
         if method_aware is not None:
             return method_aware
 
+    # --- Multisource pool: try non-RaMP paradigms first ---
+    # Extract pathway identifiers from claim so they're available for both
+    # the pool pass and the downstream RaMP-based ranked pass.
+    pathway_id, pathway_name = _extract_pathway_from_claim(claim)
+    pool_hit = _try_multisource_pool(claim, source_report, pathway_id, pathway_name)
+    if pool_hit is not None:
+        return pool_hit
+
     top_pathways = _extract_top_pathways(source_report)
     if not top_pathways:
         return _unverifiable(
@@ -105,8 +113,6 @@ def verify_set_enrichment(
         _pathway_match_from_dict(p, rank=i + 1)
         for i, p in enumerate(top_pathways[:_TOP_K_SUPPORTED])
     ]
-
-    pathway_id, pathway_name = _extract_pathway_from_claim(claim)
 
     # ID match wins.
     if pathway_id:
@@ -250,6 +256,77 @@ def verify_set_enrichment(
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _try_multisource_pool(
+    claim: ClassifiedClaim,
+    source_report: SubsixSourceReport,
+    pathway_id: str | None,
+    pathway_name: str | None,
+) -> VerifiedClaim | None:
+    """Try matching the claimed pathway against the non-RaMP multisource pool.
+
+    Returns a SUPPORTED VerifiedClaim if the pathway is found in any non-RaMP
+    paradigm (mummichog, metaboanalystr, sspa, fella). Returns None if no
+    non-RaMP match is found, allowing the caller to fall through to the
+    existing RaMP-based ranked logic.
+
+    RaMP rows are excluded here: they are handled by the rank-aware path below,
+    which distinguishes SUPPORTED (top-3) from UNSUPPORTED (rank 4-10) and
+    CONTRADICTED (outside top-10). Non-RaMP paradigms do not expose a
+    comparable rank contract, so any hit is SUPPORTED.
+    """
+    if not pathway_id and not pathway_name:
+        return None
+
+    from verifier.helpers.multisource_enrichment import build_pathway_pool, match_in_pool
+
+    pool = build_pathway_pool(source_report)
+    # Exclude RaMP rows — those are verified by the rank-aware path.
+    non_ramp_pool = [row for row in pool if row.get("_paradigm") != "ramp"]
+    if not non_ramp_pool:
+        return None
+
+    matched_row = match_in_pool(non_ramp_pool, pathway_id, pathway_name)
+    if matched_row is None:
+        return None
+
+    paradigm = matched_row.get("_paradigm", "unknown")
+    matched_name = matched_row.get("pathway_name") or matched_row.get("pathway_id_native") or ""
+    matched_pid = matched_row.get("pathway_id") or matched_row.get("pathway_id_native") or ""
+
+    return VerifiedClaim(
+        claim_id=claim.claim_id,
+        claim_text=claim.claim_text,
+        claim_type=ClaimType.SET_ENRICHMENT,
+        claim_subtype=ClaimSubtype.ENRICHMENT_PATHWAY,
+        subject=claim.subject,
+        subject_kind=claim.subject_kind,
+        candidate_ref=claim.candidate_ref,
+        verdict=ClaimVerdict.SUPPORTED,
+        evidence=(
+            f"Claimed pathway {(pathway_name or pathway_id)!r} matched in "
+            f"{paradigm} enrichment pool "
+            f"(pathway={matched_name!r}, id={matched_pid!r})."
+        ),
+        extracted_fields=claim.extracted_fields,
+        verifier_layer="set_enrichment",
+        tool_called=f"{paradigm}_enrichment_result",
+        trace_summary=f"multisource pool hit via {paradigm}",
+        enrichment_context=EnrichmentContext(
+            claimed_pathway=pathway_name,
+            claimed_pathway_id=pathway_id,
+            matched_top_pathways=[],
+            best_match=PathwayMatch(
+                pathway_id=matched_pid or None,
+                pathway_name=matched_name or None,
+                pathway_source=matched_row.get("pathway_source"),
+                pathway_external_id=matched_row.get("pathway_external_id"),
+                rank=None,
+            ),
+            pathway_match_method="id" if pathway_id and matched_pid else "substring_either",
+        ),
+    )
 
 
 def _extract_top_pathways(report: SubsixSourceReport) -> list[dict[str, Any]]:
