@@ -186,6 +186,13 @@ class ClaimVerdict(str, Enum):
     peak claim. Downstream code must treat it as a first-class verdict, not
     as an error or a filtered-out null."""
 
+    INSUFFICIENT_EVIDENCE = "insufficient_evidence"
+    """Pathway absent from the evidence pool but potentially checkable.
+    Distinct from UNVERIFIABLE_V0 (out-of-paradigm, cannot judge);
+    INSUFFICIENT_EVIDENCE means the verifier layer has the right shape
+    but the required evidence (e.g. pathway membership data) is not
+    available in the current pool."""
+
 
 class ClaimSubtype(str, Enum):
     """More specific semantic shape within a broad ``ClaimType`` route."""
