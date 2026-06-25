@@ -1041,7 +1041,9 @@ def _store_enrichment_carrier(
     if not payload.get("ok") or not isinstance(payload.get("result"), dict):
         return
     result = payload["result"]
-    if tool_name == "run_mummichog":
+    if tool_name == "run_ramp_enrichment":
+        carriers["ramp_enrichment_result"] = result
+    elif tool_name == "run_mummichog":
         carriers["mummichog_enrichment_result"] = result
     elif tool_name == "run_metaboanalystr_psea":
         carriers.setdefault("metaboanalystr_enrichment_result", {})["psea"] = result
