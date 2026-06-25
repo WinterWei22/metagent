@@ -35,10 +35,6 @@ def _get_name_matcher():
 # Carrier extraction — mirrors method_aware_enrichment._carrier_rows structure
 # ---------------------------------------------------------------------------
 
-_CARRIER_SPECS: list[tuple[str, Any]] = [
-    # (paradigm_label, extractor_fn)
-]
-
 
 def _extract_ramp(source_report: SubsixSourceReport) -> list[dict[str, Any]]:
     carrier = source_report.ramp_enrichment_result or {}
