@@ -234,9 +234,13 @@ def test_namespace_crosswalk_no_mapping_uv():
         pathway_id="GARBAGE_NS:something_not_mapped",
     )
     result = verify_set_enrichment(claim, task)
+    # Task 6 (2026-06-25, option B): absent-from-pool now yields
+    # INSUFFICIENT_EVIDENCE instead of CONTRADICTED.
+    # Authorized change: CONTRADICTED is reserved for rank/score-mismatch (Task 8).
     assert result.verdict in (
         ClaimVerdict.UNVERIFIABLE_V0,
         ClaimVerdict.CONTRADICTED,
+        ClaimVerdict.INSUFFICIENT_EVIDENCE,
     ), (
         f"Unmappable namespace pathway must not be falsely SUPPORTED; "
         f"got verdict={result.verdict!r}, evidence={result.evidence}"

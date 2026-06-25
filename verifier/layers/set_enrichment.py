@@ -246,8 +246,19 @@ def verify_set_enrichment(
             ctx=EnrichmentContext(matched_top_pathways=matched_top),
         )
 
-    # No match in top-10 → CONTRADICTED.
-    canonical_top1 = top_pathways[0].get("pathway_name")
+    # No match in top-10 → INSUFFICIENT_EVIDENCE.
+    # Semantic note (Task 6, 2026-06-25): "absent from pool" ≠ "refuted".
+    # Enrichment tools may simply not cover that pathway.
+    # CONTRADICTED is reserved for rank/score-mismatch (Task 8).
+    # Authorized change: user adjudication option B.
+    from verifier.helpers.evidence_checklist import build_missing_evidence_checklist
+
+    # Re-build the full pool for checklist context (pool was already consumed
+    # earlier in _try_multisource_pool; we rebuild cheaply here).
+    from verifier.helpers.multisource_enrichment import build_pathway_pool
+    full_pool = build_pathway_pool(source_report)
+
+    checklist = build_missing_evidence_checklist(claim, full_pool)
     return VerifiedClaim(
         claim_id=claim.claim_id,
         claim_text=claim.claim_text,
@@ -256,19 +267,20 @@ def verify_set_enrichment(
         subject=claim.subject,
         subject_kind=claim.subject_kind,
         candidate_ref=claim.candidate_ref,
-        verdict=ClaimVerdict.CONTRADICTED,
+        verdict=ClaimVerdict.INSUFFICIENT_EVIDENCE,
         evidence=(
-            f"Claimed pathway {(pathway_name or pathway_id)!r} is not in "
-            f"top_pathways[:{_TOP_K_TOLERATED}]; ground-truth top-1 is "
-            f"{canonical_top1!r}."
+            f"Claimed pathway {(pathway_name or pathway_id)!r} is absent from "
+            f"all enrichment pools and top_pathways[:{_TOP_K_TOLERATED}]; "
+            f"cannot confirm or refute enrichment without additional evidence."
         ),
-        correction=canonical_top1,
         extracted_fields=claim.extracted_fields,
         verifier_layer="set_enrichment",
         tool_called="ramp_enrichment_result",
         trace_summary=(
-            f"claim pathway {(pathway_name or pathway_id)!r} absent from top-{_TOP_K_TOLERATED}"
+            f"claim pathway {(pathway_name or pathway_id)!r} absent from pool "
+            f"→ INSUFFICIENT_EVIDENCE"
         ),
+        feedback_hint=checklist,
         enrichment_context=EnrichmentContext(
             claimed_pathway=pathway_name,
             claimed_pathway_id=pathway_id,
