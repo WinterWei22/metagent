@@ -81,6 +81,16 @@ def _normalize_task(raw: dict[str, Any]) -> dict[str, Any]:
     return {
         "task_id": raw["task_id"],
         "differential_metabolites": raw.get("input", {}).get("differential_metabolites", []),
+        # Preserve ground_truth + input so the v4 verifier adapter can run:
+        # _is_v4_task detects task["ground_truth"]["perturbed_pathway"], and
+        # v4_task_to_subsix_source_report reads that plus
+        # task["input"]["differential_metabolites"]. Without these the runner
+        # falls back to the v3 adapter and every task fails with a
+        # SubsixSourceReport ValidationError. _strip_task_for_llm strips the
+        # task down to {task_id, differential_metabolites} before the LLM sees
+        # it, so ground_truth never leaks into the agent prompt.
+        "ground_truth": raw.get("ground_truth", {}),
+        "input": raw.get("input", {}),
     }
 
 
@@ -124,12 +134,14 @@ def _make_status(
         "termination_reason": fr.termination_reason,
         "error": fr.error,
     }
-    if fv and fv.ok and fv.verdict:
-        totals = fv.verdict.verdicts_total or {}
-        signals["n_supported"] = totals.get("SUPPORTED", 0)
-        signals["n_unsupported"] = totals.get("UNSUPPORTED", 0)
-        signals["n_contradicted"] = totals.get("CONTRADICTED", 0)
-        signals["n_dropped"] = totals.get("DROPPED", 0)
+    if fv and fv.ok and fv.verdict and fv.verdict.claim_metrics:
+        cm = fv.verdict.claim_metrics
+        signals["n_supported"] = cm.supported_claims
+        signals["n_unsupported"] = cm.unsupported_claims
+        signals["n_contradicted"] = cm.contradicted_claims
+        signals["n_unverifiable_v0"] = cm.unverifiable_claims
+        signals["n_insufficient_evidence"] = cm.insufficient_evidence_claims
+        signals["n_dropped"] = cm.dropped_by_grammar
     row["signals"] = signals
     return row
 
