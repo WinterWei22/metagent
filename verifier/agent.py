@@ -653,6 +653,21 @@ def _verify_per_claim_sub6(
         verified_claim: VerifiedClaim
         if c_for_trace.claim_type == ClaimType.SET_ENRICHMENT:
             verified_claim = verify_set_enrichment(c_for_trace, source_report)
+            # [verifier-modify-warning] 2D: post-UV structural consistency fallback.
+            # When set_enrichment can't match the pathway in top_pathways, ask an
+            # LLM judge whether the metabolites' SMILES are structurally consistent
+            # with the claimed pathway.  Only fires on final iteration to avoid
+            # burning LLM cost on intermediate feedback rounds.
+            if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+                from verifier.layers.structural_consistency import verify_structural_consistency
+                sc_claim = verify_structural_consistency(
+                    c_for_trace,
+                    source_report,
+                    cost_tracker=judge_cost_tracker,
+                    iteration=iteration,
+                )
+                if sc_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                    verified_claim = sc_claim
         elif c_for_trace.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED):
             # W12 C7 — route metabolite-ID claims to the Sub-6 friendly
             # factual_sub6 layer. The original fall-through path below
