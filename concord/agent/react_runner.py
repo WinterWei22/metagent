@@ -101,6 +101,7 @@ class ConcordIterationRecord:
     n_unsupported: int = 0
     n_supported: int = 0
     n_unverifiable_v0: int = 0
+    n_insufficient_evidence: int = 0
     n_tool_calls: int = 0
     n_turns: int = 0
     force_finalised: bool = False
@@ -162,6 +163,7 @@ class VerificationOutcome:
     n_unsupported: int = 0
     n_contradicted: int = 0
     n_unverifiable_v0: int = 0
+    n_insufficient_evidence: int = 0
 
     @property
     def quality(self) -> int:
@@ -753,7 +755,7 @@ class ConcordReactRunner:
             return VerificationOutcome(
                 ok=True, verdict=None, error=None,
                 n_supported=0, n_unsupported=0, n_contradicted=0,
-                n_unverifiable_v0=0,
+                n_unverifiable_v0=0, n_insufficient_evidence=0,
             )
 
         # Adapter step — surface adapter failures as outcome.error
@@ -829,7 +831,8 @@ class ConcordReactRunner:
         #      "ClaimVerdict.UNVERIFIABLE_V0" not the value, so read
         #      `.value` defensively)
         counts = {"supported": 0, "unsupported": 0,
-                  "contradicted": 0, "unverifiable_v0": 0}
+                  "contradicted": 0, "unverifiable_v0": 0,
+                  "insufficient_evidence": 0}
         vt = getattr(verdict, "verdicts_total", None)
         if isinstance(vt, dict) and vt:
             for k in counts:
@@ -845,6 +848,9 @@ class ConcordReactRunner:
                 counts["unsupported"] = int(getattr(cm, "unsupported_claims", 0) or 0)
                 counts["contradicted"] = int(getattr(cm, "contradicted_claims", 0) or 0)
                 counts["unverifiable_v0"] = int(getattr(cm, "unverifiable_claims", 0) or 0)
+                counts["insufficient_evidence"] = int(
+                    getattr(cm, "insufficient_evidence_claims", 0) or 0
+                )
             else:
                 claims = list(getattr(verdict, "claims_v1", None) or [])
                 for c in claims:
@@ -861,6 +867,7 @@ class ConcordReactRunner:
             n_unsupported=counts["unsupported"],
             n_contradicted=counts["contradicted"],
             n_unverifiable_v0=counts["unverifiable_v0"],
+            n_insufficient_evidence=counts["insufficient_evidence"],
         )
 
     # ------------------------------------------------------------------
