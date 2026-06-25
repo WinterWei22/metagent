@@ -133,9 +133,14 @@ V3 Part 2 把 benchmark 从 v3 升级到 v4，范式从"benchmark 预填熟饭"�
 - v4：verifier 跑通（112/112 不再 adapter 崩），产出真实 UV 数字
 - 假阳 sanity：SUPPORTED 命中 GT 比例 ≥ 命中噪音比例（具体阈值 D5 定）
 
-### 实测结果（Task 10 offline replay — 2026-06-25）
+### 实测结果（Task 10 offline replay — 2026-06-25，flag-corrected）
 
 使用 `scripts/metagent/v4_verifier_replay.py` 对 112 条 p1p2p3 traces 离线回放。
+
+**环境复现**：replay 脚本设置 `METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT=1`（镜像
+production `verify_with_b1` 在 `use_structured=True` 分支的行为，见 `react_runner.py`
+line 776）。未设此 flag 的旧回放数字为 SUPPORTED 65.6% / CONTRADICTED 0%；设置后
+SUPPORTED 降 1.0 pp（-11 claim）、CONTRADICTED 升 1.0 pp（+11 claim），整体稳定。
 
 **关键前提**：traces 生成于 Task 1 RaMP carrier-capture patch 落地之前，
 `enrichment_carriers` 中只含 `mummichog_enrichment_result` 和
@@ -148,16 +153,27 @@ V3 Part 2 把 benchmark 从 v3 升级到 v4，范式从"benchmark 预填熟饭"�
 | Gate B | **1619 pass / 18 fail / 33 error**（fail 全部预存环境 fail，无新增）✅ |
 | v4 adapter crash rate | **0 / 112**（重构前 112/112 崩）✅ |
 | total verified claims | 1115（grammar 0 dropped）|
-| SUPPORTED | 731 / 1115 = **65.6%** |
+| SUPPORTED | 720 / 1115 = **64.6%** |
 | INSUFFICIENT_EVIDENCE | 182 / 1115 = **16.3%** |
 | UNSUPPORTED | 138 / 1115 = **12.4%** |
 | UNVERIFIABLE_V0 | 64 / 1115 = **5.7%** |
-| 假阳 sanity（set_enrichment SUPPORTED）| GT-match 169 / (169+174) = **49.3%**（<50%，因 RaMP 缺失导致 GT pathway 命中率偏低）|
+| CONTRADICTED | 11 / 1115 = **1.0%**（method-aware 路径检出，flag 修复后新增）|
+| 假阳 sanity（claim-level，多 rank 重复计数）| GT-match 165 / 332 = **49.7%**，off-pathway 167 / 332 = **50.3%** |
+| 假阳 sanity（pathway-level，per-task dedup）| 待本轮 stdout 补充（见 report §3）|
 
-**假阳 sanity 说明**：GT-match 49.3% < 噪音 50.7%，未达到"命中 GT ≥ 噪音"目标。
-根因是 traces 缺 RaMP carrier（上述前提），GT pathway（多为 KEGG/RAMP_P 系）无法经
-ramp-carrier 路径命中，而非 multisource 逻辑本身有误。带完整 RaMP carrier 的真实
-live rerun 预计会扭转此比例。
+**假阳 sanity 说明（诚实表述）**：
+
+49.7% claim-level GT-match 是"命中任一 paradigm → SUPPORTED"策略**假阳率的下界**，
+不是上界，也不能仅用"RaMP 缺失"来解释。两个并列根因需同时承认：
+
+1. **RaMP carrier 缺失（数据局限）**：traces 缺 RaMP carrier，GT pathway（多为
+   KEGG/RAMP_P 系）无法经 ramp-carrier 路径命中，GT-match 率被压低。带完整 5
+   carrier 的 live rerun 预计会提升 GT-match。
+
+2. **宽松匹配架构风险（设计取舍）**：live rerun 有 5 个 paradigm 时，噪音 paradigm
+   命中面更大，off-pathway pathway 被判 SUPPORTED 的机会只多不少。2-paradigm 离线
+   replay 的 50.3% off-pathway 率是 live run 假阳率的**下界**。"命中任一"策略需在
+   Task 1 live rerun 后重新度量，才能确认设计可控。
 
 **附注**：offline replay 使用 `common.llm_client.set_mock(["[]"] * 20)` 使 consistency
 layer 离线模拟"无矛盾"，零 LLM API 成本。`verifier/claim_table.py` 中

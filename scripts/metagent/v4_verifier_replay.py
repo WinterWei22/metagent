@@ -156,6 +156,21 @@ def _run_replay(
         # One "[]" per consistency-layer call; replenish generously.
         _set_llm_mock(["[]"] * 20)
 
+    # ---------------------------------------------------------------------------
+    # Replicate production env vars (react_runner.py:verify_with_b1, lines 775-781)
+    # Production sets these when use_structured=True (our replay always uses the
+    # structured bridge, so we mirror all three unconditionally).
+    # METAGENT_LLM_PROVIDER / model flags affect verifier's LLM calls; with the
+    # offline mock the consistency layer never reaches the real API, but we set
+    # them to match production state so any conditional branch inside verifier
+    # layers that reads them behaves identically to a live run.
+    # ---------------------------------------------------------------------------
+    os.environ["METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT"] = "1"
+    # Provider/model: use "openai" as the neutral offline default (mock intercepts
+    # before any real HTTP call; the actual value only matters for mock-bypassing
+    # paths which the offline replay does not exercise).
+    os.environ.setdefault("METAGENT_LLM_PROVIDER", "openai")
+
     _reset_mock()
 
     tasks = _load_benchmark(bench_path)
@@ -170,9 +185,13 @@ def _run_replay(
     first_failure_tb: str | None = None
 
     # For false-positive sanity: SUPPORTED set_enrichment claims
-    # matched vs missed ground-truth pathway
-    gt_match_count = 0
-    gt_miss_count = 0
+    # matched vs missed ground-truth pathway.
+    # claim-level: each rank of a multi-paradigm hit counts separately.
+    # pathway-level: dedup pathways per task before counting → one match/miss per task.
+    gt_match_count = 0   # claim-level (multi-rank double-counted)
+    gt_miss_count = 0    # claim-level
+    gt_pathway_hit_tasks = 0   # pathway-level: tasks where GT pathway was hit at least once
+    gt_pathway_miss_tasks = 0  # pathway-level: tasks where GT pathway had 0 SUPPORTED hits
 
     for trace in traces:
         task_id = trace.get("task_id", "")
@@ -252,11 +271,20 @@ def _run_replay(
             .lower()
         )
         se_pathways = _get_set_enrichment_supported_pathways(verdicts)
+        # claim-level: count each occurrence (multi-rank double-counting intentional)
+        task_gt_hit = False
         for p in se_pathways:
             if gt_pathway_name and gt_pathway_name in p.lower():
                 gt_match_count += 1
+                task_gt_hit = True
             else:
                 gt_miss_count += 1
+        # pathway-level: was the GT pathway hit at least once in this task?
+        if se_pathways:
+            if task_gt_hit:
+                gt_pathway_hit_tasks += 1
+            else:
+                gt_pathway_miss_tasks += 1
 
     return {
         "n_traces": len(traces),
@@ -266,6 +294,8 @@ def _run_replay(
         "verdict_counts": dict(verdict_counts),
         "gt_match_count": gt_match_count,
         "gt_miss_count": gt_miss_count,
+        "gt_pathway_hit_tasks": gt_pathway_hit_tasks,
+        "gt_pathway_miss_tasks": gt_pathway_miss_tasks,
         "first_failure_tb": first_failure_tb,
     }
 
@@ -287,16 +317,68 @@ def _write_report(stats: dict, report_path: Path) -> None:
     gt_match = stats["gt_match_count"]
     gt_miss = stats["gt_miss_count"]
     gt_total = gt_match + gt_miss
+    gt_hit_tasks = stats.get("gt_pathway_hit_tasks", 0)
+    gt_miss_tasks = stats.get("gt_pathway_miss_tasks", 0)
+    gt_task_total = gt_hit_tasks + gt_miss_tasks
     if gt_total > 0:
-        fp_ratio = f"{gt_match}/{gt_total} = {gt_match / gt_total * 100:.1f}% GT-matching, {gt_miss / gt_total * 100:.1f}% off-pathway"
+        fp_claim_line = (
+            f"**Claim-level** (multi-rank double-counted): "
+            f"{gt_match}/{gt_total} = {gt_match / gt_total * 100:.1f}% GT-matching, "
+            f"{gt_miss}/{gt_total} = {gt_miss / gt_total * 100:.1f}% off-pathway"
+        )
+        if gt_task_total > 0:
+            fp_task_line = (
+                f"**Pathway-level** (dedup per task): "
+                f"{gt_hit_tasks}/{gt_task_total} tasks had ≥1 GT-pathway SUPPORTED hit "
+                f"({gt_hit_tasks / gt_task_total * 100:.1f}%); "
+                f"{gt_miss_tasks}/{gt_task_total} had zero GT hits "
+                f"({gt_miss_tasks / gt_task_total * 100:.1f}%)"
+            )
+        else:
+            fp_task_line = "Pathway-level: N/A (no tasks with set_enrichment claims)"
     else:
-        fp_ratio = "no SUPPORTED set_enrichment claims found"
+        fp_claim_line = "no SUPPORTED set_enrichment claims found"
+        fp_task_line = ""
 
     uv_pct = pct("UNVERIFIABLE_V0")
     sup_pct = pct("SUPPORTED")
     insuf_pct = pct("INSUFFICIENT_EVIDENCE")
     contra_pct = pct("CONTRADICTED")
     unsup_pct = pct("UNSUPPORTED")
+
+    # §2b: only emit the schema-incompatibility narrative when claims were actually dropped
+    if dropped_grammar > 0:
+        sec2b = f"""## §2b V4 Claim Schema Incompatibility Finding
+
+**All {dropped_grammar} claims across {processed} tasks were dropped at grammar validation.**
+
+Root cause: the v4 `final_narrative_json` claims use a ConcordMet-native schema:
+
+```json
+{{"claim_type": "PATHWAY_ENRICHMENT", "pathway_id": "KEGG:hsa00340", "pathway_name": "...", "evidence_method": "run_ramp_enrichment", "rank": 1, "score": 1.1e-18, "score_type": "fdr"}}
+```
+
+B1 grammar v2 `validate()` requires claims to have `"grammar"` (a `ClaimGrammar` enum value) and `"claim_text"` (non-empty string). The v4 schema has neither, so all claims fail at `grammar field missing or non-string: None`.
+
+**Implication:** this replay proves the adapter (Task 2) no longer crashes and the verifier runs end-to-end on v4 traces. However, a *real* UV% number requires either:
+1. A live API rerun (v4 LLM produces grammar-v2 JSON claims post-Task 1-9 patches), OR
+2. A v4-claim → grammar-v2 translation bridge (out of scope for Task 10).
+
+The pre-refactor baseline was 0 verified claims (adapter crash before reaching verification).
+The post-refactor baseline is also 0 verified claims (grammar incompatibility of pre-existing traces).
+The delta = adapter crash eliminated; schema bridge is the remaining gap for a full live rerun.
+"""
+    else:
+        sec2b = f"""## §2b V4 Claim Translation Status
+
+All {total_claims} claims were successfully translated from ConcordMet-native schema to B1 grammar v2 shape via
+`concord_result_to_b1_structured_payload` before verification. Grammar validation dropped **0 claims**.
+
+The `concord_result_to_b1_structured_payload` bridge (Task 6 / `verifier_adapter.py`)
+converts e.g. `{{"claim_type": "PATHWAY_ENRICHMENT", "pathway_id": "KEGG:hsa00340", ...}}`
+into `{{"grammar": "pathway_enrichment", "claim_text": "run_ramp_enrichment ranks KEGG:hsa00340 (...) at rank 1 ...", ...}}`
+before passing claims to `verify_sub6`. All {processed} tasks passed translation without error.
+"""
 
     tb_section = ""
     if stats.get("first_failure_tb"):
@@ -311,6 +393,7 @@ def _write_report(stats: dict, report_path: Path) -> None:
     report = f"""# v4 Verifier Offline Replay — 2026-06-25
 
 **Run mode:** offline replay (zero LLM cost) — replays existing ReAct traces through refactored verifier
+**Env flags:** `METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT=1` (mirrors production `use_structured=True` branch)
 **Trace source:** `data/metagent/v4_bench_eval_sub6hmdb_p1p2p3_20260625/path_x_full/` ({n} files)
 **Benchmark:** `data/benchmark/metagent_bench_v2/metagent_bench_easy_v4_metabolic.jsonl`
 
@@ -347,36 +430,42 @@ Total claims dropped by B1 grammar validation: **{dropped_grammar}**
 
 ---
 
-## §2b V4 Claim Schema Incompatibility Finding
-
-**All {dropped_grammar} claims across {processed} tasks were dropped at grammar validation.**
-
-Root cause: the v4 `final_narrative_json` claims use a ConcordMet-native schema:
-
-```json
-{{"claim_type": "PATHWAY_ENRICHMENT", "pathway_id": "KEGG:hsa00340", "pathway_name": "...", "evidence_method": "run_ramp_enrichment", "rank": 1, "score": 1.1e-18, "score_type": "fdr"}}
-```
-
-B1 grammar v2 `validate()` requires claims to have `"grammar"` (a `ClaimGrammar` enum value) and `"claim_text"` (non-empty string). The v4 schema has neither, so all claims fail at `grammar field missing or non-string: None`.
-
-**Implication:** this replay proves the adapter (Task 2) no longer crashes and the verifier runs end-to-end on v4 traces. However, a *real* UV% number requires either:
-1. A live API rerun (v4 LLM produces grammar-v2 JSON claims post-Task 1-9 patches), OR
-2. A v4-claim → grammar-v2 translation bridge (out of scope for Task 10).
-
-The pre-refactor baseline was 0 verified claims (adapter crash before reaching verification).
-The post-refactor baseline is also 0 verified claims (grammar incompatibility of pre-existing traces).
-The delta = adapter crash eliminated; schema bridge is the remaining gap for a full live rerun.
+{sec2b}
 
 ---
 
 ## §3 False-Positive Sanity Check
 
-Among SUPPORTED `set_enrichment` claims, how many cite the ground-truth `perturbed_pathway` vs an off-pathway (noise) pathway?
+Among SUPPORTED `set_enrichment` claims: how many match the ground-truth `perturbed_pathway`?
 
-**Result:** {fp_ratio}
+> **Important framing note:** the numbers below are **claim-level** counts.
+> Because a single task can have multiple SUPPORTED claims for the same ground-truth pathway
+> (one per paradigm rank), a task hitting GT at 5 ranks counts 5 toward the GT-match total.
+> The claim-level ratio therefore systematically over-counts the GT-match rate relative to
+> a per-task unique-pathway count. See pathway-level stats below for the de-duplicated view.
 
-Interpretation: the "hit-any-carrier → SUPPORTED" design (Task 6 checklist) intentionally promotes any enrichment tool hit.
-A high off-pathway fraction here is expected and should be interpreted in light of the RaMP-carrier caveat (§4).
+{fp_claim_line}
+
+{fp_task_line}
+
+**Design-risk interpretation (decision §2 "hit-any-carrier → SUPPORTED"):**
+
+The 49–50% claim-level GT-match is a **lower bound on the false-positive rate** of the
+"hit-any-carrier → SUPPORTED" policy — not an upper bound, and not explained solely by
+RaMP absence. Two co-causes must both be acknowledged:
+
+1. **RaMP-carrier absence (data caveat):** these 112 traces predate Task 1's RaMP
+   carrier-capture patch. Ground-truth pathways are predominantly KEGG/RAMP_P-namespaced;
+   without the RaMP carrier they cannot match via the ramp-carrier path. A live rerun
+   with Task 1 active is expected to raise the GT-match rate.
+
+2. **Loose-matching design risk (architectural):** the "hit-any-carrier" policy
+   deliberately promotes any enrichment tool hit to SUPPORTED. In a live run with all 5
+   paradigms active, the noise-paradigm hit surface is *larger* — more paradigms means
+   more off-pathway pathways can qualify as SUPPORTED. The false-positive rate for
+   off-pathway claims in a full 5-paradigm run is therefore expected to be **at least
+   as high as the offline 2-paradigm rate, and likely higher**. This must be re-measured
+   in the post-Task-1 live rerun before treating the "hit-any-carrier" policy as validated.
 
 ---
 
