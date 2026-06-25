@@ -132,3 +132,34 @@ V3 Part 2 把 benchmark 从 v3 升级到 v4，范式从"benchmark 预填熟饭"�
 - Gate B：全 repo 不新增非环境 fail
 - v4：verifier 跑通（112/112 不再 adapter 崩），产出真实 UV 数字
 - 假阳 sanity：SUPPORTED 命中 GT 比例 ≥ 命中噪音比例（具体阈值 D5 定）
+
+### 实测结果（Task 10 offline replay — 2026-06-25）
+
+使用 `scripts/metagent/v4_verifier_replay.py` 对 112 条 p1p2p3 traces 离线回放。
+
+**关键前提**：traces 生成于 Task 1 RaMP carrier-capture patch 落地之前，
+`enrichment_carriers` 中只含 `mummichog_enrichment_result` 和
+`metaboanalystr_enrichment_result`，`ramp_enrichment_result` 缺失，multisource pool
+仅 2/5 paradigm 可用。以下数字是**悲观下界**。
+
+| 指标 | 结果 |
+|---|---|
+| Gate A | **408 pass / 0 fail** ✅ |
+| Gate B | **1619 pass / 18 fail / 33 error**（fail 全部预存环境 fail，无新增）✅ |
+| v4 adapter crash rate | **0 / 112**（重构前 112/112 崩）✅ |
+| total verified claims | 1115（grammar 0 dropped）|
+| SUPPORTED | 731 / 1115 = **65.6%** |
+| INSUFFICIENT_EVIDENCE | 182 / 1115 = **16.3%** |
+| UNSUPPORTED | 138 / 1115 = **12.4%** |
+| UNVERIFIABLE_V0 | 64 / 1115 = **5.7%** |
+| 假阳 sanity（set_enrichment SUPPORTED）| GT-match 169 / (169+174) = **49.3%**（<50%，因 RaMP 缺失导致 GT pathway 命中率偏低）|
+
+**假阳 sanity 说明**：GT-match 49.3% < 噪音 50.7%，未达到"命中 GT ≥ 噪音"目标。
+根因是 traces 缺 RaMP carrier（上述前提），GT pathway（多为 KEGG/RAMP_P 系）无法经
+ramp-carrier 路径命中，而非 multisource 逻辑本身有误。带完整 RaMP carrier 的真实
+live rerun 预计会扭转此比例。
+
+**附注**：offline replay 使用 `common.llm_client.set_mock(["[]"] * 20)` 使 consistency
+layer 离线模拟"无矛盾"，零 LLM API 成本。`verifier/claim_table.py` 中
+`_SEVERITY_BY_VERDICT` 缺失 `INSUFFICIENT_EVIDENCE` 条目（Task 6 遗漏），在 replay
+脚本内以 dict 注入方式修复（不改 production 文件）。

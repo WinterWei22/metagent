@@ -87,22 +87,42 @@ def _load_traces(trace_dir: Path, limit: int | None) -> list[dict]:
 
 
 def _get_set_enrichment_supported_pathways(verdicts) -> list[str]:
-    """Extract pathway subjects from SUPPORTED set_enrichment claims."""
+    """Extract pathway names from SUPPORTED set_enrichment claims.
+
+    ``verdicts`` is a list of ``VerifiedClaim`` objects (post-verify_sub6).
+    ``VerifiedClaim`` carries ``claim_type``, ``verdict``, and ``subject``
+    directly — there is no nested ``.claim`` attribute.
+
+    For pathway_enrichment grammar claims, ``subject`` is None (the extractor
+    does not populate it for this grammar shape); fall back to extracting the
+    pathway name from the parenthesised annotation in ``claim_text``, e.g.
+    "run_ramp_enrichment ranks KEGG:hsa00340 (Histidine metabolism) at rank 1..."
+    """
+    import re as _re
+    _PAREN_RE = _re.compile(r"\(([^)]+)\)")
+
     paths = []
     for v in verdicts:
-        claim = getattr(v, "claim", None)
-        if claim is None:
-            continue
-        claim_type = getattr(claim, "claim_type", None)
-        if str(claim_type) not in ("set_enrichment", "ClaimType.set_enrichment"):
+        # VerifiedClaim exposes claim_type and subject directly (no .claim wrapper)
+        claim_type = getattr(v, "claim_type", None)
+        ct_str = str(claim_type)
+        # Handle both "set_enrichment" (value) and "ClaimType.SET_ENRICHMENT" (repr)
+        if ct_str not in ("set_enrichment", "ClaimType.SET_ENRICHMENT",
+                          "ClaimType.set_enrichment"):
             continue
         verdict_val = getattr(v, "verdict", None)
         verdict_str = str(verdict_val) if verdict_val is not None else ""
         if "SUPPORTED" not in verdict_str:
             continue
-        subject = getattr(claim, "subject", None)
+        subject = getattr(v, "subject", None)
         if subject:
             paths.append(subject)
+            continue
+        # Fall back to parenthesised pathway name in claim_text
+        claim_text = getattr(v, "claim_text", None) or ""
+        m = _PAREN_RE.search(claim_text)
+        if m:
+            paths.append(m.group(1))
     return paths
 
 
@@ -112,8 +132,31 @@ def _run_replay(
     limit: int | None,
 ) -> dict:
     """Run the offline replay and return aggregated stats dict."""
-    from concord.agent.verifier_adapter import v4_task_to_subsix_source_report
+    from concord.agent.verifier_adapter import (
+        v4_task_to_subsix_source_report,
+        concord_result_to_b1_structured_payload,
+    )
     from verifier.agent import verify_sub6
+    # Install a deterministic mock for the consistency-layer LLM call so the
+    # replay runs fully offline (zero API cost).  The consistency layer fires
+    # once per task when ≥2 claims survive grammar; returning "[]" tells it
+    # "no intra-document contradictions detected", which is the correct
+    # conservative offline assumption.  The mock is refilled before each task
+    # to avoid running out of preset responses.
+    from common.llm_client import set_mock as _set_llm_mock
+    # Patch claim_table's severity map to include INSUFFICIENT_EVIDENCE which was
+    # added by Task 6 but not back-ported into claim_table._SEVERITY_BY_VERDICT.
+    # This is a replay-script-level workaround that does not modify production code.
+    import verifier.claim_table as _claim_table_mod
+    from verifier.schemas import ClaimVerdict as _ClaimVerdict
+    if _ClaimVerdict.INSUFFICIENT_EVIDENCE not in _claim_table_mod._SEVERITY_BY_VERDICT:
+        _claim_table_mod._SEVERITY_BY_VERDICT[_ClaimVerdict.INSUFFICIENT_EVIDENCE] = "minor"
+
+    def _reset_mock() -> None:
+        # One "[]" per consistency-layer call; replenish generously.
+        _set_llm_mock(["[]"] * 20)
+
+    _reset_mock()
 
     tasks = _load_benchmark(bench_path)
     traces = _load_traces(trace_dir, limit)
@@ -141,27 +184,27 @@ def _run_replay(
 
         frr_dict = trace.get("final_react_result") or {}
 
-        # Build a lightweight namespace that exposes .enrichment_carriers
-        # and .final_narrative_text — exactly what v4_task_to_subsix_source_report
-        # and concord_result_to_b1_narrative read.
+        # Build a namespace that mirrors the ConcordReactResult attributes that
+        # concord_result_to_b1_structured_payload and v4_task_to_subsix_source_report
+        # need: final_claims (list of ConcordMet-native claim dicts), enrichment_carriers,
+        # final_narrative_text, and task_outcome.
         react_result = types.SimpleNamespace(
+            final_claims=frr_dict.get("final_claims") or [],
             enrichment_carriers=frr_dict.get("enrichment_carriers") or {},
             final_narrative_text=frr_dict.get("final_narrative_text") or "",
+            task_outcome=frr_dict.get("task_outcome") or "normal",
         )
 
-        # Prefer final_narrative_json (grammar-v2 JSON shape) so _extract_classify
-        # routes through the zero-LLM extract_claims_from_json path.
-        # Fall back to final_narrative_text (plain prose) which would require an
-        # LLM call — in offline mode that raises an auth error.
-        fn_json = frr_dict.get("final_narrative_json")
-        if fn_json and isinstance(fn_json, str) and fn_json.strip().startswith("{"):
-            narrative = fn_json.strip()
-        elif fn_json and isinstance(fn_json, dict):
-            narrative = json.dumps(fn_json)
-        else:
-            narrative = (react_result.final_narrative_text or "").strip()
+        # Use the production translation bridge so ConcordMet-native claims
+        # (with claim_type/pathway_id/pathway_name schema) are converted to
+        # grammar-v2 shape (with grammar + claim_text fields) before being fed
+        # to verify_sub6.  Feeding final_narrative_json raw would cause ALL
+        # claims to be dropped at grammar validation since they lack the required
+        # "grammar" and "claim_text" fields.
+        narrative = concord_result_to_b1_structured_payload(react_result, task)
 
         try:
+            _reset_mock()  # Replenish offline mock before each task
             source_report = v4_task_to_subsix_source_report(task, react_result)
             result = verify_sub6(
                 narrative,
