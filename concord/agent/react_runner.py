@@ -738,7 +738,9 @@ class ConcordReactRunner:
         from concord.agent.verifier_adapter import (
             concord_result_to_b1_narrative,
             concord_result_to_b1_structured_payload,
+            _is_v4_task,
             sub6b_task_to_subsix_source_report,
+            v4_task_to_subsix_source_report,
         )
 
         use_structured = os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS") == "1"
@@ -756,10 +758,13 @@ class ConcordReactRunner:
 
         # Adapter step — surface adapter failures as outcome.error
         try:
-            source_report = sub6b_task_to_subsix_source_report({
-                **task,
-                **react_result.enrichment_carriers,
-            })
+            if _is_v4_task(task):
+                source_report = v4_task_to_subsix_source_report(task, react_result)
+            else:
+                source_report = sub6b_task_to_subsix_source_report({
+                    **task,
+                    **react_result.enrichment_carriers,
+                })
         except Exception as exc:
             return VerificationOutcome(
                 ok=False, verdict=None,

@@ -222,6 +222,67 @@ _SUBSIX_OPTIONAL_CARRIER_KEYS = (
 )
 
 
+def _is_v4_task(task: dict[str, Any]) -> bool:
+    """Return True when *task* is a v4 benchmark row.
+
+    v4 rows carry ``ground_truth.perturbed_pathway`` instead of the flat
+    ``ground_truth_pathway`` / ``ramp_enrichment_result`` keys that v3 rows
+    use at the top level.
+    """
+    return "perturbed_pathway" in task.get("ground_truth", {})
+
+
+def v4_task_to_subsix_source_report(
+    task: dict[str, Any],
+    react_result: Any,
+) -> SubsixSourceReport:
+    """Build a ``SubsixSourceReport`` from a v4 benchmark task row + ReAct carriers.
+
+    v4 row shape::
+
+        {
+            "task_id": str,
+            "input": {
+                "context": str,
+                "differential_metabolites": [{"name", "smiles", "inchikey"}, ...],
+            },
+            "ground_truth": {
+                "perturbed_pathway": {"id": str, "name": str, "ontology": str},
+                "mechanism_evidence": {...},
+            },
+        }
+
+    Carrier data (ramp / mummichog / metaboanalystr / sspa / fella) comes from
+    ``react_result.enrichment_carriers`` populated by Task 1's carrier-capture
+    patch.  Only ``ramp_enrichment_result`` is required (SubsixSourceReport
+    schema); the other four carriers are optional and default to ``None`` when
+    absent from the carriers dict.
+
+    Ground-truth compounds are not modelled in v4 (the benchmark omits the
+    signal/noise split), so both lists default to ``[]``.
+    """
+    pp = task["ground_truth"]["perturbed_pathway"]
+    carriers: dict[str, Any] = getattr(react_result, "enrichment_carriers", {}) or {}
+    return SubsixSourceReport(
+        task_id=task["task_id"],
+        task_type="compound_only_enrichment",
+        domain=pp["ontology"],
+        ground_truth_pathway={
+            "pathway_id": pp["id"],
+            "pathway_name": pp["name"],
+            "pathway_source": pp["ontology"],
+        },
+        ground_truth_signal_compounds=[],
+        ground_truth_noise_compounds=[],
+        ramp_enrichment_result=carriers.get("ramp_enrichment_result") or {},
+        differential_metabolites=task.get("input", {}).get("differential_metabolites"),
+        mummichog_enrichment_result=carriers.get("mummichog_enrichment_result"),
+        metaboanalystr_enrichment_result=carriers.get("metaboanalystr_enrichment_result"),
+        sspa_enrichment_result=carriers.get("sspa_enrichment_result"),
+        fella_enrichment_result=carriers.get("fella_enrichment_result"),
+    )
+
+
 def sub6b_task_to_subsix_source_report(
     task: dict[str, Any],
 ) -> SubsixSourceReport:
