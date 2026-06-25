@@ -144,6 +144,14 @@ def _run_one(
     n_tasks: int,
 ) -> dict[str, Any]:
     tid = raw_task.get("task_id", "unknown")
+    done_path = status_dir / f"{tid}.json"
+    if done_path.exists():
+        with progress_lock:
+            counter["done"] += 1
+            done = counter["done"]
+        logging.info("[%d/%d] %s SKIP (already done)", done, n_tasks, tid)
+        return json.loads(done_path.read_text(encoding="utf-8"))
+
     t0 = time.time()
     trace_id = f"{_TRACE_PREFIX}.{tid}"
 
@@ -189,6 +197,13 @@ def _parse_args() -> argparse.Namespace:
         choices=["hmdb_ramp", "sub6", "human1", "recon22", "all"],
         default="hmdb_ramp",
     )
+    p.add_argument(
+        "--strata",
+        nargs="+",
+        choices=["hmdb_ramp", "sub6", "human1", "recon22"],
+        default=None,
+        help="Run multiple strata (overrides --stratum). E.g. --strata sub6 hmdb_ramp",
+    )
     p.add_argument("--limit", type=int, default=10)
     p.add_argument("--task-ids", nargs="*")
     p.add_argument("--out", default="data/metagent/v4_bench_eval")
@@ -208,6 +223,9 @@ def main() -> None:
 
     if args.task_ids:
         tasks = [t for t in all_tasks if t["task_id"] in set(args.task_ids)]
+    elif args.strata:
+        strata_set = set(args.strata)
+        tasks = [t for t in all_tasks if _stratum_of_task_id(t["task_id"]) in strata_set]
     elif args.stratum == "all":
         tasks = all_tasks[: args.limit]
     else:
@@ -215,7 +233,8 @@ def main() -> None:
             t for t in all_tasks if _stratum_of_task_id(t["task_id"]) == args.stratum
         ][: args.limit]
 
-    logging.info("Running %d tasks (stratum=%s limit=%d)", len(tasks), args.stratum, args.limit)
+    label = ",".join(args.strata) if args.strata else args.stratum
+    logging.info("Running %d tasks (stratum=%s limit=%d)", len(tasks), label, args.limit)
 
     out_root = Path(args.out)
     status_dir = out_root / "status"
