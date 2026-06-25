@@ -2,25 +2,51 @@
 
 A SET_ENRICHMENT claim asserts that a group of metabolites is enriched in
 some pathway (e.g. "These metabolites are enriched in Tyrosine metabolism").
-Verification compares the claimed pathway against
-``SubsixSourceReport.ramp_enrichment_result.top_pathways`` per the rules
-in ``reports/benchmark/sub6_evaluation_guide.md`` §3 pitfall 3 and §4.
 
-Verdict policy (concretised from the brief):
+## Verification architecture (multisource refactor — 2026-06-25)
 
-* Match in ``top_pathways[:3]``  → ``SUPPORTED``
-* Match in ``top_pathways[3:10]`` → ``UNSUPPORTED`` (weak evidence)
-* No match in ``top_pathways[:10]`` → ``CONTRADICTED``
-* Pathway phrase / ID could not be lifted from the claim → ``UNVERIFIABLE_V0``
-* ``ramp_enrichment_result`` missing or empty → ``UNVERIFIABLE_V0``
+See design doc: ``docs/decisions/2026-06-25_verifier_multisource_refactor.md``
 
-Pathway matching:
+``verify_set_enrichment`` uses a **two-pass** design:
+
+**Pass 1 — Multisource pool (UNCONDITIONAL):**
+  The multisource pool pass runs *unconditionally*, regardless of the
+  ``METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT`` flag. It builds a merged pool
+  from all 5 enrichment carriers (RaMP, Mummichog, MetaboAnalystR, SSPA, FELLA)
+  but queries only the **non-RaMP** paradigms. A claim hitting ANY non-RaMP
+  paradigm's pathways is returned as SUPPORTED immediately (non-RaMP paradigms
+  do not expose a comparable top-K rank contract, so any pool hit is SUPPORTED).
+  This intentionally supersedes W22's "flag-off → single-source RaMP only"
+  semantics — the multisource pool is now the unconditional evidence base for
+  non-RaMP paradigms.
+
+**Pass 2 — RaMP ranked path (rank-aware):**
+  If the multisource pool returns no hit, the function falls through to the
+  existing RaMP-based ranked logic:
+  - Match in ``top_pathways[:3]``  → ``SUPPORTED``
+  - Match in ``top_pathways[3:10]`` → ``UNSUPPORTED`` (weak evidence)
+  - No match in ``top_pathways[:10]`` → ``CONTRADICTED``
+  - Pathway phrase / ID could not be lifted from claim → ``UNVERIFIABLE_V0``
+  - ``ramp_enrichment_result`` missing or empty → ``UNVERIFIABLE_V0``
+
+**Flag-controlled method-aware pre-pass (optional):**
+  When ``METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT=1``, a method-aware pre-pass
+  runs *before* the pool pass. It detects a method from claim TEXT (e.g. the
+  word "mummichog" in claim_text) and routes the claim to a method-specific
+  verifier if a method is detected.
+  Priority order: method_aware (text-mention) → multisource pool → RaMP ranked.
+  NOTE: The two paths are NOT orthogonal — if the flag is ON and the claim
+  text mentions a specific method (e.g. "mummichog"), method_aware_enrichment
+  handles it first and the pool pass is bypassed for that claim. If the flag is
+  OFF or no method is detected in the text, the pool pass runs unconditionally.
+
+Pathway matching (within each pass):
 
 1. Pathway IDs (e.g. ``map00350``, ``RAMP_P_000000106``, ``WP430``) are
-   matched first, exact-equal on ``pathway_id`` / ``pathway_external_id``.
-2. Pathway names fall back to substring fuzzy match (claim ⊂ canonical
-   OR canonical ⊂ claim, both lowercased + whitespace-collapsed). This is
-   the same convention as Layer C and the eval guide §3 pitfall 3.
+   matched first via ``pathway_ids_equivalent``.
+2. Pathway names fall back to semantic/fuzzy match (exact → substring →
+   token-Jaccard). This is the same convention as Layer C and the eval
+   guide §3 pitfall 3.
 """
 from __future__ import annotations
 
@@ -275,6 +301,9 @@ def _try_multisource_pool(
     which distinguishes SUPPORTED (top-3) from UNSUPPORTED (rank 4-10) and
     CONTRADICTED (outside top-10). Non-RaMP paradigms do not expose a
     comparable rank contract, so any hit is SUPPORTED.
+
+    Even on a pool hit, the RaMP top-3 pathways are echoed into
+    ``matched_top_pathways`` so auditors have comparison context.
     """
     if not pathway_id and not pathway_name:
         return None
@@ -294,6 +323,31 @@ def _try_multisource_pool(
     paradigm = matched_row.get("_paradigm", "unknown")
     matched_name = matched_row.get("pathway_name") or matched_row.get("pathway_id_native") or ""
     matched_pid = matched_row.get("pathway_id") or matched_row.get("pathway_id_native") or ""
+
+    # Finding 3: Determine actual match basis from the matched row's IDs
+    # rather than just checking if claim had a pathway_id and matched row has
+    # a pathway_id. The match could have been via name even when both IDs exist.
+    matched_row_ids = {
+        (matched_row.get("pathway_id") or "").strip().lower(),
+        (matched_row.get("pathway_id_native") or "").strip().lower(),
+        (matched_row.get("pathway_external_id") or "").strip().lower(),
+    }
+    matched_row_ids.discard("")
+    claimed_id_norm = (pathway_id or "").strip().lower()
+    # Label "id" only when the claim's pathway_id actually appears in the
+    # matched row's ID fields; otherwise the match was name/semantic-based.
+    if claimed_id_norm and claimed_id_norm in matched_row_ids:
+        match_method: str = "id"
+    else:
+        match_method = "substring_either"
+
+    # Finding 4: Echo RaMP top-3 into matched_top_pathways for auditor context,
+    # even when the hit came from a non-RaMP pool entry.
+    top_pathways = _extract_top_pathways(source_report)
+    ramp_top3: list[PathwayMatch] = [
+        _pathway_match_from_dict(p, rank=i + 1)
+        for i, p in enumerate(top_pathways[:_TOP_K_SUPPORTED])
+    ]
 
     return VerifiedClaim(
         claim_id=claim.claim_id,
@@ -316,7 +370,7 @@ def _try_multisource_pool(
         enrichment_context=EnrichmentContext(
             claimed_pathway=pathway_name,
             claimed_pathway_id=pathway_id,
-            matched_top_pathways=[],
+            matched_top_pathways=ramp_top3,
             best_match=PathwayMatch(
                 pathway_id=matched_pid or None,
                 pathway_name=matched_name or None,
@@ -324,7 +378,7 @@ def _try_multisource_pool(
                 pathway_external_id=matched_row.get("pathway_external_id"),
                 rank=None,
             ),
-            pathway_match_method="id" if pathway_id and matched_pid else "substring_either",
+            pathway_match_method=match_method,  # type: ignore[arg-type]
         ),
     )
 
