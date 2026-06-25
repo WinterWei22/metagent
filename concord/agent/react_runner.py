@@ -33,7 +33,10 @@ from concord.agent.tool_dispatcher import (
     reset_call_cache,
 )
 from common import llm_client
-from concord.agent.pathway_prediction import generate_pathway_prediction_second_pass
+from concord.agent.pathway_prediction import (
+    generate_pathway_prediction_second_pass,
+    _ABSTAIN_SECOND_PASS_FAILED,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -557,12 +560,12 @@ class ConcordReactRunner:
             task_outcome = "empty_system_failure"
             final_narrative_text = ""
             final_claims = []
-            pathway_prediction = None
+            pathway_prediction = dict(_ABSTAIN_SECOND_PASS_FAILED)
         else:
             task_outcome = "empty_unknown"
             final_narrative_text = ""
             final_claims = []
-            pathway_prediction = None
+            pathway_prediction = dict(_ABSTAIN_SECOND_PASS_FAILED)
 
         iteration = ConcordIterationRecord(
             iter_idx=0,

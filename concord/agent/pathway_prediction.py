@@ -162,6 +162,14 @@ def coerce_pathway_prediction_payload(payload: dict[str, Any]) -> dict[str, Any]
     return pathway_prediction_to_dict(parsed.value)
 
 
+_ABSTAIN_SECOND_PASS_FAILED: dict[str, Any] = {
+    "primary": None,
+    "alternatives": [],
+    "abstain": True,
+    "abstain_reason": "second_pass_failed",
+}
+
+
 def generate_pathway_prediction_second_pass(
     *,
     claims: list[dict[str, Any]],
@@ -170,14 +178,19 @@ def generate_pathway_prediction_second_pass(
     model: str,
     provider: str,
     trace_id: str | None = None,
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Ask an LLM to choose pathway_prediction from fixed claims.
 
     This deliberately runs after the main ReAct final JSON is parsed so the
     extra pathway contract cannot compete with claim generation budget.
+
+    Returns a valid pathway_prediction dict always — if the LLM call fails or
+    the response cannot be parsed, returns an abstain fallback with
+    abstain_reason="second_pass_failed" rather than None.  This prevents
+    pathway_prediction from silently becoming null in the task trace.
     """
     if not claims:
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     payload = {
         "narrative_text": narrative_text,
         "claims": claims,
@@ -203,23 +216,23 @@ def generate_pathway_prediction_second_pass(
             response_format={"type": "json_object"},
         )
     except Exception:
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     raw = _extract_json_object(content)
     if raw is None:
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     try:
         prediction = json.loads(raw)
     except json.JSONDecodeError:
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     if not isinstance(prediction, dict):
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     parsed = parse_pathway_prediction_contract({
         "narrative_text": narrative_text,
         "claims": claims,
         "pathway_prediction": prediction,
     })
     if not parsed.ok or parsed.value is None:
-        return None
+        return dict(_ABSTAIN_SECOND_PASS_FAILED)
     return pathway_prediction_to_dict(parsed.value)
 
 
