@@ -152,6 +152,7 @@ def verify_set_enrichment(
                     matched_top=matched_top,
                     pathway_id=pathway_id,
                     pathway_name=pathway_name,
+                    top_pathways=top_pathways,
                 )
 
     # Forward fuzzy match: the regex-lifted phrase against canonical names.
@@ -170,6 +171,7 @@ def verify_set_enrichment(
                     matched_top=matched_top,
                     pathway_id=pathway_id,
                     pathway_name=pathway_name,
+                    top_pathways=top_pathways,
                 )
             if norm_claim in canon or canon in norm_claim:
                 return _verdict_for_rank(
@@ -180,6 +182,7 @@ def verify_set_enrichment(
                     matched_top=matched_top,
                     pathway_id=pathway_id,
                     pathway_name=pathway_name,
+                    top_pathways=top_pathways,
                 )
 
     # Reverse fuzzy match: canonical name appears verbatim in claim text.
@@ -203,6 +206,7 @@ def verify_set_enrichment(
                 matched_top=matched_top,
                 pathway_id=pathway_id,
                 pathway_name=pathway_name or p.get("pathway_name"),
+                top_pathways=top_pathways,
             )
 
     # W12 C7 Stage 2.5: token-Jaccard fuzzy on content tokens (post
@@ -233,6 +237,7 @@ def verify_set_enrichment(
                     matched_top=matched_top,
                     pathway_id=pathway_id,
                     pathway_name=pathway_name,
+                    top_pathways=top_pathways,
                 )
 
     if not pathway_id and not pathway_name:
@@ -467,6 +472,7 @@ def _verdict_for_rank(
     matched_top: list[PathwayMatch],
     pathway_id: str | None,
     pathway_name: str | None,
+    top_pathways: list[dict[str, Any]] | None = None,
 ) -> VerifiedClaim:
     best = _pathway_match_from_dict(matched, rank=rank)
     ctx = EnrichmentContext(
@@ -476,6 +482,75 @@ def _verdict_for_rank(
         best_match=best,
         pathway_match_method=method,  # type: ignore[arg-type]
     )
+
+    # --- Task 8: rank/score mismatch check ---
+    # If the claim asserts a rank or score, check it against the matched row.
+    # Reuses _row_score / _score_matches from
+    # verifier/helpers/method_aware_enrichment.py (same logic, imported here).
+    # NOTE: We do NOT use _rank_matches/_row_rank/_rank_from_text because:
+    # - _rank_matches uses 0-based indexing; `rank` here is 1-based (top_pathways position).
+    # - _rank_from_text is too noisy: phrases like "top hit" / "first" in claim text
+    #   trigger false positives on legacy SUPPORTED tests (task constraint: legacy tests MUST
+    #   stay green). Only typed extracted_fields.rank (from the claim extractor) is used
+    #   as a rank assertion; score extraction from text is fine (explicit "FDR=0.5" etc.).
+    from verifier.helpers.method_aware_enrichment import (
+        _row_score,
+        _score_from_text,
+        _score_matches,
+    )
+
+    # Lift claimed rank/score: typed fields ONLY for rank (text-extraction too noisy);
+    # typed fields + text extraction for score (explicit "FDR=X" patterns are reliable).
+    claimed_rank = claim.extracted_fields.rank  # typed only — no text extraction
+    claimed_score = claim.extracted_fields.score_value or _score_from_text(claim.claim_text)
+
+    if claimed_rank is not None or claimed_score is not None:
+        # `rank` is the 1-based position in top_pathways (passed from caller).
+        # Compare directly: claimed rank must equal the 1-based observed rank.
+        observed_rank: int = rank  # 1-based position
+        observed_score = _row_score(matched)
+
+        rank_ok = claimed_rank is None or claimed_rank == observed_rank
+        score_ok = claimed_score is None or _score_matches(claimed_score, observed_score)
+
+        if not rank_ok or not score_ok:
+            # Derive top-1 pathway name for the correction / feedback_hint.
+            top1_name: str | None = None
+            if top_pathways:
+                top1_name = top_pathways[0].get("pathway_name") or None
+            if not top1_name and matched_top:
+                top1_name = matched_top[0].pathway_name or None
+
+            correction_text = (
+                f"The actual top-1 enriched pathway is {top1_name!r}."
+                if top1_name
+                else "Check the actual enrichment ranking."
+            )
+            return VerifiedClaim(
+                claim_id=claim.claim_id,
+                claim_text=claim.claim_text,
+                claim_type=ClaimType.SET_ENRICHMENT,
+                claim_subtype=ClaimSubtype.ENRICHMENT_PATHWAY,
+                subject=claim.subject,
+                subject_kind=claim.subject_kind,
+                candidate_ref=claim.candidate_ref,
+                verdict=ClaimVerdict.CONTRADICTED,
+                evidence=(
+                    f"Claimed pathway {(pathway_name or pathway_id)!r} matched "
+                    f"top_pathways[{rank - 1}] (rank {rank}), but "
+                    f"claimed_rank={claimed_rank} vs observed_rank={observed_rank}; "
+                    f"claimed_score={claimed_score} vs observed_score={observed_score}."
+                ),
+                extracted_fields=claim.extracted_fields,
+                verifier_layer="set_enrichment",
+                tool_called="ramp_enrichment_result",
+                trace_summary=f"rank/score mismatch at top-{rank} match",
+                correction=correction_text,
+                feedback_hint=(
+                    f"Rank or score mismatch detected. {correction_text}"
+                ),
+                enrichment_context=ctx,
+            )
 
     # SUPPORTED vs UNSUPPORTED based on rank.
     if rank <= _TOP_K_SUPPORTED:
