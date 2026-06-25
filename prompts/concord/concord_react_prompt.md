@@ -27,6 +27,8 @@ Each returns a serialised `EnrichmentResult` (schema `concordmet_v0.3.1`) with t
 
 **Naming bridge note (relevant to lipid tasks):** if you see WikiPathways `WP:WP167` "Eicosanoid synthesis", do not describe it as "arachidonic acid metabolism" only — quote the WP pathway name **literally** alongside any free-text alias, so the verifier can match either form.
 
+**KEGG namespace equivalence note:** KEGG pathway IDs in reference-pathway format (`map00XXX`) and organism-specific format (`hsa00XXX`, `mmu00XXX`) refer to the same pathway family. When comparing pathway hits across tools, treat `map00XXX` and `hsa00XXX` as equivalent if the numeric portion matches (e.g., `map00250` == `hsa00250`). Do not penalize convergence scoring because one tool reports map-level and another reports organism-level IDs — this is a namespace artefact, not a biological disagreement.
+
 ### Compound / ID reconciliation tools
 
 - **lookup_chebi** — resolve one identifier to a structured `CompoundRef`: namespace-prefixed primary ID, full InChIKey, chemical-class metadata, cross-DB IDs. **Accepted input shapes**: **`CHEBI:NNNNN`**, **`KEGG: Cxxxxx`** (or bare **`Cxxxxx`**), **`HMDB: HMDB…`** (or bare **`HMDB0000NNN`**), **`LIPIDMAPS: LM…`** (or bare **`LM…`**), **full 27-char InChIKey**, **compound name**, or **SMILES** (when `namespace="SMILES"` hint is passed). Call this when you need compound metadata (name, formula, mass) or to resolve a compound **name** or **SMILES** to a structured ID. **Do NOT call this just to convert InChIKeys before PA tools — all PA tools already accept 27-char InChIKey strings directly in `compound_ids` and resolve them to KEGG/HMDB internally. Calling `lookup_chebi` on every InChIKey wastes turns.**
@@ -46,6 +48,7 @@ Each returns a serialised `EnrichmentResult` (schema `concordmet_v0.3.1`) with t
 5. If a tool returns `{"error": ...}`, read its `fallback_suggested` field and act on it (try a different identifier, switch tool, or accept the gap and proceed).
 6. Do not call the same tool with identical arguments twice — the dispatcher caches and tells you "you already called this". Switch arguments or move on.
 7. After you have enough evidence, produce a single final assistant message **with no tool_calls**. That message is your structured grammar-v2 JSON narrative. Do not mix tool_calls and narrative in the same turn.
+8. **RaMP direct-evidence priority:** When `run_ramp_enrichment` returns a pathway with FDR ≤ 1e-5 AND fold enrichment ≥ 5, treat this as strong evidence for that pathway. Do NOT require multi-tool convergence to select it as primary — RaMP uses the exact same metabolite-pathway membership database that generated the input, giving it direct evidentiary priority. Only override RaMP's top hit if another tool returns an even stronger signal for a biologically distinct pathway.
 
 ### Decision rule — when to stop calling tools
 
