@@ -928,6 +928,12 @@ def main() -> None:
         out_dir = out_dir.parent
 
     task_ids = None if args.all_tasks else DEFAULT_EVAL_TASK_IDS
+    # skip-if-done: drop tasks whose per-task output JSON already exists, so an
+    # interrupted run resumes without re-spending LLM cost on completed tasks.
+    if task_ids is not None:
+        before = len(task_ids)
+        task_ids = [t for t in task_ids if not (out_dir / f"{t}.json").exists()]
+        print(f"skip-done  : {before - len(task_ids)} already done, {len(task_ids)} remaining")
 
     print(f"Trace dir  : {args.traces_dir}")
     print(f"Benchmark  : {args.benchmark}")
