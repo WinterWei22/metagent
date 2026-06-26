@@ -70,6 +70,7 @@ Do NOT import from or modify B1-core helpers.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Any
 
@@ -605,3 +606,143 @@ def should_trigger_feedback(
         return frac >= min_bad_frac
 
     return True
+
+
+# ---------------------------------------------------------------------------
+# Task 5: FeedbackResult dataclass + apply_feedback_strategy dispatch
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class FeedbackResult:
+    """Unified output of apply_feedback_strategy.
+
+    Fields
+    ------
+    strategy:
+        The strategy name that produced this result ("cascade", "anchored",
+        or "gated").
+    kind:
+        "cascade" — payload is a grammar-v2 JSON string for re-ingestion by
+        verify_sub6's zero-LLM path.
+        "rewrite" — payload is a feedback prompt string (or None for gated
+        no-trigger).
+    payload:
+        For cascade: JSON string ``{"narrative_text": ..., "claims": [...]}``
+        built by build_cascade_payload after weaving narrative via LLM.
+        For anchored: the anchored feedback prompt string.
+        For gated: the B1 default feedback prompt if triggered, None if not.
+    corrected_claims:
+        For cascade only: the list of grammar-v2 claim dicts produced by
+        apply_cascade (before wrapping into JSON).  None for B/C strategies.
+    """
+    strategy: str
+    kind: str  # "cascade" | "rewrite"
+    payload: str | None
+    corrected_claims: list[dict] | None
+
+
+def _build_gated_feedback(
+    verified_claims: list[VerifiedClaim],
+    verdict_obj: Any,
+) -> str:
+    """Build the B1 default feedback string (gated strategy, trigger path).
+
+    Mirrors ``concord.agent.react_runner._resolve_default_feedback_builder``
+    but operates directly on the verified_claims list (no VerifiedIdentification
+    wrapper) because the gated strategy is called with raw VerifiedClaim objects.
+
+    The gated strategy calls this only when should_trigger_feedback is True.
+    """
+    from evaluation.sub6.run_sub6b_react_feedback import build_feedback_message
+    from verifier.feedback_hints import annotate_claims
+
+    annotated = annotate_claims(list(verified_claims), pass_id="v1")
+    contradicted = [c for c in annotated if c.verdict == ClaimVerdict.CONTRADICTED]
+    unsupported = [c for c in annotated if c.verdict == ClaimVerdict.UNSUPPORTED]
+    unverifiable = [c for c in annotated if c.verdict == ClaimVerdict.UNVERIFIABLE_V0]
+    dropped = list(getattr(verdict_obj, "dropped_claims", None) or []) if verdict_obj else []
+
+    return build_feedback_message(
+        contradicted=contradicted,
+        unsupported=unsupported,
+        unverifiable=unverifiable,
+        dropped=dropped,
+        original_narrative="",
+    )
+
+
+def apply_feedback_strategy(
+    strategy: str,
+    verified_claims: list[VerifiedClaim],
+    source_report: Any,
+    llm_call: Callable[[str], str] | None = None,
+) -> FeedbackResult:
+    """Unified dispatch for feedback strategies A / B / C.
+
+    Parameters
+    ----------
+    strategy:
+        One of "cascade", "anchored", "gated".
+    verified_claims:
+        VerifiedClaim list from one verifier pass (iter-0 output).
+    source_report:
+        The source report (accepted for signature symmetry; cascade may
+        use it for narrative context — not strictly required today).
+    llm_call:
+        Callable(prompt: str) -> str injected for testability.  Used only
+        by cascade's weave_narrative step.  If None, the default LLM
+        client is used by weave_narrative.
+
+    Returns
+    -------
+    FeedbackResult
+        Dispatch result with kind, payload, corrected_claims populated
+        per strategy contract.
+
+    Raises
+    ------
+    ValueError
+        If ``strategy`` is not one of the three supported values.
+    """
+    if strategy == "cascade":
+        corrected = apply_cascade(verified_claims)
+        narrative = weave_narrative(corrected, llm_call=llm_call)
+        payload = build_cascade_payload(corrected, narrative)
+        return FeedbackResult(
+            strategy="cascade",
+            kind="cascade",
+            payload=payload,
+            corrected_claims=corrected,
+        )
+
+    elif strategy == "anchored":
+        payload = build_anchored_feedback(verified_claims)
+        return FeedbackResult(
+            strategy="anchored",
+            kind="rewrite",
+            payload=payload,
+            corrected_claims=None,
+        )
+
+    elif strategy == "gated":
+        if should_trigger_feedback(verified_claims):
+            payload = _build_gated_feedback(verified_claims, verdict_obj=source_report)
+            return FeedbackResult(
+                strategy="gated",
+                kind="rewrite",
+                payload=payload,
+                corrected_claims=None,
+            )
+        else:
+            return FeedbackResult(
+                strategy="gated",
+                kind="rewrite",
+                payload=None,
+                corrected_claims=None,
+            )
+
+    else:
+        raise ValueError(
+            f"unknown strategy {strategy!r}; expected one of 'cascade', 'anchored', 'gated'"
+        )
