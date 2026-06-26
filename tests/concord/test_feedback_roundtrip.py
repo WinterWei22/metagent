@@ -333,3 +333,70 @@ def test_roundtrip_no_extra_claims_injected():
     total = result.claim_metrics.total_claims if result.claim_metrics else len(result.claims_v1)
     # At most 1 claim can be verified (we fed exactly 1 corrected claim).
     assert total <= 1, f"verify_sub6 produced {total} claims but we fed 1"
+
+
+def test_roundtrip_no_enrichment_context_no_pathway_id():
+    """M1 edge case: enrichment_context=None AND extracted_fields.pathway_id=None.
+
+    When a pathway_enrichment VerifiedClaim lacks both enrichment_context
+    (layer 6a may be absent in some traces) and pathway_id (fallback),
+    the old code would set term_id="" → grammar.validate fails →
+    claim is silently dropped.
+
+    With the M1 fix, term_id must have a non-empty fallback (e.g., term_name)
+    so the claim survives the roundtrip.
+    """
+    from concord.agent.feedback_strategies import apply_cascade, build_cascade_payload
+    from verifier.agent import verify_sub6
+
+    trace, task = _load_trace_and_task()
+    source_report = _build_source_report(trace, task)
+
+    # Build a pathway_enrichment claim with NO enrichment_context
+    # and NO pathway_id in extracted_fields.
+    claim_text = "Histidine metabolism is enriched in the metabolite set."
+    claim = VerifiedClaim(
+        claim_text=claim_text,
+        claim_type=ClaimType.SET_ENRICHMENT,
+        claim_subtype=ClaimSubtype.ENRICHMENT_PATHWAY,
+        subject=None,
+        subject_kind=SubjectKind.UNKNOWN,
+        verdict=ClaimVerdict.SUPPORTED,
+        evidence="Matched pathway via exact name.",
+        grammar=ClaimGrammar.PATHWAY_ENRICHMENT,
+        extracted_fields=ClaimExtractedFields(
+            pathway_name="Histidine metabolism",
+            pathway_id=None,  # EDGE CASE: no pathway_id
+        ),
+        enrichment_context=None,  # EDGE CASE: no enrichment_context
+    )
+
+    corrected = apply_cascade([claim])
+    assert len(corrected) == 1, (
+        "apply_cascade should keep SUPPORTED claim even when "
+        "enrichment_context=None and pathway_id=None"
+    )
+
+    # Verify that the rebuilt dict has a non-empty term_id
+    d = corrected[0]
+    assert "term_id" in d, "term_id missing from apply_cascade output"
+    assert d["term_id"] and d["term_id"].strip(), (
+        "term_id is empty/None — will fail grammar.validate. "
+        "M1 fix must provide a non-empty fallback (e.g., term_name)."
+    )
+
+    payload = build_cascade_payload(corrected, narrative_text=claim_text)
+
+    result = verify_sub6(
+        payload,
+        source_report,
+        trace_id="t2.no_context_no_id",
+        is_final_iteration=True,
+    )
+
+    total = result.claim_metrics.total_claims if result.claim_metrics else len(result.claims_v1)
+    assert total >= 1, (
+        f"Roundtrip dropped the claim when enrichment_context=None and pathway_id=None. "
+        f"total_claims={total}, "
+        f"dropped_reasons={[d.drop_reason for d in result.dropped_claims]}"
+    )

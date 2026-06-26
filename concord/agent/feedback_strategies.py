@@ -166,10 +166,16 @@ def _rebuild_grammar_v2_dict(claim: VerifiedClaim, *, pathway_name_override: str
         # Fall back to extracted_fields.pathway_id (less reliable; pathway_id
         # key in ClaimExtractedFields holds the KEGG/RaMP path ID when the
         # layer stored it explicitly).
+        # M1 fix: use pathway_name as final fallback so term_id is never empty
+        # string (which would fail grammar.validate). The cascade's goal is to
+        # NOT lose claims; using the pathway name as a last-resort ID keeps the
+        # claim alive for verify_sub6 re-verification.
         if "term_id" not in d or not d["term_id"]:
             ctx = claim.enrichment_context
             claimed_id = (ctx.claimed_pathway_id if ctx else None) or pathway_id
-            d["term_id"] = claimed_id or ""
+            # Final fallback: pathway_name if both enrichment_context and
+            # pathway_id are absent. This ensures term_id is never empty.
+            d["term_id"] = claimed_id or pathway_name or ""
 
         # term_type: not stored anywhere in VerifiedClaim; default to "pathway"
         # (the only value the reactive runner ever produces for enrichment claims;
