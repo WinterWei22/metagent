@@ -165,11 +165,31 @@ def _rebuild_grammar_v2_dict(claim: VerifiedClaim, *, pathway_name_override: str
     # (mapped from term_name) in ClaimExtractedFields. Reconstruct the three
     # required fields from wherever VerifiedClaim actually carries them.
     if claim.grammar == ClaimGrammar.PATHWAY_ENRICHMENT:
-        # term_name: extracted_fields.pathway_name holds this (set by
-        # _to_extracted_claim's fallback: pathway = claim_obj.get("pathway_name")
-        # or claim_obj.get("term_name")).
+        # term_name: must be the ORIGINAL term name, NOT the pathway_name_override
+        # (the override is the verifier correction text, which is a human-readable
+        # explanation, not a term name). Priority:
+        #   1. enrichment_context.claimed_pathway (set by layer 6a from original claim)
+        #   2. extracted_fields.pathway_name BEFORE override was applied
+        #   3. pathway_name fallback (only when no override was given)
         if "term_name" not in d or not d["term_name"]:
-            d["term_name"] = pathway_name or ""
+            ctx = claim.enrichment_context
+            original_term_name = (
+                (ctx.claimed_pathway if ctx else None)
+                or (claim.extracted_fields.pathway_name if claim.extracted_fields else None)
+            )
+            # If we have an original term name, use it (ignore pathway_name_override
+            # for term_name — the override only applies to pathway_name).
+            # Fall back to pathway_name only when no override was supplied (i.e.
+            # pathway_name == original extracted_fields value).
+            if original_term_name:
+                d["term_name"] = original_term_name
+            elif pathway_name_override is None:
+                d["term_name"] = pathway_name or ""
+            else:
+                # Override was supplied but no original term name found;
+                # leave term_name empty string rather than polluting it with
+                # the correction text.
+                d["term_name"] = ""
 
         # term_id: enrichment_context.claimed_pathway_id is set by layer 6a
         # (set_enrichment) from the original claim dict's term_id.
