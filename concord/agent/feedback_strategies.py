@@ -1,4 +1,4 @@
-"""Strategy A: deterministic cascade claim processing (feedback-redesign Task 1+2).
+"""Strategy A: deterministic cascade claim processing (feedback-redesign Task 1+2+3).
 
 GeneAgent-style: instead of letting the LLM rewrite claims freely (which
 net-degrades quality as shown in W13.C / W14.B), the system deterministically
@@ -57,12 +57,21 @@ Task 2 public API:
     {"narrative_text": ..., "claims": [...]} that verify_sub6 consumes
     via its zero-LLM extract_claims_from_json path.
 
+Task 3 public API:
+  weave_narrative(corrected_claims, llm_call) → str
+    Given a list of verified grammar-v2 claim dicts, call LLM once with
+    a prompt that instructs: write a 150-300 word coherent narrative
+    describing these claims, mentioning every pathway name, adding NO
+    new claims, modifying NO claim. Returns the LLM's narrative_text.
+
 This module is NEW code (✅ add-only per verifier modification policy).
 Do NOT import from or modify B1-core helpers.
 """
 from __future__ import annotations
 
 import json
+from pathlib import Path
+from typing import Callable, Any
 
 from verifier.grammar import ClaimGrammar
 from verifier.schemas import ClaimVerdict, VerifiedClaim
@@ -267,3 +276,153 @@ def build_cascade_payload(
         "claims": corrected_claims,
     }
     return json.dumps(payload, ensure_ascii=False)
+
+
+def _build_claims_summary(corrected_claims: list[dict]) -> str:
+    """Build a structured summary of claims for the LLM to narrate.
+
+    Parameters
+    ----------
+    corrected_claims:
+        List of grammar-v2 claim dicts (the corrected set after cascade).
+
+    Returns
+    -------
+    str
+        A formatted markdown-style summary listing each claim's key
+        details (pathway_name, subject, grammar shape).
+    """
+    if not corrected_claims:
+        return "(No claims provided.)"
+
+    lines = []
+    for i, claim in enumerate(corrected_claims, start=1):
+        grammar = claim.get("grammar", "unknown")
+        claim_text = claim.get("claim_text", "")
+        pathway_name = claim.get("pathway_name") or claim.get("term_name")
+        subject = claim.get("subject")
+
+        summary_parts = [f"Claim {i} ({grammar})"]
+        if claim_text:
+            summary_parts.append(f"Text: {claim_text}")
+        if pathway_name:
+            summary_parts.append(f"Pathway: {pathway_name}")
+        if subject:
+            summary_parts.append(f"Subject: {subject}")
+
+        lines.append(" | ".join(summary_parts))
+
+    return "\n".join(lines)
+
+
+def weave_narrative(
+    corrected_claims: list[dict],
+    llm_call: Callable[[str], str] | None = None,
+) -> str:
+    """Weave a narrative describing the corrected claims using LLM.
+
+    Given a list of deterministically corrected grammar-v2 claim dicts,
+    this function calls the LLM once to produce a coherent narrative
+    that describes these claims. The LLM is instructed to:
+
+    1. Write a 150-300 word coherent paragraph
+    2. Mention every pathway name from the claims
+    3. NOT add any new claims
+    4. NOT modify any claim's pathway, subject, or structured fields
+    5. NOT use meta-language, hedging, or qualifications
+    6. Preserve the factual specificity of each claim
+
+    Parameters
+    ----------
+    corrected_claims:
+        List of grammar-v2 claim dicts as produced by apply_cascade().
+        Each dict has keys: grammar, claim_text, pathway_name,
+        subject, etc.
+    llm_call:
+        A callable that takes a prompt (str) and returns the LLM's
+        response (str). If None, uses the default LLM client.
+
+    Returns
+    -------
+    str
+        The LLM's narrative text, returned verbatim (no post-processing).
+    """
+    if llm_call is None:
+        llm_call = _default_weave_narrative_call
+
+    # Build structured summary of claims for the prompt
+    claims_summary = _build_claims_summary(corrected_claims)
+
+    # Load the prompt template
+    prompt_template = _load_narrative_weave_template()
+
+    # Substitute {claims_summary} placeholder
+    prompt = prompt_template.replace("{claims_summary}", claims_summary)
+
+    # Call LLM with the constructed prompt
+    narrative_text = llm_call(prompt)
+
+    return narrative_text
+
+
+def _load_narrative_weave_template() -> str:
+    """Load the narrative weave prompt template from file.
+
+    Returns
+    -------
+    str
+        The prompt template with {claims_summary} placeholder ready
+        for substitution.
+    """
+    # Path relative to this module
+    template_path = Path(__file__).parent.parent.parent / "prompts" / "agent" / "feedback_narrative_weave_prompt.md"
+
+    if template_path.exists():
+        with open(template_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    # Fallback if file not found (for testing or edge cases)
+    return """You have reviewed evidence-verified claims about metabolite pathways.
+Write a coherent 150–300 word narrative that describes these claims.
+
+CRITICAL CONSTRAINTS:
+1. Do NOT add new claims.
+2. Do NOT modify or remove any claim.
+3. Do NOT use meta-language or hedging.
+4. Mention every pathway name explicitly.
+
+Claims to weave:
+
+{claims_summary}
+
+Write your narrative now:
+"""
+
+
+def _default_weave_narrative_call(prompt: str) -> str:
+    """Default LLM call for weave_narrative.
+
+    Uses the project's standard LLM client (common.llm_client.chat).
+
+    Parameters
+    ----------
+    prompt:
+        The structured prompt to send to the LLM.
+
+    Returns
+    -------
+    str
+        The LLM's response text.
+    """
+    from common.llm_client import chat
+
+    response = chat(
+        [
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.0,
+        max_tokens=600,
+        trace_id="feedback_narrative_weave",
+        caller="concord.feedback_strategies.weave_narrative",
+    )
+    return response
