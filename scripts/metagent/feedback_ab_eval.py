@@ -220,6 +220,48 @@ def _claims_to_list(claims_v2: list) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
+def _extract_pathway_name_from_claim(c) -> str:
+    """Extract pathway name from a claim object (dict or VerifiedClaim)."""
+    if isinstance(c, dict):
+        return c.get("pathway_name") or c.get("term_name") or ""
+    # VerifiedClaim: check extracted_fields.pathway_name first
+    ef = getattr(c, "extracted_fields", None)
+    ef_pname = getattr(ef, "pathway_name", None) if ef is not None else None
+    return (
+        ef_pname
+        or getattr(c, "pathway_name", None)
+        or getattr(c, "term_name", None)
+        or ""
+    )
+
+
+def _is_preferred_verdict(c) -> bool:
+    """True iff claim has a verdict that is reliable for primary_name selection.
+
+    SUPPORTED and INSUFFICIENT_EVIDENCE are the only verdicts whose pathway
+    names are trustworthy: CONTRADICTED claims carry the verifier correction
+    in pathway_name (not the actual pathway), UNSUPPORTED claims reference
+    pathways the verifier could not confirm, and UV/ERROR are out-of-scope.
+    """
+    from verifier.schemas import ClaimVerdict
+    verdict = getattr(c, "verdict", None)
+    if verdict is None:
+        # dict claims (from _claims_to_list) store verdict as string
+        if isinstance(c, dict):
+            verdict_str = c.get("verdict", "")
+            # Normalise "ClaimVerdict.SUPPORTED" -> "SUPPORTED" -> "supported"
+            if "." in verdict_str:
+                verdict_str = verdict_str.split(".")[-1]
+            verdict_str = verdict_str.lower()
+            return verdict_str in ("supported", "insufficient_evidence")
+        return False
+    # Enum or string
+    verdict_val = verdict.value if hasattr(verdict, "value") else str(verdict).lower()
+    if "." in verdict_val:
+        verdict_val = verdict_val.split(".")[-1].lower()
+    return verdict_val in ("supported", "insufficient_evidence")
+
+
 def _eval_pathway_accuracy(
     narrative: str | None,
     claims: list | None,
@@ -231,39 +273,45 @@ def _eval_pathway_accuracy(
     Extracts pathway names from claims (term_name / pathway_name fields),
     then uses the canonical pathway_semantic_match function.
 
+    primary_name is taken from the FIRST SUPPORTED or INSUFFICIENT_EVIDENCE
+    claim that has a non-empty pathway name. This prevents CONTRADICTED claims
+    (whose pathway_name field may contain the verifier correction text, not a
+    real pathway name) from biasing the top-1 accuracy metric. Falls back to
+    scanning all claims only when no preferred-verdict claim has a pathway name.
+
+    topk scans ALL claims regardless of verdict so that any pathway named in
+    the result (even a corrected or unsupported one) contributes to topk recall.
+
     Returns dict with keys: primary_name, top1_hit, topk_hit, abstain.
     """
     if not gt_pathway_name:
         return {"primary_name": None, "top1_hit": None, "topk_hit": None, "abstain": False}
 
-    # Collect predicted pathway names from claims.
-    # Handles three shapes:
-    #   (a) dict (from _claims_to_list) — check pathway_name / term_name keys
-    #   (b) VerifiedClaim object — pathway_name lives on extracted_fields
-    #   (c) plain object with direct pathway_name attr (legacy)
-    predicted_names: list[str] = []
-    for c in (claims or []):
-        if isinstance(c, dict):
-            pname = c.get("pathway_name") or c.get("term_name") or ""
-        else:
-            # VerifiedClaim: check extracted_fields.pathway_name first
-            ef = getattr(c, "extracted_fields", None)
-            ef_pname = getattr(ef, "pathway_name", None) if ef is not None else None
-            pname = (
-                ef_pname
-                or getattr(c, "pathway_name", None)
-                or getattr(c, "term_name", None)
-                or ""
-            )
-        if pname:
-            predicted_names.append(str(pname))
+    claims_list = list(claims or [])
 
-    if not predicted_names:
+    # Collect ALL predicted pathway names (for topk).
+    all_predicted_names: list[str] = []
+    for c in claims_list:
+        pname = _extract_pathway_name_from_claim(c)
+        if pname:
+            all_predicted_names.append(str(pname))
+
+    if not all_predicted_names:
         return {"primary_name": None, "top1_hit": False, "topk_hit": False, "abstain": True}
 
-    primary_name = predicted_names[0]
+    # Collect preferred-verdict names (for primary_name / top1).
+    preferred_names: list[str] = [
+        str(_extract_pathway_name_from_claim(c))
+        for c in claims_list
+        if _is_preferred_verdict(c) and _extract_pathway_name_from_claim(c)
+    ]
+
+    # Use preferred names for primary if available; otherwise fall back to all.
+    primary_pool = preferred_names if preferred_names else all_predicted_names
+
+    primary_name = primary_pool[0]
     top1_hit = pathway_semantic_match_fn(gt_pathway_name, primary_name)
-    topk_hit = any(pathway_semantic_match_fn(gt_pathway_name, p) for p in predicted_names)
+    topk_hit = any(pathway_semantic_match_fn(gt_pathway_name, p) for p in all_predicted_names)
 
     return {
         "primary_name": primary_name,
