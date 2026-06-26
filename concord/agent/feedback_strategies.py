@@ -1,4 +1,4 @@
-"""Strategy A: deterministic cascade claim processing (feedback-redesign Task 1).
+"""Strategy A: deterministic cascade claim processing (feedback-redesign Task 1+2).
 
 GeneAgent-style: instead of letting the LLM rewrite claims freely (which
 net-degrades quality as shown in W13.C / W14.B), the system deterministically
@@ -36,11 +36,35 @@ Grammar-v2 dict keys used by _to_extracted_claim (verifier/claim_extractor.py):
     pathway_enrichment:        term_id, term_name, term_type
     driver_metabolite:         subject, pathway_name, signal_compound_ids
 
+M1 fix (Task 2):
+  pathway_enrichment claims require term_id / term_name / term_type in the
+  grammar-v2 dict. These are NOT stored in ClaimExtractedFields by
+  _to_extracted_claim (it only stores pathway_name there). Without explicit
+  reconstruction, grammar.validate rejects the rebuilt dict and
+  extract_claims_from_json silently drops the claim.
+
+  Fix: _rebuild_grammar_v2_dict detects grammar=PATHWAY_ENRICHMENT and
+  injects term_id / term_name / term_type sourced from:
+    term_name  → extracted_fields.pathway_name (mapped by _to_extracted_claim)
+    term_id    → enrichment_context.claimed_pathway_id (set by layer 6a)
+                 OR extracted_fields.pathway_id (fallback)
+    term_type  → "pathway" default (only value produced by the reactive runner;
+                 no storage path exists in VerifiedClaim for the original value)
+
+Task 2 public API:
+  build_cascade_payload(corrected_claims, narrative_text) → str
+    Wraps the corrected_claims list into the grammar-v2 JSON object
+    {"narrative_text": ..., "claims": [...]} that verify_sub6 consumes
+    via its zero-LLM extract_claims_from_json path.
+
 This module is NEW code (✅ add-only per verifier modification policy).
 Do NOT import from or modify B1-core helpers.
 """
 from __future__ import annotations
 
+import json
+
+from verifier.grammar import ClaimGrammar
 from verifier.schemas import ClaimVerdict, VerifiedClaim
 
 # Verdicts that cause a claim to be kept (before correction logic).
@@ -117,8 +141,7 @@ def _rebuild_grammar_v2_dict(claim: VerifiedClaim, *, pathway_name_override: str
     }
 
     # Carry forward any extra extracted_fields that grammar shapes need
-    # (e.g. pathway_enrichment needs term_id / term_name / term_type;
-    #  driver_metabolite needs signal_compound_ids;
+    # (e.g. driver_metabolite needs signal_compound_ids;
     #  metabolite_pathway_link needs enzyme_or_reaction).
     # We do this by inspecting the Pydantic model's __fields__ to avoid
     # hard-coding every field name — forward-compatible as the schema grows.
@@ -126,6 +149,33 @@ def _rebuild_grammar_v2_dict(claim: VerifiedClaim, *, pathway_name_override: str
         for field_name, field_value in claim.extracted_fields.model_dump(exclude_none=True).items():
             if field_name not in d:
                 d[field_name] = field_value
+
+    # M1 fix: pathway_enrichment requires term_id / term_name / term_type in
+    # the rebuilt dict, but _to_extracted_claim only stores pathway_name
+    # (mapped from term_name) in ClaimExtractedFields. Reconstruct the three
+    # required fields from wherever VerifiedClaim actually carries them.
+    if claim.grammar == ClaimGrammar.PATHWAY_ENRICHMENT:
+        # term_name: extracted_fields.pathway_name holds this (set by
+        # _to_extracted_claim's fallback: pathway = claim_obj.get("pathway_name")
+        # or claim_obj.get("term_name")).
+        if "term_name" not in d or not d["term_name"]:
+            d["term_name"] = pathway_name or ""
+
+        # term_id: enrichment_context.claimed_pathway_id is set by layer 6a
+        # (set_enrichment) from the original claim dict's term_id.
+        # Fall back to extracted_fields.pathway_id (less reliable; pathway_id
+        # key in ClaimExtractedFields holds the KEGG/RaMP path ID when the
+        # layer stored it explicitly).
+        if "term_id" not in d or not d["term_id"]:
+            ctx = claim.enrichment_context
+            claimed_id = (ctx.claimed_pathway_id if ctx else None) or pathway_id
+            d["term_id"] = claimed_id or ""
+
+        # term_type: not stored anywhere in VerifiedClaim; default to "pathway"
+        # (the only value the reactive runner ever produces for enrichment claims;
+        # the RaMP wrapper only returns pathway-type enrichment results).
+        if "term_type" not in d or not d["term_type"]:
+            d["term_type"] = "pathway"
 
     return d
 
@@ -169,3 +219,45 @@ def apply_cascade(verified_claims: list[VerifiedClaim]) -> list[dict]:
         # Any other verdict not explicitly mapped (defensive): drop.
 
     return kept
+
+
+def build_cascade_payload(
+    corrected_claims: list[dict],
+    narrative_text: str,
+) -> str:
+    """Wrap corrected grammar-v2 claim dicts into a verify_sub6-consumable payload.
+
+    Parameters
+    ----------
+    corrected_claims:
+        List of grammar-v2 claim dicts as returned by ``apply_cascade``.
+        Each dict must carry the keys required by
+        ``verifier.grammar.validate`` for its grammar shape.
+    narrative_text:
+        The human-facing narrative string. When the cascade is used for
+        pure re-verification (no LLM renarration), pass the original
+        iter-0 narrative. When an LLM rewrites the narrative using the
+        corrected claims, pass the new narrative.
+
+    Returns
+    -------
+    str
+        JSON string ``{"narrative_text": ..., "claims": [...]}`` that
+        ``verify_sub6`` consumes via its zero-LLM
+        ``extract_claims_from_json`` path (triggered when the payload
+        parses as a v2 grammar JSON object).
+
+    Notes
+    -----
+    The payload format follows the B1 D2 grammar-v2 contract defined in
+    ``verifier/claim_extractor.py:_try_parse_grammar_payload``.
+    ``extract_claims_from_json`` requires:
+      - Top-level dict with ``"claims"`` key holding a list.
+      - ``"narrative_text"`` key (consumed by verify_sub6 for the
+        ``source_llm_output`` / ``rewritten_output`` fields).
+    """
+    payload = {
+        "narrative_text": narrative_text,
+        "claims": corrected_claims,
+    }
+    return json.dumps(payload, ensure_ascii=False)
