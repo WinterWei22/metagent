@@ -302,3 +302,90 @@ def test_claim_text_preserved():
     claim = _make_claim(verdict=ClaimVerdict.SUPPORTED, claim_text=text)
     result = apply_cascade([claim])
     assert result[0]["claim_text"] == text
+
+
+# ---------------------------------------------------------------------------
+# Fix 1: PATHWAY_ENRICHMENT + CONTRADICTED — term_name must NOT be the
+# correction string. It should remain the original term name so the eval
+# can read a sensible pathway name from the claim.
+# ---------------------------------------------------------------------------
+
+
+def _make_enrichment_claim(
+    *,
+    verdict: ClaimVerdict,
+    term_name: str = "Galactose Metabolism",
+    term_id: str = "SMPDB:SMP00043",
+    correction: str | None = None,
+) -> VerifiedClaim:
+    """Build a PATHWAY_ENRICHMENT VerifiedClaim for cascade fix-1 testing."""
+    from verifier.schemas import EnrichmentContext
+    return VerifiedClaim(
+        claim_text=f"run_ramp_enrichment ranks {term_id} ({term_name}) at rank 1.",
+        claim_type=ClaimType.SET_ENRICHMENT,
+        claim_subtype=ClaimSubtype.ENRICHMENT_PATHWAY,
+        subject=None,
+        subject_kind=SubjectKind.UNKNOWN,
+        verdict=verdict,
+        evidence="test evidence",
+        correction=correction,
+        extracted_fields=ClaimExtractedFields(
+            pathway_name=term_name,
+            pathway_id=term_id,
+        ),
+        grammar=ClaimGrammar.PATHWAY_ENRICHMENT,
+        enrichment_context=EnrichmentContext(
+            claimed_pathway=term_name,
+            claimed_pathway_id=term_id,
+        ),
+    )
+
+
+def test_fix1_contradicted_enrichment_term_name_not_correction():
+    """Fix 1 RED: cascade PATHWAY_ENRICHMENT + CONTRADICTED must NOT put
+    the correction string in term_name. The term_name should be the
+    original term name (from enrichment_context or extracted_fields), not
+    the verifier's correction text (which is a human-readable explanation).
+    """
+    from concord.agent.feedback_strategies import apply_cascade
+
+    correction_text = "The actual top-1 enriched pathway is 'Galactosemia'."
+    claim = _make_enrichment_claim(
+        verdict=ClaimVerdict.CONTRADICTED,
+        term_name="Galactose Metabolism",
+        term_id="SMPDB:SMP00043",
+        correction=correction_text,
+    )
+    result = apply_cascade([claim])
+    # Claim is CONTRADICTED with a non-empty correction -> kept
+    assert len(result) == 1
+    d = result[0]
+    # term_name must NOT be the correction text
+    assert d.get("term_name") != correction_text, (
+        f"term_name should not be the correction string; got {d.get('term_name')!r}"
+    )
+    # term_name should be a sensible pathway name (original or from context), not empty
+    assert d.get("term_name"), "term_name must not be empty after cascade"
+
+
+def test_fix1_contradicted_enrichment_term_name_is_original():
+    """Fix 1 RED: cascade PATHWAY_ENRICHMENT + CONTRADICTED -- term_name
+    should come from enrichment_context.claimed_pathway (the original term
+    name recorded by the verifier layer), not from pathway_name_override.
+    """
+    from concord.agent.feedback_strategies import apply_cascade
+
+    correction_text = "The actual top-1 enriched pathway is 'Galactosemia'."
+    claim = _make_enrichment_claim(
+        verdict=ClaimVerdict.CONTRADICTED,
+        term_name="Galactose Metabolism",
+        term_id="SMPDB:SMP00043",
+        correction=correction_text,
+    )
+    result = apply_cascade([claim])
+    assert len(result) == 1
+    d = result[0]
+    # term_name should be the original term from enrichment_context / extracted_fields
+    assert d.get("term_name") == "Galactose Metabolism", (
+        f"Expected 'Galactose Metabolism' in term_name, got {d.get('term_name')!r}"
+    )
