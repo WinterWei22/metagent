@@ -1,29 +1,37 @@
-"""4-arm feedback A/B evaluation script (Task 6).
+"""5-arm feedback A/B evaluation script (Task 6 + Task 7).
 
-Runs four experimental arms on each trace from the v4_live_full run, using
-iter-0 claims as the common starting point for A/B strategies:
+Runs five experimental arms on each trace from the w14 run, using a shared
+iter-0 live re-verify result as the common starting point for A/B strategies:
 
-  no-feedback  : iter-0 verdict — read directly from trace (0 LLM calls)
-  baseline     : iterations[-1].verification — final live-run verdict (0 LLM calls)
-  A cascade    : apply_feedback_strategy("cascade") on iter-0 verified claims →
-                 verify_sub6(result.payload)  [1 LLM call for narrative weaving]
-  B anchored   : apply_feedback_strategy("anchored") → 1 LLM chat call for
-                 full rewrite → parse JSON → verify_sub6  [1 LLM call]
+  no_feedback      : iter-0 verdict — read directly from trace (0 LLM calls)
+  baseline         : iterations[-1].verification — final live-run verdict (0 LLM calls)
+  iter0_reverify   : live re-verify of iter-0 payload with NO feedback (1 LLM call)
+  A_cascade        : apply_feedback_strategy("cascade") on iter0_reverify claims →
+                     verify_sub6(cascade_payload)  [1 LLM call for narrative weaving]
+  B_anchored       : apply_feedback_strategy("anchored") → 1 LLM chat call for
+                     full rewrite → parse JSON → verify_sub6  [1 LLM call]
 
-Arms A/B reconstruct iter-0 VerifiedClaims by feeding iter-0 react_result
-through the v4 adapter (v4_task_to_subsix_source_report +
-concord_result_to_b1_structured_payload + verify_sub6).
+Task 7 adds:
+- iter0_reverify arm: fair common starting point (live re-verify, no feedback)
+- Shared iter-0 re-verify: computed ONCE per task, reused by iter0_reverify + A + B
+- pathway_accuracy: top-1 semantic match against GT perturbed_pathway.name
+- claim_dist: verdict distribution per arm
+- paired_delta: per arm Δ vs iter0_reverify (supported/unsupported/UV)
 
 Usage::
 
     PYTHONPATH=. python3 scripts/metagent/feedback_ab_eval.py \\
-        --limit 2 --out data/metagent/feedback_ab_smoke
+        --traces-dir data/concord/w14_path_x_post_noise_cap/path_x_full \\
+        --benchmark data/benchmark/sub6/sub6b_mammalian_tasks_v3.jsonl \\
+        --output data/metagent/feedback_ab_eval/task7_smoke.json \\
+        --limit 2
 
 Output::
 
-    <out>/results.jsonl          — one line per (task_id, arm) with verdict counts
-    <out>/<task_id>_<arm>.json  — full arm result per task (claims + narrative)
-    <out>/summary.json           — aggregate counts across all tasks/arms
+    <output>/ (directory)
+        results.jsonl          — one line per (task_id, arm) with verdict counts + pathway
+        <task_id>.json         — full arm result per task (claims + narrative + pathway)
+        summary.json           — aggregate counts + paired delta across all tasks/arms
 """
 from __future__ import annotations
 
@@ -42,18 +50,57 @@ from typing import Any
 # ---------------------------------------------------------------------------
 _REPO = Path(__file__).resolve().parents[2]
 
-_DEFAULT_TRACE_DIR = _REPO / "data" / "metagent" / "v4_live_full" / "path_x_full"
+_DEFAULT_TRACE_DIR = _REPO / "data" / "concord" / "w14_path_x_post_noise_cap" / "path_x_full"
 _DEFAULT_BENCH = (
     _REPO
     / "data"
     / "benchmark"
-    / "metagent_bench_v2"
-    / "metagent_bench_easy_v4.jsonl"
+    / "sub6"
+    / "sub6b_mammalian_tasks_v3.jsonl"
 )
-_DEFAULT_OUT = _REPO / "data" / "metagent" / "feedback_ab_smoke"
+_DEFAULT_OUT = _REPO / "data" / "metagent" / "feedback_ab_eval"
 
-# Arm names in display order
-_ARMS = ["no_feedback", "baseline", "A_cascade", "B_anchored"]
+# Arm names in display order (5 arms for Task 7)
+_ARMS = ["no_feedback", "baseline", "iter0_reverify", "A_cascade", "B_anchored"]
+
+# ---------------------------------------------------------------------------
+# Default task selection (Task 7 — 23 tasks covering up/down/flat × strata)
+#
+# Selected from w14 traces with n_feedback_iterations > 0 (62/63 tasks).
+# Bucketed by delta_supported (last_iter - first_iter):
+#   down  (10): delta < 0  — 7 hmdb_ramp + 3 sub6b
+#   up    (10): delta > 0  — 7 hmdb_ramp + 3 sub6b
+#   flat   (3): delta == 0 — 3 hmdb_ramp  (only 4 flat tasks exist)
+# Both strata (hmdb_ramp / sub6b) represented.
+# ---------------------------------------------------------------------------
+DEFAULT_EVAL_TASK_IDS: list[str] = [
+    # --- down bucket (delta < 0) ---
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed6",   # delta=-24 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed4",   # delta=-18 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",   # delta=-16 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed3",   # delta=-15 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",   # delta=-14 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed2",   # delta=-14 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",   # delta=-13 hmdb_ramp
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",   # delta=-8  sub6b
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",   # delta=-6  sub6b
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",   # delta=-3  sub6b
+    # --- up bucket (delta > 0) ---
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",   # delta=+19 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",   # delta=+12 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",   # delta=+11 hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000421_seed5",   # delta=+7  hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",   # delta=+6  hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",   # delta=+5  hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",   # delta=+5  hmdb_ramp
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed7",   # delta=+12 sub6b
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",   # delta=+8  sub6b
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed3",   # delta=+4  sub6b
+    # --- flat bucket (delta == 0) ---
+    "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",   # delta=0   hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",   # delta=0   hmdb_ramp
+    "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",   # delta=0   hmdb_ramp
+]
 
 
 # ---------------------------------------------------------------------------
@@ -75,8 +122,15 @@ def _load_benchmark(bench_path: Path) -> dict[str, dict]:
     return tasks
 
 
-def _load_traces(trace_dir: Path, limit: int | None) -> list[dict]:
-    files = sorted(trace_dir.glob("*.json"))
+def _load_traces(trace_dir: Path, limit: int | None, task_ids: list[str] | None = None) -> list[dict]:
+    """Load trace files; if task_ids given, only load matching files."""
+    if task_ids is not None:
+        files = sorted(
+            fp for tid in task_ids
+            for fp in [trace_dir / f"{tid}.json"] if fp.exists()
+        )
+    else:
+        files = sorted(trace_dir.glob("*.json"))
     if limit is not None:
         files = files[:limit]
     traces = []
@@ -86,6 +140,29 @@ def _load_traces(trace_dir: Path, limit: int | None) -> list[dict]:
         except Exception as exc:
             print(f"[WARN] Failed to load {fp.name}: {exc}", file=sys.stderr)
     return traces
+
+
+# ---------------------------------------------------------------------------
+# Ground-truth pathway extraction (supports sub6b-v3 format)
+# ---------------------------------------------------------------------------
+
+
+def _get_gt_pathway(task: dict) -> tuple[str, str]:
+    """Return (pathway_id, pathway_name) from a task row.
+
+    Supports both sub6b-v3 format (top-level ground_truth_pathway) and
+    v4 format (ground_truth.perturbed_pathway).
+    """
+    # sub6b-v3 format
+    gtp = task.get("ground_truth_pathway")
+    if isinstance(gtp, dict) and gtp.get("pathway_name"):
+        return str(gtp.get("pathway_id") or ""), str(gtp.get("pathway_name") or "")
+    # v4 format
+    gt = task.get("ground_truth", {})
+    pp = gt.get("perturbed_pathway", {})
+    if isinstance(pp, dict) and pp.get("name"):
+        return str(pp.get("id") or ""), str(pp.get("name") or "")
+    return "", ""
 
 
 # ---------------------------------------------------------------------------
@@ -127,6 +204,75 @@ def _narrative_from_result(result: Any) -> str:
     )
 
 
+def _claims_to_list(claims_v2: list) -> list[dict]:
+    return [
+        {
+            "claim_text": getattr(c, "claim_text", ""),
+            "verdict": str(getattr(c, "verdict", "")).split(".")[-1],
+            "grammar": str(getattr(c, "grammar", "")).split(".")[-1],
+        }
+        for c in (claims_v2 or [])
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Pathway accuracy evaluation
+# ---------------------------------------------------------------------------
+
+
+def _eval_pathway_accuracy(
+    narrative: str | None,
+    claims: list | None,
+    gt_pathway_name: str,
+    pathway_semantic_match_fn,
+) -> dict[str, Any]:
+    """Compute pathway accuracy for one arm.
+
+    Extracts pathway names from claims (term_name / pathway_name fields),
+    then uses the canonical pathway_semantic_match function.
+
+    Returns dict with keys: primary_name, top1_hit, topk_hit, abstain.
+    """
+    if not gt_pathway_name:
+        return {"primary_name": None, "top1_hit": None, "topk_hit": None, "abstain": False}
+
+    # Collect predicted pathway names from claims.
+    # Handles three shapes:
+    #   (a) dict (from _claims_to_list) — check pathway_name / term_name keys
+    #   (b) VerifiedClaim object — pathway_name lives on extracted_fields
+    #   (c) plain object with direct pathway_name attr (legacy)
+    predicted_names: list[str] = []
+    for c in (claims or []):
+        if isinstance(c, dict):
+            pname = c.get("pathway_name") or c.get("term_name") or ""
+        else:
+            # VerifiedClaim: check extracted_fields.pathway_name first
+            ef = getattr(c, "extracted_fields", None)
+            ef_pname = getattr(ef, "pathway_name", None) if ef is not None else None
+            pname = (
+                ef_pname
+                or getattr(c, "pathway_name", None)
+                or getattr(c, "term_name", None)
+                or ""
+            )
+        if pname:
+            predicted_names.append(str(pname))
+
+    if not predicted_names:
+        return {"primary_name": None, "top1_hit": False, "topk_hit": False, "abstain": True}
+
+    primary_name = predicted_names[0]
+    top1_hit = pathway_semantic_match_fn(gt_pathway_name, primary_name)
+    topk_hit = any(pathway_semantic_match_fn(gt_pathway_name, p) for p in predicted_names)
+
+    return {
+        "primary_name": primary_name,
+        "top1_hit": top1_hit,
+        "topk_hit": topk_hit,
+        "abstain": False,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Arm runners
 # ---------------------------------------------------------------------------
@@ -141,13 +287,13 @@ def _run_no_feedback(iter0_verification: dict) -> dict:
         "UNVERIFIABLE_V0": iter0_verification.get("n_unverifiable_v0", 0),
         "INSUFFICIENT_EVIDENCE": iter0_verification.get("n_insufficient_evidence", 0),
     }
-    # Filter zero counts
     counts = {k: v for k, v in counts.items() if v}
     return {
         "arm": "no_feedback",
         "verdict_counts": counts,
-        "narrative": None,  # not stored in trace
+        "narrative": None,
         "claims": None,
+        "pathway_accuracy": None,  # no live claims available
         "error": None,
     }
 
@@ -169,48 +315,111 @@ def _run_baseline(iters: list) -> dict:
         "verdict_counts": counts,
         "narrative": None,
         "claims": None,
+        "pathway_accuracy": None,  # no live claims available
         "error": None,
     }
+
+
+def _run_iter0_reverify(
+    task_id: str,
+    task: dict,
+    iter0_rr_dict: dict,
+    verify_sub6_fn,
+    sub6b_task_to_source_fn,
+    concord_to_payload_fn,
+    pathway_semantic_match_fn,
+    gt_pathway_name: str,
+) -> tuple[dict, Any, list]:
+    """Arm iter0_reverify: live re-verify of iter-0 payload with NO feedback.
+
+    Returns (arm_result_dict, result0_object, verified_claims0) so that
+    A/B arms can reuse result0 and verified_claims0 without an extra LLM call.
+    This shared computation cuts ~30% LLM cost vs recomputing in each arm.
+    """
+    try:
+        react_result = _react_result_ns(iter0_rr_dict)
+        payload0 = concord_to_payload_fn(react_result, task)
+        source_report = sub6b_task_to_source_fn(task)
+
+        result0 = verify_sub6_fn(
+            payload0,
+            source_report,
+            trace_id=f"ab_eval.{task_id}.iter0_reverify",
+        )
+        verified_claims0 = getattr(result0, "claims_v2", []) or []
+        counts = _count_verdicts(verified_claims0)
+        narrative = _narrative_from_result(result0)
+        claims_list = _claims_to_list(verified_claims0)
+        pathway_acc = _eval_pathway_accuracy(
+            narrative, verified_claims0, gt_pathway_name, pathway_semantic_match_fn
+        )
+
+        arm = {
+            "arm": "iter0_reverify",
+            "verdict_counts": counts,
+            "narrative": narrative,
+            "claims": claims_list,
+            "pathway_accuracy": pathway_acc,
+            "error": None,
+        }
+        return arm, result0, verified_claims0
+    except Exception:
+        tb = traceback.format_exc()
+        print(f"[ERROR] iter0_reverify {task_id}: {tb}", file=sys.stderr)
+        arm = {
+            "arm": "iter0_reverify",
+            "verdict_counts": {},
+            "narrative": None,
+            "claims": None,
+            "pathway_accuracy": None,
+            "error": tb[-500:],
+        }
+        return arm, None, []
 
 
 def _run_cascade(
     task_id: str,
     task: dict,
     iter0_rr_dict: dict,
+    result0: Any,
+    verified_claims0: list,
     verify_sub6_fn,
-    v4_task_to_source_fn,
+    sub6b_task_to_source_fn,
     concord_to_payload_fn,
     apply_feedback_strategy_fn,
+    pathway_semantic_match_fn,
+    gt_pathway_name: str,
 ) -> dict:
     """Arm A: cascade strategy.
 
-    1. Reconstruct iter-0 VerifiedClaims via verify_sub6 on iter-0 react_result.
-    2. apply_feedback_strategy("cascade") → FeedbackResult (kind="cascade", payload=JSON).
-    3. verify_sub6(payload) → verdict distribution.
+    Reuses result0 + verified_claims0 from iter0_reverify (shared computation).
+    apply_feedback_strategy("cascade") → FeedbackResult → verify_sub6.
     """
     try:
-        react_result = _react_result_ns(iter0_rr_dict)
-        payload0 = concord_to_payload_fn(react_result, task)
-        source_report = v4_task_to_source_fn(task, react_result)
+        source_report = sub6b_task_to_source_fn(task)
 
-        # Step 1: iter-0 verify → get verified_claims
-        result0 = verify_sub6_fn(
-            payload0,
-            source_report,
-            trace_id=f"ab_eval.{task_id}.iter0",
-        )
-        verified_claims0 = getattr(result0, "claims_v2", []) or []
+        # Fall back to recomputing if iter0_reverify failed
+        if result0 is None or not verified_claims0:
+            react_result = _react_result_ns(iter0_rr_dict)
+            payload0 = concord_to_payload_fn(react_result, task)
+            result0_local = verify_sub6_fn(
+                payload0,
+                source_report,
+                trace_id=f"ab_eval.{task_id}.iter0_for_cascade",
+            )
+            verified_claims0_local = getattr(result0_local, "claims_v2", []) or []
+        else:
+            verified_claims0_local = verified_claims0
 
-        # Step 2: apply cascade strategy → FeedbackResult
+        # Apply cascade strategy → FeedbackResult
         fb_result = apply_feedback_strategy_fn(
             "cascade",
-            verified_claims0,
+            verified_claims0_local,
             source_report,
         )
-        # fb_result.kind == "cascade", fb_result.payload is a JSON string
         cascade_payload = fb_result.payload
 
-        # Step 3: verify_sub6 on cascade payload
+        # Verify cascade payload
         result_a = verify_sub6_fn(
             cascade_payload,
             source_report,
@@ -219,19 +428,17 @@ def _run_cascade(
         claims_a = getattr(result_a, "claims_v2", []) or []
         counts = _count_verdicts(claims_a)
         narrative = _narrative_from_result(result_a)
+        claims_list = _claims_to_list(claims_a)
+        pathway_acc = _eval_pathway_accuracy(
+            narrative, claims_a, gt_pathway_name, pathway_semantic_match_fn
+        )
 
         return {
             "arm": "A_cascade",
             "verdict_counts": counts,
             "narrative": narrative,
-            "claims": [
-                {
-                    "claim_text": getattr(c, "claim_text", ""),
-                    "verdict": str(getattr(c, "verdict", "")).split(".")[-1],
-                    "grammar": str(getattr(c, "grammar", "")).split(".")[-1],
-                }
-                for c in claims_a
-            ],
+            "claims": claims_list,
+            "pathway_accuracy": pathway_acc,
             "error": None,
         }
     except Exception:
@@ -242,6 +449,7 @@ def _run_cascade(
             "verdict_counts": {},
             "narrative": None,
             "claims": None,
+            "pathway_accuracy": None,
             "error": tb[-500:],
         }
 
@@ -250,49 +458,50 @@ def _run_anchored(
     task_id: str,
     task: dict,
     iter0_rr_dict: dict,
+    result0: Any,
+    verified_claims0: list,
     verify_sub6_fn,
-    v4_task_to_source_fn,
+    sub6b_task_to_source_fn,
     concord_to_payload_fn,
     apply_feedback_strategy_fn,
     chat_fn,
+    pathway_semantic_match_fn,
+    gt_pathway_name: str,
 ) -> dict:
     """Arm B: anchored rewrite strategy.
 
-    1. Reconstruct iter-0 VerifiedClaims via verify_sub6 on iter-0 react_result.
-    2. apply_feedback_strategy("anchored") → FeedbackResult (kind="rewrite", payload=prompt).
-    3. 1 LLM chat call with the anchored feedback prompt → rewritten narrative (JSON).
-    4. verify_sub6(rewritten_narrative) → verdict distribution.
+    Reuses result0 + verified_claims0 from iter0_reverify (shared computation).
+    apply_feedback_strategy("anchored") → feedback prompt → LLM rewrite → verify_sub6.
     """
     try:
+        source_report = sub6b_task_to_source_fn(task)
         react_result = _react_result_ns(iter0_rr_dict)
-        payload0 = concord_to_payload_fn(react_result, task)
-        source_report = v4_task_to_source_fn(task, react_result)
 
-        # Step 1: iter-0 verify → get verified_claims
-        result0 = verify_sub6_fn(
-            payload0,
-            source_report,
-            trace_id=f"ab_eval.{task_id}.iter0_b",
-        )
-        verified_claims0 = getattr(result0, "claims_v2", []) or []
+        # Fall back to recomputing if iter0_reverify failed
+        if result0 is None or not verified_claims0:
+            payload0 = concord_to_payload_fn(react_result, task)
+            result0_local = verify_sub6_fn(
+                payload0,
+                source_report,
+                trace_id=f"ab_eval.{task_id}.iter0_for_anchored",
+            )
+            verified_claims0_local = getattr(result0_local, "claims_v2", []) or []
+        else:
+            verified_claims0_local = verified_claims0
 
-        # Step 2: apply anchored strategy → FeedbackResult (prompt string)
+        # Apply anchored strategy → FeedbackResult (prompt string)
         fb_result = apply_feedback_strategy_fn(
             "anchored",
-            verified_claims0,
+            verified_claims0_local,
             source_report,
         )
-        # fb_result.kind == "rewrite", fb_result.payload is the feedback prompt
         feedback_prompt = fb_result.payload or ""
 
-        # Step 3: Build system message + user message for rewrite call.
-        # We ask the LLM to produce a grammar-v2 JSON response: the same
-        # format that the production react_runner produces (so verify_sub6
-        # takes the zero-LLM extract_claims_from_json path).
+        # Build system + user messages for rewrite call
         system_msg = (
             "You are a metabolomics pathway-analysis assistant. "
             "Output ONLY valid JSON matching the schema: "
-            '{\"narrative_text\": \"<prose>\", \"claims\": [<claim_dicts>]}. '
+            '{"narrative_text": "<prose>", "claims": [<claim_dicts>]}. '
             "Each claim dict must have: grammar (pathway_enrichment | "
             "pathway_membership | metabolite_pathway_link | driver_metabolite), "
             "claim_text (verbatim sentence). "
@@ -301,7 +510,6 @@ def _run_anchored(
             "add subject, pathway_name. "
             "Do NOT include any text outside the JSON object."
         )
-        # Prepend the iter-0 narrative as context so the LLM knows what it wrote
         iter0_narrative = (react_result.final_narrative_text or "").strip()
         user_content = (
             f"Your previous narrative:\n\n{iter0_narrative}\n\n"
@@ -320,7 +528,7 @@ def _run_anchored(
             caller="feedback_ab_eval.B_anchored",
         )
 
-        # Step 4: verify_sub6 on the rewritten payload
+        # Verify the rewritten payload
         result_b = verify_sub6_fn(
             rewritten_raw,
             source_report,
@@ -329,20 +537,18 @@ def _run_anchored(
         claims_b = getattr(result_b, "claims_v2", []) or []
         counts = _count_verdicts(claims_b)
         narrative = _narrative_from_result(result_b)
+        claims_list = _claims_to_list(claims_b)
+        pathway_acc = _eval_pathway_accuracy(
+            narrative, claims_b, gt_pathway_name, pathway_semantic_match_fn
+        )
 
         return {
             "arm": "B_anchored",
             "verdict_counts": counts,
             "narrative": narrative,
-            "rewrite_raw": rewritten_raw[:1000],  # truncate for storage
-            "claims": [
-                {
-                    "claim_text": getattr(c, "claim_text", ""),
-                    "verdict": str(getattr(c, "verdict", "")).split(".")[-1],
-                    "grammar": str(getattr(c, "grammar", "")).split(".")[-1],
-                }
-                for c in claims_b
-            ],
+            "rewrite_raw": rewritten_raw[:1000],
+            "claims": claims_list,
+            "pathway_accuracy": pathway_acc,
             "error": None,
         }
     except Exception:
@@ -353,8 +559,46 @@ def _run_anchored(
             "verdict_counts": {},
             "narrative": None,
             "claims": None,
+            "pathway_accuracy": None,
             "error": tb[-500:],
         }
+
+
+# ---------------------------------------------------------------------------
+# Paired delta computation
+# ---------------------------------------------------------------------------
+
+
+def _compute_paired_delta(arm_data: dict, ref_data: dict, label: str) -> dict[str, Any]:
+    """Compute delta for arm vs reference (iter0_reverify) arm."""
+    ref_counts = ref_data.get("verdict_counts", {})
+    arm_counts = arm_data.get("verdict_counts", {})
+
+    def _get(d: dict, k: str) -> int:
+        return d.get(k, 0)
+
+    ref_sup = _get(ref_counts, "SUPPORTED")
+    ref_uv = _get(ref_counts, "UNVERIFIABLE_V0") + _get(ref_counts, "INSUFFICIENT_EVIDENCE")
+    ref_unsup = _get(ref_counts, "UNSUPPORTED")
+
+    arm_sup = _get(arm_counts, "SUPPORTED")
+    arm_uv = _get(arm_counts, "UNVERIFIABLE_V0") + _get(arm_counts, "INSUFFICIENT_EVIDENCE")
+    arm_unsup = _get(arm_counts, "UNSUPPORTED")
+
+    # Pathway accuracy delta
+    ref_top1 = (ref_data.get("pathway_accuracy") or {}).get("top1_hit")
+    arm_top1 = (arm_data.get("pathway_accuracy") or {}).get("top1_hit")
+    top1_delta: int | None = None
+    if ref_top1 is not None and arm_top1 is not None:
+        top1_delta = (1 if arm_top1 else 0) - (1 if ref_top1 else 0)
+
+    return {
+        "arm": label,
+        "delta_supported": arm_sup - ref_sup,
+        "delta_uv": arm_uv - ref_uv,
+        "delta_unsupported": arm_unsup - ref_unsup,
+        "delta_pathway_top1": top1_delta,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -367,16 +611,18 @@ def run_eval(
     bench_path: Path,
     out_dir: Path,
     limit: int | None,
+    task_ids: list[str] | None = None,
 ) -> dict:
-    """Run 4-arm evaluation over traces, write per-task JSON + results.jsonl."""
+    """Run 5-arm evaluation over traces, write per-task JSON + results.jsonl."""
     import verifier.claim_table as _claim_table_mod
     from verifier.schemas import ClaimVerdict as _ClaimVerdict
     from verifier.agent import verify_sub6
     from concord.agent.verifier_adapter import (
-        v4_task_to_subsix_source_report,
+        sub6b_task_to_subsix_source_report,
         concord_result_to_b1_structured_payload,
     )
     from concord.agent.feedback_strategies import apply_feedback_strategy
+    from concord.agent.pathway_prediction import pathway_semantic_match
     from common.llm_client import chat
 
     # Patch claim_table severity map if needed (mirrors v4_verifier_replay.py)
@@ -386,7 +632,6 @@ def run_eval(
     # Set env flags to match production verify_with_b1 path
     os.environ["METAGENT_VERIFY_STRUCTURED_CLAIMS"] = "1"
     os.environ["METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT"] = "1"
-    # Use MiniMax as LLM provider (do not default to openai)
     os.environ.setdefault("METAGENT_LLM_PROVIDER", "minimax")
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -394,11 +639,18 @@ def run_eval(
     summary_path = out_dir / "summary.json"
 
     tasks = _load_benchmark(bench_path)
-    traces = _load_traces(trace_dir, limit)
+    traces = _load_traces(trace_dir, limit, task_ids=task_ids)
     print(f"Loaded {len(tasks)} benchmark tasks, {len(traces)} trace files.")
 
     # Aggregated verdict counts per arm
     agg: dict[str, Counter] = {arm: Counter() for arm in _ARMS}
+    # Pathway accuracy counts per arm
+    pathway_hits: dict[str, dict[str, int]] = {
+        arm: {"top1_hit": 0, "topk_hit": 0, "total": 0, "abstain": 0}
+        for arm in _ARMS
+    }
+    # Paired delta accumulators vs iter0_reverify
+    paired_deltas: dict[str, list[dict]] = {arm: [] for arm in _ARMS}
     n_ok = 0
     n_fail = 0
 
@@ -421,7 +673,8 @@ def run_eval(
             iter0_rr_dict = iter0.get("react_result", {})
             iter0_ver = iter0.get("verification", {})
 
-            print(f"  Processing {task_id} ({len(iters)} iters)...", flush=True)
+            gt_pathway_id, gt_pathway_name = _get_gt_pathway(task)
+            print(f"  Processing {task_id} (GT: {gt_pathway_name[:50]})...", flush=True)
 
             # ----------------------------------------------------------
             # Arm: no_feedback (read from trace iter-0 verification)
@@ -434,56 +687,102 @@ def run_eval(
             arm_baseline = _run_baseline(iters)
 
             # ----------------------------------------------------------
-            # Arm A: cascade (1 LLM call for narrative weave)
+            # Arm: iter0_reverify — live re-verify, SHARED with A and B.
+            # Computed ONCE per task; result0 + verified_claims0 are
+            # passed to _run_cascade and _run_anchored to avoid redundant
+            # LLM calls (saves ~2 verify calls per task ≈ 30% cost cut).
+            # ----------------------------------------------------------
+            arm_iter0_rv, result0, verified_claims0 = _run_iter0_reverify(
+                task_id,
+                task,
+                iter0_rr_dict,
+                verify_sub6,
+                sub6b_task_to_subsix_source_report,
+                concord_result_to_b1_structured_payload,
+                pathway_semantic_match,
+                gt_pathway_name,
+            )
+
+            # ----------------------------------------------------------
+            # Arm A: cascade (reuses result0 + verified_claims0)
             # ----------------------------------------------------------
             arm_a = _run_cascade(
                 task_id,
                 task,
                 iter0_rr_dict,
+                result0,
+                verified_claims0,
                 verify_sub6,
-                v4_task_to_subsix_source_report,
+                sub6b_task_to_subsix_source_report,
                 concord_result_to_b1_structured_payload,
                 apply_feedback_strategy,
+                pathway_semantic_match,
+                gt_pathway_name,
             )
 
             # ----------------------------------------------------------
-            # Arm B: anchored (1 LLM call for rewrite)
+            # Arm B: anchored (reuses result0 + verified_claims0)
             # ----------------------------------------------------------
             arm_b = _run_anchored(
                 task_id,
                 task,
                 iter0_rr_dict,
+                result0,
+                verified_claims0,
                 verify_sub6,
-                v4_task_to_subsix_source_report,
+                sub6b_task_to_subsix_source_report,
                 concord_result_to_b1_structured_payload,
                 apply_feedback_strategy,
                 chat,
+                pathway_semantic_match,
+                gt_pathway_name,
             )
 
             # ----------------------------------------------------------
-            # Aggregate + write output
+            # Aggregate + paired delta
             # ----------------------------------------------------------
-            task_result = {
-                "task_id": task_id,
-                "arms": {
-                    "no_feedback": arm_no_fb,
-                    "baseline": arm_baseline,
-                    "A_cascade": arm_a,
-                    "B_anchored": arm_b,
-                },
+            arm_map = {
+                "no_feedback": arm_no_fb,
+                "baseline": arm_baseline,
+                "iter0_reverify": arm_iter0_rv,
+                "A_cascade": arm_a,
+                "B_anchored": arm_b,
             }
 
+            for arm_name in _ARMS:
+                arm_data = arm_map[arm_name]
+                agg[arm_name].update(arm_data["verdict_counts"])
+                # Pathway accuracy
+                pa = arm_data.get("pathway_accuracy")
+                if pa is not None:
+                    pathway_hits[arm_name]["total"] += 1
+                    if pa.get("abstain"):
+                        pathway_hits[arm_name]["abstain"] += 1
+                    if pa.get("top1_hit"):
+                        pathway_hits[arm_name]["top1_hit"] += 1
+                    if pa.get("topk_hit"):
+                        pathway_hits[arm_name]["topk_hit"] += 1
+                # Paired delta vs iter0_reverify
+                delta = _compute_paired_delta(arm_data, arm_iter0_rv, arm_name)
+                paired_deltas[arm_name].append(delta)
+
             # Per-task JSON
+            task_result = {
+                "task_id": task_id,
+                "gt_pathway_name": gt_pathway_name,
+                "arms": {arm_name: arm_map[arm_name] for arm_name in _ARMS},
+                "paired_deltas_vs_iter0_reverify": {
+                    arm_name: paired_deltas[arm_name][-1]
+                    for arm_name in _ARMS
+                },
+            }
             task_out_path = out_dir / f"{task_id}.json"
             task_out_path.write_text(json.dumps(task_result, indent=2, ensure_ascii=False))
 
             # results.jsonl line (compact per-arm rows)
-            for arm_name, arm_data in [
-                ("no_feedback", arm_no_fb),
-                ("baseline", arm_baseline),
-                ("A_cascade", arm_a),
-                ("B_anchored", arm_b),
-            ]:
+            for arm_name in _ARMS:
+                arm_data = arm_map[arm_name]
+                pa = arm_data.get("pathway_accuracy") or {}
                 row = {
                     "task_id": task_id,
                     "arm": arm_name,
@@ -492,34 +791,88 @@ def run_eval(
                     "n_supported": arm_data["verdict_counts"].get("SUPPORTED", 0),
                     "n_unsupported": arm_data["verdict_counts"].get("UNSUPPORTED", 0),
                     "n_unverifiable_v0": arm_data["verdict_counts"].get("UNVERIFIABLE_V0", 0),
-                    "n_insufficient_evidence": arm_data["verdict_counts"].get("INSUFFICIENT_EVIDENCE", 0),
+                    "n_insufficient_evidence": arm_data["verdict_counts"].get(
+                        "INSUFFICIENT_EVIDENCE", 0
+                    ),
                     "n_contradicted": arm_data["verdict_counts"].get("CONTRADICTED", 0),
+                    "pathway_top1_hit": pa.get("top1_hit"),
+                    "pathway_topk_hit": pa.get("topk_hit"),
+                    "pathway_abstain": pa.get("abstain"),
+                    "pathway_primary_name": pa.get("primary_name"),
                 }
                 results_fh.write(json.dumps(row, ensure_ascii=False) + "\n")
-                agg[arm_name].update(arm_data["verdict_counts"])
 
             n_ok += 1
             print(
-                f"    no_feedback: {arm_no_fb['verdict_counts']} | "
-                f"baseline: {arm_baseline['verdict_counts']} | "
-                f"A: {arm_a['verdict_counts']} | "
-                f"B: {arm_b['verdict_counts']}"
+                f"    no_fb:{arm_no_fb['verdict_counts']} | "
+                f"base:{arm_baseline['verdict_counts']} | "
+                f"rv0:{arm_iter0_rv['verdict_counts']} | "
+                f"A:{arm_a['verdict_counts']} | "
+                f"B:{arm_b['verdict_counts']}"
             )
 
-    # Write summary
+    # ---------------------------------------------------------------------------
+    # Compute aggregate summary with pathway accuracy rates and paired deltas
+    # ---------------------------------------------------------------------------
+
+    def _avg_delta(arm_name: str, key: str) -> float | None:
+        vals = [d[key] for d in paired_deltas[arm_name] if d.get(key) is not None]
+        return round(sum(vals) / len(vals), 4) if vals else None
+
+    pathway_accuracy_summary: dict[str, Any] = {}
+    for arm_name in _ARMS:
+        ph = pathway_hits[arm_name]
+        total = ph["total"]
+        pathway_accuracy_summary[arm_name] = {
+            "total_with_eval": total,
+            "top1_hit": ph["top1_hit"],
+            "topk_hit": ph["topk_hit"],
+            "abstain": ph["abstain"],
+            "top1_hit_rate": round(ph["top1_hit"] / total, 4) if total else None,
+            "topk_hit_rate": round(ph["topk_hit"] / total, 4) if total else None,
+        }
+
+    paired_delta_summary: dict[str, Any] = {}
+    for arm_name in _ARMS:
+        paired_delta_summary[arm_name] = {
+            "avg_delta_supported": _avg_delta(arm_name, "delta_supported"),
+            "avg_delta_uv": _avg_delta(arm_name, "delta_uv"),
+            "avg_delta_unsupported": _avg_delta(arm_name, "delta_unsupported"),
+            "avg_delta_pathway_top1": _avg_delta(arm_name, "delta_pathway_top1"),
+        }
+
     summary = {
         "n_traces": len(traces),
         "n_ok": n_ok,
         "n_fail": n_fail,
+        "arms": _ARMS,
         "aggregate_by_arm": {arm: dict(agg[arm]) for arm in _ARMS},
+        "pathway_accuracy_by_arm": pathway_accuracy_summary,
+        "paired_delta_vs_iter0_reverify": paired_delta_summary,
     }
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False))
 
     print(f"\n=== Summary ===")
     print(f"Tasks processed OK : {n_ok}")
     print(f"Tasks failed       : {n_fail}")
+    print(f"\nVerdict aggregate by arm:")
     for arm in _ARMS:
         print(f"  {arm}: {dict(agg[arm])}")
+    print(f"\nPathway accuracy (top1 hit rate):")
+    for arm in _ARMS:
+        pa = pathway_accuracy_summary[arm]
+        print(
+            f"  {arm}: {pa['top1_hit_rate']} "
+            f"({pa['top1_hit']}/{pa['total_with_eval']})"
+        )
+    print(f"\nPaired delta vs iter0_reverify (avg):")
+    for arm in _ARMS:
+        d = paired_delta_summary[arm]
+        print(
+            f"  {arm}: Δsup={d['avg_delta_supported']}  "
+            f"Δuv={d['avg_delta_uv']}  "
+            f"Δpathway_top1={d['avg_delta_pathway_top1']}"
+        )
 
     return summary
 
@@ -530,18 +883,22 @@ def run_eval(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="4-arm feedback A/B evaluation")
+    parser = argparse.ArgumentParser(description="5-arm feedback A/B evaluation (Task 7)")
     parser.add_argument(
+        "--traces-dir",
         "--trace-dir",
+        dest="traces_dir",
         type=Path,
         default=_DEFAULT_TRACE_DIR,
         help="Directory of ConcordFeedbackResult trace JSON files",
     )
     parser.add_argument(
+        "--benchmark",
         "--bench",
+        dest="benchmark",
         type=Path,
         default=_DEFAULT_BENCH,
-        help="Benchmark JSONL (v4 rows with ground_truth.perturbed_pathway)",
+        help="Benchmark JSONL (sub6b-v3 rows with ground_truth_pathway)",
     )
     parser.add_argument(
         "--limit",
@@ -550,24 +907,41 @@ def main() -> None:
         help="Process only N traces (use 2 for smoke test)",
     )
     parser.add_argument(
+        "--output",
         "--out",
+        dest="output",
         type=Path,
         default=_DEFAULT_OUT,
-        help="Output directory for results.jsonl and per-task JSON",
+        help="Output directory (or .json path; parent dir used if .json suffix)",
+    )
+    parser.add_argument(
+        "--all-tasks",
+        action="store_true",
+        default=False,
+        help="Run all traces in traces-dir, not just DEFAULT_EVAL_TASK_IDS",
     )
     args = parser.parse_args()
 
-    print(f"Trace dir : {args.trace_dir}")
-    print(f"Benchmark : {args.bench}")
-    print(f"Limit     : {args.limit or 'all'}")
-    print(f"Output    : {args.out}")
+    # If --output is a .json path, use its parent directory
+    out_dir = args.output
+    if str(out_dir).endswith(".json"):
+        out_dir = out_dir.parent
+
+    task_ids = None if args.all_tasks else DEFAULT_EVAL_TASK_IDS
+
+    print(f"Trace dir  : {args.traces_dir}")
+    print(f"Benchmark  : {args.benchmark}")
+    print(f"Limit      : {args.limit or 'all'}")
+    print(f"Output dir : {out_dir}")
+    print(f"Task IDs   : {'all' if task_ids is None else f'{len(task_ids)} selected'}")
     print()
 
     run_eval(
-        trace_dir=args.trace_dir,
-        bench_path=args.bench,
-        out_dir=args.out,
+        trace_dir=args.traces_dir,
+        bench_path=args.benchmark,
+        out_dir=out_dir,
         limit=args.limit,
+        task_ids=task_ids,
     )
 
 
