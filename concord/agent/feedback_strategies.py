@@ -426,3 +426,182 @@ def _default_weave_narrative_call(prompt: str) -> str:
         caller="concord.feedback_strategies.weave_narrative",
     )
     return response
+
+
+# ---------------------------------------------------------------------------
+# Task 4: B-strategy (anchored rewrite) + C-gating
+# ---------------------------------------------------------------------------
+
+# Verdicts whose claims must NOT appear in the anchored feedback prompt.
+# INSUFFICIENT_EVIDENCE: the verifier is unsure → keep without guidance.
+# UNVERIFIABLE_V0 / NEEDS_HUMAN_REVIEW / ERROR: out-of-scope for LLM fix.
+_SILENT_VERDICTS = frozenset(
+    [
+        ClaimVerdict.INSUFFICIENT_EVIDENCE,
+        ClaimVerdict.UNVERIFIABLE_V0,
+        ClaimVerdict.NEEDS_HUMAN_REVIEW,
+        ClaimVerdict.ERROR,
+    ]
+)
+
+
+def build_anchored_feedback(verified_claims: list[VerifiedClaim]) -> str:
+    """B-strategy: build a feedback prompt with a positive anchor block.
+
+    Unlike the original feedback prompt (which only shows the LLM the
+    PROBLEMS — contradicted/unsupported), this prompt leads with a
+    SUPPORTED-anchor block that explicitly tells the LLM which claims it
+    must preserve verbatim. This prevents the LLM from accidentally
+    degrading already-correct content during the rewrite.
+
+    Verdict routing:
+      SUPPORTED              → listed in anchor block (must preserve)
+      CONTRADICTED           → listed in "must change" block with top-1
+                               correction suggestion; if correction absent,
+                               silently omitted from that block
+      UNSUPPORTED            → listed in "rephrase or drop" block
+      INSUFFICIENT_EVIDENCE  → omitted entirely (verifier unsure → keep)
+      UNVERIFIABLE_V0        → omitted from prompt (handled separately if
+                               the caller wants to add a UNV section)
+      NEEDS_HUMAN_REVIEW     → omitted
+      ERROR                  → omitted
+
+    Parameters
+    ----------
+    verified_claims:
+        The list of VerifiedClaim objects from one verifier pass.
+
+    Returns
+    -------
+    str
+        A formatted feedback prompt string ready to be sent as a user-role
+        message in the feedback turn. Uses the anchored prompt template
+        ``prompts/agent/sub6b_react_feedback_prompt_anchored.md``.
+    """
+    supported: list[VerifiedClaim] = []
+    contradicted: list[VerifiedClaim] = []
+    unsupported: list[VerifiedClaim] = []
+
+    for claim in verified_claims:
+        if claim.verdict == ClaimVerdict.SUPPORTED:
+            supported.append(claim)
+        elif claim.verdict == ClaimVerdict.CONTRADICTED:
+            contradicted.append(claim)
+        elif claim.verdict == ClaimVerdict.UNSUPPORTED:
+            unsupported.append(claim)
+        # INSUFFICIENT_EVIDENCE and all other verdicts are silently skipped
+
+    # Build anchor block
+    if supported:
+        anchor_lines = ["已验证，原样保留 (preserve verbatim):"]
+        for c in supported:
+            anchor_lines.append(f"- {c.claim_text}")
+        supported_anchor_block = "\n".join(anchor_lines)
+    else:
+        supported_anchor_block = "(No SUPPORTED claims in this pass.)"
+
+    # Build CONTRADICTED block
+    contradicted_lines: list[str] = []
+    for c in contradicted:
+        correction = c.correction
+        if correction and correction.strip():
+            contradicted_lines.append(
+                f"- CLAIM: {c.claim_text}\n  应该是 (should be): {correction.strip()}"
+            )
+        # If no correction, omit from the "must change" block (no usable suggestion)
+    contradicted_block = "\n".join(contradicted_lines) if contradicted_lines else "(None)"
+
+    # Build UNSUPPORTED block
+    unsupported_lines: list[str] = []
+    for c in unsupported:
+        unsupported_lines.append(f"- {c.claim_text}")
+    unsupported_block = "\n".join(unsupported_lines) if unsupported_lines else "(None)"
+
+    # Load prompt template and substitute placeholders
+    template = _load_anchored_feedback_template()
+    output = (
+        template
+        .replace("{supported_anchor_block}", supported_anchor_block)
+        .replace("{n_contradicted}", str(len(contradicted)))
+        .replace("{n_unsupported}", str(len(unsupported)))
+        .replace("{contradicted_block}", contradicted_block)
+        .replace("{unsupported_block}", unsupported_block)
+        # Leave optional placeholders with sensible defaults
+        .replace("{n_unverifiable}", "0")
+        .replace("{unverifiable_block}", "(None)")
+        .replace("{n_dropped_by_grammar}", "0")
+        .replace("{dropped_block}", "(None)")
+        .replace("{original_narrative_text}", "")
+    )
+    return output
+
+
+def _load_anchored_feedback_template() -> str:
+    """Load the anchored feedback prompt template from file."""
+    template_path = (
+        Path(__file__).parent.parent.parent
+        / "prompts"
+        / "agent"
+        / "sub6b_react_feedback_prompt_anchored.md"
+    )
+    if template_path.exists():
+        with open(template_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    # Inline fallback (used only if the file is missing — e.g. bare test env)
+    return (
+        "# ANCHOR — Already-Verified Claims (DO NOT CHANGE)\n"
+        "{supported_anchor_block}\n\n"
+        "# What to fix\n"
+        "- {n_contradicted} CONTRADICTED claim(s) — MUST change.\n"
+        "- {n_unsupported} UNSUPPORTED claim(s) — rephrase or drop.\n\n"
+        "# CONTRADICTED claims\n"
+        "{contradicted_block}\n\n"
+        "# UNSUPPORTED claims\n"
+        "{unsupported_block}\n"
+    )
+
+
+def should_trigger_feedback(
+    verified_claims: list[VerifiedClaim],
+    min_bad_frac: float = 0.0,
+) -> bool:
+    """C-gating: decide whether a feedback turn is warranted.
+
+    A feedback turn is triggered only if there is meaningful actionable
+    content to give the LLM. Specifically, there must be at least one
+    CONTRADICTED or UNSUPPORTED claim (the two verdicts the LLM can act
+    on with a prompt-level fix).
+
+    INSUFFICIENT_EVIDENCE is explicitly excluded from triggering feedback:
+    the verifier was uncertain, not confident of an error, so sending the
+    LLM back to revise those claims risks spurious rewrites.
+
+    Parameters
+    ----------
+    verified_claims:
+        The list of VerifiedClaim objects from one verifier pass.
+    min_bad_frac:
+        Optional minimum fraction of claims that must be CONTRADICTED or
+        UNSUPPORTED before triggering. Default 0.0 means any single bad
+        claim triggers. Set to e.g. 0.5 to require >= 50% bad claims.
+
+    Returns
+    -------
+    bool
+        True → run a feedback turn; False → skip.
+    """
+    if not verified_claims:
+        return False
+
+    bad_verdicts = frozenset([ClaimVerdict.CONTRADICTED, ClaimVerdict.UNSUPPORTED])
+    bad_count = sum(1 for c in verified_claims if c.verdict in bad_verdicts)
+
+    if bad_count == 0:
+        return False
+
+    if min_bad_frac > 0.0:
+        frac = bad_count / len(verified_claims)
+        return frac >= min_bad_frac
+
+    return True
