@@ -322,3 +322,75 @@ def _outcome_wrapping(verdict):
     from concord.agent.react_runner import VerificationOutcome
 
     return VerificationOutcome(ok=True, verdict=verdict, error=None)
+
+
+# ---------------------------------------------------------------------------
+# Test 5: cascade synthetic result must carry pathway_prediction
+# ---------------------------------------------------------------------------
+
+
+def test_cascade_iteration_populates_pathway_prediction(fake_task, monkeypatch):
+    """REGRESSION: the synthetic ConcordReactResult from a cascade iteration
+    must carry a non-None `pathway_prediction`.
+
+    The production scorecard (`full344_pathway_scorecard.py`) reads pathway
+    accuracy from `final_react_result.pathway_prediction`. Before this fix the
+    cascade iteration left that field at its default (None), so every task that
+    ran a cascade feedback round scored as prediction-failed — the v4 112-task
+    cascade run showed exactly this: all 62 cascade-feedback tasks had
+    pathway_prediction_ok=False, collapsing overall pathway accuracy from
+    ~76.8% to 41%. To stay consistent with the pre-merge production contract,
+    cascade must regenerate pathway_prediction via the SAME second-pass
+    generator used at iter-0 (on the cascade-corrected claims + woven narrative).
+    """
+    sentinel = {
+        "primary": {"pathway_id": "WP:WP167", "pathway_name": "Eicosanoid synthesis"},
+        "alternatives": [],
+        "abstain": False,
+        "abstain_reason": None,
+    }
+    calls = {"n": 0}
+
+    def _fake_second_pass(**_kwargs):
+        calls["n"] += 1
+        return dict(sentinel)
+
+    monkeypatch.setattr(
+        "concord.agent.react_runner.generate_pathway_prediction_second_pass",
+        _fake_second_pass,
+    )
+
+    iter0_claims = [
+        _make_verified_claim(ClaimVerdict.SUPPORTED, pathway_name="Eicosanoid synthesis"),
+    ]
+    iter0_verdict = _make_verdict_mock(claims_v2=iter0_claims)
+
+    runner = ConcordReactRunner(
+        chat_with_tools=lambda _m, **_k: _finalise_msg(),
+        verifier_fn=lambda _n, _s, **_k: _make_verdict_mock(supported=1, unsupported=0),
+        llm_model="fake-model",
+        max_feedback_iters=1,
+    )
+    base_result = ConcordReactResult(task_id="test_cascade_task")
+
+    rk, _vk = runner._run_cascade_iteration(
+        fake_task,
+        prev_outcome=_outcome_wrapping(iter0_verdict),
+        base_result=base_result,
+        trace_id="pp",
+        k=1,
+    )
+
+    # Cascade must call the second-pass generator exactly once (on its
+    # corrected claims) — before the fix it never called it.
+    assert calls["n"] == 1, (
+        "cascade iteration must regenerate pathway_prediction via the "
+        f"second-pass generator exactly once; got {calls['n']} calls"
+    )
+    # The synthetic result must carry the prediction so the scorecard can read it.
+    assert rk.pathway_prediction is not None, (
+        "cascade synthetic ConcordReactResult must carry pathway_prediction"
+    )
+    assert rk.pathway_prediction["primary"]["pathway_name"] == "Eicosanoid synthesis", (
+        f"cascade must store the regenerated prediction; got {rk.pathway_prediction}"
+    )

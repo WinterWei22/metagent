@@ -1043,12 +1043,30 @@ class ConcordReactRunner:
             is_final_iteration=(k == self.max_feedback_iters),
         )
 
+        # Regenerate pathway_prediction from the cascade-corrected claims via
+        # the SAME second-pass generator used at iter-0. The production
+        # scorecard reads pathway accuracy from
+        # final_react_result.pathway_prediction; without this the synthetic
+        # cascade result leaves it None and every cascade-feedback task scores
+        # as prediction-failed. The generator never raises — it returns an
+        # abstain sentinel on any LLM/parse failure (or empty claims).
+        corrected_claims = fb.corrected_claims or []
+        cascade_pathway_prediction = generate_pathway_prediction_second_pass(
+            claims=corrected_claims,
+            narrative_text=narr,
+            chat_fn=llm_client.chat,
+            model=self.llm_model,
+            provider=self.llm_provider,
+            trace_id=f"{trace_id}.iter{k}.pathway_prediction",
+        )
+
         # Build a synthetic ConcordReactResult for trace / audit purposes.
         rk = ConcordReactResult(
             task_id=base_result.task_id,
-            final_claims=fb.corrected_claims or [],
+            final_claims=corrected_claims,
             final_narrative_text=narr,
             final_narrative_json=payload,
+            pathway_prediction=cascade_pathway_prediction,
             enrichment_carriers=getattr(base_result, "enrichment_carriers", {}) or {},
             task_outcome=getattr(base_result, "task_outcome", "normal"),
             n_feedback_iterations=k,
