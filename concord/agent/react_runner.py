@@ -362,6 +362,7 @@ class ConcordReactRunner:
     max_feedback_iters: int = DEFAULT_MAX_FEEDBACK_ITERS
     inner_finalise_retries: int = DEFAULT_INNER_FINALISE_RETRIES
     task_timeout_seconds: float = DEFAULT_TASK_TIMEOUT_SECONDS
+    feedback_strategy: str = "cascade"
 
     def __post_init__(self) -> None:
         # Validate config the moment a runner is constructed so a
@@ -380,6 +381,11 @@ class ConcordReactRunner:
             raise ValueError(
                 f"inner_finalise_retries must be 0 or 1, "
                 f"got {self.inner_finalise_retries}"
+            )
+        if self.feedback_strategy not in ("cascade", "rewrite"):
+            raise ValueError(
+                f"feedback_strategy must be 'cascade' or 'rewrite'; "
+                f"got {self.feedback_strategy!r}"
             )
 
         self.tool_specs = get_tool_specs()
@@ -657,28 +663,38 @@ class ConcordReactRunner:
 
         # iter 1..max_feedback_iters
         for k in range(1, self.max_feedback_iters + 1):
-            prev_verdict = iterations[-1][1].verdict
-            try:
-                hint = builder(prev_verdict)
-            except Exception as exc:
-                # If the feedback builder itself bombs, treat it as a
-                # halt — we cannot ask the LLM to revise without a hint.
-                logger.warning("feedback builder failed: %s", exc)
-                hint = (
-                    "VERIFIER FEEDBACK: previous iteration had unsupported / "
-                    "contradicted claims — please re-emit a stricter "
-                    "narrative referring to pathways by their literal "
-                    "namespace-prefixed names from the tool outputs."
+            if self.feedback_strategy == "cascade":
+                rk, vk = self._run_cascade_iteration(
+                    task,
+                    prev_outcome=iterations[-1][1],
+                    base_result=iterations[0][0],
+                    trace_id=trace_id,
+                    k=k,
                 )
-            rk = self.run_task(
-                task, trace_id=f"{trace_id}.iter{k}", feedback_user_msg=hint,
-            )
-            vk = self.verify_with_b1(
-                rk,
-                task,
-                trace_id=f"{trace_id}.iter{k}.verify",
-                is_final_iteration=(k == self.max_feedback_iters),
-            )
+            else:
+                # "rewrite" — legacy path: re-run full ReAct with a hint
+                prev_verdict = iterations[-1][1].verdict
+                try:
+                    hint = builder(prev_verdict)
+                except Exception as exc:
+                    # If the feedback builder itself bombs, treat it as a
+                    # halt — we cannot ask the LLM to revise without a hint.
+                    logger.warning("feedback builder failed: %s", exc)
+                    hint = (
+                        "VERIFIER FEEDBACK: previous iteration had unsupported / "
+                        "contradicted claims — please re-emit a stricter "
+                        "narrative referring to pathways by their literal "
+                        "namespace-prefixed names from the tool outputs."
+                    )
+                rk = self.run_task(
+                    task, trace_id=f"{trace_id}.iter{k}", feedback_user_msg=hint,
+                )
+                vk = self.verify_with_b1(
+                    rk,
+                    task,
+                    trace_id=f"{trace_id}.iter{k}.verify",
+                    is_final_iteration=(k == self.max_feedback_iters),
+                )
             iterations.append((rk, vk))
 
         # Final selection: prefer the latest if it monotonically beat both
@@ -740,9 +756,6 @@ class ConcordReactRunner:
         from concord.agent.verifier_adapter import (
             concord_result_to_b1_narrative,
             concord_result_to_b1_structured_payload,
-            _is_v4_task,
-            sub6b_task_to_subsix_source_report,
-            v4_task_to_subsix_source_report,
         )
 
         use_structured = os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS") == "1"
@@ -760,21 +773,65 @@ class ConcordReactRunner:
 
         # Adapter step — surface adapter failures as outcome.error
         try:
-            if _is_v4_task(task):
-                source_report = v4_task_to_subsix_source_report(task, react_result)
-            else:
-                source_report = sub6b_task_to_subsix_source_report({
-                    **task,
-                    **react_result.enrichment_carriers,
-                })
+            source_report = self._build_source_report(react_result, task)
         except Exception as exc:
             return VerificationOutcome(
                 ok=False, verdict=None,
                 error=f"source_report_adapter_failed: {type(exc).__name__}: {exc}",
             )
 
-        # Run B1 verifier — surface its internal failures the same way
         tid = trace_id or f"concord_w8_d4.{react_result.task_id}.verify"
+        return self._verify_payload(
+            narrative,
+            source_report,
+            react_task_id=react_result.task_id,
+            trace_id=tid,
+            is_final_iteration=is_final_iteration,
+        )
+
+    def _build_source_report(
+        self,
+        react_result: ConcordReactResult,
+        task: dict[str, Any],
+    ) -> Any:
+        """Build a SubsixSourceReport from a ConcordReactResult + task.
+
+        Dispatches to the v4 adapter when the task has v4 shape, else the
+        v3 adapter. Extracted from verify_with_b1 so the cascade path can
+        reuse the iter-0 react result's enrichment carriers.
+
+        Raises on adapter failure — callers must catch.
+        """
+        from concord.agent.verifier_adapter import (
+            _is_v4_task,
+            sub6b_task_to_subsix_source_report,
+            v4_task_to_subsix_source_report,
+        )
+        if _is_v4_task(task):
+            return v4_task_to_subsix_source_report(task, react_result)
+        return sub6b_task_to_subsix_source_report({
+            **task,
+            **react_result.enrichment_carriers,
+        })
+
+    def _verify_payload(
+        self,
+        narrative: str,
+        source_report: Any,
+        *,
+        react_task_id: str,
+        trace_id: str,
+        is_final_iteration: bool,
+    ) -> "VerificationOutcome":
+        """Run the B1 verifier on an already-built narrative + source_report.
+
+        This is the shared tail of verify_with_b1 and _run_cascade_iteration:
+        env save/restore, verifier_fn call, verdict-count extraction.
+
+        Always returns a VerificationOutcome — never raises.
+        """
+        use_structured = os.environ.get("METAGENT_VERIFY_STRUCTURED_CLAIMS") == "1"
+        # Run B1 verifier — surface its internal failures the same way
         old_method_flag = os.environ.get("METAGENT_ENABLE_METHOD_AWARE_ENRICHMENT")
         old_provider = os.environ.get("METAGENT_LLM_PROVIDER")
         old_minimax_model = os.environ.get("METAGENT_MINIMAX_MODEL")
@@ -790,7 +847,7 @@ class ConcordReactRunner:
             verdict = self.verifier_fn(
                 narrative,
                 source_report,
-                trace_id=tid,
+                trace_id=trace_id,
                 is_final_iteration=is_final_iteration,
             )
         except Exception as exc:
@@ -869,6 +926,136 @@ class ConcordReactRunner:
             n_unverifiable_v0=counts["unverifiable_v0"],
             n_insufficient_evidence=counts["insufficient_evidence"],
         )
+
+    def _weave_llm_call(self, prompt: str) -> str:
+        """Single-shot LLM call for the cascade narrative weave.
+
+        Uses this runner's configured provider/model (so the weave matches
+        the rest of the run) and NEVER raises — any LLM failure degrades to
+        "" so the deterministic cascade claims still flow through. The
+        narrative is cosmetic: verify_sub6 verifies the structured `claims`,
+        not the prose.
+        """
+        old_provider = os.environ.get("METAGENT_LLM_PROVIDER")
+        old_minimax_model = os.environ.get("METAGENT_MINIMAX_MODEL")
+        old_openai_model = os.environ.get("METAGENT_OPENAI_MODEL")
+        os.environ["METAGENT_LLM_PROVIDER"] = self.llm_provider
+        if self.llm_provider == "minimax":
+            os.environ["METAGENT_MINIMAX_MODEL"] = self.llm_model
+        elif self.llm_provider == "openai":
+            os.environ["METAGENT_OPENAI_MODEL"] = self.llm_model
+        try:
+            from common.llm_client import chat
+
+            return chat(
+                [{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=600,
+                trace_id="concord.cascade.weave_narrative",
+                caller="concord.react_runner._weave_llm_call",
+            )
+        except Exception as exc:  # noqa: BLE001 — weave is best-effort
+            logger.warning("cascade weave LLM call failed, using empty narrative: %s", exc)
+            return ""
+        finally:
+            if old_provider is None:
+                os.environ.pop("METAGENT_LLM_PROVIDER", None)
+            else:
+                os.environ["METAGENT_LLM_PROVIDER"] = old_provider
+            if old_minimax_model is None:
+                os.environ.pop("METAGENT_MINIMAX_MODEL", None)
+            else:
+                os.environ["METAGENT_MINIMAX_MODEL"] = old_minimax_model
+            if old_openai_model is None:
+                os.environ.pop("METAGENT_OPENAI_MODEL", None)
+            else:
+                os.environ["METAGENT_OPENAI_MODEL"] = old_openai_model
+
+    def _run_cascade_iteration(
+        self,
+        task: dict[str, Any],
+        *,
+        prev_outcome: "VerificationOutcome",
+        base_result: ConcordReactResult,
+        trace_id: str,
+        k: int,
+    ) -> "tuple[ConcordReactResult, VerificationOutcome]":
+        """Run one cascade feedback iteration (no LLM ReAct re-run).
+
+        Deterministically processes iter-0 verified claims by verdict
+        (via apply_cascade), weaves a narrative once via LLM (single call,
+        not a full ReAct loop), then re-verifies. Returns a synthetic
+        ConcordReactResult carrying the corrected payload + a fresh
+        VerificationOutcome.
+        """
+        from concord.agent.feedback_strategies import apply_feedback_strategy
+
+        prev_verdict = prev_outcome.verdict
+        prev_claims = list(getattr(prev_verdict, "claims_v2", None) or [])
+
+        # Build source_report reusing iter-0 enrichment carriers.
+        try:
+            source_report = self._build_source_report(base_result, task)
+        except Exception as exc:
+            # If the adapter fails, surface gracefully as an error outcome
+            # so the quality rollback logic can fall back to iter-0.
+            err_outcome = VerificationOutcome(
+                ok=False, verdict=None,
+                error=f"cascade_source_report_failed: {type(exc).__name__}: {exc}",
+            )
+            err_result = ConcordReactResult(
+                task_id=base_result.task_id,
+                enrichment_carriers=getattr(base_result, "enrichment_carriers", {}) or {},
+                task_outcome=getattr(base_result, "task_outcome", "normal"),
+                n_feedback_iterations=k,
+                llm_model=self.llm_model,
+                termination_reason="cascade_source_report_error",
+            )
+            return err_result, err_outcome
+
+        # Run cascade: deterministic claim filter + LLM narrative weave.
+        # Route the weave through the runner's own LLM client so it honours
+        # this runner's provider/model (the 112-task experiment relied on
+        # METAGENT_LLM_PROVIDER=minimax in env; this makes it explicit). The
+        # weave produces only the cosmetic narrative_text — verify_sub6 reads
+        # the deterministic `claims`, not the prose — so `_weave_llm_call`
+        # degrades to "" on any LLM failure rather than crashing the loop.
+        fb = apply_feedback_strategy(
+            "cascade", prev_claims, source_report, llm_call=self._weave_llm_call,
+        )
+        payload = fb.payload or ""
+
+        # Extract narrative_text for the trace.
+        narr = ""
+        if payload:
+            try:
+                narr = json.loads(payload).get("narrative_text", "")
+            except (json.JSONDecodeError, AttributeError):
+                narr = ""
+
+        # Re-verify the cascade payload directly (no grammar extraction step —
+        # the payload IS already a grammar-v2 JSON string).
+        vk = self._verify_payload(
+            payload,
+            source_report,
+            react_task_id=str(task.get("task_id") or "unknown"),
+            trace_id=f"{trace_id}.iter{k}.verify",
+            is_final_iteration=(k == self.max_feedback_iters),
+        )
+
+        # Build a synthetic ConcordReactResult for trace / audit purposes.
+        rk = ConcordReactResult(
+            task_id=base_result.task_id,
+            final_claims=fb.corrected_claims or [],
+            final_narrative_text=narr,
+            final_narrative_json=payload,
+            enrichment_carriers=getattr(base_result, "enrichment_carriers", {}) or {},
+            task_outcome=getattr(base_result, "task_outcome", "normal"),
+            n_feedback_iterations=k,
+            llm_model=self.llm_model,
+            termination_reason="cascade_feedback",
+        )
+        return rk, vk
 
     # ------------------------------------------------------------------
     # Inspection helpers — useful for tests and D1 sanity probes
