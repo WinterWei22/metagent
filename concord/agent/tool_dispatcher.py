@@ -99,6 +99,20 @@ TOOL_SPECS: list[dict[str, Any]] = [
                         "maximum": 50,
                         "description": "Number of top pathways to return.",
                     },
+                    "pathway_sources": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": ["kegg", "reactome", "wikipathways", "smpdb"],
+                        },
+                        "description": (
+                            "Optional. Restrict enrichment to these pathway "
+                            "databases. Omit for the default multi-DB mix. Use "
+                            "[\"kegg\"] to get canonical KEGG metabolic pathways "
+                            "(e.g. Citrate cycle / TCA) when the default mix is "
+                            "dominated by disease-specific SMPDB pathways."
+                        ),
+                    },
                 },
                 "required": ["compound_ids"],
             },

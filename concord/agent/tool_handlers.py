@@ -567,7 +567,9 @@ def handle_run_ramp_enrichment(arguments: dict[str, Any]) -> dict[str, Any]:
     try:
         from concord.wrappers.ramp_wrapper import run_ramp_enrichment
         from concord.normalize.ramp_norm import normalize_ramp_output
-        raw = run_ramp_enrichment(refs, top_n=top_n)
+        raw = run_ramp_enrichment(
+            refs, top_n=top_n, pathway_sources=arguments.get("pathway_sources"),
+        )
     except _WRAPPER_UNAVAILABLE_ERRORS as exc:
         return _err(
             "run_ramp_enrichment",

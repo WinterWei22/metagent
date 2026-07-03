@@ -53,6 +53,7 @@ def run_ramp_enrichment(
     fdr_threshold: float = 0.05,
     ramp_db_path: str | None = None,
     id_type: Literal["auto", "hmdb", "inchikey", "kegg"] = "auto",
+    pathway_sources: list[str] | None = None,
 ) -> dict[str, Any]:
     """Run RaMP hypergeometric ORA. Returns dict ready for normalize_ramp_output.
 
@@ -112,12 +113,22 @@ def run_ramp_enrichment(
             "id_type_used": chosen_type,
         }
 
-    from tools.benchmark.sub6.ramp_enrichment import compute_enrichment
+    from tools.benchmark.sub6.ramp_enrichment import (
+        _sources_to_excluded_types,
+        compute_enrichment,
+    )
+
+    # Optional INCLUDE-semantics source filter (LLM-driven): e.g. ["kegg"] →
+    # canonical KEGG metabolic pathways only. None → default multi-DB behaviour
+    # (byte-identical to pre-2026-07-03; guardrail: old benchmark unaffected).
+    extra: dict[str, Any] = {}
+    if pathway_sources:
+        extra["excluded_pathway_types"] = _sources_to_excluded_types(pathway_sources)
 
     t0 = time.time()
     report = compute_enrichment(
         chosen_ids, id_type=chosen_type, top_n=top_n,
-        fdr_threshold=fdr_threshold, ramp_db_path=ramp_db_path,
+        fdr_threshold=fdr_threshold, ramp_db_path=ramp_db_path, **extra,
     )
     return {
         "report": report,
