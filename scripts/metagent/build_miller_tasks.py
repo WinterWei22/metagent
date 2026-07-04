@@ -33,6 +33,17 @@ CONFIGS = [
      "Valine, leucine and isoleucine degradation", ["leucine", "isoleucine", "valine", "ketoleucine", "oxo"], "BCAA"),
     ("Phenylketonuria", "miller_pku", "PAH",
      "Phenylalanine metabolism", ["phenylalanine", "phenyllactate", "phenylpyruvate"], "Phenylalanine"),
+    # --- v1.3 扩充(零下载,同 Miller 文件)---
+    ("Citrullinemia", "miller_citrullinemia", "ASS1 (argininosuccinate synthase)",
+     "Urea cycle", ["citrulline"], "Urea cycle"),
+    ("Argininemia", "miller_argininemia", "ARG1 (arginase 1)",
+     "Urea cycle / arginine", ["arginine", "argininate", "2-oxoarginine"], "Urea cycle"),
+    ("Glutaric Aciduria type 1", "miller_ga1", "GCDH (glutaryl-CoA dehydrogenase)",
+     "Lysine degradation", ["glutaryl", "glutarate", "glutaric", "hydroxyglutar"], "Lysine"),
+    ("Trimethyllysine hydroxylase", "miller_tmlhe", "TMLHE",
+     "Carnitine biosynthesis", ["trimethyllysine", "butyrobetaine", "trimethyl"], "Carnitine"),
+    ("Cobalamin biosynthesis", "miller_cobalamin", "Cobalamin (B12) metabolism",
+     "Propanoate metabolism", ["methylmalonate", "methylmalonic", "methylcitrate", "propionylcarnitine"], "Propanoate"),
 ]
 CONTROL = "No biochemical genetic diagnosis"
 TOP_N = 15
