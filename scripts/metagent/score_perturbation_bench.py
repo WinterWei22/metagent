@@ -79,19 +79,24 @@ def extract_predicted(task_json: dict) -> str:
     return ""
 
 
-def load_benchmark(path: str) -> dict[str, str]:
-    golds = {}
+def load_benchmark(path: str) -> dict[str, dict]:
+    rows = {}
     for line in open(path):
         row = json.loads(line)
-        golds[row["task_id"]] = row["ground_truth"]["perturbed_pathway"]["name"]
-    return golds
+        rows[row["task_id"]] = {
+            "gold": row["ground_truth"]["perturbed_pathway"]["name"],
+            "family": row.get("pathway_family", "?"),
+            "gold_provenance": row.get("gold_provenance", "measured_cohort"),
+        }
+    return rows
 
 
 def score(benchmark: str, run_dirs: list[str], registry: str) -> dict:
-    golds = load_benchmark(benchmark)
+    rows = load_benchmark(benchmark)
     matcher = build_matcher(os.environ["RAMP_DB_PATH"], registry)
     per_task: dict[str, dict] = {}
-    for task_id, gold in golds.items():
+    for task_id, meta in rows.items():
+        gold = meta["gold"]
         seeds = []
         for run in run_dirs:
             p = Path(run) / "path_x_full" / f"{task_id}.json"
@@ -109,6 +114,8 @@ def score(benchmark: str, run_dirs: list[str], registry: str) -> dict:
             })
         per_task[task_id] = {
             "gold": gold,
+            "family": meta["family"],
+            "gold_provenance": meta["gold_provenance"],
             "seeds": seeds,
             # A task counts (per-seed mean) toward strict/lenient; report the fraction.
             "strict_frac": _frac(seeds, "strict"),
