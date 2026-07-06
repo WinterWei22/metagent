@@ -24,14 +24,26 @@ from pathlib import Path
 from scripts.metagent.pathway_match_rubric import MatchTier, build_matcher
 
 
-def extract_predicted(task_json: dict) -> str:
-    """Best-available structured predicted pathway name from an agent output.
+def _react_results(task_json: dict) -> list[dict]:
+    """All react results in chronological order: per-iteration then final.
 
-    Prefers the agent's declared `pathway_prediction.primary`; falls back to the
-    first alternative. Returns '' when the agent emitted no structured prediction.
+    The post-feedback (final) iteration sometimes collapses to an empty
+    narrative/claims/prediction; the pre-feedback iterations carry the
+    complete prediction. We therefore scan them all.
     """
-    fr = task_json.get("final_react_result") or {}
-    pp = fr.get("pathway_prediction") or {}
+    out = []
+    for it in task_json.get("iterations") or []:
+        rr = it.get("react_result")
+        if isinstance(rr, dict):
+            out.append(rr)
+    fr = task_json.get("final_react_result")
+    if isinstance(fr, dict):
+        out.append(fr)
+    return out
+
+
+def _primary_name(rr: dict) -> str:
+    pp = rr.get("pathway_prediction") or {}
     primary = pp.get("primary") or {}
     name = (primary.get("pathway_name") or "").strip()
     if name:
@@ -40,6 +52,30 @@ def extract_predicted(task_json: dict) -> str:
         alt_name = (alt.get("pathway_name") or "").strip()
         if alt_name:
             return alt_name
+    return ""
+
+
+def extract_predicted(task_json: dict) -> str:
+    """Deterministic predicted pathway name from an agent output trace.
+
+    Takes the LAST non-empty declared `pathway_prediction.primary` across all
+    iterations (the agent's most refined conclusion that did not collapse).
+    Only if no iteration declared a primary do we fall back to the top-ranked
+    RaMP enrichment carrier. Returns '' when there is no signal at all.
+    """
+    results = _react_results(task_json)
+    for rr in reversed(results):  # most-refined non-empty primary
+        name = _primary_name(rr)
+        if name:
+            return name
+    for rr in reversed(results):  # fallback: top enrichment carrier
+        ec = rr.get("enrichment_carriers") or {}
+        ramp = ec.get("ramp_enrichment_result") or {}
+        pw = ramp.get("pathways") or []
+        if pw:
+            top = (pw[0].get("pathway_name") or pw[0].get("name") or "").strip()
+            if top:
+                return top
     return ""
 
 

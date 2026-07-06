@@ -229,19 +229,27 @@ class RampResolver:
                 return self._gold_entry(self._prid_to_gold[prid])
             return PathwayEntry(prid, normalize_pathway_name(raw), self._metabolites([prid]))
 
-        # Normalized-name match: exact, else substring (either direction).
+        # Normalized-name match: exact first, else the single closest name by
+        # token overlap (never union hundreds of loose substring matches — that
+        # inflates the metabolite set with hub metabolites and distorts tiers).
         norm = normalize_pathway_name(raw)
         if not norm:
             return None
         ids = self._name_index.get(norm)
         if not ids:
-            hits: list[str] = []
-            for key, key_ids in self._name_index.items():
-                if norm in key or key in norm:
-                    hits.extend(key_ids)
-            ids = hits
-        if not ids:
-            return None
+            q = set(norm.split())
+            best_key, best_score = None, 0.0
+            for key in self._name_index:
+                k = set(key.split())
+                if not (q & k):
+                    continue
+                score = len(q & k) / len(q | k)  # token Jaccard
+                if score > best_score:
+                    best_key, best_score = key, score
+            if best_key is None:
+                return None
+            ids = self._name_index[best_key]
+            norm = best_key
         # Snap to a gold concept if the matched pathways belong to one.
         golds = {self._prid_to_gold[p] for p in ids if p in self._prid_to_gold}
         if len(golds) == 1:
