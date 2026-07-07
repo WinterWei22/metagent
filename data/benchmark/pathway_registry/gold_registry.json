@@ -215,5 +215,89 @@
       }
     ],
     "n_metabolites": 24
+  },
+  "Pyrimidine metabolism": {
+    "kegg_id": "map00240",
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00240",
+        "name": "Pyrimidine metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP4022",
+        "name": "Pyrimidine metabolism"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000043",
+      "RAMP_P_000053306"
+    ],
+    "n_metabolites": 62
+  },
+  "Purine metabolism": {
+    "kegg_id": "map00230",
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00230",
+        "name": "Purine metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP4792",
+        "name": "Purine metabolism"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000236",
+      "RAMP_P_000053365"
+    ],
+    "n_metabolites": 74
+  },
+  "Fatty acid degradation": {
+    "kegg_id": "map00071",
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00051",
+        "name": "Fatty acid Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00071",
+        "name": "Fatty acid Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map01212",
+        "name": "Fatty acid metabolism"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-8978868",
+        "name": "Fatty acid metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP143",
+        "name": "Fatty acid beta-oxidation"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-77289",
+        "name": "Mitochondrial Fatty Acid Beta-Oxidation"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000344",
+      "RAMP_P_000000345",
+      "RAMP_P_000049955",
+      "RAMP_P_000049984",
+      "RAMP_P_000052767",
+      "RAMP_P_000050044"
+    ],
+    "n_metabolites": 274
   }
 }
