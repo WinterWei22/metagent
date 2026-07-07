@@ -224,6 +224,8 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--max-feedback-iters", type=int, default=1)
     p.add_argument("--llm-model", default=None)
     p.add_argument("--llm-provider", default=None)
+    p.add_argument("--feedback-strategy", default="cascade", choices=["cascade", "rewrite"],
+                   help="feedback strategy for the ReAct runner (default cascade)")
     return p.parse_args()
 
 
@@ -267,6 +269,7 @@ def main() -> None:
         verifier_fn=_b1_verify_sub6,
         max_react_turns=args.max_react_turns,
         max_feedback_iters=args.max_feedback_iters,
+        feedback_strategy=args.feedback_strategy,
         llm_provider=_prov,
         llm_model=_model,
     )
