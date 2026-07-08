@@ -131,9 +131,11 @@ def main() -> None:
     ap.add_argument("--registry", default="data/benchmark/pathway_registry/gold_registry.json")
     ap.add_argument("--out", default=None, help="output path prefix (.json + .md)")
     ap.add_argument("--title", default="Perturbation benchmark scorecard")
+    ap.add_argument("--iteration", default="iter0", choices=["iter0", "final", "last_nonempty"],
+                    help="which ReAct pass to score (iter0 = canonical single-shot baseline)")
     args = ap.parse_args()
 
-    scored = score(args.benchmark, args.runs, args.registry)
+    scored = score(args.benchmark, args.runs, args.registry, iteration=args.iteration)
     stats = compute_stats(scored)
     md = render_markdown(stats, args.title)
     print(md)

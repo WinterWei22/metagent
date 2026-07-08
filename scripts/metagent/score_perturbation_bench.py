@@ -55,20 +55,35 @@ def _primary_name(rr: dict) -> str:
     return ""
 
 
-def extract_predicted(task_json: dict) -> str:
+def extract_predicted(task_json: dict, iteration: str = "iter0") -> str:
     """Deterministic predicted pathway name from an agent output trace.
 
-    Takes the LAST non-empty declared `pathway_prediction.primary` across all
-    iterations (the agent's most refined conclusion that did not collapse).
-    Only if no iteration declared a primary do we fall back to the top-ranked
-    RaMP enrichment carrier. Returns '' when there is no signal at all.
+    `iteration` selects which ReAct pass is scored:
+      - "iter0"        : the pre-feedback (single-shot) prediction. CANONICAL
+                         baseline — verifier feedback is documented to degrade the
+                         pathway pick (W13/W14, 2026-06-29 §4.4), so the pathway
+                         metric is reported single-shot.
+      - "final"        : the post-feedback final prediction.
+      - "last_nonempty": last non-empty primary across all iterations (legacy;
+                         used to salvage collapsed cascade runs).
+
+    Falls back to the top-ranked RaMP enrichment carrier only if no primary is
+    declared. Returns '' when there is no signal at all.
     """
     results = _react_results(task_json)
-    for rr in reversed(results):  # most-refined non-empty primary
+    if not results:
+        return ""
+    if iteration == "iter0":
+        candidates = [results[0]]
+    elif iteration == "final":
+        candidates = [results[-1]]
+    else:  # last_nonempty
+        candidates = list(reversed(results))
+    for rr in candidates:
         name = _primary_name(rr)
         if name:
             return name
-    for rr in reversed(results):  # fallback: top enrichment carrier
+    for rr in candidates:  # fallback: top enrichment carrier
         ec = rr.get("enrichment_carriers") or {}
         ramp = ec.get("ramp_enrichment_result") or {}
         pw = ramp.get("pathways") or []
@@ -91,7 +106,7 @@ def load_benchmark(path: str) -> dict[str, dict]:
     return rows
 
 
-def score(benchmark: str, run_dirs: list[str], registry: str) -> dict:
+def score(benchmark: str, run_dirs: list[str], registry: str, iteration: str = "iter0") -> dict:
     rows = load_benchmark(benchmark)
     matcher = build_matcher(os.environ["RAMP_DB_PATH"], registry)
     per_task: dict[str, dict] = {}
@@ -102,7 +117,7 @@ def score(benchmark: str, run_dirs: list[str], registry: str) -> dict:
             p = Path(run) / "path_x_full" / f"{task_id}.json"
             if not p.exists():
                 continue
-            predicted = extract_predicted(json.loads(p.read_text()))
+            predicted = extract_predicted(json.loads(p.read_text()), iteration=iteration)
             result = matcher.match(predicted=predicted, gold=gold)
             seeds.append({
                 "run": Path(run).name,
