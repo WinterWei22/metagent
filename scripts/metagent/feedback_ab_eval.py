@@ -387,7 +387,7 @@ def _run_iter0_reverify(
     try:
         react_result = _react_result_ns(iter0_rr_dict)
         payload0 = concord_to_payload_fn(react_result, task)
-        source_report = sub6b_task_to_source_fn(task)
+        source_report = sub6b_task_to_source_fn(task, react_result)
 
         result0 = verify_sub6_fn(
             payload0,
@@ -444,11 +444,11 @@ def _run_cascade(
     apply_feedback_strategy("cascade") → FeedbackResult → verify_sub6.
     """
     try:
-        source_report = sub6b_task_to_source_fn(task)
+        react_result = _react_result_ns(iter0_rr_dict)
+        source_report = sub6b_task_to_source_fn(task, react_result)
 
         # Fall back to recomputing if iter0_reverify failed
         if result0 is None or not verified_claims0:
-            react_result = _react_result_ns(iter0_rr_dict)
             payload0 = concord_to_payload_fn(react_result, task)
             result0_local = verify_sub6_fn(
                 payload0,
@@ -522,8 +522,8 @@ def _run_anchored(
     apply_feedback_strategy("anchored") → feedback prompt → LLM rewrite → verify_sub6.
     """
     try:
-        source_report = sub6b_task_to_source_fn(task)
         react_result = _react_result_ns(iter0_rr_dict)
+        source_report = sub6b_task_to_source_fn(task, react_result)
 
         # Fall back to recomputing if iter0_reverify failed
         if result0 is None or not verified_claims0:
@@ -660,6 +660,7 @@ def run_eval(
     out_dir: Path,
     limit: int | None,
     task_ids: list[str] | None = None,
+    k_concurrent: int = 8,
 ) -> dict:
     """Run 5-arm evaluation over traces, write per-task JSON + results.jsonl."""
     import verifier.claim_table as _claim_table_mod
@@ -667,8 +668,21 @@ def run_eval(
     from verifier.agent import verify_sub6
     from concord.agent.verifier_adapter import (
         sub6b_task_to_subsix_source_report,
+        v4_task_to_subsix_source_report,
+        _is_v4_task,
         concord_result_to_b1_structured_payload,
     )
+
+    def _build_source_report(task: dict, react_result: Any):
+        """Dispatch to the v4 or v3 source-report adapter.
+
+        v4 benchmark rows (ground_truth.perturbed_pathway) need the carrier-aware
+        adapter; v3 sub6b rows carry every field at top level. The arm runners
+        always pass react_result, so a single 2-arg signature serves both.
+        """
+        if _is_v4_task(task):
+            return v4_task_to_subsix_source_report(task, react_result)
+        return sub6b_task_to_subsix_source_report(task)
     from concord.agent.feedback_strategies import apply_feedback_strategy
     from concord.agent.pathway_prediction import pathway_semantic_match
     from common.llm_client import chat
@@ -690,174 +704,152 @@ def run_eval(
     traces = _load_traces(trace_dir, limit, task_ids=task_ids)
     print(f"Loaded {len(tasks)} benchmark tasks, {len(traces)} trace files.")
 
-    # Aggregated verdict counts per arm
-    agg: dict[str, Counter] = {arm: Counter() for arm in _ARMS}
-    # Pathway accuracy counts per arm
-    pathway_hits: dict[str, dict[str, int]] = {
-        arm: {"top1_hit": 0, "topk_hit": 0, "total": 0, "abstain": 0}
-        for arm in _ARMS
-    }
-    # Paired delta accumulators vs iter0_reverify
-    paired_deltas: dict[str, list[dict]] = {arm: [] for arm in _ARMS}
+    import concurrent.futures
+    import threading
+
     n_ok = 0
     n_fail = 0
 
-    with open(results_path, "w") as results_fh:
-        for trace in traces:
-            task_id = trace.get("task_id", "")
-            task = tasks.get(task_id)
-            if task is None:
-                print(f"[WARN] task_id '{task_id}' not in benchmark — skip", file=sys.stderr)
-                n_fail += 1
-                continue
+    def _process_one(trace: dict):
+        """Run all 5 arms for one trace; write per-task JSON; return result rows.
 
-            iters = trace.get("iterations", [])
-            if not iters:
-                print(f"[WARN] {task_id} has no iterations — skip", file=sys.stderr)
-                n_fail += 1
-                continue
+        Tasks are independent (own trace, own source report, own per-task JSON
+        path), so they run concurrently. Only the shared results.jsonl append is
+        serialised — done in the main thread via as_completed.
+        """
+        task_id = trace.get("task_id", "")
+        task = tasks.get(task_id)
+        if task is None:
+            print(f"[WARN] task_id '{task_id}' not in benchmark — skip", file=sys.stderr)
+            return ("fail", task_id, [])
+        iters = trace.get("iterations", [])
+        if not iters:
+            print(f"[WARN] {task_id} has no iterations — skip", file=sys.stderr)
+            return ("fail", task_id, [])
 
-            iter0 = iters[0]
-            iter0_rr_dict = iter0.get("react_result", {})
-            iter0_ver = iter0.get("verification", {})
+        iter0 = iters[0]
+        iter0_rr_dict = iter0.get("react_result", {})
+        iter0_ver = iter0.get("verification", {})
+        gt_pathway_id, gt_pathway_name = _get_gt_pathway(task)
+        print(f"  Processing {task_id} (GT: {gt_pathway_name[:50]})...", flush=True)
 
-            gt_pathway_id, gt_pathway_name = _get_gt_pathway(task)
-            print(f"  Processing {task_id} (GT: {gt_pathway_name[:50]})...", flush=True)
+        arm_no_fb = _run_no_feedback(iter0_ver)
+        arm_baseline = _run_baseline(iters)
+        arm_iter0_rv, result0, verified_claims0 = _run_iter0_reverify(
+            task_id, task, iter0_rr_dict, verify_sub6, _build_source_report,
+            concord_result_to_b1_structured_payload, pathway_semantic_match,
+            gt_pathway_name,
+        )
+        arm_a = _run_cascade(
+            task_id, task, iter0_rr_dict, result0, verified_claims0, verify_sub6,
+            _build_source_report, concord_result_to_b1_structured_payload,
+            apply_feedback_strategy, pathway_semantic_match, gt_pathway_name,
+        )
+        arm_b = _run_anchored(
+            task_id, task, iter0_rr_dict, result0, verified_claims0, verify_sub6,
+            _build_source_report, concord_result_to_b1_structured_payload,
+            apply_feedback_strategy, chat, pathway_semantic_match, gt_pathway_name,
+        )
 
-            # ----------------------------------------------------------
-            # Arm: no_feedback (read from trace iter-0 verification)
-            # ----------------------------------------------------------
-            arm_no_fb = _run_no_feedback(iter0_ver)
+        arm_map = {
+            "no_feedback": arm_no_fb,
+            "baseline": arm_baseline,
+            "iter0_reverify": arm_iter0_rv,
+            "A_cascade": arm_a,
+            "B_anchored": arm_b,
+        }
+        deltas = {
+            arm_name: _compute_paired_delta(arm_map[arm_name], arm_iter0_rv, arm_name)
+            for arm_name in _ARMS
+        }
+        task_result = {
+            "task_id": task_id,
+            "gt_pathway_name": gt_pathway_name,
+            "arms": arm_map,
+            "paired_deltas_vs_iter0_reverify": deltas,
+        }
+        (out_dir / f"{task_id}.json").write_text(
+            json.dumps(task_result, indent=2, ensure_ascii=False)
+        )
 
-            # ----------------------------------------------------------
-            # Arm: baseline (read from trace last iter verification)
-            # ----------------------------------------------------------
-            arm_baseline = _run_baseline(iters)
-
-            # ----------------------------------------------------------
-            # Arm: iter0_reverify — live re-verify, SHARED with A and B.
-            # Computed ONCE per task; result0 + verified_claims0 are
-            # passed to _run_cascade and _run_anchored to avoid redundant
-            # LLM calls (saves ~2 verify calls per task ≈ 30% cost cut).
-            # ----------------------------------------------------------
-            arm_iter0_rv, result0, verified_claims0 = _run_iter0_reverify(
-                task_id,
-                task,
-                iter0_rr_dict,
-                verify_sub6,
-                sub6b_task_to_subsix_source_report,
-                concord_result_to_b1_structured_payload,
-                pathway_semantic_match,
-                gt_pathway_name,
-            )
-
-            # ----------------------------------------------------------
-            # Arm A: cascade (reuses result0 + verified_claims0)
-            # ----------------------------------------------------------
-            arm_a = _run_cascade(
-                task_id,
-                task,
-                iter0_rr_dict,
-                result0,
-                verified_claims0,
-                verify_sub6,
-                sub6b_task_to_subsix_source_report,
-                concord_result_to_b1_structured_payload,
-                apply_feedback_strategy,
-                pathway_semantic_match,
-                gt_pathway_name,
-            )
-
-            # ----------------------------------------------------------
-            # Arm B: anchored (reuses result0 + verified_claims0)
-            # ----------------------------------------------------------
-            arm_b = _run_anchored(
-                task_id,
-                task,
-                iter0_rr_dict,
-                result0,
-                verified_claims0,
-                verify_sub6,
-                sub6b_task_to_subsix_source_report,
-                concord_result_to_b1_structured_payload,
-                apply_feedback_strategy,
-                chat,
-                pathway_semantic_match,
-                gt_pathway_name,
-            )
-
-            # ----------------------------------------------------------
-            # Aggregate + paired delta
-            # ----------------------------------------------------------
-            arm_map = {
-                "no_feedback": arm_no_fb,
-                "baseline": arm_baseline,
-                "iter0_reverify": arm_iter0_rv,
-                "A_cascade": arm_a,
-                "B_anchored": arm_b,
-            }
-
-            for arm_name in _ARMS:
-                arm_data = arm_map[arm_name]
-                agg[arm_name].update(arm_data["verdict_counts"])
-                # Pathway accuracy
-                pa = arm_data.get("pathway_accuracy")
-                if pa is not None:
-                    pathway_hits[arm_name]["total"] += 1
-                    if pa.get("abstain"):
-                        pathway_hits[arm_name]["abstain"] += 1
-                    if pa.get("top1_hit"):
-                        pathway_hits[arm_name]["top1_hit"] += 1
-                    if pa.get("topk_hit"):
-                        pathway_hits[arm_name]["topk_hit"] += 1
-                # Paired delta vs iter0_reverify
-                delta = _compute_paired_delta(arm_data, arm_iter0_rv, arm_name)
-                paired_deltas[arm_name].append(delta)
-
-            # Per-task JSON
-            task_result = {
+        rows = []
+        for arm_name in _ARMS:
+            arm_data = arm_map[arm_name]
+            pa = arm_data.get("pathway_accuracy") or {}
+            rows.append({
                 "task_id": task_id,
-                "gt_pathway_name": gt_pathway_name,
-                "arms": {arm_name: arm_map[arm_name] for arm_name in _ARMS},
-                "paired_deltas_vs_iter0_reverify": {
-                    arm_name: paired_deltas[arm_name][-1]
-                    for arm_name in _ARMS
-                },
-            }
-            task_out_path = out_dir / f"{task_id}.json"
-            task_out_path.write_text(json.dumps(task_result, indent=2, ensure_ascii=False))
+                "arm": arm_name,
+                "verdict_counts": arm_data["verdict_counts"],
+                "error": arm_data.get("error"),
+                "n_supported": arm_data["verdict_counts"].get("SUPPORTED", 0),
+                "n_unsupported": arm_data["verdict_counts"].get("UNSUPPORTED", 0),
+                "n_unverifiable_v0": arm_data["verdict_counts"].get("UNVERIFIABLE_V0", 0),
+                "n_insufficient_evidence": arm_data["verdict_counts"].get("INSUFFICIENT_EVIDENCE", 0),
+                "n_contradicted": arm_data["verdict_counts"].get("CONTRADICTED", 0),
+                "pathway_top1_hit": pa.get("top1_hit"),
+                "pathway_topk_hit": pa.get("topk_hit"),
+                "pathway_abstain": pa.get("abstain"),
+                "pathway_primary_name": pa.get("primary_name"),
+            })
+        print(
+            f"    {task_id} done | rv0:{arm_iter0_rv['verdict_counts']} "
+            f"A:{arm_a['verdict_counts']} B:{arm_b['verdict_counts']}",
+            flush=True,
+        )
+        return ("ok", task_id, rows)
 
-            # results.jsonl line (compact per-arm rows)
-            for arm_name in _ARMS:
-                arm_data = arm_map[arm_name]
-                pa = arm_data.get("pathway_accuracy") or {}
-                row = {
-                    "task_id": task_id,
-                    "arm": arm_name,
-                    "verdict_counts": arm_data["verdict_counts"],
-                    "error": arm_data.get("error"),
-                    "n_supported": arm_data["verdict_counts"].get("SUPPORTED", 0),
-                    "n_unsupported": arm_data["verdict_counts"].get("UNSUPPORTED", 0),
-                    "n_unverifiable_v0": arm_data["verdict_counts"].get("UNVERIFIABLE_V0", 0),
-                    "n_insufficient_evidence": arm_data["verdict_counts"].get(
-                        "INSUFFICIENT_EVIDENCE", 0
-                    ),
-                    "n_contradicted": arm_data["verdict_counts"].get("CONTRADICTED", 0),
-                    "pathway_top1_hit": pa.get("top1_hit"),
-                    "pathway_topk_hit": pa.get("topk_hit"),
-                    "pathway_abstain": pa.get("abstain"),
-                    "pathway_primary_name": pa.get("primary_name"),
-                }
-                results_fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    # Append so a resumed run (skip-done) preserves results.jsonl rows from
+    # earlier passes. The final summary is recomputed from per-task JSONs on
+    # disk, so duplicate rows here are harmless.
+    with open(results_path, "a") as results_fh:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=k_concurrent) as ex:
+            futs = [ex.submit(_process_one, tr) for tr in traces]
+            for fut in concurrent.futures.as_completed(futs):
+                status, task_id, rows = fut.result()
+                if status == "fail":
+                    n_fail += 1
+                    continue
+                n_ok += 1
+                for row in rows:
+                    results_fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+                results_fh.flush()
 
-            n_ok += 1
-            print(
-                f"    no_fb:{arm_no_fb['verdict_counts']} | "
-                f"base:{arm_baseline['verdict_counts']} | "
-                f"rv0:{arm_iter0_rv['verdict_counts']} | "
-                f"A:{arm_a['verdict_counts']} | "
-                f"B:{arm_b['verdict_counts']}"
-            )
+    # ---------------------------------------------------------------------------
+    # Re-aggregate from ALL per-task JSONs on disk so a resumed run reports the
+    # full benchmark, not just the tasks processed in this pass.
+    # ---------------------------------------------------------------------------
+    agg = {arm: Counter() for arm in _ARMS}
+    pathway_hits = {
+        arm: {"top1_hit": 0, "topk_hit": 0, "total": 0, "abstain": 0}
+        for arm in _ARMS
+    }
+    paired_deltas = {arm: [] for arm in _ARMS}
+    n_tasks_on_disk = 0
+    for fp in sorted(out_dir.glob("*.json")):
+        if fp.name == "summary.json":
+            continue
+        try:
+            d = json.loads(fp.read_text())
+        except Exception:
+            continue
+        if "arms" not in d:
+            continue
+        n_tasks_on_disk += 1
+        for arm_name in _ARMS:
+            ad = d["arms"].get(arm_name, {})
+            agg[arm_name].update(ad.get("verdict_counts", {}))
+            pa = ad.get("pathway_accuracy")
+            if pa is not None:
+                pathway_hits[arm_name]["total"] += 1
+                if pa.get("abstain"):
+                    pathway_hits[arm_name]["abstain"] += 1
+                if pa.get("top1_hit"):
+                    pathway_hits[arm_name]["top1_hit"] += 1
+                if pa.get("topk_hit"):
+                    pathway_hits[arm_name]["topk_hit"] += 1
+            pd = (d.get("paired_deltas_vs_iter0_reverify") or {}).get(arm_name)
+            if pd:
+                paired_deltas[arm_name].append(pd)
 
     # ---------------------------------------------------------------------------
     # Compute aggregate summary with pathway accuracy rates and paired deltas
@@ -891,6 +883,7 @@ def run_eval(
 
     summary = {
         "n_traces": len(traces),
+        "n_tasks_total_on_disk": n_tasks_on_disk,
         "n_ok": n_ok,
         "n_fail": n_fail,
         "arms": _ARMS,
@@ -968,6 +961,12 @@ def main() -> None:
         default=False,
         help="Run all traces in traces-dir, not just DEFAULT_EVAL_TASK_IDS",
     )
+    parser.add_argument(
+        "--k-concurrent",
+        type=int,
+        default=8,
+        help="Number of tasks to process concurrently (thread pool)",
+    )
     args = parser.parse_args()
 
     # If --output is a .json path, use its parent directory
@@ -975,13 +974,17 @@ def main() -> None:
     if str(out_dir).endswith(".json"):
         out_dir = out_dir.parent
 
-    task_ids = None if args.all_tasks else DEFAULT_EVAL_TASK_IDS
+    if args.all_tasks:
+        # Enumerate every trace in the directory so skip-done + per-task JSON
+        # resume applies to a full-benchmark (e.g. 112-task v4) run too.
+        task_ids = sorted(p.stem for p in args.traces_dir.glob("*.json"))
+    else:
+        task_ids = list(DEFAULT_EVAL_TASK_IDS)
     # skip-if-done: drop tasks whose per-task output JSON already exists, so an
     # interrupted run resumes without re-spending LLM cost on completed tasks.
-    if task_ids is not None:
-        before = len(task_ids)
-        task_ids = [t for t in task_ids if not (out_dir / f"{t}.json").exists()]
-        print(f"skip-done  : {before - len(task_ids)} already done, {len(task_ids)} remaining")
+    before = len(task_ids)
+    task_ids = [t for t in task_ids if not (out_dir / f"{t}.json").exists()]
+    print(f"skip-done  : {before - len(task_ids)} already done, {len(task_ids)} remaining")
 
     print(f"Trace dir  : {args.traces_dir}")
     print(f"Benchmark  : {args.benchmark}")
@@ -996,6 +999,7 @@ def main() -> None:
         out_dir=out_dir,
         limit=args.limit,
         task_ids=task_ids,
+        k_concurrent=args.k_concurrent,
     )
 
 
