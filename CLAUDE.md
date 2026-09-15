@@ -1,8 +1,8 @@
 # MetAgent — Project Brief
 
 **Worktree:** `/home/weiwentao/workspace/llm_agent_metabolomics/metagent_v2`
-**Branch:** `metagent-v2`
-**Last sprint:** W15 UV attribution audit (HEAD `de6cf5a`,2026-05-26)
+**Branch:** `metagent-v3-benchmark`（**不再是** `metagent-v2`——2026-06 中改名,原因见下方"W16+ 增补"）
+**Last sprint:** Phase A publication-grade benchmark 构建中(HEAD `9a90d82`,2026-07-08)。W15 之后到现在有 **122 个 commit** 未写进本文档主体,已在"## W16+ 增补"章节补上,**先看那一章**,再看下面 W8-W15 的历史部分。
 **Sibling worktrees:**
 - `metagent_day1_v5` (main, B1 paper data,frozen tag `metagent-v2-base-b1` @ `ed6243b`)
 - `metagent_day1_v5_investigation` (ConcordMet 5-PA wrapper调研,frozen tag `metagent-v2-base-investigation` @ `3ffe621`)
@@ -172,6 +172,185 @@ Stage 2 的 Verifier 路径 import Stage 1 build 的 schemas(`verifier/schemas.p
 `extract_claims_from_json`(grammar v2 JSON parse,zero-LLM extract)。Stage 2 不
 反向 import Stage 1 工具,但通过 `verifier.agent.verify_sub6()` 的 4-shape
 grammar 强制对齐。
+
+---
+
+## W16+ 增补(W15 收尾 `de6cf5a` → `metagent-v3-benchmark` 分支 HEAD `9a90d82`,122 commit)
+
+本章补上上面"当前进度"表完全没写的这段时间。**这是当前交接文档最大的缺口**——上面
+的"核心架构决策"和"当前进度"两节写的是 W15 为止的状态,有一条已经被下面的工作**取
+代**(见 1),读的时候要留意别把旧决策当成现在还生效的唯一真相。
+
+### 0. 大事记速览(时间顺序)
+
+| 阶段 | 做了什么 | 状态 |
+|---|---|---|
+| W16 D3 | `signal_sub6` 层 + dispatcher catch-all | **失败回滚**(UV 反升到 47.67%,`5933cdd` 禁用) |
+| W17 | `SubsixSourceReport` 加 4 个 method-keyed carrier 字段(schema-only,未接新 verifier) | 完成,UV 44.92%、pathway 57/63=90.5% |
+| W18 | β `llm_judge_sub6` beta 层 | 完成,59/63 clean 上 UV 36.45%(−8.47pp),但要排除 4 个 task |
+| W19 | γ `tool_output_sub6` 层(核对 RaMP/Mummichog/MetaboAnalystR carrier) | **INCONCLUSIVE**,代码保留(小幅正向但低于 ReAct 重跑方差 ~5pp) |
+| W20 | KEGG REST 知识库审计 | **INCONCLUSIVE/GATE-STOPPED**,strict ceiling 只 2.03pp(<3pp 门槛),**没写代码** |
+| W21 | ReAct prompt 加 `Hypothesis:` 标记试验 | **INVALID EXPERIMENT**(标记在抽取阶段丢失,pilot 不可判读,未跑 full-59) |
+| `cb9d745` | 一次性补交 W16-W22 期间"跑过但没 commit"的代码/测试/设计文档 | 见第 6 节治理观察 |
+| W22 附近 | `set_enrichment` 重写成 multisource pathway pool、新增 `ClaimVerdict.INSUFFICIENT_EVIDENCE`、v4 benchmark 构建(InChIKey xref + SapBERT 通路名匹配器) | 完成,详见第 3、4 节 |
+| **反馈机制重设计** | 三策略(A cascade / B anchored / C gating)全量 112-task A/B,**cascade 定为生产默认**(`00d47f0`) | 完成但**有已知未修回归**,见第 1 节 |
+| `4c991b9` | 文档/报告目录重组,引入 `docs/PROJECT_MAP.md`(**现在的"现状总览"权威文档,建议先看这份再看本章**)+ `reports/reports_v2/` `reports/reports_v3/` | 完成 |
+| benchmark v0→v1.3 | perturbation-anchored 非循环 benchmark pipeline + Miller 2015 Baylor MAPS multi-IEM builder + lysine/carnitine、urea/propanoate 扩样 | 完成 |
+| **Phase A(现在最活跃)** | publication-grade 40-task benchmark:ontology-graded matcher、A-stats scorecard、MPIB-Lit baseline | **进行中**,见第 5 节 |
+
+### 1. 架构决策更新:cascade 取代"iter cap=1、无 iter2"(**修正上面"核心架构决策 §2"**)
+
+上面"核心架构决策"第 2 条写的 W14.B 结论是"iter-2 净破坏,`max_feedback_iters=1` 锁
+死不跑第二轮反馈"。**这条硬结论没有被推翻**,但反馈机制本身在这之后被重新设计:
+
+- 新增三种 feedback 策略(`concord/agent/feedback_strategies.py`):
+  - **A_cascade**(**现为生产默认**):iter-0 verdict 确定性处理 claim(SUPPORTED 保留 /
+    CONTRADICTED 换成多源池 top-1 / UNSUPPORTED 删 / UV 删),LLM 只做 1 次受限
+    narrative 织合,**不允许**增删改 claim。
+  - B_anchored:LLM 锚定重写——**112-task 实验里灾难性失败**(pathway 54.05% vs
+    baseline 75.00%,噪音 651 vs 0),已否决。
+  - C gating:设计中提及,未见独立实现证据。
+- **决策文档**:`docs/decisions/2026-06-26_feedback_workflow_a_cascade.md`。cascade
+  已在 `concord/agent/react_runner.py` 里作为 `feedback_strategy: str = "cascade"`
+  字段接线(`00d47f0`,带 `[concord-modify-warning]`),legacy rewrite 路径保留在
+  `feedback_strategy="rewrite"` 向后兼容。
+- **这不是"重新打开了 iter-2"**——cascade 的 iter-1 不是重跑 LLM ReAct,是确定性规
+  则 + 1 次窄范围 LLM 织句,跟 W14.B 想禁的"LLM 自由重写第二轮"是两件事,机制上更接
+  近 GeneAgent 的 deterministic-cascade 修正范式。
+
+**⚠ 但 cascade 生产默认有一个已知、已量化、**尚未修复**的回归**:
+
+| | raw iter-0 | cascade final(生产默认) | Δ |
+|---|---:|---:|---:|
+| pathway 语义匹配(v4 112-task) | **79.46%** | 71.43% | **−8.03pp,纯负向(0 改对/9 改坏)** |
+| claim 噪音(UNS+UV) | 高 | 接近 0 | 大幅改善 |
+
+根因(`docs/decisions/2026-07-01_verifier_feedback_lock_pathway_to_raw.md`,**这份决
+策文档目前是 untracked,还没 commit 到 git**,内容仍要读):
+1. **R1**:cascade 删掉 UNSUPPORTED/UV claim 后,second-pass 从"删剩的 claim"二次重
+   推 pathway primary,丢失了原本指向正确通路的信号(9 个改坏 task 里 6 个是这种
+   "删+重推" artifact,没有真反证)。
+2. **R2**:W15 早就测过 UV 里 52.5% 是 verifier_gap(查不了 ≠ 错),cascade 把这些
+   当"要清理的噪音"处理,等于在低精度信号上动了不该动的刀。
+
+**提出的修法(D1,已用零 LLM 反事实模拟验证,但代码还没落地)**:pathway 默认锁 raw
+iter-0 的 primary,不再从 cascade 删剩的 claim 重推;cascade 的 claim 清洗只留给
+narrative 用。验证脚本 `scripts/metagent/validate_lock_pathway_to_raw.py`(untracked)
+在现有 112-task 数据上反事实模拟:锁 raw 把 pathway 从 71.43% 拉回 **79.46%**
+(+8.03pp),且 cascade 从未在 pathway 指标上赢过 raw,理论上零风险。**这是接手后
+最优先的下一步**,见第 7 节接手提示。
+
+### 2. Verifier 层清单(现在有几层,分别是什么状态)
+
+| 层 | 引入 sprint | 状态 |
+|---|---|---|
+| `factual_sub6` / `_ID_PATTERNS` / `subject_normalizer` / `fuzzy_match` / `noise_pattern` | W12-W14 | **生产**,W15 之前的既有内容,未变 |
+| `signal_sub6` | W16 | **禁用**(dispatcher catch-all 被 `5933cdd` 关掉,代码留着但不生效) |
+| `llm_judge_sub6` | W18 | **beta,生产接线中**(final iteration only,有 cost cap) |
+| `tool_output_sub6` | W19 | **保留但 inconclusive**(小幅正向、低于重跑噪音,未被证明有害,也未被证明有效) |
+| KEGG REST 知识库层 | W20 审计后 | **未实现**(ceiling 太小,audit-only,没写生产代码) |
+| `structural_consistency`(2D) | W22 附近 | 新增,已接入 `verify_sub6` 的 `SET_ENRICHMENT` 分支 |
+| `set_enrichment`(多源池重写) | W22 附近 | **重写**,从单源 RaMP 判定改成任一 paradigm 命中即 SUPPORTED(`998e112`,带 warning) |
+| `ClaimVerdict.INSUFFICIENT_EVIDENCE` | W22 附近 | 新增 verdict 值,已接 metrics/severity/react_runner 下游 |
+
+### 3. v3/v4 benchmark 构建(为什么现在有好几个通路匹配相关的新组件)
+
+W16+ 花了相当篇幅重建通路匹配基础设施,因为旧的 sub6b-v3(63 task)namespace 覆盖不
+够、且需要跟外部 baseline 可比:
+- `structure_resolver` 统一结构解析器 + MetaNetX 结构索引 + exclusion sidecar
+- SapBERT 通路名语义匹配器(token-overlap 兜底)
+- InChIKey xref pipeline → **v4 benchmark(342 task,P0 filter 后 292)**
+  `data/benchmark/metagent_bench_v2/metagent_bench_easy_v4_metabolic.jsonl`
+- 相关决策文档:`docs/decisions/2026-06-23_v3_part2_embedding_method_upgrade.md`、
+  `docs/decisions/2026-06-25_v4bench_second_pass_matcher_fix.md`、
+  `docs/decisions/2026-06-25_verifier_multisource_refactor.md`
+
+### 4. Benchmark 版本谱系(接手人最容易迷路的地方,列清楚)
+
+| 名字 | 规模 | 来源/用途 | 状态 |
+|---|---:|---|---|
+| `sub6b_mammalian_tasks_v3.jsonl` | 63 | W8-W15 主战场,Path X | 仍是 legacy 对照基线 |
+| `metagent_bench_v2`(v4) | 342 → P0 filter 292 | InChIKey xref + SapBERT 构建;实际常跑 sub6 63 + hmdb_ramp filtered 49 = **112** 子集 | 现在的主评测集 |
+| benchmark v0→v1.3 | 逐步扩样 | perturbation-anchored 非循环 pipeline + Miller 2015 Baylor MAPS multi-IEM + lysine/carnitine、urea/propanoate 复制 | 独立于 v4 的另一条构建线 |
+| `data/benchmark/impc_pilot/`(**untracked**) | 小规模 pilot | IMPC pilot task 集,新产出,还没接入主 eval | 未知去向,建议向原作者确认用途 |
+| **Phase A publication-grade** | 目标 N=40(60 stretch) | 榨干 Miller → Sahoo/Recon 逻辑扩展 → 仅按需下载新队列 | **进行中**,见第 5 节 |
+| MPIB-Lit(Biomni) | 外部基线数据集 | 用同一套 official rubric matcher 打分,做跨方法对比 | 已接入(`73d2e09` MPIB-Lit official baseline = single-shot iter0) |
+
+### 5. 现在最活跃的工作:Phase A publication-grade benchmark
+
+`docs/decisions/2026-07-07_phase_a_benchmark_publication_grade_spec.md`(已定稿,
+用户授权自主执行)。目标:产出可复现自动打分的 **40-task benchmark** + MetAgent 在
+其上的结果,为后续投稿铺路(注意:投稿/论文叙事本身仍是死命令禁区,这里只记工程进度)。
+
+四个已认可的核心决策:
+1. **rubric = 本体驱动自动分级 + 双口径**:tier ∈ {exact, parent_child, adjacent,
+   miss};strict = exact+parent_child,lenient 再加 adjacent。相邻性从 RaMP
+   (`analytehaspathway` 1.35M 行 + `pathway_duplicates` + `pathway_similarity`)
+   客观算,不靠人工拍脑袋。实现在 `scripts/metagent/pathway_match_rubric.py`
+   (zero-LLM、纯确定性、可单测)。**A1 复现硬门**:必须在现有 19-task 上复现人工
+   判定 strict 13/19、lenient 15/19。
+2. **N=40 硬目标 / 60 stretch**,来源优先级 A(榨干 Miller,零下载)→ B(Sahoo/
+   Recon 逻辑扩展)→ C(仅按需下载新队列)。
+3. **统计只做自己模型**:bootstrap 任务级区间 + 3-seed range + 分家族;置换检验/
+   baseline 对比推到 Phase B。
+4. 全公开发布(CC-BY-4.0 数据 / MIT 代码)。
+
+进度产出(均已存在于当前 worktree,部分尚未 commit):
+- `scripts/metagent/pathway_match_rubric.py` —— 当前 worktree 里还有一处未提交的
+  "同义通路名"匹配增量(如 "Leucine, isoleucine and valine metabolism" 与
+  "Valine, leucine and isoleucine degradation" 判 EXACT),带配套 RED/GREEN 测试,
+  建议随手 commit。
+- A-stats scorecard(bootstrap CI + per-family + tier 分布,`dbaa782`)
+- gold registry 扩展(pyrimidine/purine/FAO,`9934978`)
+- `v4_bench_eval.py` 加 `--feedback-strategy` flag,默认 cascade(`8dea4ef`)
+- MPIB-Lit official baseline = single-shot(iter0)打分(`73d2e09`)
+- 一批 untracked 的零 LLM 诊断脚本(见第 6 节),都是围着"cascade 的 pathway 回归"和
+  "pathway 天花板在哪"这两个问题在挖
+
+### 6. 未提交(untracked)但相关的产出——接手人需要知道这些存在
+
+以下文件当前**没有 commit**,内容是最新分析,但不在 git 历史里,交接时容易漏看:
+
+| 文件 | 用途 |
+|---|---|
+| `docs/decisions/2026-07-01_verifier_feedback_lock_pathway_to_raw.md` | 第 1 节的 D1 修法提案,**最重要的一份未提交文档** |
+| `scripts/metagent/validate_lock_pathway_to_raw.py` | D1 的零 LLM 反事实验证脚本 |
+| `scripts/metagent/diagnose_pathway_ceiling.py` / `pathway_oracle_ceiling.py` / `simulate_pathway_critic.py` | 零 LLM 诊断:pathway 缺口在"工具没查到"还是"LLM 选错"还是"matcher 测量误差";oracle 上限;模拟 critic 净收益 |
+| `scripts/metagent/eval_biomni_mpib_lit.py` / `run_llm_mpib_baselines.py` / `tests/test_llm_mpib_baseline.py` | 用同一套 official rubric matcher 打分外部 MPIB baseline,做跨方法对比 |
+| `scripts/metagent/stage1_2_e2e_build.py` / `stage1_2_e2e_analysis.py` | Stage1(真实鉴定,非 perfect-id)→ Stage2 全链路串联评测 |
+| `scripts/metagent/stage2_detailed_analysis.py` | cascade vs legacy 详细对比分析(pathway/claim/工具/case study) |
+| `scripts/eval_sub6/rerank_mcnemar_stats.py` | Stage 1 rerank 前后配对 McNemar 检验 |
+| `data/benchmark/impc_pilot/` | 新 pilot task 集,用途未在 commit history 里说明 |
+
+### 7. 治理观察(verifier modification policy 核对结果)
+
+用 `git log --format='%B'`(**注意必须看完整 commit body,不能只看 `--oneline`
+subject**,`[verifier-modify-warning]` 都写在 body 里)核对了这段时间所有碰
+`verifier/` 的 commit:**绝大多数实质性修改现有逻辑的 commit 都老实带了
+`[verifier-modify-warning]` + justification + B1 回归实测数字**(如
+`998e112` 重写 `set_enrichment`、`d4fda9c` 改 metrics rollup、`00d47f0`/`b75601f`
+cascade 接线),纪律执行得不错。
+
+两处例外值得记录,不是要翻旧账,是接手人应该知道:
+1. `cb9d745`(chore:一次性补交 W16-W22 期间"跑过但没 commit"的代码)里包含
+   `verifier/layers/set_enrichment.py` 的 8 行改动,但因为是打包提交,没有单独走
+   RED→GREEN + warning 流程。内容本身看起来是良性的(配合同批新增的
+   helper/schema),但这种"攒了很多天一次性提交"的模式本身违反了上面"核心架构决
+   策 §5"要求的"每个 piece 独立 RED/GREEN commit"纪律,提醒接手人别把这个当范例
+   延续。
+2. 上面第 1 节的 cascade pathway 回归,严格说不是"漏打 warning tag"问题,而是
+   "**已知回归被验证但还没打补丁就先上生产**"——这个比 tag 缺失更该优先处理。
+
+### 8. 接手提示(取代下方旧"接手提示"里过时的 W16 起点)
+
+1. **先看 `docs/PROJECT_MAP.md`**(2026-06-30 整理,现状总览权威文档,比这一整章
+   更结构化),再回来看本章补的"之后又发生了什么"。
+2. **最优先的技术债**:实现第 1 节的 D1(pathway 锁 raw iter-0),预计零 LLM 成本、
+   +8pp pathway 恢复,验证脚本已经现成。记得改动带 `[concord-modify-warning]`。
+3. **然后**继续 Phase A(第 5 节):A2(扩到 40 task)→ A3(3-seed 重跑 + 打分)→
+   A4(发布包)。
+4. 旧的"W16 推荐起点:C7 producer prompt tighten"**已经过时**,不要再当作下一步——
+   那是 W15 时的候选,已经被后续 122 个 commit 的工作绕过。
 
 ---
 
@@ -548,12 +727,13 @@ references),W16 推荐 C7 producer prompt tighten(4.57 pp cap,3 day,prompt-only)
 
 ---
 
-## 接手提示
+## 接手提示(W15 时写的版本——**第 4 条已过时,权威版本见上方"## W16+ 增补"第 8 节**)
 
 1. **先读 `docs/ARCHITECTURE.md`**(Stage 1 设计哲学)+ **`docs/claim_grammar_v2.md`**(Stage 2 4-shape grammar)
 2. **跑 setup script**(symlink sqlite,否则 concord 测试 ~12 fail)
-3. **看最新 close-out**:`reports/agent/concord_w14_close_out.md` + `data/metagent/w15_uv_attribution/summary.md`
-4. **W16 推荐起点**:C7 producer prompt tighten。spec 还没写,需要起草。
+3. **看最新 close-out**:`reports/agent/concord_w14_close_out.md` + `data/metagent/w15_uv_attribution/summary.md`(这两份仍是 W14/W15 的历史记录,不是现状——现状看 `docs/PROJECT_MAP.md`)
+4. ~~**W16 推荐起点**:C7 producer prompt tighten~~ ——**已过时**,W16 之后 122 个 commit 已经绕开这条路径。现在的推荐起点是"## W16+ 增补"第 8 节:先修 cascade 的 pathway 回归(D1 锁 raw),再继续 Phase A benchmark。
 
-如果只看一份文件了解全貌,看这份 CLAUDE.md。如果只跑一次验证回归没坏,跑 Gate A
-(`pytest tests/test_verifier/ ...` 407 pass / 0 fail)+ Gate B(全 repo,1368-1371 pass / 14 fail)。
+如果只看一份文件了解全貌,看这份 CLAUDE.md(记得先看"## W16+ 增补"再看下面的历史章
+节)。如果只跑一次验证回归没坏,跑 Gate A(`pytest tests/test_verifier/ ...` 407
+pass / 0 fail)+ Gate B(全 repo,1368-1371 pass / 14 fail)。

@@ -1,15 +1,21 @@
 # MetAgent v2 — Project Handoff
 
 **Worktree:** `/home/weiwentao/workspace/llm_agent_metabolomics/metagent_v2`
-**Branch:** `metagent-v2`
-**Last sprint:** W15 UV attribution audit (HEAD `de6cf5a`, completed 2026-05-26)
-**Handoff written:** 2026-05-28
+**Branch:** `metagent-v3-benchmark` (renamed from `metagent-v2` in late June 2026 — see §5A)
+**Last sprint:** Phase A publication-grade benchmark construction, in progress (HEAD `9a90d82`, 2026-07-08)
+**Handoff written:** 2026-05-28. **Addendum §5A written 2026-07-08** covering the 122
+commits between W15 (`de6cf5a`) and the current HEAD — the original §1-§14 below
+still describe the W8→W15 state accurately as *history*, but §5A supersedes some of
+their forward-looking conclusions (most importantly §4.3's iter-2 story — read §5A.1
+before relying on §4.3 for current behavior).
 
 This document is the single-source onboarding artifact for a new
 maintainer. Read it end-to-end before opening a PR or starting a new
-sprint. If you only have time for one file, read this. `CLAUDE.md` is
-a shorter sibling oriented at automated agents; `HANDOFF.md` (this
-file) is the human-oriented version with full decision history.
+sprint. If you only have time for one file, read this — but read
+**§5A first**, since it is the part that is not yet reflected anywhere
+else outside `docs/PROJECT_MAP.md`. `CLAUDE.md` is a shorter sibling
+oriented at automated agents; `HANDOFF.md` (this file) is the
+human-oriented version with full decision history.
 
 ---
 
@@ -378,6 +384,225 @@ chain is in place; the writeup itself is not yet authorised.
   W15 v2 cross-tab has sub-classified them by attribution but not
   by W11 surface bucket; W17 candidate (C9 sub-classification)
   would refine
+
+---
+
+## §5A — Addendum: W16+ (W15 close `de6cf5a` → `metagent-v3-benchmark` HEAD `9a90d82`, 122 commits)
+
+**Why this section exists.** §1–§14 of this document were written at the W15
+close-out and describe the project accurately as of 2026-05-26. Between then and
+now, 122 commits landed on a renamed branch (`metagent-v2` → `metagent-v3-benchmark`)
+and none of it is reflected anywhere in this file or `CLAUDE.md` until this addendum.
+`docs/PROJECT_MAP.md` (dated 2026-06-30) is the closest thing to an up-to-date
+overview and should be read alongside this section — it has authoritative current
+headline numbers this addendum mostly points at rather than re-derives.
+
+### §5A.1 — Timeline in one table
+
+| Phase | What happened | Outcome |
+|---|---|---|
+| W16 D3 | Added `signal_sub6` verifier layer + dispatcher catch-all | **Rolled back** — UV rose to 47.67% (worse than W14's 44.25%), disabled in `5933cdd` |
+| W17 | Extended `SubsixSourceReport` with 4 method-keyed carrier fields (schema-only, no new consumer wired) | Landed. UV 44.92%, pathway 57/63 = 90.5% (best to date) |
+| W18 | Added β `llm_judge_sub6` beta layer (LLM-as-verifier-tool on already-grounded claims) | Landed. UV 36.45% on a 59/63 "clean" subset (4 tasks excluded after a HEDGED-aggregation crash) |
+| W19 | Added γ `tool_output_sub6` layer (checks RaMP/Mummichog/MetaboAnalystR claims against stored tool-output carriers) | **INCONCLUSIVE** — kept in code; small positive signal (~1pp) sits below ReAct rerun variance (~5pp); a dedicated crosswalk audit confirmed it did not break the W18 judge fall-through |
+| W20 | Audited KEGG REST as a knowledge-base layer | **INCONCLUSIVE / GATE-STOPPED** — strict ceiling only 2.03pp against a ≥3pp implementation gate; **no production code was written**, audit-only |
+| W21 | Piloted a `Hypothesis:` marker in the ReAct prompt to separate evidence-backed facts from biological interpretation | **INVALID EXPERIMENT** — the marker was lost between narrative text and extracted `claim_text` before the detector ever saw it; the 5-task pilot deltas are a pipeline bug artifact, not evidence either way. Full-59 was never run. |
+| `cb9d745` | A single "chore" commit retroactively landing W16–W22 code, tests, and design docs that had been "running but never committed" | See §5A.6 (governance note) |
+| ~W22 | `set_enrichment` rewritten to a multisource pathway pool (any paradigm hit → SUPPORTED, not just RaMP); new `ClaimVerdict.INSUFFICIENT_EVIDENCE`; new `structural_consistency` (2D) layer; v4 benchmark construction (InChIKey xref pipeline, SapBERT pathway-name matcher, MetaNetX structure index) | Landed — see §5A.3 |
+| **Feedback redesign** | Full 112-task 3-arm A/B of feedback strategies; **cascade wired as the production default** (`00d47f0`) | Landed, **with a known unfixed regression** — see §5A.2, this is the single most important update in this addendum |
+| `4c991b9` | Reports/docs reorganisation — introduced `docs/PROJECT_MAP.md`, `reports/reports_v2/`, `reports/reports_v3/`, archived (not deleted, all via `git mv`) superseded reports | Landed |
+| benchmark v0→v1.3 | A separate benchmark-construction line: perturbation-anchored non-circular pipeline, a Miller 2015 Baylor MAPS multi-IEM task builder, and a v1.3 expansion adding lysine/carnitine + urea/propanoate replicates | Landed |
+| **Phase A (current active work)** | Publication-grade 40-task benchmark: ontology-graded pathway matcher, bootstrap-CI scorecard, MPIB-Lit external baseline | **In progress** — see §5A.5 |
+
+### §5A.2 — Architecture update: cascade supersedes the "iter cap=1, no iter-2" framing (updates §4.3)
+
+§4.3 above ("the iter-2 story") is still an accurate *historical* record — three
+independent diagnostics really did show a fresh LLM-rewrite second iteration is
+net-destructive, and W14.B really did cap `max_feedback_iters` at 1. **That
+finding was not overturned.** But the feedback mechanism itself was redesigned on
+top of it:
+
+- Three strategies were designed in `concord/agent/feedback_strategies.py`:
+  - **A_cascade** (now the production default): deterministically processes
+    iter-0 verdicts — keep SUPPORTED, replace CONTRADICTED with the multisource
+    pool's top-1, drop UNSUPPORTED, drop UV — then makes exactly **one** LLM call
+    to weave a narrative. The LLM cannot add, remove, or reinterpret claims.
+  - **B_anchored**: LLM-anchored rewrite. **Failed catastrophically** in the full
+    112-task experiment (pathway 54.05% vs a 75.00% no-feedback baseline; noise
+    count 651 vs 0). Rejected.
+  - **C gating**: mentioned in the design doc; no independent implementation
+    evidence found in the commit history.
+- Decision record: `docs/decisions/2026-06-26_feedback_workflow_a_cascade.md`.
+  Cascade is wired into `ConcordReactRunner` as `feedback_strategy: str =
+  "cascade"` (`00d47f0`, tagged `[concord-modify-warning]`); the legacy rewrite
+  path is preserved for backward compatibility as `feedback_strategy="rewrite"`.
+- This does **not** reopen the "iter-2" question W14.B closed. Cascade's
+  iteration is a deterministic claim-filter plus one narrow LLM narrative call,
+  not a second free-form ReAct rewrite — mechanically closer to GeneAgent's
+  deterministic-cascade correction than to the thing W14.B banned.
+
+**⚠ The production default has a known, quantified, currently-unpatched
+regression.** On the v4 112-task benchmark:
+
+| Metric | raw iter-0 | cascade final (production default) | Δ |
+|---|---:|---:|---:|
+| Pathway semantic accuracy | **79.46%** | 71.43% | **−8.03pp, purely negative (0 fixed / 9 broken)** |
+| Claim noise (UNSUPPORTED+UV) | high | ~0 | large improvement |
+
+Root cause, per `docs/decisions/2026-07-01_verifier_feedback_lock_pathway_to_raw.md`
+(**this decision doc is currently untracked — not committed to git — but its
+content is the most current design thinking on this issue and should be read**):
+
+1. **R1** — after cascade drops UNSUPPORTED/UV claims, the pathway second-pass
+   re-derives its primary prediction from the *remaining* claims, losing the
+   signal that pointed at the correct pathway. 6 of the 9 broken tasks show this
+   "drop-then-re-derive" pattern with zero actual counter-evidence.
+2. **R2** — W15 already established that 52.5% of UV claims are `verifier_gap`
+   (unverifiable ≠ wrong). Cascade treats all UV as noise to remove, which means
+   it is operating on a low-precision signal.
+
+**Proposed fix (D1), validated but not yet implemented in code**: lock the
+final `pathway_prediction.primary` to the raw iter-0 prediction rather than
+re-deriving it from cascade-filtered claims; cascade's claim cleanup would then
+only affect the cosmetic narrative, never the pathway verdict. A zero-LLM
+counterfactual replay (`scripts/metagent/validate_lock_pathway_to_raw.py`,
+untracked) on the existing 112-task run shows this recovers **71.43% → 79.46%**
+(+8.03pp) with no observed downside — cascade never beat raw on this metric in
+any of the 9 disagreement cases. **This is the highest-priority next step for
+whoever picks this project up** — see §5A.8.
+
+### §5A.3 — Verifier layer inventory (what exists now, and its status)
+
+| Layer | Introduced | Status |
+|---|---|---|
+| `factual_sub6` / extended `_ID_PATTERNS` / `subject_normalizer` / `fuzzy_match` / `noise_pattern` | W12–W14 | Production, unchanged since §1-§14 was written |
+| `signal_sub6` | W16 | **Disabled** — dispatcher catch-all turned off in `5933cdd`; code remains but does not run |
+| `llm_judge_sub6` | W18 | **Beta, wired into production** (final-iteration only, has a cost cap) |
+| `tool_output_sub6` | W19 | **Retained, inconclusive** — small positive signal, not proven harmful or clearly beneficial |
+| KEGG REST knowledge-base layer | W20 (audit) | **Never implemented** — ceiling too small, audit-only, no production code |
+| `structural_consistency` (2D) | ~W22 | New, wired into `verify_sub6`'s `SET_ENRICHMENT` branch |
+| `set_enrichment` | ~W22 | **Rewritten** from single-source RaMP judgement to a multisource pool (any of the 5 paradigms hitting → SUPPORTED); `998e112`, tagged `[verifier-modify-warning]` |
+| `ClaimVerdict.INSUFFICIENT_EVIDENCE` | ~W22 | New verdict value, wired through metrics/severity/`react_runner` |
+
+### §5A.4 — v3/v4 benchmark infrastructure (why several new pathway-matching components exist)
+
+A large chunk of this window rebuilt pathway-matching infrastructure because the
+old sub6b-v3 (63-task) namespace coverage was insufficient and the project needed
+external-baseline comparability:
+
+- A unified `structure_resolver` + a MetaNetX structure index + an exclusion sidecar
+- A SapBERT pathway-name semantic matcher with token-overlap fallback
+- An InChIKey cross-reference pipeline feeding the **v4 benchmark (342 tasks,
+  292 after a P0 filter)**: `data/benchmark/metagent_bench_v2/metagent_bench_easy_v4_metabolic.jsonl`
+- Design docs: `docs/decisions/2026-06-23_v3_part2_embedding_method_upgrade.md`,
+  `docs/decisions/2026-06-25_v4bench_second_pass_matcher_fix.md`,
+  `docs/decisions/2026-06-25_verifier_multisource_refactor.md`
+
+### §5A.5 — Benchmark version lineage (easy to get lost here — read this table first)
+
+| Name | Size | Source / purpose | Status |
+|---|---:|---|---|
+| `sub6b_mammalian_tasks_v3.jsonl` | 63 | W8–W15's Path X main benchmark | Still the legacy comparison baseline |
+| `metagent_bench_v2` (v4) | 342 → 292 after P0 filter | Built from the InChIKey xref + SapBERT pipeline; the subset actually run day-to-day is sub6 63 + hmdb_ramp filtered 49 = **112** | Current main evaluation set |
+| benchmark v0→v1.3 | grows per version | A separate construction line: perturbation-anchored non-circular pipeline + Miller 2015 Baylor MAPS multi-IEM builder + lysine/carnitine, urea/propanoate replicate expansion | Landed, independent of v4 |
+| `data/benchmark/impc_pilot/` (**untracked**) | small pilot | New IMPC pilot task set; not yet wired into any eval driver | Purpose not documented in commit history — confirm with the original author before relying on it |
+| **Phase A publication-grade** | target N=40, 60 stretch | Prioritizes exhausting Miller data, then Sahoo/Recon logical extension, then new downloads only if needed | **In progress**, see §5A.6 |
+| MPIB-Lit (Biomni) | external | Scored with the *same* official rubric matcher as MetAgent, for cross-method comparison | Wired in (`73d2e09`, single-shot iter0 = official baseline) |
+
+### §5A.6 — Current active work: Phase A publication-grade benchmark
+
+Spec: `docs/decisions/2026-07-07_phase_a_benchmark_publication_grade_spec.md`
+(finalized, user-authorized to execute autonomously). Goal: a reproducible,
+auto-scored **40-task benchmark** plus MetAgent's results on it. (Publication
+narrative itself remains out of scope per the standing "no paper writing" decree
+— this section tracks engineering progress only.)
+
+Four accepted design decisions:
+1. **Rubric = ontology-driven automatic grading, dual threshold.** Tiers ∈
+   {exact, parent_child, adjacent, miss}; strict = exact+parent_child, lenient =
+   strict+adjacent. Adjacency computed objectively from RaMP
+   (`analytehaspathway`, 1.35M rows; `pathway_duplicates`; `pathway_similarity`),
+   not hand-tuned. Implementation: `scripts/metagent/pathway_match_rubric.py`
+   (deterministic, zero-LLM, unit-testable). **Hard gate**: must reproduce the
+   human strict 13/19 and lenient 15/19 judgement on the existing 19-task set.
+2. **N=40 hard target / 60 stretch**, sourcing priority A (exhaust Miller, zero
+   download) → B (Sahoo/Recon logical extension) → C (download new cohorts only
+   if needed).
+3. **Statistics on our own model only** — bootstrap task-level CIs + 3-seed
+   range + per-family breakdown; permutation tests / baseline comparisons are
+   deferred to a future "Phase B".
+4. Full public release (CC-BY-4.0 data / MIT code).
+
+Progress artifacts already present in the working tree (some not yet committed):
+- `scripts/metagent/pathway_match_rubric.py` — the current worktree has one
+  uncommitted increment adding a "synonym pathway name" match (e.g. "Leucine,
+  isoleucine and valine metabolism" and "Valine, leucine and isoleucine
+  degradation" both resolve to EXACT), with matching RED/GREEN tests. Worth
+  committing as-is.
+- A-stats scorecard (bootstrap CI + per-family + tier distribution, `dbaa782`)
+- Extended gold registry (pyrimidine/purine/FAO, `9934978`)
+- `v4_bench_eval.py` gained a `--feedback-strategy` flag, default cascade (`8dea4ef`)
+- MPIB-Lit official baseline = single-shot (iter0) scoring (`73d2e09`)
+- A cluster of untracked zero-LLM diagnostic scripts (§5A.7), mostly aimed at the
+  two open questions "where exactly is the cascade pathway regression coming
+  from" and "what is the actual pathway accuracy ceiling."
+
+### §5A.7 — Untracked artifacts a new maintainer needs to know exist
+
+None of the following are in `git log` yet, but they are current analysis, not
+scratch work — easy to miss during handoff:
+
+| File | Purpose |
+|---|---|
+| `docs/decisions/2026-07-01_verifier_feedback_lock_pathway_to_raw.md` | The D1 fix proposal from §5A.2 — **the single most important uncommitted document** |
+| `scripts/metagent/validate_lock_pathway_to_raw.py` | Zero-LLM counterfactual validator for D1 |
+| `scripts/metagent/diagnose_pathway_ceiling.py`, `pathway_oracle_ceiling.py`, `simulate_pathway_critic.py` | Zero-LLM diagnostics decomposing the pathway gap into tool-ceiling / LLM-selection / matcher-measurement error; an oracle upper bound; a simulated-critic net-benefit estimate |
+| `scripts/metagent/eval_biomni_mpib_lit.py`, `run_llm_mpib_baselines.py`, `tests/test_llm_mpib_baseline.py` | Score the external MPIB baseline with the same official rubric matcher, for cross-method comparison |
+| `scripts/metagent/stage1_2_e2e_build.py`, `stage1_2_e2e_analysis.py` | Chains real (non-perfect-id) Stage 1 identification into Stage 2 for a genuine end-to-end evaluation |
+| `scripts/metagent/stage2_detailed_analysis.py` | Detailed cascade-vs-legacy breakdown (pathway / claims / tools / case studies) |
+| `scripts/eval_sub6/rerank_mcnemar_stats.py` | Paired McNemar test for Stage 1 rerank before/after |
+| `data/benchmark/impc_pilot/` | New pilot task set; purpose undocumented in history |
+
+### §5A.8 — Governance check: verifier modification policy (§2.7) compliance
+
+Checked every commit touching `verifier/` between `de6cf5a` and HEAD against the
+three-tier policy in §2.7 — **the full commit body**, not just the `git log
+--oneline` subject line, since `[verifier-modify-warning]` is written in the
+body. Result: the large majority of substantive existing-logic changes (the
+`set_enrichment` rewrite, the `INSUFFICIENT_EVIDENCE` metrics rollup, the
+cascade wiring in `react_runner.py`) correctly carry the warning tag with
+justification and B1-regression numbers. The discipline mostly held.
+
+Two things worth flagging, not as accusations but as things a new maintainer
+should know about:
+
+1. `cb9d745` ("chore: land W16–W22 verifier/eval code ... that had been running
+   but never committed") bundles an 8-line change to
+   `verifier/layers/set_enrichment.py` without its own individual RED/GREEN +
+   warning-tag treatment, because it was landed retroactively as one big commit.
+   The content itself looks benign (it accompanies new helpers/schema fields
+   from the same window), but this "accumulate for days then land as one chore
+   commit" pattern itself is a deviation from §2.9's "one RED/GREEN commit per
+   piece" discipline — worth not treating as a precedent to repeat.
+2. The cascade pathway regression in §5A.2 is not a missing-tag problem — it is
+   a **known, quantified regression that shipped to the production default
+   before being patched**. That is a more urgent issue than the tag audit
+   itself.
+
+### §5A.9 — What to do next (supersedes the outdated pointer in §11 below)
+
+1. Read `docs/PROJECT_MAP.md` first — it is the closest thing to a structured,
+   up-to-date "what exists / how to run it / where results live" reference; this
+   addendum fills in what happened *after* it was last updated.
+2. **Highest-priority technical debt**: implement D1 from §5A.2 (lock
+   `pathway_prediction.primary` to raw iter-0 instead of re-deriving it from
+   cascade-filtered claims). Expected zero LLM cost, +8pp pathway recovery,
+   validation script already exists. Tag the commit `[concord-modify-warning]`.
+3. **Then** continue Phase A (§5A.6): A2 (expand to 40 tasks) → A3 (3-seed rerun
+   + scoring) → A4 (release package).
+4. §11's "W16 starting point: C7 producer prompt tighten" below is **stale** —
+   it was a W15-era candidate that has been bypassed by the subsequent 122
+   commits. Do not resume it as the next step.
 
 ---
 
@@ -766,8 +991,10 @@ metagent_v2/
 8. **Inspect the memory dir** at
    `/home/weiwentao/.claude/projects/-home-weiwentao-workspace-llm-agent-metabolomics-metagent-day1-v5/memory/`
    to see all 8 death decrees + 3 project memories.
-9. **W16 starting point:** C7 producer prompt tighten. Spec not yet
-   written. Estimated 4.57 pp UV reduction, ~3 d wall, prompt-only.
+9. ~~**W16 starting point:** C7 producer prompt tighten~~ — **stale, superseded.**
+   122 commits happened after this was written. Read **§5A** first; the real
+   current starting point is §5A.9 (fix the cascade pathway regression, then
+   continue Phase A).
 
 ---
 
@@ -810,7 +1037,7 @@ metagent_v2/
 |---|---|---|
 | `metagent_day1_v5` | Original main (B1 paper data work) | `metagent-v2-base-b1` @ `ed6243b` (frozen) |
 | `metagent_day1_v5_investigation` | ConcordMet spike (5-PA wrapper exploration W3-W7) | `metagent-v2-base-investigation` @ `3ffe621` (frozen) |
-| `metagent_v2` (this) | Post-merge integration + Stage 2 sprints W8 → W15 | HEAD `de6cf5a` |
+| `metagent_v2` (this) | Post-merge integration + Stage 2 sprints W8 → W15, then W16+/Phase A on renamed branch `metagent-v3-benchmark` (see §5A) | HEAD `9a90d82` |
 
 All new work goes in `metagent_v2`. The other two are reference only.
 
