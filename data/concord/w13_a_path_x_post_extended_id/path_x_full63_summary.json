@@ -1,0 +1,424 @@
+{
+  "n_tasks": 63,
+  "n_crash": 0,
+  "n_valid": 63,
+  "by_iter_outcome": {
+    "normal": 185
+  },
+  "early_exit_iter0": 2,
+  "n_feedback_iter1": 61,
+  "n_feedback_iter2": 61,
+  "rollback_total": 35,
+  "rollback_feedback_made_it_worse": 25,
+  "rollback_iter2_degraded": 10,
+  "framework_signal_bridge_in_iters": 56,
+  "framework_signal_bridge_lost_to_rollback": 34,
+  "framework_signal_best_ne_final": 13,
+  "tool_call_max_distribution": {
+    "max": 27,
+    "p95": 21.0,
+    "median": 13.0,
+    "n_over_25": 1
+  },
+  "mean_wall_seconds_per_task": 441.5918043416644,
+  "total_wall_seconds": 6219.9,
+  "wall_human": "103.7 min",
+  "k_concurrent": 10,
+  "llm_model": "MiniMax-M2.7",
+  "benchmark_md5_assumed": "331b30a64017debe9d5ce07ed238e4f5",
+  "token_usage": {
+    "present": true,
+    "n_calls_total": 1562,
+    "n_calls_unattributed": 0,
+    "per_task_total_tokens_median": 360840,
+    "per_task_total_tokens_p95": 606861,
+    "per_task_total_tokens_max": 714722,
+    "per_task_total_tokens_min": 91305,
+    "per_task_prompt_total": 21000406,
+    "per_task_completion_total": 2996880,
+    "per_task_total_total": 23997286,
+    "saturate_threshold": 120000,
+    "saturate_count": 62,
+    "saturate_pct_of_tasks": 98.41,
+    "per_task_breakdown": {
+      "compound_only_enrich_mammalian_RAMP_P_000052855_seed0": {
+        "prompt": 358501,
+        "completion": 40004,
+        "total": 398505,
+        "n_calls": 28
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed1": {
+        "prompt": 293889,
+        "completion": 42633,
+        "total": 336522,
+        "n_calls": 24
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed2": {
+        "prompt": 292202,
+        "completion": 44602,
+        "total": 336804,
+        "n_calls": 22
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed3": {
+        "prompt": 373205,
+        "completion": 49561,
+        "total": 422766,
+        "n_calls": 28
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed4": {
+        "prompt": 381082,
+        "completion": 53854,
+        "total": 434936,
+        "n_calls": 28
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed5": {
+        "prompt": 261847,
+        "completion": 38174,
+        "total": 300021,
+        "n_calls": 23
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed6": {
+        "prompt": 290221,
+        "completion": 36131,
+        "total": 326352,
+        "n_calls": 24
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000421_seed8": {
+        "prompt": 365567,
+        "completion": 40191,
+        "total": 405758,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000053042_seed9": {
+        "prompt": 283086,
+        "completion": 58026,
+        "total": 341112,
+        "n_calls": 24
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed1": {
+        "prompt": 361546,
+        "completion": 69591,
+        "total": 431137,
+        "n_calls": 24
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed2": {
+        "prompt": 372796,
+        "completion": 39537,
+        "total": 412333,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed4": {
+        "prompt": 199092,
+        "completion": 69002,
+        "total": 268094,
+        "n_calls": 8
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed6": {
+        "prompt": 425557,
+        "completion": 54079,
+        "total": 479636,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed7": {
+        "prompt": 428438,
+        "completion": 50583,
+        "total": 479021,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000016_seed9": {
+        "prompt": 410134,
+        "completion": 46337,
+        "total": 456471,
+        "n_calls": 29
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000025682_seed2": {
+        "prompt": 643777,
+        "completion": 70945,
+        "total": 714722,
+        "n_calls": 29
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed0": {
+        "prompt": 414941,
+        "completion": 34580,
+        "total": 449521,
+        "n_calls": 23
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed1": {
+        "prompt": 402196,
+        "completion": 55583,
+        "total": 457779,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed2": {
+        "prompt": 570432,
+        "completion": 36429,
+        "total": 606861,
+        "n_calls": 30
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed3": {
+        "prompt": 508340,
+        "completion": 51650,
+        "total": 559990,
+        "n_calls": 28
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed4": {
+        "prompt": 581589,
+        "completion": 53391,
+        "total": 634980,
+        "n_calls": 28
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed5": {
+        "prompt": 438241,
+        "completion": 38474,
+        "total": 476715,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed6": {
+        "prompt": 328328,
+        "completion": 36191,
+        "total": 364519,
+        "n_calls": 21
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed7": {
+        "prompt": 303264,
+        "completion": 118162,
+        "total": 421426,
+        "n_calls": 20
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed8": {
+        "prompt": 256234,
+        "completion": 34696,
+        "total": 290930,
+        "n_calls": 19
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed9": {
+        "prompt": 574474,
+        "completion": 52208,
+        "total": 626682,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000053306_seed1": {
+        "prompt": 234225,
+        "completion": 42805,
+        "total": 277030,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050099_seed6": {
+        "prompt": 278558,
+        "completion": 113823,
+        "total": 392381,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000053306_seed7": {
+        "prompt": 293092,
+        "completion": 34461,
+        "total": 327553,
+        "n_calls": 22
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed0": {
+        "prompt": 241792,
+        "completion": 49346,
+        "total": 291138,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed1": {
+        "prompt": 425562,
+        "completion": 60508,
+        "total": 486070,
+        "n_calls": 33
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed2": {
+        "prompt": 228067,
+        "completion": 49963,
+        "total": 278030,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed3": {
+        "prompt": 344491,
+        "completion": 52951,
+        "total": 397442,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed4": {
+        "prompt": 248066,
+        "completion": 37404,
+        "total": 285470,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed5": {
+        "prompt": 289149,
+        "completion": 46475,
+        "total": 335624,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed6": {
+        "prompt": 233279,
+        "completion": 29341,
+        "total": 262620,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed7": {
+        "prompt": 317691,
+        "completion": 37574,
+        "total": 355265,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed8": {
+        "prompt": 249362,
+        "completion": 48434,
+        "total": 297796,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed9": {
+        "prompt": 237203,
+        "completion": 47346,
+        "total": 284549,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed0": {
+        "prompt": 277282,
+        "completion": 43724,
+        "total": 321006,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed2": {
+        "prompt": 282626,
+        "completion": 52994,
+        "total": 335620,
+        "n_calls": 27
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed3": {
+        "prompt": 269956,
+        "completion": 31351,
+        "total": 301307,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050096_seed6": {
+        "prompt": 307611,
+        "completion": 35317,
+        "total": 342928,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed8": {
+        "prompt": 306551,
+        "completion": 54289,
+        "total": 360840,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed0": {
+        "prompt": 347289,
+        "completion": 62264,
+        "total": 409553,
+        "n_calls": 22
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed1": {
+        "prompt": 364105,
+        "completion": 52800,
+        "total": 416905,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed2": {
+        "prompt": 366776,
+        "completion": 52728,
+        "total": 419504,
+        "n_calls": 24
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed3": {
+        "prompt": 184254,
+        "completion": 41698,
+        "total": 225952,
+        "n_calls": 18
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed4": {
+        "prompt": 236510,
+        "completion": 34872,
+        "total": 271382,
+        "n_calls": 21
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed5": {
+        "prompt": 269485,
+        "completion": 36677,
+        "total": 306162,
+        "n_calls": 21
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed6": {
+        "prompt": 346473,
+        "completion": 44733,
+        "total": 391206,
+        "n_calls": 23
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed7": {
+        "prompt": 301495,
+        "completion": 42975,
+        "total": 344470,
+        "n_calls": 23
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed8": {
+        "prompt": 295316,
+        "completion": 43330,
+        "total": 338646,
+        "n_calls": 21
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed9": {
+        "prompt": 220123,
+        "completion": 45985,
+        "total": 266108,
+        "n_calls": 21
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
+        "prompt": 411831,
+        "completion": 38370,
+        "total": 450201,
+        "n_calls": 26
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed1": {
+        "prompt": 260770,
+        "completion": 43125,
+        "total": 303895,
+        "n_calls": 23
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed2": {
+        "prompt": 272846,
+        "completion": 48578,
+        "total": 321424,
+        "n_calls": 25
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed3": {
+        "prompt": 84137,
+        "completion": 7168,
+        "total": 91305,
+        "n_calls": 6
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed4": {
+        "prompt": 473344,
+        "completion": 37431,
+        "total": 510775,
+        "n_calls": 29
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed5": {
+        "prompt": 312553,
+        "completion": 44208,
+        "total": 356761,
+        "n_calls": 30
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed6": {
+        "prompt": 347092,
+        "completion": 39954,
+        "total": 387046,
+        "n_calls": 29
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed7": {
+        "prompt": 372759,
+        "completion": 53380,
+        "total": 426139,
+        "n_calls": 31
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000141_seed8": {
+        "prompt": 349706,
+        "completion": 43884,
+        "total": 393590,
+        "n_calls": 32
+      }
+    }
+  }
+}

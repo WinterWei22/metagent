@@ -118,6 +118,23 @@ class SubsixSourceReport(BaseModel):
         ),
     )
 
+    mummichog_enrichment_result: dict[str, Any] | None = Field(
+        None,
+        description="Optional normalized standalone Mummichog enrichment output carrier.",
+    )
+    metaboanalystr_enrichment_result: dict[str, Any] | None = Field(
+        None,
+        description="Optional nested MetaboAnalystR carrier, keyed by psea/msea/mummichog variants.",
+    )
+    sspa_enrichment_result: dict[str, Any] | None = Field(
+        None,
+        description="Optional normalized SSPA enrichment output carrier.",
+    )
+    fella_enrichment_result: dict[str, Any] | None = Field(
+        None,
+        description="Optional nested FELLA carrier, keyed by rwr/diffusion variants.",
+    )
+
     # ------------------------------------------------------------------ #
     # Phase 6.3 Layer F adapters
     # ------------------------------------------------------------------ #

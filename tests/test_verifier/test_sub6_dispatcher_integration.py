@@ -253,11 +253,20 @@ def test_verify_sub6_handles_empty_narrative(real_sub6b_task):
     assert result.llm_call_count == 0
 
 
-def test_verify_sub6_unsupported_claim_types_fallback_to_unverifiable(
+def test_verify_sub6_factual_grounded_routed_to_factual_sub6_layer(
     real_sub6b_task,
 ):
-    """A FACTUAL claim — irrelevant to Sub-6 — should fall through to
-    the explicit UNVERIFIABLE_V0 default rather than crash."""
+    """A FACTUAL claim referencing molecular_formula (not an extractable ID)
+    should be routed to factual_sub6 layer, which returns UNVERIFIABLE_V0
+    when no kegg_id / hmdb_id / chebi_id / inchikey pattern is extractable.
+
+    Contract updated 2026-05-24 (W12 D4): FACTUAL / GROUNDED no longer
+    fall-through; they have a dedicated layer (factual_sub6). See
+    verifier/layers/factual_sub6.py + verifier/agent.py:_verify_per_claim_sub6.
+
+    Prior contract (pre-W12 D4): FACTUAL fell through to ``verify_sub6``
+    label with UV verdict. Verdict unchanged; only layer label changed.
+    """
     llm_client.set_mock([
         json.dumps([
             {
@@ -273,7 +282,9 @@ def test_verify_sub6_unsupported_claim_types_fallback_to_unverifiable(
         trace_id="sub6_factual_fallback",
     )
     # The grounded/factual classifier rule will match (formula keyword),
-    # so the dispatcher should route to its UNVERIFIABLE_V0 default.
+    # so the dispatcher routes to factual_sub6. molecular_formula is not
+    # one of factual_sub6's recognised identifier patterns
+    # (KEGG / HMDB / CHEBI / InChIKey), so the layer returns UV.
     factual_or_grounded = [
         c for c in result.claims_v1
         if c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED)
@@ -281,4 +292,4 @@ def test_verify_sub6_unsupported_claim_types_fallback_to_unverifiable(
     assert len(factual_or_grounded) >= 1
     for c in factual_or_grounded:
         assert c.verdict == ClaimVerdict.UNVERIFIABLE_V0
-        assert c.verifier_layer == "verify_sub6"
+        assert c.verifier_layer == "factual_sub6"

@@ -1,0 +1,3849 @@
+{
+ "s4_cooke_2025_human1_group1": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle cytosolic",
+   "carnitine shuttle endoplasmic reticular",
+   "carnitine shuttle mitochondrial",
+   "fatty acid activation cytosolic",
+   "fatty acid activation endoplasmic reticular",
+   "fatty acid biosynthesis",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism",
+   "pool reactions"
+  ],
+  "size": 10
+ },
+ "s4_cooke_2025_human1_group3": {
+  "source": "human1",
+  "relevant_names": [
+   "alanine aspartate and glutamate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group8": {
+  "source": "human1",
+  "relevant_names": [
+   "arachidonic acid metabolism",
+   "leukotriene metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group9": {
+  "source": "human1",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "glycine serine and threonine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group11": {
+  "source": "human1",
+  "relevant_names": [
+   "ascorbate and aldarate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group19": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of phytanic acid peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "vitamin e metabolism"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group26": {
+  "source": "human1",
+  "relevant_names": [
+   "bile acid biosynthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group28": {
+  "source": "human1",
+  "relevant_names": [
+   "biopterin metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group30": {
+  "source": "human1",
+  "relevant_names": [
+   "blood group biosynthesis",
+   "glycosphingolipid biosynthesis globo series",
+   "glycosphingolipid biosynthesis lacto and neolacto series",
+   "keratan sulfate biosynthesis",
+   "o glycan metabolism"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group32": {
+  "source": "human1",
+  "relevant_names": [
+   "c5 branched dibasic acid metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group33": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle cytosolic",
+   "carnitine shuttle endoplasmic reticular",
+   "carnitine shuttle mitochondrial",
+   "fatty acid biosynthesis",
+   "glycerolipid metabolism"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_human1_group34": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle cytosolic",
+   "carnitine shuttle endoplasmic reticular",
+   "carnitine shuttle mitochondrial",
+   "fatty acid activation cytosolic",
+   "fatty acid activation endoplasmic reticular",
+   "fatty acid biosynthesis",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group36": {
+  "source": "human1",
+  "relevant_names": [
+   "carnitine shuttle peroxisomal"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group40": {
+  "source": "human1",
+  "relevant_names": [
+   "cholesterol biosynthesis 1 bloch pathway",
+   "cholesterol metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group45": {
+  "source": "human1",
+  "relevant_names": [
+   "cysteine and methionine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group47": {
+  "source": "human1",
+  "relevant_names": [
+   "drug metabolism",
+   "glycolysis gluconeogenesis",
+   "leukotriene metabolism",
+   "lysine metabolism",
+   "phenylalanine metabolism",
+   "propanoate metabolism",
+   "riboflavin metabolism",
+   "ubiquinone synthesis",
+   "vitamin e metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group48": {
+  "source": "human1",
+  "relevant_names": [
+   "eicosanoid metabolism",
+   "leukotriene metabolism",
+   "prostaglandin biosynthesis"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group49": {
+  "source": "human1",
+  "relevant_names": [
+   "estrogen metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group52": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle endoplasmic reticular",
+   "fatty acid activation cytosolic",
+   "fatty acid activation endoplasmic reticular",
+   "fatty acid oxidation",
+   "formation and hydrolysis of cholesterol esters",
+   "pool reactions"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group62": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid activation cytosolic",
+   "fatty acid oxidation"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group63": {
+  "source": "human1",
+  "relevant_names": [
+   "folate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group64": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle endoplasmic reticular",
+   "fatty acid activation cytosolic",
+   "fatty acid activation endoplasmic reticular",
+   "fatty acid biosynthesis",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism",
+   "pool reactions"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group65": {
+  "source": "human1",
+  "relevant_names": [
+   "fructose and mannose metabolism",
+   "riboflavin metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group69": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle cytosolic",
+   "carnitine shuttle endoplasmic reticular",
+   "carnitine shuttle mitochondrial",
+   "fatty acid activation endoplasmic reticular",
+   "fatty acid biosynthesis",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism",
+   "pool reactions"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group71": {
+  "source": "human1",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "glycine serine and threonine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group75": {
+  "source": "human1",
+  "relevant_names": [
+   "blood group biosynthesis",
+   "glycosphingolipid biosynthesis globo series",
+   "glycosphingolipid biosynthesis lacto and neolacto series"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group83": {
+  "source": "human1",
+  "relevant_names": [
+   "inositol phosphate metabolism",
+   "phosphatidylinositol phosphate metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group87": {
+  "source": "human1",
+  "relevant_names": [
+   "arachidonic acid metabolism",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "drug metabolism",
+   "eicosanoid metabolism",
+   "leukotriene metabolism",
+   "phenylalanine metabolism",
+   "riboflavin metabolism",
+   "ubiquinone synthesis",
+   "vitamin e metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group88": {
+  "source": "human1",
+  "relevant_names": [
+   "linoleate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group90": {
+  "source": "human1",
+  "relevant_names": [
+   "drug metabolism",
+   "lysine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group97": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "fatty acid biosynthesis",
+   "omega 3 fatty acid metabolism",
+   "omega 6 fatty acid metabolism",
+   "tryptophan metabolism"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_human1_group101": {
+  "source": "human1",
+  "relevant_names": [
+   "pentose and glucuronate interconversions"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group102": {
+  "source": "human1",
+  "relevant_names": [
+   "pentose phosphate pathway"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group105": {
+  "source": "human1",
+  "relevant_names": [
+   "phenylalanine tyrosine and tryptophan biosynthesis",
+   "tyrosine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group109": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "butanoate metabolism",
+   "drug metabolism",
+   "fatty acid biosynthesis even chain",
+   "omega 6 fatty acid metabolism",
+   "propanoate metabolism",
+   "riboflavin metabolism",
+   "vitamin e metabolism"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group110": {
+  "source": "human1",
+  "relevant_names": [
+   "eicosanoid metabolism",
+   "prostaglandin biosynthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group111": {
+  "source": "human1",
+  "relevant_names": [
+   "aminoacyl trna biosynthesis",
+   "artificial reactions",
+   "peptide metabolism",
+   "protein assembly",
+   "protein degradation"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group112": {
+  "source": "human1",
+  "relevant_names": [
+   "aminoacyl trna biosynthesis",
+   "peptide metabolism",
+   "protein assembly",
+   "protein degradation"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group121": {
+  "source": "human1",
+  "relevant_names": [
+   "glycosphingolipid biosynthesis ganglio series",
+   "glycosphingolipid metabolism",
+   "sphingolipid metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group129": {
+  "source": "human1",
+  "relevant_names": [
+   "tricarboxylic acid cycle and glyoxylate dicarboxylate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group131": {
+  "source": "human1",
+  "relevant_names": [
+   "phenylalanine tyrosine and tryptophan biosynthesis",
+   "tyrosine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group142": {
+  "source": "human1",
+  "relevant_names": [
+   "xenobiotics metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group82": {
+  "source": "human1",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "histidine metabolism",
+   "ubiquinone synthesis"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group103": {
+  "source": "human1",
+  "relevant_names": [
+   "aminoacyl trna biosynthesis",
+   "peptide metabolism",
+   "protein assembly",
+   "protein degradation"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group91": {
+  "source": "human1",
+  "relevant_names": [
+   "metabolism of other amino acids"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group104": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "drug metabolism",
+   "leukotriene metabolism",
+   "phenylalanine metabolism",
+   "riboflavin metabolism",
+   "ubiquinone synthesis",
+   "vitamin e metabolism"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group134": {
+  "source": "human1",
+  "relevant_names": [
+   "valine leucine and isoleucine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group68": {
+  "source": "human1",
+  "relevant_names": [
+   "glutathione metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group120": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "serotonin and melatonin biosynthesis",
+   "tryptophan metabolism",
+   "ubiquinone synthesis"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group116": {
+  "source": "human1",
+  "relevant_names": [
+   "glycolysis gluconeogenesis",
+   "pyruvate metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group122": {
+  "source": "human1",
+  "relevant_names": [
+   "starch and sucrose metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group31": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "butanoate metabolism",
+   "propanoate metabolism",
+   "riboflavin metabolism"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_human1_group37": {
+  "source": "human1",
+  "relevant_names": [
+   "cholesterol biosynthesis 1 bloch pathway",
+   "cholesterol metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group38": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 2",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid desaturation odd chain",
+   "glucocorticoid biosynthesis",
+   "riboflavin metabolism",
+   "vitamin a metabolism",
+   "vitamin d metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group39": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 2",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation odd chain",
+   "vitamin a metabolism"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group99": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "oxidative phosphorylation",
+   "riboflavin metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group124": {
+  "source": "human1",
+  "relevant_names": [
+   "sulfur metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group41": {
+  "source": "human1",
+  "relevant_names": [
+   "chondroitin heparan sulfate biosynthesis",
+   "keratan sulfate biosynthesis",
+   "o glycan metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group42": {
+  "source": "human1",
+  "relevant_names": [
+   "chondroitin sulfate degradation",
+   "heparan sulfate degradation",
+   "keratan sulfate degradation"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group73": {
+  "source": "human1",
+  "relevant_names": [
+   "glycosphingolipid biosynthesis ganglio series",
+   "glycosphingolipid biosynthesis globo series",
+   "sphingolipid metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group74": {
+  "source": "human1",
+  "relevant_names": [
+   "blood group biosynthesis",
+   "glycosphingolipid biosynthesis ganglio series",
+   "glycosphingolipid biosynthesis globo series",
+   "glycosphingolipid biosynthesis lacto and neolacto series",
+   "glycosphingolipid metabolism",
+   "keratan sulfate degradation",
+   "o glycan metabolism"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group76": {
+  "source": "human1",
+  "relevant_names": [
+   "glycosphingolipid biosynthesis globo series",
+   "glycosphingolipid metabolism",
+   "sphingolipid metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group85": {
+  "source": "human1",
+  "relevant_names": [
+   "blood group biosynthesis",
+   "chondroitin heparan sulfate biosynthesis",
+   "keratan sulfate biosynthesis",
+   "o glycan metabolism"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group86": {
+  "source": "human1",
+  "relevant_names": [
+   "chondroitin sulfate degradation",
+   "glycosphingolipid biosynthesis globo series",
+   "keratan sulfate degradation"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group93": {
+  "source": "human1",
+  "relevant_names": [
+   "n glycan metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group96": {
+  "source": "human1",
+  "relevant_names": [
+   "blood group biosynthesis",
+   "chondroitin heparan sulfate biosynthesis",
+   "glycosphingolipid biosynthesis globo series",
+   "keratan sulfate biosynthesis",
+   "o glycan metabolism"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group2": {
+  "source": "human1",
+  "relevant_names": [
+   "acylglycerides metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group7": {
+  "source": "human1",
+  "relevant_names": [
+   "androgen metabolism",
+   "glucocorticoid biosynthesis",
+   "steroid metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group12": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 mitochondrial",
+   "butanoate metabolism",
+   "fatty acid biosynthesis odd chain",
+   "omega 6 fatty acid metabolism",
+   "oxidative phosphorylation",
+   "propanoate metabolism",
+   "riboflavin metabolism"
+  ],
+  "size": 15
+ },
+ "s4_cooke_2025_human1_group13": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 mitochondrial",
+   "butanoate metabolism",
+   "omega 6 fatty acid metabolism"
+  ],
+  "size": 11
+ },
+ "s4_cooke_2025_human1_group14": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal",
+   "omega 6 fatty acid metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group15": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of even chain fatty acids mitochondrial",
+   "beta oxidation of even chain fatty acids peroxisomal"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group16": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of even chain fatty acids mitochondrial",
+   "beta oxidation of even chain fatty acids peroxisomal"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group17": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of odd chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group20": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of phytanic acid peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal",
+   "cholesterol biosynthesis 2",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation odd chain",
+   "glucocorticoid biosynthesis",
+   "leukotriene metabolism",
+   "omega 3 fatty acid metabolism",
+   "omega 6 fatty acid metabolism",
+   "phenylalanine metabolism",
+   "riboflavin metabolism",
+   "serotonin and melatonin biosynthesis",
+   "terpenoid backbone biosynthesis",
+   "tryptophan metabolism",
+   "ubiquinone synthesis",
+   "vitamin a metabolism",
+   "vitamin d metabolism",
+   "vitamin e metabolism"
+  ],
+  "size": 28
+ },
+ "s4_cooke_2025_human1_group21": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal",
+   "butanoate metabolism"
+  ],
+  "size": 11
+ },
+ "s4_cooke_2025_human1_group23": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 9 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group24": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group22": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal",
+   "vitamin d metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group27": {
+  "source": "human1",
+  "relevant_names": [
+   "bile acid recycling"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group50": {
+  "source": "human1",
+  "relevant_names": [
+   "ether lipid metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group53": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle endoplasmic reticular",
+   "fatty acid activation cytosolic",
+   "fatty acid activation endoplasmic reticular",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism",
+   "pool reactions"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group54": {
+  "source": "human1",
+  "relevant_names": [
+   "acyl coa hydrolysis",
+   "carnitine shuttle cytosolic",
+   "carnitine shuttle endoplasmic reticular",
+   "carnitine shuttle mitochondrial",
+   "fatty acid biosynthesis",
+   "formation and hydrolysis of cholesterol esters",
+   "glycerolipid metabolism",
+   "omega 3 fatty acid metabolism",
+   "omega 6 fatty acid metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group55": {
+  "source": "human1",
+  "relevant_names": [
+   "biotin metabolism",
+   "fatty acid biosynthesis even chain",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid elongation odd chain",
+   "propanoate metabolism",
+   "riboflavin metabolism",
+   "urea cycle"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group56": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis even chain",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation even chain",
+   "fatty acid elongation odd chain",
+   "terpenoid backbone biosynthesis",
+   "vitamin a metabolism"
+  ],
+  "size": 12
+ },
+ "s4_cooke_2025_human1_group57": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis even chain",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation even chain",
+   "fatty acid elongation odd chain"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group58": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid desaturation even chain",
+   "fatty acid desaturation odd chain"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group59": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 2",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation even chain",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation odd chain",
+   "glucocorticoid biosynthesis",
+   "heme degradation",
+   "heme synthesis",
+   "vitamin a metabolism",
+   "vitamin d metabolism"
+  ],
+  "size": 13
+ },
+ "s4_cooke_2025_human1_group60": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid elongation even chain",
+   "fatty acid elongation odd chain"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group61": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis even chain",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid biosynthesis unsaturated",
+   "fatty acid desaturation odd chain",
+   "fatty acid elongation even chain",
+   "fatty acid elongation odd chain"
+  ],
+  "size": 8
+ },
+ "s4_cooke_2025_human1_group67": {
+  "source": "human1",
+  "relevant_names": [
+   "androgen metabolism",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 2",
+   "fatty acid desaturation odd chain",
+   "glucocorticoid biosynthesis",
+   "vitamin d metabolism"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_human1_group77": {
+  "source": "human1",
+  "relevant_names": [
+   "glycosylphosphatidylinositol gpi anchor biosynthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group80": {
+  "source": "human1",
+  "relevant_names": [
+   "chondroitin sulfate degradation",
+   "heparan sulfate degradation"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group98": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "fatty acid biosynthesis",
+   "omega 3 fatty acid metabolism",
+   "omega 6 fatty acid metabolism",
+   "propanoate metabolism"
+  ],
+  "size": 9
+ },
+ "s4_cooke_2025_human1_group123": {
+  "source": "human1",
+  "relevant_names": [
+   "androgen metabolism",
+   "steroid metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group29": {
+  "source": "human1",
+  "relevant_names": [
+   "biotin metabolism",
+   "coa synthesis",
+   "fatty acid biosynthesis even chain",
+   "riboflavin metabolism",
+   "thiamine metabolism"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_human1_group108": {
+  "source": "human1",
+  "relevant_names": [
+   "porphyrin metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group132": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "drug metabolism",
+   "histidine metabolism",
+   "leukotriene metabolism",
+   "phenylalanine metabolism",
+   "riboflavin metabolism",
+   "serotonin and melatonin biosynthesis",
+   "terpenoid backbone biosynthesis",
+   "ubiquinone synthesis",
+   "vitamin e metabolism"
+  ],
+  "size": 10
+ },
+ "s4_cooke_2025_human1_group138": {
+  "source": "human1",
+  "relevant_names": [
+   "vitamin b6 metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group135": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "cholesterol biosynthesis 2",
+   "cholesterol biosynthesis 3 kandustch russell pathway",
+   "fatty acid biosynthesis odd chain",
+   "fatty acid desaturation odd chain",
+   "retinol metabolism",
+   "vitamin a metabolism"
+  ],
+  "size": 7
+ },
+ "s4_cooke_2025_human1_group78": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid desaturation odd chain",
+   "heme degradation",
+   "heme synthesis",
+   "ros detoxification"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group125": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "fatty acid biosynthesis odd chain",
+   "terpenoid backbone biosynthesis",
+   "ubiquinone synthesis"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group18": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 mitochondrial",
+   "beta oxidation of di unsaturated fatty acids n 6 peroxisomal",
+   "beta oxidation of odd chain fatty acids mitochondrial",
+   "beta oxidation of odd chain fatty acids peroxisomal",
+   "beta oxidation of phytanic acid peroxisomal",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 mitochondrial",
+   "beta oxidation of unsaturated fatty acids n 7 peroxisomal",
+   "beta oxidation of unsaturated fatty acids n 9 peroxisomal",
+   "cholesterol biosynthesis 2",
+   "fatty acid biosynthesis odd chain",
+   "omega 3 fatty acid metabolism",
+   "omega 6 fatty acid metabolism",
+   "vitamin d metabolism",
+   "vitamin e metabolism"
+  ],
+  "size": 16
+ },
+ "s4_cooke_2025_human1_group100": {
+  "source": "human1",
+  "relevant_names": [
+   "coa synthesis",
+   "pantothenate and coa biosynthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group79": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid desaturation odd chain",
+   "heme degradation",
+   "heme synthesis"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group106": {
+  "source": "human1",
+  "relevant_names": [
+   "inositol phosphate metabolism",
+   "phosphatidylinositol phosphate metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group130": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "omega 3 fatty acid metabolism",
+   "serotonin and melatonin biosynthesis",
+   "tryptophan metabolism"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_human1_group81": {
+  "source": "human1",
+  "relevant_names": [
+   "hippurate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group113": {
+  "source": "human1",
+  "relevant_names": [
+   "protein modification"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group89": {
+  "source": "human1",
+  "relevant_names": [
+   "lipoic acid metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group43": {
+  "source": "human1",
+  "relevant_names": [
+   "coa catabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group44": {
+  "source": "human1",
+  "relevant_names": [
+   "biotin metabolism",
+   "coa synthesis",
+   "pantothenate and coa biosynthesis"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group137": {
+  "source": "human1",
+  "relevant_names": [
+   "riboflavin metabolism",
+   "vitamin b2 metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group25": {
+  "source": "human1",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "histidine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_human1_group133": {
+  "source": "human1",
+  "relevant_names": [
+   "fatty acid biosynthesis even chain",
+   "thiamine metabolism",
+   "urea cycle"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_human1_group139": {
+  "source": "human1",
+  "relevant_names": [
+   "vitamin c metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_human1_group119": {
+  "source": "human1",
+  "relevant_names": [
+   "beta oxidation of branched chain fatty acids mitochondrial",
+   "beta oxidation of poly unsaturated fatty acids mitochondrial",
+   "biotin metabolism",
+   "butanoate metabolism",
+   "cholesterol biosynthesis 2",
+   "drug metabolism",
+   "fatty acid biosynthesis even chain",
+   "fructose and mannose metabolism",
+   "leukotriene metabolism",
+   "oxidative phosphorylation",
+   "phenylalanine metabolism",
+   "propanoate metabolism",
+   "riboflavin metabolism",
+   "thiamine metabolism",
+   "ubiquinone synthesis",
+   "vitamin b2 metabolism",
+   "vitamin e metabolism"
+  ],
+  "size": 17
+ },
+ "s4_cooke_2025_recon2_2_subsystem27": {
+  "source": "recon2",
+  "relevant_names": [
+   "phosphatidylinositol phosphate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem76": {
+  "source": "recon2",
+  "relevant_names": [
+   "vitamin b6 metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem70": {
+  "source": "recon2",
+  "relevant_names": [
+   "galactose metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem45": {
+  "source": "recon2",
+  "relevant_names": [
+   "starch and sucrose metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem9": {
+  "source": "recon2",
+  "relevant_names": [
+   "phenylalanine metabolism",
+   "ubiquinone synthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem69": {
+  "source": "recon2",
+  "relevant_names": [
+   "glyoxylate and dicarboxylate metabolism",
+   "phenylalanine metabolism",
+   "pyruvate metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem59": {
+  "source": "recon2",
+  "relevant_names": [
+   "heme synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem6": {
+  "source": "recon2",
+  "relevant_names": [
+   "nucleotide interconversion",
+   "pyrimidine catabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem17": {
+  "source": "recon2",
+  "relevant_names": [
+   "cytochrome metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem85": {
+  "source": "recon2",
+  "relevant_names": [
+   "androgen and estrogen synthesis and metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem30": {
+  "source": "recon2",
+  "relevant_names": [
+   "citric acid cycle",
+   "glutamate metabolism",
+   "glycolysis gluconeogenesis",
+   "propanoate metabolism",
+   "pyruvate metabolism"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_recon2_2_subsystem90": {
+  "source": "recon2",
+  "relevant_names": [
+   "blood group synthesis",
+   "glycosphingolipid metabolism",
+   "keratan sulfate synthesis",
+   "o glycan synthesis"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_recon2_2_subsystem40": {
+  "source": "recon2",
+  "relevant_names": [
+   "triacylglycerol synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem75": {
+  "source": "recon2",
+  "relevant_names": [
+   "histidine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem61": {
+  "source": "recon2",
+  "relevant_names": [
+   "cysteine metabolism",
+   "d alanine metabolism",
+   "ros detoxification"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem12": {
+  "source": "recon2",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem15": {
+  "source": "recon2",
+  "relevant_names": [
+   "taurine and hypotaurine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem48": {
+  "source": "recon2",
+  "relevant_names": [
+   "vitamin c metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem19": {
+  "source": "recon2",
+  "relevant_names": [
+   "keratan sulfate degradation",
+   "n glycan degradation"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem5": {
+  "source": "recon2",
+  "relevant_names": [
+   "methionine and cysteine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem38": {
+  "source": "recon2",
+  "relevant_names": [
+   "purine synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem10": {
+  "source": "recon2",
+  "relevant_names": [
+   "valine leucine and isoleucine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem36": {
+  "source": "recon2",
+  "relevant_names": [
+   "nucleotide salvage pathway"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem7": {
+  "source": "recon2",
+  "relevant_names": [
+   "citric acid cycle",
+   "propanoate metabolism",
+   "vitamin b2 metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem39": {
+  "source": "recon2",
+  "relevant_names": [
+   "blood group synthesis",
+   "glycosphingolipid metabolism",
+   "keratan sulfate synthesis",
+   "n glycan synthesis",
+   "o glycan synthesis",
+   "transport golgi apparatus"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_recon2_2_subsystem78": {
+  "source": "recon2",
+  "relevant_names": [
+   "coa catabolism",
+   "coa synthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem63": {
+  "source": "recon2",
+  "relevant_names": [
+   "folate metabolism",
+   "glutamate metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem2": {
+  "source": "recon2",
+  "relevant_names": [
+   "vitamin d metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem8": {
+  "source": "recon2",
+  "relevant_names": [
+   "tyrosine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem21": {
+  "source": "recon2",
+  "relevant_names": [
+   "blood group synthesis",
+   "glycosphingolipid metabolism",
+   "keratan sulfate synthesis",
+   "n glycan synthesis",
+   "o glycan synthesis",
+   "transport golgi apparatus"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_recon2_2_subsystem55": {
+  "source": "recon2",
+  "relevant_names": [
+   "d alanine metabolism",
+   "ros detoxification"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem33": {
+  "source": "recon2",
+  "relevant_names": [
+   "oxidative phosphorylation",
+   "propanoate metabolism",
+   "vitamin b2 metabolism"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem68": {
+  "source": "recon2",
+  "relevant_names": [
+   "fructose and mannose metabolism",
+   "glycolysis gluconeogenesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem14": {
+  "source": "recon2",
+  "relevant_names": [
+   "nucleotide interconversion",
+   "purine catabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem80": {
+  "source": "recon2",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "glyoxylate and dicarboxylate metabolism",
+   "lysine metabolism",
+   "phenylalanine metabolism",
+   "ubiquinone synthesis"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_recon2_2_subsystem83": {
+  "source": "recon2",
+  "relevant_names": [
+   "cysteine metabolism",
+   "d alanine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem74": {
+  "source": "recon2",
+  "relevant_names": [
+   "hyaluronan metabolism",
+   "o glycan synthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem54": {
+  "source": "recon2",
+  "relevant_names": [
+   "limonene and pinene degradation"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem79": {
+  "source": "recon2",
+  "relevant_names": [
+   "nad metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem20": {
+  "source": "recon2",
+  "relevant_names": [
+   "blood group synthesis",
+   "glycosphingolipid metabolism",
+   "hyaluronan metabolism",
+   "keratan sulfate degradation",
+   "keratan sulfate synthesis",
+   "o glycan synthesis"
+  ],
+  "size": 6
+ },
+ "s4_cooke_2025_recon2_2_subsystem16": {
+  "source": "recon2",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "urea cycle"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem3": {
+  "source": "recon2",
+  "relevant_names": [
+   "lysine metabolism",
+   "phenylalanine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem28": {
+  "source": "recon2",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "glycine serine alanine and threonine metabolism",
+   "urea cycle"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem47": {
+  "source": "recon2",
+  "relevant_names": [
+   "r group synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem4": {
+  "source": "recon2",
+  "relevant_names": [
+   "glycine serine alanine and threonine metabolism",
+   "urea cycle"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem82": {
+  "source": "recon2",
+  "relevant_names": [
+   "thiamine metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem22": {
+  "source": "recon2",
+  "relevant_names": [
+   "citric acid cycle",
+   "folate metabolism",
+   "glutamate metabolism",
+   "pyruvate metabolism"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_recon2_2_subsystem87": {
+  "source": "recon2",
+  "relevant_names": [
+   "arachidonic acid metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem67": {
+  "source": "recon2",
+  "relevant_names": [
+   "keratan sulfate degradation",
+   "n glycan degradation",
+   "o glycan synthesis"
+  ],
+  "size": 3
+ },
+ "s4_cooke_2025_recon2_2_subsystem77": {
+  "source": "recon2",
+  "relevant_names": [
+   "inositol phosphate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem44": {
+  "source": "recon2",
+  "relevant_names": [
+   "glutathione metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem46": {
+  "source": "recon2",
+  "relevant_names": [
+   "biotin metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem23": {
+  "source": "recon2",
+  "relevant_names": [
+   "pentose phosphate pathway"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem53": {
+  "source": "recon2",
+  "relevant_names": [
+   "heme degradation"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem49": {
+  "source": "recon2",
+  "relevant_names": [
+   "pyrimidine synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem66": {
+  "source": "recon2",
+  "relevant_names": [
+   "coa catabolism",
+   "coa synthesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem52": {
+  "source": "recon2",
+  "relevant_names": [
+   "blood group synthesis",
+   "keratan sulfate synthesis",
+   "n glycan synthesis",
+   "transport golgi apparatus"
+  ],
+  "size": 4
+ },
+ "s4_cooke_2025_recon2_2_subsystem62": {
+  "source": "recon2",
+  "relevant_names": [
+   "fatty acid synthesis"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem31": {
+  "source": "recon2",
+  "relevant_names": [
+   "citric acid cycle",
+   "glutamate metabolism",
+   "glycolysis gluconeogenesis",
+   "glyoxylate and dicarboxylate metabolism",
+   "pyruvate metabolism"
+  ],
+  "size": 5
+ },
+ "s4_cooke_2025_recon2_2_subsystem41": {
+  "source": "recon2",
+  "relevant_names": [
+   "alanine and aspartate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem13": {
+  "source": "recon2",
+  "relevant_names": [
+   "butanoate metabolism"
+  ],
+  "size": 1
+ },
+ "s4_cooke_2025_recon2_2_subsystem26": {
+  "source": "recon2",
+  "relevant_names": [
+   "aminosugar metabolism",
+   "glycolysis gluconeogenesis"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem1": {
+  "source": "recon2",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "phenylalanine metabolism"
+  ],
+  "size": 2
+ },
+ "s4_cooke_2025_recon2_2_subsystem81": {
+  "source": "recon2",
+  "relevant_names": [
+   "oxidative phosphorylation",
+   "vitamin b2 metabolism"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000052855_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "estrogen metabolism pathway including enzymes blue field and chemical compounds",
+   "sulfatase and aromatase pathway"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed5": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "17 beta hydroxysteroid dehydrogenase iii deficiency",
+   "androgen and estrogen metabolism",
+   "androstenedione metabolism",
+   "aromatase deficiency"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053042_seed9": {
+  "source": "ramp",
+  "relevant_names": [
+   "adrenal steroidogenesis pathway",
+   "aldo keto reductase 1c2 akr1c2 expression in prostate cancer cell lines",
+   "alterations in the steroid biosynthesis pathway in congenital adrenal hyperplasia cah",
+   "analysis of gene pathways for ment lh alone or in combination ment lh to regulate steroidogenesis",
+   "androgen biosynthesis",
+   "androgen pathway and genes involved in androgen biosynthesis and metabolism",
+   "antral follicle steroidogenesis",
+   "biosynthesis of steroids in mammals",
+   "biosynthetic pathway for neurosteroids in the brain",
+   "biosynthetic pathways of neurosteroid formation",
+   "common synthesis pathway for testosterone from cholesterol and its subsequent conversion into estrogenic and androgenic active metabolites",
+   "cyp17 inhibitors for prostate cancer therapy",
+   "effect of maternal body mass index on the steroid profile in women with gestational diabetes mellitus",
+   "estrogen biosynthesis pathway",
+   "estrogen biosynthesis pathway from cholesterol to estetrol with the enzymes involved",
+   "estrogen metabolism pathway including enzymes blue field and chemical compounds",
+   "estrogens and the schr dinger s cat in the ovarian tumor microenvironment",
+   "lipedema and the potential role of estrogen in excessive adipose tissue accumulation",
+   "male steroid hormones in cardiomyocyte energy metabolism",
+   "mechanisms and management of age related oxidative stress in male hypogonadism associated with non communicable chronic disease",
+   "metabolic pathway of 17beta estradiol biosynthesis",
+   "novel method to differentiate tonsil derived mesenchymal stem cells in vitro into estrogen secreting cells",
+   "ovarian steroid hormone synthesis",
+   "pathway for adrenal steroid synthesis",
+   "preclinical and clinical research models of prostate cancer a brief overview",
+   "schematic diagram of androgen biosynthesis",
+   "schematic overview of the steroidogenic pathway",
+   "schematic showing the details of the estrogen pathway",
+   "steroid biosynthesis",
+   "steroid hormone structures and synthesis pathways",
+   "steroidogenesis pathway involved in testosterone synthesis from cholesterol in testicular leydig cells",
+   "steroidogenic pathway",
+   "structure based discovery of selective cyp17a1 inhibitors for castration resistant prostate cancer treatment",
+   "summary of steroidogenic pathways in primary trophoblast cells isolated from human term placenta",
+   "synthesis of dihydrotestosterone via the classic and alternative backdoor pathwaysthe classic pathway of steroidogenesis leading to dihydrotestosterone is shown on the left and the alternative pathway is shown on the right",
+   "synthesis of estrogen progesterone and testosterone from cholesterol",
+   "the steroidogenic pathway"
+  ],
+  "size": 37
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed9": {
+  "source": "ramp",
+  "relevant_names": [
+   "3 phosphoglycerate dehydrogenase deficiency",
+   "dihydropyrimidine dehydrogenase deficiency dhpd",
+   "dimethylglycine dehydrogenase deficiency",
+   "glycine serine and threonine metabolism",
+   "hyperglycinemia non ketotic",
+   "non ketotic hyperglycinemia",
+   "sarcosinemia"
+  ],
+  "size": 7
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000025682_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetaminophen action pathway",
+   "acetylsalicylic acid action pathway",
+   "antipyrine action pathway",
+   "antrafenine action pathway",
+   "arachidonic acid metabolism",
+   "bromfenac action pathway",
+   "carprofen action pathway",
+   "celecoxib action pathway",
+   "diclofenac action pathway",
+   "diflunisal action pathway",
+   "etodolac action pathway",
+   "etoricoxib action pathway",
+   "fenoprofen action pathway",
+   "flurbiprofen action pathway",
+   "ibuprofen action pathway",
+   "indomethacin action pathway",
+   "ketoprofen action pathway",
+   "ketorolac action pathway",
+   "leukotriene c4 synthesis deficiency",
+   "lornoxicam action pathway",
+   "lumiracoxib action pathway",
+   "magnesium salicylate action pathway",
+   "mefenamic acid action pathway",
+   "meloxicam action pathway",
+   "nabumetone action pathway",
+   "naproxen action pathway",
+   "nepafenac action pathway",
+   "oxaprozin action pathway",
+   "phenylbutazone action pathway",
+   "piroxicam action pathway",
+   "rofecoxib action pathway",
+   "salicylate sodium action pathway",
+   "salicylic acid action pathway",
+   "salsalate action pathway",
+   "sulindac action pathway",
+   "suprofen action pathway",
+   "tenoxicam action pathway",
+   "tiaprofenic acid action pathway",
+   "tolmetin action pathway",
+   "trisalicylate choline action pathway",
+   "valdecoxib action pathway"
+  ],
+  "size": 41
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed5": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed9": {
+  "source": "ramp",
+  "relevant_names": [
+   "galactose metabolism",
+   "galactosemia"
+  ],
+  "size": 2
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "pyrimidine metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050099_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "nucleotide catabolism",
+   "pyrimidine catabolism",
+   "pyrimidine salvage"
+  ],
+  "size": 3
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "pyrimidine metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed5": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed9": {
+  "source": "ramp",
+  "relevant_names": [
+   "biological oxidations",
+   "cytochrome p450 arranged by substrate type",
+   "phase i functionalization of compounds",
+   "phase ii conjugation of compounds"
+  ],
+  "size": 4
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkaptonuria",
+   "disulfiram action pathway",
+   "dopamine beta hydroxylase deficiency",
+   "hawkinsinuria",
+   "monoamine oxidase a deficiency mao a",
+   "tyrosine metabolism",
+   "tyrosinemia transient of the newborn",
+   "tyrosinemia type i"
+  ],
+  "size": 8
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkaptonuria",
+   "disulfiram action pathway",
+   "dopamine beta hydroxylase deficiency",
+   "hawkinsinuria",
+   "monoamine oxidase a deficiency mao a",
+   "tyrosine metabolism",
+   "tyrosinemia transient of the newborn",
+   "tyrosinemia type i"
+  ],
+  "size": 8
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkaptonuria",
+   "disulfiram action pathway",
+   "dopamine beta hydroxylase deficiency",
+   "hawkinsinuria",
+   "monoamine oxidase a deficiency mao a",
+   "tyrosine metabolism",
+   "tyrosinemia transient of the newborn",
+   "tyrosinemia type i"
+  ],
+  "size": 8
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050096_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "metabolism of amino acids and derivatives"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkaptonuria",
+   "disulfiram action pathway",
+   "dopamine beta hydroxylase deficiency",
+   "hawkinsinuria",
+   "monoamine oxidase a deficiency mao a",
+   "tyrosine metabolism",
+   "tyrosinemia transient of the newborn",
+   "tyrosinemia type i"
+  ],
+  "size": 8
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9": {
+  "source": "ramp",
+  "relevant_names": [
+   "eicosanoid synthesis"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed1": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed2": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed3": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed4": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed5": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed6": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed7": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed8": {
+  "source": "ramp",
+  "relevant_names": [
+   "tryptophan metabolism"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 hydroxyglutric aciduria d and l form",
+   "4 hydroxybutyric aciduria succinic semialdehyde dehydrogenase deficiency",
+   "alanine aspartate and glutamate metabolism",
+   "aspartate metabolism",
+   "canavan disease",
+   "glutamate metabolism",
+   "homocarnosinosis",
+   "hyperinsulinism hyperammonemia syndrome",
+   "hypoacetylaspartia",
+   "succinic semialdehyde dehydrogenase deficiency"
+  ],
+  "size": 10
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 hydroxyglutric aciduria d and l form",
+   "4 hydroxybutyric aciduria succinic semialdehyde dehydrogenase deficiency",
+   "alanine aspartate and glutamate metabolism",
+   "aspartate metabolism",
+   "canavan disease",
+   "glutamate metabolism",
+   "homocarnosinosis",
+   "hyperinsulinism hyperammonemia syndrome",
+   "hypoacetylaspartia",
+   "succinic semialdehyde dehydrogenase deficiency"
+  ],
+  "size": 10
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "amino sugar metabolism",
+   "g m2 gangliosidosis variant b tay sachs disease",
+   "salla disease infantile sialic acid storage disease",
+   "sialuria or french type sialuria",
+   "tay sachs disease"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "amino sugar metabolism",
+   "g m2 gangliosidosis variant b tay sachs disease",
+   "salla disease infantile sialic acid storage disease",
+   "sialuria or french type sialuria",
+   "tay sachs disease"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetaminophen action pathway",
+   "acetylsalicylic acid action pathway",
+   "antipyrine action pathway",
+   "antrafenine action pathway",
+   "arachidonic acid metabolism",
+   "bromfenac action pathway",
+   "carprofen action pathway",
+   "celecoxib action pathway",
+   "diclofenac action pathway",
+   "diflunisal action pathway",
+   "etodolac action pathway",
+   "etoricoxib action pathway",
+   "fenoprofen action pathway",
+   "flurbiprofen action pathway",
+   "ibuprofen action pathway",
+   "indomethacin action pathway",
+   "ketoprofen action pathway",
+   "ketorolac action pathway",
+   "leukotriene c4 synthesis deficiency",
+   "lornoxicam action pathway",
+   "lumiracoxib action pathway",
+   "magnesium salicylate action pathway",
+   "mefenamic acid action pathway",
+   "meloxicam action pathway",
+   "nabumetone action pathway",
+   "naproxen action pathway",
+   "nepafenac action pathway",
+   "oxaprozin action pathway",
+   "phenylbutazone action pathway",
+   "piroxicam action pathway",
+   "rofecoxib action pathway",
+   "salicylate sodium action pathway",
+   "salicylic acid action pathway",
+   "salsalate action pathway",
+   "sulindac action pathway",
+   "suprofen action pathway",
+   "tenoxicam action pathway",
+   "tiaprofenic acid action pathway",
+   "tolmetin action pathway",
+   "trisalicylate choline action pathway",
+   "valdecoxib action pathway"
+  ],
+  "size": 41
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetaminophen action pathway",
+   "acetylsalicylic acid action pathway",
+   "antipyrine action pathway",
+   "antrafenine action pathway",
+   "arachidonic acid metabolism",
+   "bromfenac action pathway",
+   "carprofen action pathway",
+   "celecoxib action pathway",
+   "diclofenac action pathway",
+   "diflunisal action pathway",
+   "etodolac action pathway",
+   "etoricoxib action pathway",
+   "fenoprofen action pathway",
+   "flurbiprofen action pathway",
+   "ibuprofen action pathway",
+   "indomethacin action pathway",
+   "ketoprofen action pathway",
+   "ketorolac action pathway",
+   "leukotriene c4 synthesis deficiency",
+   "lornoxicam action pathway",
+   "lumiracoxib action pathway",
+   "magnesium salicylate action pathway",
+   "mefenamic acid action pathway",
+   "meloxicam action pathway",
+   "nabumetone action pathway",
+   "naproxen action pathway",
+   "nepafenac action pathway",
+   "oxaprozin action pathway",
+   "phenylbutazone action pathway",
+   "piroxicam action pathway",
+   "rofecoxib action pathway",
+   "salicylate sodium action pathway",
+   "salicylic acid action pathway",
+   "salsalate action pathway",
+   "sulindac action pathway",
+   "suprofen action pathway",
+   "tenoxicam action pathway",
+   "tiaprofenic acid action pathway",
+   "tolmetin action pathway",
+   "trisalicylate choline action pathway",
+   "valdecoxib action pathway"
+  ],
+  "size": 41
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "arginine glycine amidinotransferase deficiency agat deficiency",
+   "argininemia",
+   "argininosuccinic aciduria",
+   "carbamoyl phosphate synthetase deficiency",
+   "citrullinemia type i",
+   "creatine deficiency guanidinoacetate methyltransferase deficiency",
+   "guanidinoacetate methyltransferase deficiency gamt deficiency",
+   "hyperornithinemia hyperammonemia homocitrullinuria hhh syndrome",
+   "hyperornithinemia with gyrate atrophy hoga",
+   "hyperprolinemia type i",
+   "hyperprolinemia type ii",
+   "l arginine glycine amidinotransferase deficiency",
+   "ornithine aminotransferase deficiency oat deficiency",
+   "ornithine transcarbamylase deficiency otc deficiency",
+   "prolidase deficiency pd",
+   "prolinemia type ii",
+   "urea cycle",
+   "urea cycle and associated pathways"
+  ],
+  "size": 19
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "arginine and proline metabolism",
+   "arginine glycine amidinotransferase deficiency agat deficiency",
+   "argininemia",
+   "argininosuccinic aciduria",
+   "carbamoyl phosphate synthetase deficiency",
+   "citrullinemia type i",
+   "creatine deficiency guanidinoacetate methyltransferase deficiency",
+   "guanidinoacetate methyltransferase deficiency gamt deficiency",
+   "hyperornithinemia hyperammonemia homocitrullinuria hhh syndrome",
+   "hyperornithinemia with gyrate atrophy hoga",
+   "hyperprolinemia type i",
+   "hyperprolinemia type ii",
+   "l arginine glycine amidinotransferase deficiency",
+   "ornithine aminotransferase deficiency oat deficiency",
+   "ornithine transcarbamylase deficiency otc deficiency",
+   "prolidase deficiency pd",
+   "prolinemia type ii",
+   "urea cycle",
+   "urea cycle and associated pathways"
+  ],
+  "size": 19
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "adrenoleukodystrophy x linked",
+   "biosynthesis of unsaturated fatty acids",
+   "carnitine acylcarnitine translocase deficiency"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "adrenoleukodystrophy x linked",
+   "biosynthesis of unsaturated fatty acids",
+   "carnitine acylcarnitine translocase deficiency"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "butanonate metabolic pathway pathway",
+   "butyrate metabolism",
+   "ketone body metabolism"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "butanonate metabolic pathway pathway",
+   "butyrate metabolism",
+   "ketone body metabolism"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "caffeine and theobromine metabolism",
+   "caffeine metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "caffeine and theobromine metabolism",
+   "caffeine metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 ketoglutarate dehydrogenase complex deficiency",
+   "citric acid cycle",
+   "congenital lactic acidosis",
+   "fumarase deficiency",
+   "glutaminolysis and cancer",
+   "mitochondrial complex ii deficiency",
+   "pyruvate dehydrogenase deficiency e2",
+   "pyruvate dehydrogenase deficiency e3",
+   "tca cycle aka krebs or citric acid cycle",
+   "tca cycle and deficiency of pyruvate dehydrogenase complex pdhc",
+   "the oncogenic action of 2 hydroxyglutarate",
+   "the oncogenic action of d 2 hydroxyglutarate in hydroxygluaricaciduria",
+   "the oncogenic action of fumarate",
+   "the oncogenic action of l 2 hydroxyglutarate in hydroxygluaricaciduria",
+   "the oncogenic action of succinate",
+   "transcriptomic data shows immunometabolic effects of vitamin d",
+   "tricarboxylic acid tca cycle showing differences in gene expression and metabolite abundances in mouse liver",
+   "urinary excretion of citric acid tca cycle metabolites and the renal expression of genes that regulate these metabolites were significantly reduced among participants with versus without non diabetic ckd",
+   "warburg effect"
+  ],
+  "size": 19
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 ketoglutarate dehydrogenase complex deficiency",
+   "citric acid cycle",
+   "congenital lactic acidosis",
+   "fumarase deficiency",
+   "glutaminolysis and cancer",
+   "mitochondrial complex ii deficiency",
+   "pyruvate dehydrogenase deficiency e2",
+   "pyruvate dehydrogenase deficiency e3",
+   "tca cycle aka krebs or citric acid cycle",
+   "tca cycle and deficiency of pyruvate dehydrogenase complex pdhc",
+   "the oncogenic action of 2 hydroxyglutarate",
+   "the oncogenic action of d 2 hydroxyglutarate in hydroxygluaricaciduria",
+   "the oncogenic action of fumarate",
+   "the oncogenic action of l 2 hydroxyglutarate in hydroxygluaricaciduria",
+   "the oncogenic action of succinate",
+   "transcriptomic data shows immunometabolic effects of vitamin d",
+   "tricarboxylic acid tca cycle showing differences in gene expression and metabolite abundances in mouse liver",
+   "urinary excretion of citric acid tca cycle metabolites and the renal expression of genes that regulate these metabolites were significantly reduced among participants with versus without non diabetic ckd",
+   "warburg effect"
+  ],
+  "size": 19
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "d arginine and d ornithine metabolism"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "d arginine and d ornithine metabolism"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "carnitine palmitoyl transferase deficiency i",
+   "carnitine palmitoyl transferase deficiency ii",
+   "ethylmalonic encephalopathy",
+   "fatty acid elongation in mitochondria",
+   "fatty acid metabolism",
+   "glutaric aciduria type i",
+   "long chain 3 hydroxyacyl coa dehydrogenase deficiency lchad",
+   "long chain acyl coa dehydrogenase deficiency lcad",
+   "medium chain acyl coa dehydrogenase deficiency mcad",
+   "mitochondrial beta oxidation of medium chain saturated fatty acids",
+   "short chain acyl coa dehydrogenase deficiency scad deficiency",
+   "trifunctional protein deficiency",
+   "very long chain acyl coa dehydrogenase deficiency vlcad"
+  ],
+  "size": 13
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "carnitine palmitoyl transferase deficiency i",
+   "carnitine palmitoyl transferase deficiency ii",
+   "ethylmalonic encephalopathy",
+   "fatty acid elongation in mitochondria",
+   "fatty acid metabolism",
+   "glutaric aciduria type i",
+   "long chain 3 hydroxyacyl coa dehydrogenase deficiency lchad",
+   "long chain acyl coa dehydrogenase deficiency lcad",
+   "medium chain acyl coa dehydrogenase deficiency mcad",
+   "mitochondrial beta oxidation of medium chain saturated fatty acids",
+   "short chain acyl coa dehydrogenase deficiency scad deficiency",
+   "trifunctional protein deficiency",
+   "very long chain acyl coa dehydrogenase deficiency vlcad"
+  ],
+  "size": 13
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "carnitine palmitoyl transferase deficiency i",
+   "carnitine palmitoyl transferase deficiency ii",
+   "ethylmalonic encephalopathy",
+   "fatty acid beta oxidation",
+   "fatty acid elongation in mitochondria",
+   "fatty acid metabolism",
+   "glutaric aciduria type i",
+   "long chain 3 hydroxyacyl coa dehydrogenase deficiency lchad",
+   "long chain acyl coa dehydrogenase deficiency lcad",
+   "medium chain acyl coa dehydrogenase deficiency mcad",
+   "mitochondrial beta oxidation of long chain saturated fatty acids",
+   "mitochondrial beta oxidation of medium chain saturated fatty acids",
+   "mitochondrial beta oxidation of short chain saturated fatty acids",
+   "mitochondrial fatty acid beta oxidation of saturated fatty acids",
+   "short chain acyl coa dehydrogenase deficiency scad deficiency",
+   "trifunctional protein deficiency",
+   "very long chain acyl coa dehydrogenase deficiency vlcad"
+  ],
+  "size": 17
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "carnitine palmitoyl transferase deficiency i",
+   "carnitine palmitoyl transferase deficiency ii",
+   "ethylmalonic encephalopathy",
+   "fatty acid beta oxidation",
+   "fatty acid elongation in mitochondria",
+   "fatty acid metabolism",
+   "glutaric aciduria type i",
+   "long chain 3 hydroxyacyl coa dehydrogenase deficiency lchad",
+   "long chain acyl coa dehydrogenase deficiency lcad",
+   "medium chain acyl coa dehydrogenase deficiency mcad",
+   "mitochondrial beta oxidation of long chain saturated fatty acids",
+   "mitochondrial beta oxidation of medium chain saturated fatty acids",
+   "mitochondrial beta oxidation of short chain saturated fatty acids",
+   "mitochondrial fatty acid beta oxidation of saturated fatty acids",
+   "short chain acyl coa dehydrogenase deficiency scad deficiency",
+   "trifunctional protein deficiency",
+   "very long chain acyl coa dehydrogenase deficiency vlcad"
+  ],
+  "size": 17
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "fructose and mannose metabolism",
+   "fructose intolerance hereditary",
+   "fructosuria"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "fructose and mannose metabolism",
+   "fructose intolerance hereditary",
+   "fructosuria"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "5 oxoprolinase deficiency",
+   "5 oxoprolinuria",
+   "gamma glutamyl transpeptidase deficiency",
+   "gamma glutamyltransferase deficiency",
+   "glutathione conjugation",
+   "glutathione metabolism",
+   "glutathione synthetase deficiency"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "5 oxoprolinase deficiency",
+   "5 oxoprolinuria",
+   "gamma glutamyl transpeptidase deficiency",
+   "gamma glutamyltransferase deficiency",
+   "glutathione conjugation",
+   "glutathione metabolism",
+   "glutathione synthetase deficiency"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "d glyceric acidura",
+   "familial lipoprotein lipase deficiency",
+   "glycerol kinase deficiency",
+   "glycerolipid metabolism"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "d glyceric acidura",
+   "familial lipoprotein lipase deficiency",
+   "glycerol kinase deficiency",
+   "glycerolipid metabolism"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "biosynthesis of amino acids",
+   "biosynthesis of secondary metabolites",
+   "carbon metabolism",
+   "glycolysis gluconeogenesis",
+   "microbial metabolism in diverse environments"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "biosynthesis of amino acids",
+   "biosynthesis of secondary metabolites",
+   "carbon metabolism",
+   "glycolysis gluconeogenesis",
+   "microbial metabolism in diverse environments"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "histidine catabolism",
+   "histidine metabolism",
+   "histidinemia"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "beta alanine metabolism",
+   "histidine catabolism",
+   "histidine metabolism",
+   "histidinemia"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "butyrate metabolism",
+   "disorders in ketolysis",
+   "disorders in ketone body synthesis",
+   "ketogenesis and ketolysis",
+   "ketone body metabolism",
+   "succinyl coa 3 ketoacid coa transferase deficiency"
+  ],
+  "size": 6
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "butyrate metabolism",
+   "disorders in ketolysis",
+   "disorders in ketone body synthesis",
+   "ketogenesis and ketolysis",
+   "ketone body metabolism",
+   "succinyl coa 3 ketoacid coa transferase deficiency"
+  ],
+  "size": 6
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 aminoadipic 2 oxoadipic aciduria",
+   "glutaric aciduria type i",
+   "hyperlysinemia i familial",
+   "hyperlysinemia ii or saccharopinuria",
+   "lysine degradation",
+   "pyridoxine dependency with seizures",
+   "saccharopinuria hyperlysinemia ii"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "2 aminoadipic 2 oxoadipic aciduria",
+   "glutaric aciduria type i",
+   "hyperlysinemia i familial",
+   "hyperlysinemia ii or saccharopinuria",
+   "lysine degradation",
+   "pyridoxine dependency with seizures",
+   "saccharopinuria hyperlysinemia ii"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "cystathionine beta synthase deficiency",
+   "glycine n methyltransferase deficiency",
+   "homocystinuria megaloblastic anemia due to defect in cobalamin metabolism cblg complementation type",
+   "hypermethioninemia",
+   "methionine adenosyltransferase deficiency",
+   "methionine de novo and salvage pathway",
+   "methionine metabolism",
+   "methylenetetrahydrofolate reductase deficiency mthfrd",
+   "s adenosylhomocysteine sah hydrolase deficiency"
+  ],
+  "size": 9
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "cystathionine beta synthase deficiency",
+   "glycine n methyltransferase deficiency",
+   "homocystinuria megaloblastic anemia due to defect in cobalamin metabolism cblg complementation type",
+   "hypermethioninemia",
+   "methionine adenosyltransferase deficiency",
+   "methionine de novo and salvage pathway",
+   "methionine metabolism",
+   "methylenetetrahydrofolate reductase deficiency mthfrd",
+   "s adenosylhomocysteine sah hydrolase deficiency"
+  ],
+  "size": 9
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "nicotinate and nicotinamide metabolism",
+   "nicotinate metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "nicotinate and nicotinamide metabolism",
+   "nicotinate metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "5 phosphoribose 1 diphosphate biosynthesis"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "5 phosphoribose 1 diphosphate biosynthesis"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "abc transporters in lipid homeostasis"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "abc transporters in lipid homeostasis"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "abc family proteins mediated transport",
+   "abc transporter disorders",
+   "activation of apc c and apc c cdc20 mediated degradation of mitotic proteins",
+   "activation of nf kappab in b cells",
+   "apc c cdc20 mediated degradation of mitotic proteins",
+   "apc c cdc20 mediated degradation of securin",
+   "apc c cdh1 mediated degradation of cdc20 and other apc c cdh1 targeted proteins in late mitosis early g1",
+   "apc c mediated degradation of cell cycle proteins",
+   "apc cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint",
+   "asymmetric localization of pcp proteins",
+   "auf1 hnrnp d0 binds and destabilizes mrna",
+   "autodegradation of cdh1 by cdh1 apc c",
+   "autodegradation of the e3 ubiquitin ligase cop1",
+   "cdc20 phospho apc c mediated degradation of cyclin a",
+   "cdk mediated phosphorylation and removal of cdc6",
+   "cellular response to hypoxia",
+   "cross presentation of soluble exogenous antigens endosomes",
+   "cyclin a cdk2 associated events at s phase entry",
+   "cyclin e associated events during g1 s transition",
+   "dectin 1 mediated noncanonical nf kb signaling",
+   "defective cftr causes cystic fibrosis",
+   "degradation of axin",
+   "degradation of beta catenin by the destruction complex",
+   "degradation of dvl",
+   "degradation of gli1 by the proteasome",
+   "degradation of gli2 by the proteasome",
+   "downstream signaling events of b cell receptor bcr",
+   "er phagosome pathway",
+   "fbxl7 down regulates aurka during mitotic entry and in early mitosis",
+   "g1 s dna damage checkpoints",
+   "gli3 is processed to gli3r by the proteasome",
+   "gsk3b and btrc cul1 mediated degradation of nfe2l2",
+   "hedgehog ligand biogenesis",
+   "hedgehog on state",
+   "hh mutants abrogate ligand secretion",
+   "hh mutants are degraded by erad",
+   "mapk6 mapk4 signaling",
+   "negative regulation of notch4 signaling",
+   "nik noncanonical nf kb signaling",
+   "orc1 removal from chromatin",
+   "oxygen dependent proline hydroxylation of hypoxia inducible factor alpha",
+   "p53 dependent g1 dna damage response",
+   "p53 dependent g1 s dna damage checkpoint",
+   "p53 independent dna damage response",
+   "p53 independent g1 s dna damage checkpoint",
+   "regulation of activated pak 2p34 by proteasome mediated degradation",
+   "regulation of apc c activators between g1 s and early anaphase",
+   "regulation of apoptosis",
+   "regulation of mitotic cell cycle",
+   "regulation of mrna stability by proteins that bind au rich elements",
+   "regulation of ornithine decarboxylase odc",
+   "regulation of pten stability and activity",
+   "regulation of ras by gaps",
+   "regulation of runx2 expression and activity",
+   "regulation of runx3 expression and activity",
+   "scf beta trcp mediated degradation of emi1",
+   "scf skp2 mediated degradation of p27 p21",
+   "somitogenesis",
+   "stabilization of p53",
+   "switching of origins to a post replicative state",
+   "the role of gtse1 in g2 m progression after g2 checkpoint",
+   "ubiquitin dependent degradation of cyclin d",
+   "ubiquitin mediated degradation of phosphorylated cdc25a",
+   "vif mediated degradation of apobec3g",
+   "vpu mediated degradation of cd4"
+  ],
+  "size": 65
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "abc family proteins mediated transport",
+   "abc transporter disorders",
+   "activation of apc c and apc c cdc20 mediated degradation of mitotic proteins",
+   "activation of nf kappab in b cells",
+   "apc c cdc20 mediated degradation of mitotic proteins",
+   "apc c cdc20 mediated degradation of securin",
+   "apc c cdh1 mediated degradation of cdc20 and other apc c cdh1 targeted proteins in late mitosis early g1",
+   "apc c mediated degradation of cell cycle proteins",
+   "apc cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint",
+   "asymmetric localization of pcp proteins",
+   "auf1 hnrnp d0 binds and destabilizes mrna",
+   "autodegradation of cdh1 by cdh1 apc c",
+   "autodegradation of the e3 ubiquitin ligase cop1",
+   "cdc20 phospho apc c mediated degradation of cyclin a",
+   "cdk mediated phosphorylation and removal of cdc6",
+   "cellular response to hypoxia",
+   "cross presentation of soluble exogenous antigens endosomes",
+   "cyclin a cdk2 associated events at s phase entry",
+   "cyclin e associated events during g1 s transition",
+   "dectin 1 mediated noncanonical nf kb signaling",
+   "defective cftr causes cystic fibrosis",
+   "degradation of axin",
+   "degradation of beta catenin by the destruction complex",
+   "degradation of dvl",
+   "degradation of gli1 by the proteasome",
+   "degradation of gli2 by the proteasome",
+   "downstream signaling events of b cell receptor bcr",
+   "er phagosome pathway",
+   "fbxl7 down regulates aurka during mitotic entry and in early mitosis",
+   "g1 s dna damage checkpoints",
+   "gli3 is processed to gli3r by the proteasome",
+   "gsk3b and btrc cul1 mediated degradation of nfe2l2",
+   "hedgehog ligand biogenesis",
+   "hedgehog on state",
+   "hh mutants abrogate ligand secretion",
+   "hh mutants are degraded by erad",
+   "mapk6 mapk4 signaling",
+   "negative regulation of notch4 signaling",
+   "nik noncanonical nf kb signaling",
+   "orc1 removal from chromatin",
+   "oxygen dependent proline hydroxylation of hypoxia inducible factor alpha",
+   "p53 dependent g1 dna damage response",
+   "p53 dependent g1 s dna damage checkpoint",
+   "p53 independent dna damage response",
+   "p53 independent g1 s dna damage checkpoint",
+   "regulation of activated pak 2p34 by proteasome mediated degradation",
+   "regulation of apc c activators between g1 s and early anaphase",
+   "regulation of apoptosis",
+   "regulation of mitotic cell cycle",
+   "regulation of mrna stability by proteins that bind au rich elements",
+   "regulation of ornithine decarboxylase odc",
+   "regulation of pten stability and activity",
+   "regulation of ras by gaps",
+   "regulation of runx2 expression and activity",
+   "regulation of runx3 expression and activity",
+   "scf beta trcp mediated degradation of emi1",
+   "scf skp2 mediated degradation of p27 p21",
+   "somitogenesis",
+   "stabilization of p53",
+   "switching of origins to a post replicative state",
+   "the role of gtse1 in g2 m progression after g2 checkpoint",
+   "ubiquitin dependent degradation of cyclin d",
+   "ubiquitin mediated degradation of phosphorylated cdc25a",
+   "vif mediated degradation of apobec3g",
+   "vpu mediated degradation of cd4"
+  ],
+  "size": 65
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "abo blood group biosynthesis",
+   "blood group systems biosynthesis"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "abo blood group biosynthesis",
+   "blood group systems biosynthesis"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of gabab receptors",
+   "adenylate cyclase inhibitory pathway",
+   "adora2b mediated anti inflammatory cytokines production",
+   "adp signalling through p2y purinoceptor 1",
+   "adp signalling through p2y purinoceptor 12",
+   "adrenaline noradrenaline inhibits insulin secretion",
+   "aquaporin mediated transport",
+   "calmodulin induced events",
+   "cam pathway",
+   "g alpha z signalling events",
+   "g beta gamma signalling through btk",
+   "g beta gamma signalling through cdc42",
+   "g beta gamma signalling through pi3kgamma",
+   "g protein activation",
+   "g protein mediated events",
+   "g protein signaling",
+   "gaba b receptor activation",
+   "gaba receptor activation",
+   "glucagon like peptide 1 glp1 regulates insulin secretion",
+   "glucagon signaling in metabolic regulation",
+   "gper1 signaling",
+   "opioid signalling",
+   "pka activation",
+   "pka activation in glucagon signalling",
+   "pka mediated phosphorylation of creb",
+   "prostacyclin signalling through prostacyclin receptor",
+   "signal amplification",
+   "thromboxane signalling through tp receptor",
+   "vasopressin regulates renal water homeostasis via aquaporins"
+  ],
+  "size": 29
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of gabab receptors",
+   "adenylate cyclase inhibitory pathway",
+   "adora2b mediated anti inflammatory cytokines production",
+   "adp signalling through p2y purinoceptor 1",
+   "adp signalling through p2y purinoceptor 12",
+   "adrenaline noradrenaline inhibits insulin secretion",
+   "aquaporin mediated transport",
+   "calmodulin induced events",
+   "cam pathway",
+   "g alpha z signalling events",
+   "g beta gamma signalling through btk",
+   "g beta gamma signalling through cdc42",
+   "g beta gamma signalling through pi3kgamma",
+   "g protein activation",
+   "g protein mediated events",
+   "g protein signaling",
+   "gaba b receptor activation",
+   "gaba receptor activation",
+   "glucagon like peptide 1 glp1 regulates insulin secretion",
+   "glucagon signaling in metabolic regulation",
+   "gper1 signaling",
+   "opioid signalling",
+   "pka activation",
+   "pka activation in glucagon signalling",
+   "pka mediated phosphorylation of creb",
+   "prostacyclin signalling through prostacyclin receptor",
+   "signal amplification",
+   "thromboxane signalling through tp receptor",
+   "vasopressin regulates renal water homeostasis via aquaporins"
+  ],
+  "size": 29
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of g protein gated potassium channels",
+   "activation of gabab receptors",
+   "activation of kainate receptors upon glutamate binding",
+   "adora2b mediated anti inflammatory cytokines production",
+   "adp signalling through p2y purinoceptor 1",
+   "adp signalling through p2y purinoceptor 12",
+   "adrenaline noradrenaline inhibits insulin secretion",
+   "cooperation of pdcl phlp1 and tric cct in g protein beta folding",
+   "g alpha z signalling events",
+   "g beta gamma signalling through btk",
+   "g beta gamma signalling through cdc42",
+   "g beta gamma signalling through pi3kgamma",
+   "g beta gamma signalling through plc beta",
+   "g protein activation",
+   "g protein beta gamma signalling",
+   "g protein gated potassium channels",
+   "gaba b receptor activation",
+   "gaba receptor activation",
+   "glucagon like peptide 1 glp1 regulates insulin secretion",
+   "glucagon signaling in metabolic regulation",
+   "glucagon type ligand receptors",
+   "gper1 signaling",
+   "inhibition of voltage gated ca2 channels via gbeta gamma subunits",
+   "inwardly rectifying k channels",
+   "presynaptic function of kainate receptors",
+   "prostacyclin signalling through prostacyclin receptor",
+   "signal amplification",
+   "thrombin signalling through proteinase activated receptors pars",
+   "thromboxane signalling through tp receptor",
+   "vasopressin regulates renal water homeostasis via aquaporins"
+  ],
+  "size": 30
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of g protein gated potassium channels",
+   "activation of gabab receptors",
+   "activation of kainate receptors upon glutamate binding",
+   "adora2b mediated anti inflammatory cytokines production",
+   "adp signalling through p2y purinoceptor 1",
+   "adp signalling through p2y purinoceptor 12",
+   "adrenaline noradrenaline inhibits insulin secretion",
+   "cooperation of pdcl phlp1 and tric cct in g protein beta folding",
+   "g alpha z signalling events",
+   "g beta gamma signalling through btk",
+   "g beta gamma signalling through cdc42",
+   "g beta gamma signalling through pi3kgamma",
+   "g beta gamma signalling through plc beta",
+   "g protein activation",
+   "g protein beta gamma signalling",
+   "g protein gated potassium channels",
+   "gaba b receptor activation",
+   "gaba receptor activation",
+   "glucagon like peptide 1 glp1 regulates insulin secretion",
+   "glucagon signaling in metabolic regulation",
+   "glucagon type ligand receptors",
+   "gper1 signaling",
+   "inhibition of voltage gated ca2 channels via gbeta gamma subunits",
+   "inwardly rectifying k channels",
+   "presynaptic function of kainate receptors",
+   "prostacyclin signalling through prostacyclin receptor",
+   "signal amplification",
+   "thrombin signalling through proteinase activated receptors pars",
+   "thromboxane signalling through tp receptor",
+   "vasopressin regulates renal water homeostasis via aquaporins"
+  ],
+  "size": 30
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkbh2 mediated reversal of alkylation damage",
+   "alkbh3 mediated reversal of alkylation damage",
+   "dna damage reversal",
+   "reversal of alkylation damage by dna dioxygenases",
+   "tet1 2 3 and tdg demethylate dna"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkbh2 mediated reversal of alkylation damage",
+   "alkbh3 mediated reversal of alkylation damage",
+   "dna damage reversal",
+   "reversal of alkylation damage by dna dioxygenases",
+   "tet1 2 3 and tdg demethylate dna"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkbh2 mediated reversal of alkylation damage",
+   "alkbh3 mediated reversal of alkylation damage",
+   "dna damage reversal",
+   "reversal of alkylation damage by dna dioxygenases"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "alkbh2 mediated reversal of alkylation damage",
+   "alkbh3 mediated reversal of alkylation damage",
+   "dna damage reversal",
+   "reversal of alkylation damage by dna dioxygenases"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "abacavir adme",
+   "abacavir metabolism",
+   "abacavir transmembrane transport"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "abacavir adme",
+   "abacavir metabolism",
+   "abacavir transmembrane transport"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "abacavir adme",
+   "abacavir metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "abacavir adme",
+   "abacavir metabolism"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylcholine neurotransmitter release cycle",
+   "dopamine neurotransmitter release cycle",
+   "glutamate neurotransmitter release cycle",
+   "norepinephrine neurotransmitter release cycle",
+   "serotonin neurotransmitter release cycle"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylcholine neurotransmitter release cycle",
+   "dopamine neurotransmitter release cycle",
+   "glutamate neurotransmitter release cycle",
+   "norepinephrine neurotransmitter release cycle",
+   "serotonin neurotransmitter release cycle"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylcholine regulates insulin secretion",
+   "fatty acids bound to gpr40 ffar1 regulate insulin secretion",
+   "free fatty acids regulate insulin secretion"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acetylcholine regulates insulin secretion",
+   "fatty acids bound to gpr40 ffar1 regulate insulin secretion",
+   "free fatty acids regulate insulin secretion"
+  ],
+  "size": 3
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activated pkn1 stimulates transcription of ar androgen receptor regulated genes klk2 and klk3",
+   "assembly of the orc complex at the origin of replication",
+   "b wich complex positively regulates rrna expression",
+   "chromatin modifications during the maternal to zygotic transition mzt",
+   "cleavage of the damaged purine",
+   "cleavage of the damaged pyrimidine",
+   "condensation of prophase chromosomes",
+   "defective pyroptosis",
+   "deposition of new cenpa containing nucleosomes at the centromere",
+   "depurination",
+   "depyrimidination",
+   "dna methylation",
+   "ercc6 csb and ehmt2 g9a positively regulate rrna expression",
+   "formation of the beta catenin tcf transactivating complex",
+   "inhibition of dna recombination at telomere",
+   "meiotic recombination",
+   "meiotic synapsis",
+   "nucleosome assembly",
+   "packaging of telomere ends",
+   "prc2 methylates histones and dna",
+   "pre notch transcription and translation",
+   "recognition and association of dna glycosylase with site containing an affected purine",
+   "recognition and association of dna glycosylase with site containing an affected pyrimidine",
+   "regulation of endogenous retroelements by piwi interacting rnas pirnas",
+   "regulation of endogenous retroelements by the human silencing hub hush complex",
+   "replacement of protamines by nucleosomes in the male pronucleus",
+   "rho gtpases activate pkns",
+   "rna polymerase i promoter escape",
+   "rna polymerase i promoter opening",
+   "runx1 regulates genes involved in megakaryocyte differentiation and platelet function",
+   "sirt1 negatively regulates rrna expression",
+   "transcriptional regulation of granulopoiesis"
+  ],
+  "size": 32
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activated pkn1 stimulates transcription of ar androgen receptor regulated genes klk2 and klk3",
+   "assembly of the orc complex at the origin of replication",
+   "b wich complex positively regulates rrna expression",
+   "chromatin modifications during the maternal to zygotic transition mzt",
+   "cleavage of the damaged purine",
+   "cleavage of the damaged pyrimidine",
+   "condensation of prophase chromosomes",
+   "defective pyroptosis",
+   "deposition of new cenpa containing nucleosomes at the centromere",
+   "depurination",
+   "depyrimidination",
+   "dna methylation",
+   "ercc6 csb and ehmt2 g9a positively regulate rrna expression",
+   "formation of the beta catenin tcf transactivating complex",
+   "inhibition of dna recombination at telomere",
+   "meiotic recombination",
+   "meiotic synapsis",
+   "nucleosome assembly",
+   "packaging of telomere ends",
+   "prc2 methylates histones and dna",
+   "pre notch transcription and translation",
+   "recognition and association of dna glycosylase with site containing an affected purine",
+   "recognition and association of dna glycosylase with site containing an affected pyrimidine",
+   "regulation of endogenous retroelements by piwi interacting rnas pirnas",
+   "regulation of endogenous retroelements by the human silencing hub hush complex",
+   "replacement of protamines by nucleosomes in the male pronucleus",
+   "rho gtpases activate pkns",
+   "rna polymerase i promoter escape",
+   "rna polymerase i promoter opening",
+   "runx1 regulates genes involved in megakaryocyte differentiation and platelet function",
+   "sirt1 negatively regulates rrna expression",
+   "transcriptional regulation of granulopoiesis"
+  ],
+  "size": 32
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activated point mutants of fgfr2",
+   "downstream signaling of activated fgfr1",
+   "downstream signaling of activated fgfr2",
+   "downstream signaling of activated fgfr3",
+   "fgfr1 ligand binding and activation",
+   "fgfr1 mutant receptor activation",
+   "fgfr1c ligand binding and activation",
+   "fgfr2 ligand binding and activation",
+   "fgfr2 mutant receptor activation",
+   "fgfr2b ligand binding and activation",
+   "fgfr2c ligand binding and activation",
+   "fgfr3 ligand binding and activation",
+   "fgfr3 mutant receptor activation",
+   "fgfr3b ligand binding and activation",
+   "fgfr3c ligand binding and activation",
+   "fgfr4 ligand binding and activation",
+   "fgfrl1 modulation of fgfr1 signaling",
+   "frs mediated fgfr1 signaling",
+   "frs mediated fgfr2 signaling",
+   "frs mediated fgfr3 signaling",
+   "frs mediated fgfr4 signaling",
+   "negative regulation of fgfr1 signaling",
+   "negative regulation of fgfr2 signaling",
+   "phospholipase c mediated cascade fgfr1",
+   "phospholipase c mediated cascade fgfr2",
+   "phospholipase c mediated cascade fgfr3",
+   "phospholipase c mediated cascade fgfr4",
+   "pi 3k cascade fgfr1",
+   "pi 3k cascade fgfr2",
+   "pi 3k cascade fgfr3",
+   "pi 3k cascade fgfr4",
+   "pi3k cascade",
+   "shc mediated cascade fgfr1",
+   "shc mediated cascade fgfr2",
+   "shc mediated cascade fgfr3",
+   "shc mediated cascade fgfr4",
+   "signaling by activated point mutants of fgfr1",
+   "signaling by activated point mutants of fgfr3",
+   "signaling by fgfr in disease",
+   "signaling by fgfr2 in disease",
+   "signaling by fgfr3 in disease"
+  ],
+  "size": 41
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activated point mutants of fgfr2",
+   "downstream signaling of activated fgfr1",
+   "downstream signaling of activated fgfr2",
+   "downstream signaling of activated fgfr3",
+   "fgfr1 ligand binding and activation",
+   "fgfr1 mutant receptor activation",
+   "fgfr1c ligand binding and activation",
+   "fgfr2 ligand binding and activation",
+   "fgfr2 mutant receptor activation",
+   "fgfr2b ligand binding and activation",
+   "fgfr2c ligand binding and activation",
+   "fgfr3 ligand binding and activation",
+   "fgfr3 mutant receptor activation",
+   "fgfr3b ligand binding and activation",
+   "fgfr3c ligand binding and activation",
+   "fgfr4 ligand binding and activation",
+   "fgfrl1 modulation of fgfr1 signaling",
+   "frs mediated fgfr1 signaling",
+   "frs mediated fgfr2 signaling",
+   "frs mediated fgfr3 signaling",
+   "frs mediated fgfr4 signaling",
+   "negative regulation of fgfr1 signaling",
+   "negative regulation of fgfr2 signaling",
+   "phospholipase c mediated cascade fgfr1",
+   "phospholipase c mediated cascade fgfr2",
+   "phospholipase c mediated cascade fgfr3",
+   "phospholipase c mediated cascade fgfr4",
+   "pi 3k cascade fgfr1",
+   "pi 3k cascade fgfr2",
+   "pi 3k cascade fgfr3",
+   "pi 3k cascade fgfr4",
+   "pi3k cascade",
+   "shc mediated cascade fgfr1",
+   "shc mediated cascade fgfr2",
+   "shc mediated cascade fgfr3",
+   "shc mediated cascade fgfr4",
+   "signaling by activated point mutants of fgfr1",
+   "signaling by activated point mutants of fgfr3",
+   "signaling by fgfr in disease",
+   "signaling by fgfr2 in disease",
+   "signaling by fgfr3 in disease"
+  ],
+  "size": 41
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of ampk downstream of nmdars",
+   "activation of nmda receptors and postsynaptic events",
+   "assembly and cell surface presentation of nmda receptors",
+   "creb1 phosphorylation through nmda receptor mediated activation of ras signaling",
+   "neurotransmitter receptors and postsynaptic signal transmission",
+   "post nmda receptor activation events",
+   "transmission across chemical synapses"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of ampk downstream of nmdars",
+   "activation of nmda receptors and postsynaptic events",
+   "assembly and cell surface presentation of nmda receptors",
+   "creb1 phosphorylation through nmda receptor mediated activation of ras signaling",
+   "neurotransmitter receptors and postsynaptic signal transmission",
+   "post nmda receptor activation events",
+   "transmission across chemical synapses"
+  ],
+  "size": 7
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of gene expression by srebf srebp",
+   "bmal1 clock npas2 activates circadian gene expression",
+   "regulation of cholesterol biosynthesis by srebp srebf",
+   "rora activates gene expression"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of gene expression by srebf srebp",
+   "bmal1 clock npas2 activates circadian gene expression",
+   "regulation of cholesterol biosynthesis by srebp srebf",
+   "rora activates gene expression"
+  ],
+  "size": 4
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of the phototransduction cascade",
+   "the phototransduction cascade"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "activation of the phototransduction cascade",
+   "the phototransduction cascade"
+  ],
+  "size": 2
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050453_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acyl chain remodeling of cl"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050453_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acyl chain remodeling of cl"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "acyl chain remodeling of dag and tag"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "acyl chain remodeling of dag and tag"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "10q22q23 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "10q22q23 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "15q11q13 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "15q11q13 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "15q25 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "15q25 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "4 hydroxytamoxifen dexamethasone and retinoic acids regulation of p27 expression"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "4 hydroxytamoxifen dexamethasone and retinoic acids regulation of p27 expression"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "4p16 3 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "4p16 3 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "5q35 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "5q35 copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "7 oxo c and 7 beta hc pathways"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "7 oxo c and 7 beta hc pathways"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "7q11 23 distal copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "7q11 23 distal copy number variation"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "ace inhibitor pathway",
+   "agents acting on the renin angiotensin system pathway pharmgkb",
+   "ras and bradykinin pathways in covid 19",
+   "renin angiotensin aldosterone system raas",
+   "sars cov 2 and ace2 receptor molecular mechanisms"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "ace inhibitor pathway",
+   "agents acting on the renin angiotensin system pathway pharmgkb",
+   "ras and bradykinin pathways in covid 19",
+   "renin angiotensin aldosterone system raas",
+   "sars cov 2 and ace2 receptor molecular mechanisms"
+  ],
+  "size": 5
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep0": {
+  "source": "ramp",
+  "relevant_names": [
+   "adhd and autism asd pathways"
+  ],
+  "size": 1
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep1": {
+  "source": "ramp",
+  "relevant_names": [
+   "adhd and autism asd pathways"
+  ],
+  "size": 1
+ }
+}

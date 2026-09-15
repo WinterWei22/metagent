@@ -146,7 +146,7 @@ def main(argv: list[str] | None = None) -> int:
     all_tasks = {t["task_id"]: t for t in iter_jsonl(args.tasks)}
     driver_lookup = _build_driver_lookup(Path(args.curated))
 
-    _resolve_api_key("minimax", "MiniMax-M2.7")
+    _resolve_api_key("minimax", "MiniMax-M2.7-highspeed")
 
     # Build the list of (tid, variant, narrative, task) to grade.
     work: list[dict] = []

@@ -41,7 +41,7 @@ ChatFn = Callable[..., str]
 
 
 NARRATIVE_LLM_ROUTES: dict[str, dict[str, str | None]] = {
-    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7"},
+    "minimax": {"provider": "minimax", "model": "MiniMax-M2.7-highspeed"},
     "gpt55": {"provider": "openai", "model": "gpt-5.5"},
     "opus47": {"provider": "openai", "model": "claude-opus-4-7"},
 }
@@ -229,6 +229,7 @@ def run_sub6a(
                     model=model,
                     trace_id=task["task_id"],
                     caller=caller,
+                    response_format={"type": "json_object"},
                     **_chat_kwargs(provider),
                 )
                 llm_calls = 1

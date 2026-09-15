@@ -63,6 +63,14 @@ types and what each means:
   enrichment signal (e.g. "Tyrosine and DOPA are key drivers").
 - pathway_relationship: a claim about a relationship between TWO pathways
   (upstream / downstream / cross-talk / shared intermediates).
+- other_claim: an abstract single-compound regulatory / mechanistic
+  statement that names no specific pathway and no specific
+  enzyme / reaction (e.g. "Polyamines regulate protein synthesis").
+  Phase B1 D3: such sentences USED to be auto-routed to
+  biological_claim, where layer C / Sub-6 biological then attempted a
+  RaMP membership lookup against an unverifiable subject and emitted
+  a misleading UNSUPPORTED verdict. Routing to other_claim makes the
+  dispatcher emit UNVERIFIABLE_V0, which is the honest verdict.
 
 Examples (Sub-6 enrichment narratives):
 
@@ -84,13 +92,17 @@ Examples (Sub-6 enrichment narratives):
     "Tyrosine metabolism is upstream of dopamine synthesis." → pathway_relationship
     "Both pathways share several intermediates including DOPA." → pathway_relationship
 
-    # BIOLOGICAL — single compound role / single-process / pathway membership
+    # BIOLOGICAL — names a SPECIFIC pathway by name AND attaches a
+    # single-compound or single-process subject to that pathway
     "Tyrosine metabolism is dysregulated in Parkinson's disease." → biological_claim
     "Caffeine maps to KEGG pathway map00232." → biological_claim
-    "Glutathione is involved in oxidative stress response." → biological_claim
     "dCMP is in pyrimidine metabolism." → biological_claim
-    "Polyamines regulate protein synthesis." → biological_claim
-    "Heme synthesis compromise affects mitochondrial electron transport." → biological_claim
+
+    # OTHER — abstract single-compound regulation / mechanism that
+    # neither names a specific pathway nor an enzyme / reaction
+    "Polyamines regulate protein synthesis." → other_claim
+    "Glutathione is involved in oxidative stress response." → other_claim
+    "Heme synthesis compromise affects mitochondrial electron transport." → other_claim
 
 Output one line per claim in the format ``<index>: <type>`` — for example::
 

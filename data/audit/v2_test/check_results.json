@@ -1,0 +1,1407 @@
+{
+  "md5": {
+    "per_file": {
+      "data/benchmark/sub6/sub6b_mammalian_tasks_v2.jsonl": {
+        "expected_md5": "23594c0a3c6ab7a906baad1e0cd622dc",
+        "actual_md5": "23594c0a3c6ab7a906baad1e0cd622dc",
+        "match": true,
+        "resolved_from": "audit_worktree",
+        "size_bytes": 4872237
+      },
+      "data/benchmark/sub6/sub6a_e2e_tasks_v2.jsonl": {
+        "expected_md5": "73f0f3a336dc3d0be87571d15cfc6831",
+        "actual_md5": "73f0f3a336dc3d0be87571d15cfc6831",
+        "match": true,
+        "resolved_from": "audit_worktree",
+        "size_bytes": 3557026
+      },
+      "data/benchmark/sub6/curated_hmdb_mammalian_v2.jsonl": {
+        "expected_md5": "2a8a9f35e8cf84a9c1e2a452eb00561e",
+        "actual_md5": "2a8a9f35e8cf84a9c1e2a452eb00561e",
+        "match": true,
+        "resolved_from": "audit_worktree",
+        "size_bytes": 1759288
+      },
+      "data/processed/hmdb_candidates_npc_classified_v2.jsonl": {
+        "expected_md5": "8824f112a1a63e2f91fcc451ce157244",
+        "actual_md5": "8824f112a1a63e2f91fcc451ce157244",
+        "match": true,
+        "resolved_from": "sibling",
+        "size_bytes": 7237675
+      },
+      "data/processed/nm002_excluded_gnps_ids.json": {
+        "expected_md5": "b5176477fa803c3c2a3c13eeae1f7638",
+        "actual_md5": "b5176477fa803c3c2a3c13eeae1f7638",
+        "match": true,
+        "resolved_from": "audit_worktree",
+        "size_bytes": 10040274
+      }
+    },
+    "all_match": true,
+    "anomalies": [
+      "data/processed/hmdb_candidates_npc_classified_v2.jsonl resolved from sibling worktree (audit worktree branch lacks file)"
+    ]
+  },
+  "p0_1": {
+    "sub6a": {
+      "n_tasks": 38,
+      "noise_count_min": 2,
+      "noise_count_median": 4.0,
+      "noise_count_max": 5,
+      "noise_zero_count": 0,
+      "noise_zero_pct": 0.0
+    },
+    "sub6b": {
+      "n_tasks": 63,
+      "noise_count_min": 2,
+      "noise_count_median": 4,
+      "noise_count_max": 5,
+      "noise_zero_count": 0,
+      "noise_zero_pct": 0.0
+    }
+  },
+  "p0_2": {
+    "n_pathways": 13,
+    "n_tasks_per_pathway": {
+      "RAMP_P_000052855": 1,
+      "RAMP_P_000000421": 7,
+      "RAMP_P_000053042": 1,
+      "RAMP_P_000000016": 6,
+      "RAMP_P_000000398": 10,
+      "RAMP_P_000025682": 1,
+      "RAMP_P_000053306": 2,
+      "RAMP_P_000050099": 1,
+      "RAMP_P_000050021": 10,
+      "RAMP_P_000000106": 4,
+      "RAMP_P_000050096": 1,
+      "RAMP_P_000000203": 10,
+      "RAMP_P_000000141": 9
+    },
+    "n_singletons": 5
+  },
+  "p0_3": {
+    "n_unique_source_ids": 369,
+    "n_spectra_total": 459,
+    "n_excluded_overlap": 15,
+    "sample_excluded": [
+      "CCMSLIB00005464365",
+      "CCMSLIB00005720762",
+      "CCMSLIB00003138222",
+      "CCMSLIB00005885094",
+      "CCMSLIB00006579327",
+      "CCMSLIB00006674284",
+      "MoNA024029",
+      "CCMSLIB00000578142",
+      "MSBNK-mFam-MC21_000778",
+      "VF-NPL-QTOF007875"
+    ],
+    "exclusion_list_size": 76783
+  },
+  "p0_4": {
+    "upstream_size": 600,
+    "curated_size": 250,
+    "upstream_unique_kegg": 526,
+    "curated_unique_kegg": 249,
+    "task_used_unique_kegg": 174,
+    "curated_subset_of_upstream": true,
+    "task_used_subset_of_curated": true,
+    "task_used_pct_of_curated": 69.87951807228916,
+    "curated_pct_of_upstream": 47.338403041825096
+  },
+  "p0_5": {
+    "grep_leakage_filter": "/home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/tools/benchmark/sub6/spectrum_lookup.py:27:  exactly the role :mod:`tools.benchmark.leakage_filter` plays for the\nBinary file /home/weiwentao/workspace/llm_agent_metabolomics/metagent_day1_v5_investigation/tools/benchmark/sub6/__pycache__/spectrum_lookup.cpython-313.pyc matches\n",
+    "n_spectra_in_sub6a": 459,
+    "n_spectra_in_exclusion_list": 25,
+    "leak_rate_pct": 5.446623093681917,
+    "sample_leaks": [
+      "CCMSLIB00006579327",
+      "MSBNK-mFam-MC21_000778",
+      "CCMSLIB00005720762",
+      "CCMSLIB00000085412",
+      "CCMSLIB00003138222"
+    ]
+  },
+  "p1_1": {
+    "n_tasks": 63,
+    "n_total_pairs": 1953,
+    "n_identical_pairs": 67,
+    "n_jaccard_ge_09_pairs": 67,
+    "n_jaccard_ge_07_pairs": 179,
+    "pct_pairs_ge_09": 3.430619559651818,
+    "pct_pairs_ge_07": 9.165386584741423,
+    "n_tasks_in_high_overlap_clusters": 50,
+    "pct_tasks_in_high_overlap": 79.36507936507937,
+    "n_identical_multi_clusters": 13,
+    "n_unique_signal_sets": 35,
+    "n_pathway_clusters": 13,
+    "identical_clusters_sample": [
+      [
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed8"
+      ],
+      [
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed6"
+      ],
+      [
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+        "compound_only_enrich_mammalian_RAMP_P_000000421_seed5"
+      ],
+      [
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed8"
+      ],
+      [
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed1",
+        "compound_only_enrich_mammalian_RAMP_P_000000398_seed2"
+      ]
+    ]
+  },
+  "p1_2": {
+    "n_instances": 219,
+    "n_spectra_total": 304,
+    "n_signal_no_ik_mapping": 0,
+    "mean_spectra_per_instance": 1.3881278538812785,
+    "median_spectra": 1,
+    "max_spectra": 3,
+    "n_eq_0": 45,
+    "pct_eq_0": 20.54794520547945,
+    "n_eq_1": 80,
+    "pct_eq_1": 36.529680365296805,
+    "n_ge_3": 36,
+    "pct_ge_3": 16.438356164383563,
+    "instance_tasks": [
+      [
+        "e2e_enrich_mammalian_RAMP_P_000052855_seed196617997",
+        "C00951",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000052855_seed196617997",
+        "C00280",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000052855_seed196617997",
+        "C00468",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000052855_seed196617997",
+        "C00535",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000052855_seed196617997",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C00280",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C00468",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C01227",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C03917",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C00535",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1580619361",
+        "C00951",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1859157923",
+        "C03917",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1859157923",
+        "C00535",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1859157923",
+        "C00951",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1859157923",
+        "C01227",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed1859157923",
+        "C00280",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2579427706",
+        "C03917",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2579427706",
+        "C00535",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2579427706",
+        "C00951",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2579427706",
+        "C00468",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2579427706",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C00951",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C03917",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C00468",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C00280",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed3624533572",
+        "C00535",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2148340335",
+        "C00535",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2148340335",
+        "C00468",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2148340335",
+        "C00951",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2148340335",
+        "C01227",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2148340335",
+        "C03917",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed249229871",
+        "C00951",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed249229871",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed249229871",
+        "C03917",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed249229871",
+        "C00280",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed249229871",
+        "C00535",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C00468",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C00280",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C00951",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C00535",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000421_seed2128485400",
+        "C03917",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053042_seed409910564",
+        "C00280",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053042_seed409910564",
+        "C00468",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053042_seed409910564",
+        "C03917",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053042_seed409910564",
+        "C00535",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053042_seed409910564",
+        "C01227",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C00073",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C00021",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C00077",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C00097",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C00109",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed460379927",
+        "C16241",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C00114",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C02291",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C00020",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C16241",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C00019",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C00213",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1999069143",
+        "C01005",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C02291",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00021",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00037",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00097",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00020",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00581",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C01005",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed3390457165",
+        "C00188",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C03508",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00037",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00065",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00212",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00114",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00097",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00188",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1580958619",
+        "C00019",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00114",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00188",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00073",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C16241",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00025",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00155",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00019",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed2560580376",
+        "C00212",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C00022",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C00026",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C02147",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C00025",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C00114",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000016_seed1608939814",
+        "C00188",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C00221",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C01697",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C00137",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C00089",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2094104706",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3788203504",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3788203504",
+        "C01697",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3788203504",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3788203504",
+        "C00089",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3788203504",
+        "C00137",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3517837744",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3517837744",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3517837744",
+        "C01697",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3517837744",
+        "C00089",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3517837744",
+        "C00137",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C00221",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C01697",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C00089",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed4002032937",
+        "C00137",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1909797104",
+        "C00221",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1909797104",
+        "C00089",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1909797104",
+        "C01697",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1909797104",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1909797104",
+        "C00137",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed498152030",
+        "C00221",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed498152030",
+        "C00137",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed498152030",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed498152030",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed498152030",
+        "C00089",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C00221",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C00137",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C00089",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed1887758724",
+        "C01697",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C00137",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C00089",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C01697",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C00221",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed911202007",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C00089",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C01697",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C00137",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C00221",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed3271204528",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2934282216",
+        "C00221",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2934282216",
+        "C00116",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2934282216",
+        "C00089",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2934282216",
+        "C00137",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000398_seed2934282216",
+        "C01235",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000025682_seed2943283649",
+        "C04805",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000025682_seed2943283649",
+        "C00219",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000025682_seed2943283649",
+        "C14768",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000025682_seed2943283649",
+        "C04742",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000025682_seed2943283649",
+        "C02198",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C00112",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C00429",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C00526",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C02642",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C00105",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed2915906702",
+        "C00672",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+        "C00526",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+        "C00906",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+        "C00881",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+        "C05100",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050099_seed1975252413",
+        "C00429",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C00672",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C00112",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C02642",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C00881",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C00429",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000053306_seed1727925770",
+        "C00526",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "C05851",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C05851",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed363370268",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed833794865",
+        "C05851",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C05851",
+        3
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed4072755234",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "C05851",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C05851",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C07190",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "C05851",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "C00928",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "C14853",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "C01324",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "C20319",
+        0
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "C05851",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000106_seed2277080905",
+        "C15571",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000106_seed2277080905",
+        "C00272",
+        1
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000106_seed2277080905",
+        "C00544",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000106_seed2277080905",
+        "C00547",
+        2
+      ],
+      [
+        "e2e_enrich_mammalian_RAMP_P_000000106_seed2277080905",
+        "C00082",
+        3
+      ]
+    ]
+  },
+  "p1_3": {
+    "n_pathway_groups": 13,
+    "n_inconsistent_groups": 0,
+    "inconsistent_sample": []
+  },
+  "e1": {
+    "sub6a": {
+      "label": "sub6a",
+      "n_lines": 38,
+      "n_valid_json": 38,
+      "n_parse_errors": 0,
+      "parse_error_sample": [],
+      "n_unique_task_ids": 38,
+      "n_dup_task_ids": 0,
+      "sample_dups": []
+    },
+    "sub6b": {
+      "label": "sub6b",
+      "n_lines": 63,
+      "n_valid_json": 63,
+      "n_parse_errors": 0,
+      "parse_error_sample": [],
+      "n_unique_task_ids": 63,
+      "n_dup_task_ids": 0,
+      "sample_dups": []
+    }
+  },
+  "e2": {
+    "n_tasks": 63,
+    "n_mismatch_tasks": 0,
+    "pct_mismatch": 0.0,
+    "mismatch_sample": []
+  },
+  "e3": {
+    "n_pids_total": 63,
+    "n_pids_unique": 13,
+    "prefix_distribution": {
+      "RaMP": 63
+    },
+    "sample_unique_pids": [
+      "RAMP_P_000050096",
+      "RAMP_P_000000421",
+      "RAMP_P_000053042",
+      "RAMP_P_000050099",
+      "RAMP_P_000000398"
+    ]
+  },
+  "e4": {
+    "n_tasks": 63,
+    "n_violating_tasks": 0,
+    "pct_violating": 0.0,
+    "sample_violations": []
+  },
+  "e5": {
+    "n_sub6a_pids": 10,
+    "n_sub6b_pids": 13,
+    "n_overlap_pids": 10,
+    "overlap_sample": [
+      "RAMP_P_000000421",
+      "RAMP_P_000000106",
+      "RAMP_P_000053042",
+      "RAMP_P_000050099",
+      "RAMP_P_000000398",
+      "RAMP_P_000025682",
+      "RAMP_P_000053306",
+      "RAMP_P_000050021",
+      "RAMP_P_000052855",
+      "RAMP_P_000000016"
+    ]
+  },
+  "deep_p1_1": {
+    "n_naive": 63,
+    "n_eff_by_unique_signal_set": 35,
+    "n_eff_by_pathway_cluster": 13,
+    "n_identical_multi_clusters": 13,
+    "se_multiplier_under_pathway_cluster": 2.2013981571160284,
+    "se_multiplier_under_unique_set": 1.3416407864998738,
+    "pct_tasks_in_high_overlap": 79.36507936507937
+  },
+  "deep_p1_2": {
+    "n_total_instances": 219,
+    "n_inst_eq_0_spectra": 45,
+    "n_inst_eq_1_spectrum": 80,
+    "n_inst_ge_3_spectra": 36,
+    "n_signal_no_ik_mapping": 0,
+    "n_tasks_total": 38,
+    "n_tasks_3plus_compound_with_ge1_spectrum": 30,
+    "n_tasks_3plus_compound_with_ge3_spectra": 3,
+    "n_tasks_all_instances_avg_ge2_spectra": 7,
+    "worst_5_tasks_by_total_spectra": [
+      {
+        "task_id": "e2e_enrich_mammalian_RAMP_P_000050021_seed1927381484",
+        "n_signal_inst": 5,
+        "n_inst_with_ge1_spectrum": 1,
+        "n_inst_with_ge3_spectra": 0,
+        "total_spectra_in_task": 2,
+        "n_total_spectra_in_task_dispersal": 6
+      },
+      {
+        "task_id": "e2e_enrich_mammalian_RAMP_P_000050021_seed2411785485",
+        "n_signal_inst": 6,
+        "n_inst_with_ge1_spectrum": 2,
+        "n_inst_with_ge3_spectra": 0,
+        "total_spectra_in_task": 3,
+        "n_total_spectra_in_task_dispersal": 5
+      },
+      {
+        "task_id": "e2e_enrich_mammalian_RAMP_P_000050021_seed717276092",
+        "n_signal_inst": 5,
+        "n_inst_with_ge1_spectrum": 2,
+        "n_inst_with_ge3_spectra": 0,
+        "total_spectra_in_task": 3,
+        "n_total_spectra_in_task_dispersal": 8
+      },
+      {
+        "task_id": "e2e_enrich_mammalian_RAMP_P_000050021_seed3320305144",
+        "n_signal_inst": 6,
+        "n_inst_with_ge1_spectrum": 2,
+        "n_inst_with_ge3_spectra": 0,
+        "total_spectra_in_task": 3,
+        "n_total_spectra_in_task_dispersal": 10
+      },
+      {
+        "task_id": "e2e_enrich_mammalian_RAMP_P_000050021_seed669730130",
+        "n_signal_inst": 6,
+        "n_inst_with_ge1_spectrum": 2,
+        "n_inst_with_ge3_spectra": 0,
+        "total_spectra_in_task": 3,
+        "n_total_spectra_in_task_dispersal": 4
+      }
+    ]
+  }
+}

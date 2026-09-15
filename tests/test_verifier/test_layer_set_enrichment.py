@@ -153,20 +153,23 @@ def test_set_enrichment_rank4_to_10_unsupported(tyrosine_task):
 
 
 # ---------------------------------------------------------------------------
-# outside top-10 → CONTRADICTED
+# outside top-10 → INSUFFICIENT_EVIDENCE
+# (semantic evolution: absent-from-pool ≠ refuted; per design doc §2 and
+#  user adjudication 2026-06-25 option B. CONTRADICTED is reserved for
+#  rank/score-mismatch — Task 8.)
 # ---------------------------------------------------------------------------
 
 
-def test_set_enrichment_outside_top10_contradicted(tyrosine_task):
+def test_set_enrichment_outside_top10_insufficient(tyrosine_task):
     r = verify_set_enrichment(
         _claim("These metabolites are enriched in Vitamin B12 metabolism."),
         tyrosine_task,
     )
-    assert r.verdict == ClaimVerdict.CONTRADICTED
-    # Correction is the canonical top-1 pathway name.
-    assert r.correction == "Tyrosine metabolism"
+    assert r.verdict == ClaimVerdict.INSUFFICIENT_EVIDENCE
     assert r.enrichment_context.best_match is None
     assert r.enrichment_context.pathway_match_method == "none"
+    # feedback_hint must contain a missing-evidence checklist
+    assert r.feedback_hint is not None and len(r.feedback_hint) > 0
 
 
 # ---------------------------------------------------------------------------

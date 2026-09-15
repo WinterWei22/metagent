@@ -1,0 +1,566 @@
+{
+  "n_iter2_degraded": 14,
+  "per_task": [
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+      "iter_qualities": [
+        10,
+        5,
+        10
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 4,
+          "u": 6,
+          "v": 20,
+          "s": 7,
+          "quality_cu": 10
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 5,
+          "v": 11,
+          "s": 7,
+          "quality_cu": 5
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 10,
+          "v": 9,
+          "s": 3,
+          "quality_cu": 10
+        }
+      ],
+      "delta_q_12": 5,
+      "delta_c_12": 0,
+      "delta_u_12": 5,
+      "delta_s_12": -4,
+      "delta_v_12": -2
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+      "iter_qualities": [
+        20,
+        8,
+        13
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 0,
+          "u": 20,
+          "v": 19,
+          "s": 7,
+          "quality_cu": 20
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 8,
+          "v": 21,
+          "s": 5,
+          "quality_cu": 8
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 13,
+          "v": 22,
+          "s": 0,
+          "quality_cu": 13
+        }
+      ],
+      "delta_q_12": 5,
+      "delta_c_12": 0,
+      "delta_u_12": 5,
+      "delta_s_12": -5,
+      "delta_v_12": 1
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed4",
+      "iter_qualities": [
+        11,
+        4,
+        5
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 0,
+          "u": 11,
+          "v": 13,
+          "s": 21,
+          "quality_cu": 11
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 3,
+          "v": 13,
+          "s": 7,
+          "quality_cu": 4
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 5,
+          "v": 9,
+          "s": 3,
+          "quality_cu": 5
+        }
+      ],
+      "delta_q_12": 1,
+      "delta_c_12": -1,
+      "delta_u_12": 2,
+      "delta_s_12": -4,
+      "delta_v_12": -4
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "iter_qualities": [
+        19,
+        7,
+        9
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 2,
+          "u": 17,
+          "v": 16,
+          "s": 16,
+          "quality_cu": 19
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 6,
+          "v": 4,
+          "s": 16,
+          "quality_cu": 7
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 9,
+          "v": 10,
+          "s": 6,
+          "quality_cu": 9
+        }
+      ],
+      "delta_q_12": 2,
+      "delta_c_12": -1,
+      "delta_u_12": 3,
+      "delta_s_12": -10,
+      "delta_v_12": 6
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+      "iter_qualities": [
+        15,
+        4,
+        7
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 3,
+          "u": 12,
+          "v": 14,
+          "s": 16,
+          "quality_cu": 15
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 4,
+          "v": 17,
+          "s": 10,
+          "quality_cu": 4
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 7,
+          "v": 7,
+          "s": 6,
+          "quality_cu": 7
+        }
+      ],
+      "delta_q_12": 3,
+      "delta_c_12": 0,
+      "delta_u_12": 3,
+      "delta_s_12": -4,
+      "delta_v_12": -10
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+      "iter_qualities": [
+        7,
+        4,
+        7
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 0,
+          "u": 7,
+          "v": 22,
+          "s": 16,
+          "quality_cu": 7
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 3,
+          "v": 5,
+          "s": 24,
+          "quality_cu": 4
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 7,
+          "v": 4,
+          "s": 20,
+          "quality_cu": 7
+        }
+      ],
+      "delta_q_12": 3,
+      "delta_c_12": -1,
+      "delta_u_12": 4,
+      "delta_s_12": -4,
+      "delta_v_12": -1
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "iter_qualities": [
+        15,
+        7,
+        9
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 0,
+          "u": 15,
+          "v": 21,
+          "s": 5,
+          "quality_cu": 15
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 7,
+          "v": 11,
+          "s": 4,
+          "quality_cu": 7
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 9,
+          "v": 8,
+          "s": 3,
+          "quality_cu": 9
+        }
+      ],
+      "delta_q_12": 2,
+      "delta_c_12": 0,
+      "delta_u_12": 2,
+      "delta_s_12": -1,
+      "delta_v_12": -3
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "iter_qualities": [
+        12,
+        5,
+        10
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 1,
+          "u": 11,
+          "v": 19,
+          "s": 2,
+          "quality_cu": 12
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 5,
+          "v": 8,
+          "s": 12,
+          "quality_cu": 5
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 10,
+          "v": 5,
+          "s": 18,
+          "quality_cu": 10
+        }
+      ],
+      "delta_q_12": 5,
+      "delta_c_12": 0,
+      "delta_u_12": 5,
+      "delta_s_12": 6,
+      "delta_v_12": -3
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "iter_qualities": [
+        17,
+        4,
+        13
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 3,
+          "u": 14,
+          "v": 54,
+          "s": 7,
+          "quality_cu": 17
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 4,
+          "v": 41,
+          "s": 4,
+          "quality_cu": 4
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 13,
+          "v": 18,
+          "s": 9,
+          "quality_cu": 13
+        }
+      ],
+      "delta_q_12": 9,
+      "delta_c_12": 0,
+      "delta_u_12": 9,
+      "delta_s_12": 5,
+      "delta_v_12": -23
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed3",
+      "iter_qualities": [
+        2,
+        0,
+        1
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 1,
+          "u": 1,
+          "v": 20,
+          "s": 14,
+          "quality_cu": 2
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 0,
+          "v": 17,
+          "s": 9,
+          "quality_cu": 0
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 1,
+          "v": 15,
+          "s": 14,
+          "quality_cu": 1
+        }
+      ],
+      "delta_q_12": 1,
+      "delta_c_12": 0,
+      "delta_u_12": 1,
+      "delta_s_12": 5,
+      "delta_v_12": -2
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+      "iter_qualities": [
+        17,
+        11,
+        13
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 1,
+          "u": 16,
+          "v": 21,
+          "s": 2,
+          "quality_cu": 17
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 10,
+          "v": 11,
+          "s": 3,
+          "quality_cu": 11
+        },
+        {
+          "iter_idx": 2,
+          "c": 1,
+          "u": 12,
+          "v": 19,
+          "s": 7,
+          "quality_cu": 13
+        }
+      ],
+      "delta_q_12": 2,
+      "delta_c_12": 0,
+      "delta_u_12": 2,
+      "delta_s_12": 4,
+      "delta_v_12": 8
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed7",
+      "iter_qualities": [
+        15,
+        9,
+        12
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 1,
+          "u": 14,
+          "v": 25,
+          "s": 5,
+          "quality_cu": 15
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 8,
+          "v": 22,
+          "s": 4,
+          "quality_cu": 9
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 12,
+          "v": 9,
+          "s": 9,
+          "quality_cu": 12
+        }
+      ],
+      "delta_q_12": 3,
+      "delta_c_12": -1,
+      "delta_u_12": 4,
+      "delta_s_12": 5,
+      "delta_v_12": -13
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "iter_qualities": [
+        7,
+        2,
+        3
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 1,
+          "u": 6,
+          "v": 27,
+          "s": 4,
+          "quality_cu": 7
+        },
+        {
+          "iter_idx": 1,
+          "c": 1,
+          "u": 1,
+          "v": 17,
+          "s": 9,
+          "quality_cu": 2
+        },
+        {
+          "iter_idx": 2,
+          "c": 1,
+          "u": 2,
+          "v": 24,
+          "s": 9,
+          "quality_cu": 3
+        }
+      ],
+      "delta_q_12": 1,
+      "delta_c_12": 0,
+      "delta_u_12": 1,
+      "delta_s_12": 0,
+      "delta_v_12": 7
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed6",
+      "iter_qualities": [
+        7,
+        4,
+        6
+      ],
+      "iter_counts": [
+        {
+          "iter_idx": 0,
+          "c": 0,
+          "u": 7,
+          "v": 40,
+          "s": 14,
+          "quality_cu": 7
+        },
+        {
+          "iter_idx": 1,
+          "c": 0,
+          "u": 4,
+          "v": 23,
+          "s": 8,
+          "quality_cu": 4
+        },
+        {
+          "iter_idx": 2,
+          "c": 0,
+          "u": 6,
+          "v": 16,
+          "s": 6,
+          "quality_cu": 6
+        }
+      ],
+      "delta_q_12": 2,
+      "delta_c_12": 0,
+      "delta_u_12": 2,
+      "delta_s_12": -2,
+      "delta_v_12": -7
+    }
+  ],
+  "verdict": {
+    "verdict": "H3_CONFIRMED",
+    "rationale": "unsupported gains dominate in 14/14 tasks (>= 60 %). H3 (richer feedback → LLM unsupported overshoot) extends from W10 D4.5 to W12 D5 N=63.",
+    "n_degraded": 14,
+    "h3_unsupported_dominant": 14,
+    "h4_contradicted_dominant": 0,
+    "tie": 0,
+    "other": 0,
+    "aggregate_delta_iter1_to_iter2": {
+      "sum_delta_unsupported": 48,
+      "sum_delta_contradicted": -4,
+      "sum_delta_supported": -9,
+      "tasks_losing_supported": 8
+    }
+  }
+}

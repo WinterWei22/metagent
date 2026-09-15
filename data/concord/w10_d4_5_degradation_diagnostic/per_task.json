@@ -1,0 +1,652 @@
+{
+  "n_iter2_degraded": 11,
+  "n_best_ne_final": 16,
+  "iter2_degraded": [
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "gt": "Androgen and Estrogen Metabolism",
+      "iter_qualities": [
+        11,
+        6,
+        8
+      ],
+      "delta_q_12": 2,
+      "iter_counts": [
+        {
+          "s": 7,
+          "c": 0,
+          "u": 11,
+          "v": 20
+        },
+        {
+          "s": 2,
+          "c": 0,
+          "u": 6,
+          "v": 33
+        },
+        {
+          "s": 2,
+          "c": 0,
+          "u": 8,
+          "v": 21
+        }
+      ],
+      "delta_cu_01": -5,
+      "delta_cu_12": 2,
+      "delta_uv_01": 13,
+      "delta_uv_12": -12,
+      "delta_s_12": 0,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+      "gt": "Androgen and Estrogen Metabolism",
+      "iter_qualities": [
+        9,
+        1,
+        3
+      ],
+      "delta_q_12": 2,
+      "iter_counts": [
+        {
+          "s": 8,
+          "c": 0,
+          "u": 9,
+          "v": 22
+        },
+        {
+          "s": 18,
+          "c": 0,
+          "u": 1,
+          "v": 13
+        },
+        {
+          "s": 11,
+          "c": 0,
+          "u": 3,
+          "v": 16
+        }
+      ],
+      "delta_cu_01": -8,
+      "delta_cu_12": 2,
+      "delta_uv_01": -9,
+      "delta_uv_12": 3,
+      "delta_s_12": -7,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed1",
+      "gt": "Galactose Metabolism",
+      "iter_qualities": [
+        6,
+        3,
+        6
+      ],
+      "delta_q_12": 3,
+      "iter_counts": [
+        {
+          "s": 9,
+          "c": 1,
+          "u": 5,
+          "v": 26
+        },
+        {
+          "s": 8,
+          "c": 0,
+          "u": 3,
+          "v": 9
+        },
+        {
+          "s": 3,
+          "c": 0,
+          "u": 6,
+          "v": 12
+        }
+      ],
+      "delta_cu_01": -3,
+      "delta_cu_12": 3,
+      "delta_uv_01": -17,
+      "delta_uv_12": 3,
+      "delta_s_12": -5,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+      "gt": "Galactose Metabolism",
+      "iter_qualities": [
+        15,
+        6,
+        11
+      ],
+      "delta_q_12": 5,
+      "iter_counts": [
+        {
+          "s": 11,
+          "c": 5,
+          "u": 10,
+          "v": 9
+        },
+        {
+          "s": 6,
+          "c": 1,
+          "u": 5,
+          "v": 11
+        },
+        {
+          "s": 7,
+          "c": 1,
+          "u": 10,
+          "v": 7
+        }
+      ],
+      "delta_cu_01": -9,
+      "delta_cu_12": 5,
+      "delta_uv_01": 2,
+      "delta_uv_12": -4,
+      "delta_s_12": 1,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "gt": "Pyrimidine catabolism",
+      "iter_qualities": [
+        8,
+        1,
+        8
+      ],
+      "delta_q_12": 7,
+      "iter_counts": [
+        {
+          "s": 5,
+          "c": 2,
+          "u": 6,
+          "v": 13
+        },
+        {
+          "s": 8,
+          "c": 0,
+          "u": 1,
+          "v": 19
+        },
+        {
+          "s": 3,
+          "c": 0,
+          "u": 8,
+          "v": 8
+        }
+      ],
+      "delta_cu_01": -7,
+      "delta_cu_12": 7,
+      "delta_uv_01": 6,
+      "delta_uv_12": -11,
+      "delta_s_12": -5,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed1",
+      "gt": "Biological oxidations",
+      "iter_qualities": [
+        12,
+        7,
+        11
+      ],
+      "delta_q_12": 4,
+      "iter_counts": [
+        {
+          "s": 9,
+          "c": 3,
+          "u": 9,
+          "v": 6
+        },
+        {
+          "s": 14,
+          "c": 3,
+          "u": 4,
+          "v": 18
+        },
+        {
+          "s": 14,
+          "c": 1,
+          "u": 10,
+          "v": 12
+        }
+      ],
+      "delta_cu_01": -5,
+      "delta_cu_12": 4,
+      "delta_uv_01": 12,
+      "delta_uv_12": -6,
+      "delta_s_12": 0,
+      "bridge_traj": [
+        false,
+        false,
+        false
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+      "gt": "Tyrosine metabolism",
+      "iter_qualities": [
+        8,
+        4,
+        8
+      ],
+      "delta_q_12": 4,
+      "iter_counts": [
+        {
+          "s": 7,
+          "c": 0,
+          "u": 8,
+          "v": 32
+        },
+        {
+          "s": 11,
+          "c": 1,
+          "u": 3,
+          "v": 16
+        },
+        {
+          "s": 21,
+          "c": 0,
+          "u": 8,
+          "v": 6
+        }
+      ],
+      "delta_cu_01": -4,
+      "delta_cu_12": 4,
+      "delta_uv_01": -16,
+      "delta_uv_12": -10,
+      "delta_s_12": 10,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "gt": "Tyrosine metabolism",
+      "iter_qualities": [
+        11,
+        4,
+        9
+      ],
+      "delta_q_12": 5,
+      "iter_counts": [
+        {
+          "s": 8,
+          "c": 5,
+          "u": 6,
+          "v": 32
+        },
+        {
+          "s": 20,
+          "c": 1,
+          "u": 3,
+          "v": 21
+        },
+        {
+          "s": 5,
+          "c": 0,
+          "u": 9,
+          "v": 22
+        }
+      ],
+      "delta_cu_01": -7,
+      "delta_cu_12": 5,
+      "delta_uv_01": -11,
+      "delta_uv_12": 1,
+      "delta_s_12": -15,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+      "gt": "Eicosanoid synthesis",
+      "iter_qualities": [
+        11,
+        8,
+        10
+      ],
+      "delta_q_12": 2,
+      "iter_counts": [
+        {
+          "s": 1,
+          "c": 0,
+          "u": 11,
+          "v": 14
+        },
+        {
+          "s": 8,
+          "c": 1,
+          "u": 7,
+          "v": 6
+        },
+        {
+          "s": 2,
+          "c": 0,
+          "u": 10,
+          "v": 6
+        }
+      ],
+      "delta_cu_01": -3,
+      "delta_cu_12": 2,
+      "delta_uv_01": -8,
+      "delta_uv_12": 0,
+      "delta_s_12": -6,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed7",
+      "gt": "Eicosanoid synthesis",
+      "iter_qualities": [
+        20,
+        7,
+        10
+      ],
+      "delta_q_12": 3,
+      "iter_counts": [
+        {
+          "s": 9,
+          "c": 3,
+          "u": 17,
+          "v": 21
+        },
+        {
+          "s": 7,
+          "c": 0,
+          "u": 7,
+          "v": 21
+        },
+        {
+          "s": 1,
+          "c": 2,
+          "u": 8,
+          "v": 12
+        }
+      ],
+      "delta_cu_01": -13,
+      "delta_cu_12": 3,
+      "delta_uv_01": 0,
+      "delta_uv_12": -9,
+      "delta_s_12": -6,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+      "gt": "Tryptophan metabolism",
+      "iter_qualities": [
+        13,
+        10,
+        11
+      ],
+      "delta_q_12": 1,
+      "iter_counts": [
+        {
+          "s": 15,
+          "c": 3,
+          "u": 10,
+          "v": 22
+        },
+        {
+          "s": 13,
+          "c": 0,
+          "u": 10,
+          "v": 4
+        },
+        {
+          "s": 12,
+          "c": 0,
+          "u": 11,
+          "v": 8
+        }
+      ],
+      "delta_cu_01": -3,
+      "delta_cu_12": 1,
+      "delta_uv_01": -18,
+      "delta_uv_12": 4,
+      "delta_s_12": -1,
+      "bridge_traj": [
+        true,
+        true,
+        true
+      ],
+      "final_iter_idx": 1,
+      "best_iter_idx": 1,
+      "framework_signal_bridge_lost_to_rollback": true
+    }
+  ],
+  "best_ne_final": [
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+      "best_iter_idx": 1,
+      "best_iter_quality": 9,
+      "final_iter_idx": 0,
+      "final_iter_quality": 14,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053042_seed9",
+      "best_iter_idx": 1,
+      "best_iter_quality": 9,
+      "final_iter_idx": 2,
+      "final_iter_quality": 9,
+      "rollback_reason": null,
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+      "best_iter_idx": 0,
+      "best_iter_quality": 10,
+      "final_iter_idx": 2,
+      "final_iter_quality": 10,
+      "rollback_reason": null,
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "best_iter_idx": 1,
+      "best_iter_quality": 6,
+      "final_iter_idx": 0,
+      "final_iter_quality": 16,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+      "best_iter_idx": 1,
+      "best_iter_quality": 7,
+      "final_iter_idx": 2,
+      "final_iter_quality": 7,
+      "rollback_reason": null,
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "best_iter_idx": 1,
+      "best_iter_quality": 3,
+      "final_iter_idx": 0,
+      "final_iter_quality": 8,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "best_iter_idx": 1,
+      "best_iter_quality": 4,
+      "final_iter_idx": 0,
+      "final_iter_quality": 5,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "best_iter_idx": 1,
+      "best_iter_quality": 5,
+      "final_iter_idx": 0,
+      "final_iter_quality": 7,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "best_iter_idx": 1,
+      "best_iter_quality": 5,
+      "final_iter_idx": 0,
+      "final_iter_quality": 9,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": false,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed7",
+      "best_iter_idx": 1,
+      "best_iter_quality": 10,
+      "final_iter_idx": 0,
+      "final_iter_quality": 14,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": false,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed8",
+      "best_iter_idx": 1,
+      "best_iter_quality": 4,
+      "final_iter_idx": 0,
+      "final_iter_quality": 7,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "best_iter_idx": 1,
+      "best_iter_quality": 6,
+      "final_iter_idx": 0,
+      "final_iter_quality": 8,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "best_iter_idx": 1,
+      "best_iter_quality": 7,
+      "final_iter_idx": 0,
+      "final_iter_quality": 9,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+      "best_iter_idx": 1,
+      "best_iter_quality": 1,
+      "final_iter_idx": 2,
+      "final_iter_quality": 1,
+      "rollback_reason": null,
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": true
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed6",
+      "best_iter_idx": 1,
+      "best_iter_quality": 13,
+      "final_iter_idx": 0,
+      "final_iter_quality": 14,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+      "best_iter_idx": 1,
+      "best_iter_quality": 6,
+      "final_iter_idx": 0,
+      "final_iter_quality": 11,
+      "rollback_reason": "feedback_made_it_worse",
+      "bridge_in_iters": true,
+      "bridge_lost_to_rollback": false
+    }
+  ],
+  "verdict": {
+    "n_degraded_tasks": 11,
+    "H1_concord_quality_structural_note": "concord VerificationOutcome.quality = n_c + n_u (does NOT include n_v). δ_q_12 == δ_cu_12 by definition. UV could not directly cause quality rise. H1 (UV-driven quality interaction) is REFUTED at the structural level.",
+    "H3_iter2_dynamics_signals": {
+      "tasks_with_supported_loss_iter1_to_iter2": 7,
+      "tasks_with_cu_gain_iter1_to_iter2": 11,
+      "bridge_still_in_iter2": 10,
+      "bridge_lost_AT_iter2_step": 0,
+      "verdict_H3": "CONFIRMED"
+    }
+  }
+}

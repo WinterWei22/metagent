@@ -1,0 +1,82 @@
+{
+  "n_tasks": 63,
+  "n_rows_with_output": 63,
+  "per_method": {
+    "sspa_ora": {
+      "n_total": 63,
+      "n_empty_top10": 0,
+      "n_strict_hit": 5,
+      "n_fuzzy_hit": 15,
+      "strict_precision": 0.07936507936507936,
+      "fuzzy_precision": 0.23809523809523808,
+      "median_rank_when_fuzzy_hit": 1,
+      "wall_median_sec": 3.6866116523742676
+    },
+    "mummichog": {
+      "n_total": 63,
+      "n_empty_top10": 0,
+      "n_strict_hit": 24,
+      "n_fuzzy_hit": 38,
+      "strict_precision": 0.38095238095238093,
+      "fuzzy_precision": 0.6031746031746031,
+      "median_rank_when_fuzzy_hit": 0.0,
+      "wall_median_sec": 11.192890644073486
+    },
+    "ramp": {
+      "n_total": 63,
+      "n_empty_top10": 0,
+      "n_strict_hit": 57,
+      "n_fuzzy_hit": 57,
+      "strict_precision": 0.9047619047619048,
+      "fuzzy_precision": 0.9047619047619048,
+      "median_rank_when_fuzzy_hit": 0,
+      "wall_median_sec": 1.0185389518737793
+    },
+    "PSEA": {
+      "n_total": 63,
+      "n_empty_top10": 0,
+      "n_strict_hit": 0,
+      "n_fuzzy_hit": 0,
+      "strict_precision": 0.0,
+      "fuzzy_precision": 0.0,
+      "median_rank_when_fuzzy_hit": null,
+      "wall_median_sec": 15.408215284347534
+    },
+    "FELLA": {
+      "n_total": 63,
+      "n_empty_top10": 20,
+      "n_strict_hit": 12,
+      "n_fuzzy_hit": 12,
+      "strict_precision": 0.19047619047619047,
+      "fuzzy_precision": 0.19047619047619047,
+      "median_rank_when_fuzzy_hit": 0.0,
+      "wall_median_sec": 94.25685858726501
+    }
+  },
+  "variants": {
+    "V0_strict": {
+      "cond_a": 0.9047619047619048,
+      "cond_b": 0.23809523809523808,
+      "delta_pp": -66.66666666666667,
+      "sign_p": 4.547473508864641e-13
+    },
+    "V1_fuzzy_inter": {
+      "cond_a": 0.9047619047619048,
+      "cond_b": 0.6031746031746031,
+      "delta_pp": -30.15873015873016,
+      "sign_p": 3.814697265625e-06
+    },
+    "V2_compound_member": {
+      "cond_a": 0.9047619047619048,
+      "cond_b": 0.4444444444444444,
+      "delta_pp": -46.03174603174603,
+      "sign_p": 3.725290298461914e-09
+    },
+    "V3_soft_union": {
+      "cond_a": 0.9047619047619048,
+      "cond_b": 0.8095238095238095,
+      "delta_pp": -9.523809523809524,
+      "sign_p": 0.03125
+    }
+  }
+}

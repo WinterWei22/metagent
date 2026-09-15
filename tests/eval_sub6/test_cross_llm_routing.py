@@ -49,9 +49,9 @@ def _run_one(tmp_path, narrative_llm: str) -> tuple[dict, dict]:
 
 def test_narrative_llm_minimax_routes_to_minimax_model(tmp_path):
     captured, record = _run_one(tmp_path, "minimax")
-    assert captured["model"] == "MiniMax-M2.7"
+    assert captured["model"] == "MiniMax-M2.7-highspeed"
     assert captured["provider"] == "minimax"
-    assert record["llm_model"] == "MiniMax-M2.7"
+    assert record["llm_model"] == "MiniMax-M2.7-highspeed"
 
 
 def test_narrative_llm_gpt55_routes_to_gpt55_model(tmp_path):

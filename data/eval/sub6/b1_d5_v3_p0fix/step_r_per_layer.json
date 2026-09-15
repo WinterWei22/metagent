@@ -1,0 +1,36 @@
+{
+  "biological_sub6_6c": {
+    "n_correct": 157,
+    "n_wrong": 24,
+    "mean_correct_pct": 99.92922859164896,
+    "mean_wrong_pct": 100.0,
+    "delta_pp": -0.07077140835103357,
+    "ci95_correct_pp": 0.1387119603680114,
+    "ci95_wrong_pp": 0.0
+  },
+  "driver_metabolite_6b": {
+    "n_correct": 102,
+    "n_wrong": 13,
+    "mean_correct_pct": 72.72875816993465,
+    "mean_wrong_pct": 69.23076923076923,
+    "delta_pp": 3.4979889391654195,
+    "ci95_correct_pp": 8.06482129282896,
+    "ci95_wrong_pp": 23.639217907413133
+  },
+  "set_enrichment_6a": {
+    "n_correct": 154,
+    "n_wrong": 23,
+    "mean_correct_pct": 99.13419913419914,
+    "mean_wrong_pct": 81.15942028985508,
+    "delta_pp": 17.97477884434405,
+    "ci95_correct_pp": 0.9887099216140757,
+    "ci95_wrong_pp": 15.815678479922962
+  },
+  "__full__": {
+    "n_correct": 158,
+    "n_wrong": 24,
+    "mean_correct_pct": 96.844440721023,
+    "mean_wrong_pct": 94.13510101010102,
+    "delta_pp": 2.7093397109219874
+  }
+}

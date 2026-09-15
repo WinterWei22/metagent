@@ -1,0 +1,9 @@
+{
+  "n_tasks": 63,
+  "n_error_tasks": 0,
+  "n_strict_hits": 61,
+  "n_fuzzy_hits": 61,
+  "precision_at_10_strict": 0.9682539682539683,
+  "precision_at_10_fuzzy": 0.9682539682539683,
+  "mean_wall_seconds": 1.2397414162045433
+}

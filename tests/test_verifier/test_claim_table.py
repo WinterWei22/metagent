@@ -32,6 +32,8 @@ def test_claim_table_severity_mapping():
     claims = [
         VerifiedClaim(claim_text="u", claim_type=ClaimType.GROUNDED,
                       verdict=ClaimVerdict.UNVERIFIABLE_V0, evidence="u"),
+        VerifiedClaim(claim_text="h", claim_type=ClaimType.GROUNDED,
+                      verdict=ClaimVerdict.NEEDS_HUMAN_REVIEW, evidence="h"),
         VerifiedClaim(claim_text="n", claim_type=ClaimType.GROUNDED,
                       verdict=ClaimVerdict.UNSUPPORTED, evidence="n"),
         VerifiedClaim(claim_text="c", claim_type=ClaimType.GROUNDED,
@@ -42,7 +44,24 @@ def test_claim_table_severity_mapping():
     table = build_claim_table(claims, pass_id="v2")
     assert [row.severity for row in table.rows] == [
         "minor",
+        "minor",
         "major",
         "critical",
         "major",
     ]
+
+
+def test_claim_table_insufficient_evidence_severity():
+    """Test that INSUFFICIENT_EVIDENCE verdict maps to 'minor' severity."""
+    claim = VerifiedClaim(
+        claim_text="Pathway X is enriched in the dataset",
+        claim_type=ClaimType.SET_ENRICHMENT,
+        verdict=ClaimVerdict.INSUFFICIENT_EVIDENCE,
+        evidence="Evidence pool does not contain pathway X",
+    )
+    table = build_claim_table([claim], pass_id="v1")
+
+    assert len(table.rows) == 1
+    row = table.rows[0]
+    assert row.verdict == ClaimVerdict.INSUFFICIENT_EVIDENCE
+    assert row.severity == "minor"

@@ -1,0 +1,303 @@
+{
+  "_meta": {
+    "description": "Curated gold pathway registry for the perturbation benchmark. Each gold pathway is grounded to explicit RaMP pathwayRampIds unioned across sources (kegg/hmdb/reactome/wiki; pfocr and disease/regulatory name-variants excluded). Adjacency between pathways is computed automatically from the count of shared SPECIFIC (non-hub) metabolites, NOT hand-declared.",
+    "ramp_db": "ramp.sqlite (RaMP-DB)",
+    "thresholds": {
+      "tau_exact": 0.9,
+      "tau_containment": 0.7,
+      "discriminative_max_pathways": 40,
+      "k_specific": 2
+    },
+    "tier_rule": "EXACT: both-way full-set containment>=tau_exact. PARENT_CHILD: max full-set containment>=tau_containment. ADJACENT: share>=k_specific metabolites each present in <=discriminative_max_pathways pathways (hub metabolites excluded). else MISS. strict=EXACT+PARENT_CHILD; lenient adds ADJACENT.",
+    "calibration_note": "k_specific=2 @ H=40 calibrated on gold-gold pairs: phe~tyr (4 shared: fumarylacetoacetate, 4-OH-phenylpyruvate...) and propanoate~BCAA (3 shared: methylmalonate, methylmalonyl-semialdehyde...) are ADJACENT; next pair shares <=1 -> clean gap. Shared specific metabolites are listed per adjacent verdict for auditability.",
+    "excluded_pathway_name_substrings": [
+      "diseas",
+      "disorder",
+      "biomarker",
+      "cancer",
+      "senescence",
+      "resistance",
+      "inhibitor",
+      "regulat",
+      "maturation",
+      "invasi",
+      "nutrient"
+    ]
+  },
+  "Phenylalanine metabolism": {
+    "kegg_id": "map00360",
+    "ramp_pathway_ids": [
+      "RAMP_P_000050344",
+      "RAMP_P_000000132",
+      "RAMP_P_000000133",
+      "RAMP_P_000050216"
+    ],
+    "sources": [
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-8964208",
+        "name": "Phenylalanine metabolism"
+      },
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00008",
+        "name": "Phenylalanine and Tyrosine Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00360",
+        "name": "Phenylalanine and Tyrosine Metabolism"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-8963691",
+        "name": "Phenylalanine and tyrosine metabolism"
+      }
+    ],
+    "n_metabolites": 44
+  },
+  "Citrate cycle (TCA cycle)": {
+    "kegg_id": "map00020",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000162",
+      "RAMP_P_000000163",
+      "RAMP_P_000050815",
+      "RAMP_P_000052827"
+    ],
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00057",
+        "name": "Citric Acid Cycle"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00020",
+        "name": "Citric Acid Cycle"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-71403",
+        "name": "Citric acid cycle (TCA cycle)"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP78",
+        "name": "TCA cycle (aka Krebs or citric acid cycle)"
+      }
+    ],
+    "n_metabolites": 70
+  },
+  "Urea cycle / arginine biosynthesis": {
+    "kegg_id": "map00220",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000392",
+      "RAMP_P_000050810",
+      "RAMP_P_000049910"
+    ],
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00059",
+        "name": "Urea Cycle"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-70635",
+        "name": "Urea cycle"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00220",
+        "name": "Arginine biosynthesis"
+      }
+    ],
+    "n_metabolites": 31
+  },
+  "Tyrosine metabolism": {
+    "kegg_id": "map00350",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000106"
+    ],
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00350",
+        "name": "Tyrosine metabolism"
+      }
+    ],
+    "n_metabolites": 69
+  },
+  "Propanoate metabolism": {
+    "kegg_id": "map00640",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000030"
+    ],
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00640",
+        "name": "Propanoate metabolism"
+      }
+    ],
+    "n_metabolites": 34
+  },
+  "Cysteine and methionine metabolism": {
+    "kegg_id": "map00270",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000025",
+      "RAMP_P_000000026"
+    ],
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00033",
+        "name": "Methionine Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00270",
+        "name": "Methionine Metabolism"
+      }
+    ],
+    "n_metabolites": 51
+  },
+  "Valine, leucine and isoleucine degradation": {
+    "kegg_id": "map00280",
+    "ramp_pathway_ids": [
+      "RAMP_P_000000100",
+      "RAMP_P_000050095"
+    ],
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00280",
+        "name": "Valine, leucine and isoleucine degradation"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-70895",
+        "name": "Branched-chain amino acid catabolism"
+      }
+    ],
+    "n_metabolites": 71
+  },
+  "Lysine degradation": {
+    "kegg_id": "map00310",
+    "ramp_pathway_ids": [
+      "RAMP_P_000048397"
+    ],
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00310",
+        "name": "Lysine degradation"
+      }
+    ],
+    "n_metabolites": 26
+  },
+  "Carnitine biosynthesis": {
+    "kegg_id": null,
+    "ramp_pathway_ids": [
+      "RAMP_P_000000315",
+      "RAMP_P_000050261"
+    ],
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00465",
+        "name": "Carnitine Synthesis"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-71262",
+        "name": "Carnitine synthesis"
+      }
+    ],
+    "n_metabolites": 24
+  },
+  "Pyrimidine metabolism": {
+    "kegg_id": "map00240",
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00240",
+        "name": "Pyrimidine metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP4022",
+        "name": "Pyrimidine metabolism"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000043",
+      "RAMP_P_000053306"
+    ],
+    "n_metabolites": 62
+  },
+  "Purine metabolism": {
+    "kegg_id": "map00230",
+    "sources": [
+      {
+        "type": "kegg",
+        "sourceId": "map00230",
+        "name": "Purine metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP4792",
+        "name": "Purine metabolism"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000236",
+      "RAMP_P_000053365"
+    ],
+    "n_metabolites": 74
+  },
+  "Fatty acid degradation": {
+    "kegg_id": "map00071",
+    "sources": [
+      {
+        "type": "hmdb",
+        "sourceId": "SMP00051",
+        "name": "Fatty acid Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map00071",
+        "name": "Fatty acid Metabolism"
+      },
+      {
+        "type": "kegg",
+        "sourceId": "map01212",
+        "name": "Fatty acid metabolism"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-8978868",
+        "name": "Fatty acid metabolism"
+      },
+      {
+        "type": "wiki",
+        "sourceId": "WP143",
+        "name": "Fatty acid beta-oxidation"
+      },
+      {
+        "type": "reactome",
+        "sourceId": "R-HSA-77289",
+        "name": "Mitochondrial Fatty Acid Beta-Oxidation"
+      }
+    ],
+    "ramp_pathway_ids": [
+      "RAMP_P_000000344",
+      "RAMP_P_000000345",
+      "RAMP_P_000049955",
+      "RAMP_P_000049984",
+      "RAMP_P_000052767",
+      "RAMP_P_000050044"
+    ],
+    "n_metabolites": 274
+  }
+}

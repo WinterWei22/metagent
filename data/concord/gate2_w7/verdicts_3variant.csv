@@ -1,0 +1,13 @@
+variant,cohort,n_tasks,cond_a_prec,cond_b_prec,delta_pp,sign_p,pos_neg,verdict,metric_pass
+V0_W6_strict,primary,51,0.2353,0.0392,-19.6078,0.0020,0/10,RED,False
+V1_fuzzy_inter,primary,51,0.2353,0.1765,-5.8824,0.4531,2/5,RED,False
+V2_compound_member,primary,51,0.2353,0.2745,3.9216,0.6875,4/2,YELLOW,True
+V3_soft_union,primary,51,0.2353,0.4902,25.4902,0.0002,13/0,GREEN,True
+V0_W6_strict,sens_a,19,0.3684,0.1053,-26.3158,0.0625,0/5,RED,False
+V1_fuzzy_inter,sens_a,19,0.3684,0.3684,0.0000,1.0000,1/1,YELLOW,False
+V2_compound_member,sens_a,19,0.3684,0.4211,5.2632,1.0000,2/1,YELLOW,True
+V3_soft_union,sens_a,19,0.3684,0.5789,21.0526,0.1250,4/0,YELLOW,True
+V0_W6_strict,sens_b,12,0.2500,0.1667,-8.3333,1.0000,0/1,RED,False
+V1_fuzzy_inter,sens_b,12,0.2500,0.1667,-8.3333,1.0000,0/1,RED,False
+V2_compound_member,sens_b,12,0.2500,0.2500,0.0000,1.0000,1/1,YELLOW,False
+V3_soft_union,sens_b,12,0.2500,0.4167,16.6667,0.5000,2/0,YELLOW,True

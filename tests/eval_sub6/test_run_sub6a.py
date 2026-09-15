@@ -84,7 +84,7 @@ def _mock_lib_factory(by_spectrum_id: dict[str, _MockResponse]):
 
 
 def _mock_chat_factory(narrative: str = "Tyrosine metabolism is dominant."):
-    def chat(messages, *, temperature, model, trace_id, caller):
+    def chat(messages, *, temperature, model, trace_id, caller, response_format=None):
         return narrative
 
     return chat
@@ -158,7 +158,7 @@ def test_no_ground_truth_in_chat_call_arguments():
     """Belt-and-braces: confirm the LLM never sees ground_truth_*."""
     captured: list[list[dict]] = []
 
-    def chat(messages, *, temperature, model, trace_id, caller):
+    def chat(messages, *, temperature, model, trace_id, caller, response_format=None):
         captured.append(messages)
         return "ok"
 

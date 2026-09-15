@@ -1,0 +1,76 @@
+{
+  "n_tasks": 5,
+  "n_crash": 0,
+  "n_valid": 5,
+  "by_iter_outcome": {
+    "normal": 10
+  },
+  "early_exit_iter0": 0,
+  "n_feedback_iter1": 5,
+  "n_feedback_iter2": 0,
+  "rollback_total": 3,
+  "rollback_feedback_made_it_worse": 3,
+  "rollback_iter2_degraded": 0,
+  "framework_signal_bridge_in_iters": 4,
+  "framework_signal_bridge_lost_to_rollback": 2,
+  "framework_signal_best_ne_final": 1,
+  "tool_call_max_distribution": {
+    "max": 20,
+    "p95": 20.0,
+    "median": 14.0,
+    "n_over_25": 0
+  },
+  "mean_wall_seconds_per_task": 257.0881681919098,
+  "total_wall_seconds": 2519.3,
+  "wall_human": "42.0 min",
+  "k_concurrent": 1,
+  "llm_model": "MiniMax-M2.7",
+  "benchmark_md5_assumed": "331b30a64017debe9d5ce07ed238e4f5",
+  "token_usage": {
+    "present": true,
+    "n_calls_total": 84,
+    "n_calls_unattributed": 0,
+    "per_task_total_tokens_median": 269272,
+    "per_task_total_tokens_p95": 295568,
+    "per_task_total_tokens_max": 295568,
+    "per_task_total_tokens_min": 166153,
+    "per_task_prompt_total": 1063225,
+    "per_task_completion_total": 162118,
+    "per_task_total_total": 1225343,
+    "saturate_threshold": 120000,
+    "saturate_count": 5,
+    "saturate_pct_of_tasks": 100.0,
+    "per_task_breakdown": {
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed0": {
+        "prompt": 140368,
+        "completion": 25785,
+        "total": 166153,
+        "n_calls": 15
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000106_seed8": {
+        "prompt": 260575,
+        "completion": 34993,
+        "total": 295568,
+        "n_calls": 20
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000050021_seed6": {
+        "prompt": 170778,
+        "completion": 30975,
+        "total": 201753,
+        "n_calls": 17
+      },
+      "compound_only_enrich_mammalian_RAMP_P_000000398_seed0": {
+        "prompt": 262082,
+        "completion": 30515,
+        "total": 292597,
+        "n_calls": 16
+      },
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed0": {
+        "prompt": 229422,
+        "completion": 39850,
+        "total": 269272,
+        "n_calls": 16
+      }
+    }
+  }
+}

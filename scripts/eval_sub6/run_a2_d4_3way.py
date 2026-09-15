@@ -168,7 +168,7 @@ def _process_one_task(
     max_react_turns: int,
     max_feedback_iters: int,
     total_timeout: float,
-    model: str = "MiniMax-M2.7",
+    model: str = "MiniMax-M2.7-highspeed",
     provider: str = "minimax",
 ) -> dict:
     """Run all three variants for one task. Resume-aware: existing
@@ -397,8 +397,8 @@ def main(argv: list[str] | None = None) -> int:
              "5 = recommended for MiniMax pilots; >10 risks rate-limit.",
     )
     parser.add_argument(
-        "--model", default="MiniMax-M2.7",
-        help="Narrative LLM model id. Defaults to MiniMax-M2.7. "
+        "--model", default="MiniMax-M2.7-highspeed",
+        help="Narrative LLM model id. Defaults to MiniMax-M2.7-highspeed. "
              "Use 'gpt-5.5' or 'claude-opus-4-7' for cross-LLM smoke "
              "(set --provider openai for both).",
     )
@@ -423,7 +423,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Resolve API keys for both providers (single-call uses minimax via run_sub6b;
     # react/feedback also use minimax through chat_with_tools).
-    _resolve_api_key("minimax", "MiniMax-M2.7")
+    _resolve_api_key("minimax", "MiniMax-M2.7-highspeed")
 
     out_root = Path(args.out_dir)
     driver_lookup = _build_driver_lookup(Path(args.curated))

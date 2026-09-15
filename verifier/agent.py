@@ -30,9 +30,13 @@ Caller-side, the typical pattern is::
 """
 from __future__ import annotations
 
+import logging
 import os
+import re
 from datetime import datetime, timezone
 from typing import Any, Callable, Literal
+
+logger = logging.getLogger(__name__)
 
 from schemas import LiteratureSearchResponse
 from schemas.molecule import MetaboliteInfoResponse
@@ -43,6 +47,7 @@ from verifier.claim_classifier import classify_claims
 from verifier.claim_extractor import (
     ClaimExtractionError,
     extract_claims,
+    extract_claims_from_json,
     extract_claims_rulebased,
 )
 from verifier.claim_table import build_claim_table
@@ -58,9 +63,41 @@ from verifier.schemas import (
     ClaimType,
     ClaimVerdict,
     ClassifiedClaim,
+    DroppedClaim,
+    TaskOutcome,
     VerifiedClaim,
     VerifiedIdentification,
 )
+from verifier.task_outcome import detect_task_outcome
+
+
+# Phase B1 D4 — v2 grammar should only ever route to one of these
+# ClaimType values via verifier.claim_classifier.route_v2_claim. Any
+# other ClaimType arriving with ``grammar is not None`` means the
+# extractor / classifier silently produced a v1 type for a v2-grammar
+# claim — log it loudly so the smoke can flag the regression.
+_V2_EXPECTED_TYPES = frozenset({
+    ClaimType.BIOLOGICAL,
+    ClaimType.SET_ENRICHMENT,
+    ClaimType.DRIVER_METABOLITE,
+})
+
+
+def _maybe_warn_v1_legacy_in_v2_path(c: ClassifiedClaim, *, where: str) -> None:
+    """Emit one ``logger.warning`` when a claim that was extracted via
+    the v2 grammar path lands on a ClaimType the dispatcher expects to
+    see only from the v1 legacy path.
+
+    ``where`` is a short tag (e.g. ``'sub6'`` / ``'spectrum'``) for the
+    log line so D5 audit can filter on it. The warning carries
+    ``claim_id`` so the trace_id grep is fast.
+    """
+    if c.grammar is not None and c.claim_type not in _V2_EXPECTED_TYPES:
+        logger.warning(
+            "v1 legacy claim_type %s in v2 grammar path (%s); "
+            "claim_id=%s grammar=%s",
+            c.claim_type.value, where, c.claim_id, c.grammar.value,
+        )
 
 
 Fetcher = Callable[[str], MetaboliteInfoResponse]
@@ -87,12 +124,15 @@ def verify(
     warnings: list[str] = []
     llm_calls = 0
 
+    dropped_all: list[DroppedClaim] = []
+
     # ---------- v1 pass ----------
-    classified_v1, calls, w = _extract_classify(
+    classified_v1, calls, w, dropped = _extract_classify(
         llm_output, trace_id=f"{trace_id}.s1s2_v1"
     )
     llm_calls += calls
     warnings += w
+    dropped_all += dropped
     if classified_v1 is None:
         # Stage 1 failed; cannot proceed.
         return _failed(
@@ -100,6 +140,7 @@ def verify(
             trace_id=trace_id,
             warnings=warnings,
             llm_calls=llm_calls,
+            dropped_claims=dropped_all,
         )
 
     verified_v1 = _verify_per_claim(
@@ -124,6 +165,7 @@ def verify(
             warnings=warnings,
             llm_calls=llm_calls,
             trace_id=trace_id,
+            dropped_claims=dropped_all,
         )
 
     rewritten = rewrite(
@@ -133,11 +175,12 @@ def verify(
     )
     llm_calls += 1
 
-    classified_v2, calls, w = _extract_classify(
+    classified_v2, calls, w, dropped = _extract_classify(
         rewritten, trace_id=f"{trace_id}.s1s2_v2"
     )
     llm_calls += calls
     warnings += w
+    dropped_all += dropped
     if classified_v2 is None:
         # Re-extract failed — preserve v1 record but flag the failure.
         warnings.append(
@@ -151,6 +194,7 @@ def verify(
             warnings=warnings,
             llm_calls=llm_calls,
             trace_id=trace_id,
+            dropped_claims=dropped_all,
         )
 
     verified_v2 = _verify_per_claim(
@@ -173,6 +217,7 @@ def verify(
         warnings=warnings,
         llm_calls=llm_calls,
         trace_id=trace_id,
+        dropped_claims=dropped_all,
     )
 
 
@@ -183,11 +228,23 @@ def verify(
 
 def _extract_classify(
     text: str, *, trace_id: str
-) -> tuple[list[ClassifiedClaim] | None, int, list[str]]:
-    """Run Stage 1 + Stage 2. Returns (classified, llm_calls, warnings).
+) -> tuple[
+    list[ClassifiedClaim] | None,
+    int,
+    list[str],
+    list[DroppedClaim],
+]:
+    """Run Stage 1 + Stage 2.
+
+    Returns ``(classified, llm_calls, warnings, dropped)``.
 
     ``classified`` is None when Stage 1 raised — caller treats that as a
     fatal cascade failure for the relevant pass.
+
+    ``dropped`` is the list of claims rejected by the grammar v2 path
+    (empty list when the legacy extractor path is used). Surfacing it
+    here is the Phase B1 D2 hook that lets ``_final`` aggregate the
+    ``dropped_by_grammar`` metric across passes.
 
     Empty / whitespace-only input short-circuits: ``extract_claims`` skips
     the LLM call, we return an empty classified list, and llm_calls stays
@@ -199,27 +256,44 @@ def _extract_classify(
     call, sentence-level split that preserves compound mechanistic
     phrases). The rule-based path is paper-finding-tied to Layer F
     activation; see ``reports/eval/layerf_loop_closed.md`` for context.
+
+    Phase B1 D2: a third mode, triggered when ``text`` parses as a v2
+    grammar JSON payload (``{"narrative_text": str, "claims": list}``),
+    routes through :func:`extract_claims_from_json` — zero LLM call,
+    schema validation only. The dropped claim list returned by that
+    function is surfaced as the 4th tuple element.
     """
     warnings: list[str] = []
+    dropped: list[DroppedClaim] = []
     if not text.strip():
-        return [], 0, warnings
+        return [], 0, warnings, dropped
 
     extractor_mode = os.environ.get("METAGENT_VERIFIER_EXTRACTOR", "llm").lower()
     try:
-        if extractor_mode == "rule-based":
-            extracted = extract_claims_rulebased(text, trace_id=f"{trace_id}.extract")
+        # Phase B1 D2: auto-detect v2 grammar JSON payload regardless of mode.
+        # extract_claims_from_json raises ClaimExtractionError when the
+        # payload is not a v2 object — we then fall back to the configured
+        # extractor (LLM or rule-based) for v1 narrative shapes.
+        try:
+            extracted, dropped = extract_claims_from_json(
+                text, trace_id=f"{trace_id}.extract"
+            )
             extract_calls = 0
-        else:
-            extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
-            extract_calls = 1
+        except ClaimExtractionError:
+            if extractor_mode == "rule-based":
+                extracted = extract_claims_rulebased(text, trace_id=f"{trace_id}.extract")
+                extract_calls = 0
+            else:
+                extracted = extract_claims(text, trace_id=f"{trace_id}.extract")
+                extract_calls = 1
     except ClaimExtractionError as exc:
         warnings.append(f"VERIFICATION_PARSE_FAILED at stage1: {exc}")
-        return None, 1, warnings
+        return None, 1, warnings, dropped
 
     classified, classify_calls = classify_claims(
         extracted, trace_id=f"{trace_id}.classify"
     )
-    return classified, extract_calls + classify_calls, warnings
+    return classified, extract_calls + classify_calls, warnings, dropped
 
 
 def _verify_per_claim(
@@ -233,6 +307,9 @@ def _verify_per_claim(
     """Dispatch each claim to its layer (A/B/C/E/F). Layer D runs separately."""
     out: list[VerifiedClaim] = []
     for c in classified:
+        # Phase B1 D4 — log when a v2-grammar claim arrives with an
+        # unexpected v1 type (smoke stop condition).
+        _maybe_warn_v1_legacy_in_v2_path(c, where="spectrum")
         candidate_ref = resolve_candidate_ref(c, source_report)
         if candidate_ref is not None:
             c = c.model_copy(update={"candidate_ref": candidate_ref})
@@ -259,9 +336,76 @@ def _verify_per_claim(
             # creates those entries. If it ever happens (LLM fallback
             # returned consistency_claim), default-route to Layer A.
             out.append(layer_a.verify_grounded(c, source_report))
+        elif c.claim_type == ClaimType.OTHER:
+            # Phase B1 D3 — abstract single-compound regulatory
+            # statements (Polyamines regulate protein synthesis, etc.)
+            # are routed here instead of being silently absorbed by
+            # BIOLOGICAL. Honest verdict is UNVERIFIABLE_V0; Stage 4
+            # rewriter will not try to "fix" them.
+            out.append(
+                VerifiedClaim(
+                    claim_id=c.claim_id,
+                    claim_text=c.claim_text,
+                    claim_type=c.claim_type,
+                    claim_subtype=c.claim_subtype,
+                    subject=c.subject,
+                    subject_kind=c.subject_kind,
+                    candidate_ref=c.candidate_ref,
+                    verdict=ClaimVerdict.UNVERIFIABLE_V0,
+                    evidence=(
+                        "Claim classified as OTHER (abstract single-"
+                        "compound regulation / mechanism with no specific "
+                        "pathway or enzyme endpoint). v1 used to absorb "
+                        "these into BIOLOGICAL; B1 D3 keeps them "
+                        "explicitly unverifiable to avoid misleading "
+                        "UNSUPPORTED verdicts."
+                    ),
+                    extracted_fields=c.extracted_fields,
+                    verifier_layer="other_fallback",
+                    trace_summary="OTHER claim — no verifier route",
+                )
+            )
         else:  # pragma: no cover — exhaustive
             raise AssertionError(f"unhandled claim_type {c.claim_type}")
-    return out
+    return _stamp_grammar_from_classified(out, classified)
+
+
+def _iteration_from_trace_id(trace_id: str) -> int | None:
+    match = re.search(r"\.iter(\d+)(?:\.|$)", trace_id)
+    if match is None:
+        return None
+    return int(match.group(1))
+
+
+def _classified_with_trace_id(claim: ClassifiedClaim, claim_index: int) -> ClassifiedClaim:
+    if claim.claim_id:
+        return claim
+    return claim.model_copy(update={"claim_id": f"claim-{claim_index}"})
+
+
+def _stamp_grammar_from_classified(
+    verified_claims: list[VerifiedClaim],
+    classified_claims: list[ClassifiedClaim],
+) -> list[VerifiedClaim]:
+    """Phase B1 P0 Stage D — copy ``ClassifiedClaim.grammar`` onto each
+    ``VerifiedClaim`` so per-grammar metric aggregation (e.g. distinguishing
+    ``pathway_membership`` from ``metabolite_pathway_link`` — both collapse
+    to ``ClaimType.BIOLOGICAL``) can read ``VerifiedClaim.grammar`` directly
+    instead of round-tripping through ``ExtractedClaim``.
+
+    Previously the per-layer verifier constructors set
+    ``VerifiedClaim.grammar`` to its default ``None`` because layers don't
+    receive the grammar information explicitly. This dispatcher-level stamp
+    centralises the passthrough — no layer touched.
+
+    1:1 with the classified list (each dispatch appends exactly one verified
+    claim per classified claim). Was followup_debt P0 #1.
+    """
+    return [
+        v if (c.grammar is None or v.grammar == c.grammar)
+        else v.model_copy(update={"grammar": c.grammar})
+        for v, c in zip(verified_claims, classified_claims, strict=True)
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -291,7 +435,10 @@ def _aggregate_verdict(
         # confidently say "verified". Treat as partially_verified rather
         # than failed — the caller still gets the surviving evidence.
         return "partially_verified"
-    if has_unsupported or has_unverifiable or has_needs_review:
+    has_insufficient_evidence = any(
+        c.verdict == ClaimVerdict.INSUFFICIENT_EVIDENCE for c in claims
+    )
+    if has_unsupported or has_unverifiable or has_needs_review or has_insufficient_evidence:
         # NEEDS_HUMAN_REVIEW from Layer F's cross-validation: the
         # consensus could not arbitrate between SIRIUS and CFM-ID, so
         # the claim's status is suspended pending review. Maps to
@@ -315,6 +462,7 @@ def _final(
     warnings: list[str],
     llm_calls: int,
     trace_id: str,
+    dropped_claims: list[DroppedClaim] | None = None,
 ) -> VerifiedIdentification:
     # Phase A2 D1: synthesise stable claim_ids and populate feedback_hint
     # before serialising. The build_claim_table helper still applies its
@@ -324,7 +472,18 @@ def _final(
     claims_v2 = annotate_claims(claims_v2, pass_id="v2")
     table_v1 = build_claim_table(claims_v1, pass_id="v1")
     table_v2 = build_claim_table(claims_v2, pass_id="v2")
-    metrics = compute_claim_metrics(claims_v1=claims_v1, claims_v2=claims_v2)
+    dropped = list(dropped_claims or [])
+    metrics = compute_claim_metrics(
+        claims_v1=claims_v1,
+        claims_v2=claims_v2,
+        dropped_by_grammar=len(dropped),
+    )
+    # Phase B1 D4: bucket the run for D5 aggregation.
+    outcome = detect_task_outcome(
+        llm_output=llm_output,
+        verified_claims=claims_v2 or claims_v1,
+        dropped_claims=dropped,
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -333,6 +492,8 @@ def _final(
         claims_v2=claims_v2,
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
+        dropped_claims=dropped,
+        task_outcome=outcome,
         overall_verdict=_aggregate_verdict(claims_v2),
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -346,10 +507,23 @@ def _failed(
     trace_id: str,
     warnings: list[str],
     llm_calls: int,
+    dropped_claims: list[DroppedClaim] | None = None,
 ) -> VerifiedIdentification:
     table_v1 = build_claim_table([], pass_id="v1")
     table_v2 = build_claim_table([], pass_id="v2")
-    metrics = compute_claim_metrics(claims_v1=[], claims_v2=[])
+    dropped = list(dropped_claims or [])
+    metrics = compute_claim_metrics(
+        claims_v1=[], claims_v2=[],
+        dropped_by_grammar=len(dropped),
+    )
+    # Phase B1 D4: even on the failed path the outcome detector runs;
+    # it disambiguates "extractor parse failed" (system) vs "extractor
+    # got [] honest-refusal narrative".
+    outcome = detect_task_outcome(
+        llm_output=llm_output,
+        verified_claims=[],
+        dropped_claims=dropped,
+    )
     return VerifiedIdentification(
         trace_id=trace_id,
         source_llm_output=llm_output,
@@ -358,6 +532,8 @@ def _failed(
         claims_v2=[],
         claim_tables=[table_v1, table_v2],
         claim_metrics=metrics,
+        dropped_claims=dropped,
+        task_outcome=outcome,
         overall_verdict="failed",
         verification_warnings=warnings,
         llm_call_count=llm_calls,
@@ -378,6 +554,7 @@ def verify_sub6(
     ramp_db_path: str | None = None,
     ramp_conn=None,
     driver_lookup: dict[str, str] | None = None,
+    is_final_iteration: bool = True,
 ) -> VerifiedIdentification:
     """Stage-cascaded verification for Sub-6 enrichment narratives.
 
@@ -403,7 +580,7 @@ def verify_sub6(
     warnings: list[str] = []
     llm_calls = 0
 
-    classified, calls, w = _extract_classify(
+    classified, calls, w, dropped = _extract_classify(
         llm_output, trace_id=f"{trace_id}.s1s2"
     )
     llm_calls += calls
@@ -414,6 +591,7 @@ def verify_sub6(
             trace_id=trace_id,
             warnings=warnings,
             llm_calls=llm_calls,
+            dropped_claims=dropped,
         )
 
     verified = _verify_per_claim_sub6(
@@ -422,6 +600,8 @@ def verify_sub6(
         ramp_db_path=ramp_db_path,
         ramp_conn=ramp_conn,
         driver_lookup=driver_lookup,
+        is_final_iteration=is_final_iteration,
+        iteration=_iteration_from_trace_id(trace_id),
     )
     consistency, calls, w = layer_d.detect_consistency_contradictions(
         classified, trace_id=f"{trace_id}.s3"
@@ -438,6 +618,7 @@ def verify_sub6(
         warnings=warnings,
         llm_calls=llm_calls,
         trace_id=trace_id,
+        dropped_claims=dropped,
     )
 
 
@@ -448,6 +629,8 @@ def _verify_per_claim_sub6(
     ramp_db_path: str | None,
     ramp_conn,
     driver_lookup: dict[str, str] | None,
+    is_final_iteration: bool = True,
+    iteration: int | None = None,
 ) -> list[VerifiedClaim]:
     """Dispatch each Sub-6 claim to its layer.
 
@@ -456,64 +639,155 @@ def _verify_per_claim_sub6(
     """
     from verifier.layers.biological_sub6 import verify_biological_sub6
     from verifier.layers.driver_metabolite import verify_driver_metabolite
+    from verifier.layers.factual_sub6 import verify_factual_sub6
+    from verifier.helpers.judge_cost_cap import get_run_level_tracker
+    from verifier.layers.llm_judge_sub6 import verify_llm_judge_sub6 as _verify_llm_judge_sub6_default
     from verifier.layers.pathway_relationship import verify_pathway_relationship
     from verifier.layers.set_enrichment import verify_set_enrichment
+    from verifier.layers.tool_output_sub6 import verify_tool_output_sub6 as _verify_tool_output_sub6_default
 
     out: list[VerifiedClaim] = []
-    for c in classified:
-        if c.claim_type == ClaimType.SET_ENRICHMENT:
-            out.append(verify_set_enrichment(c, source_report))
-        elif c.claim_type == ClaimType.DRIVER_METABOLITE:
-            out.append(
+    judge_cost_tracker = get_run_level_tracker()
+    for claim_index, c in enumerate(classified):
+        c_for_trace = _classified_with_trace_id(c, claim_index)
+        # Phase B1 D4 — log when a v2-grammar claim arrives with an
+        # unexpected v1 type (smoke stop condition).
+        _maybe_warn_v1_legacy_in_v2_path(c_for_trace, where="sub6")
+        verified_claim: VerifiedClaim
+        if c_for_trace.claim_type == ClaimType.SET_ENRICHMENT:
+            verified_claim = verify_set_enrichment(c_for_trace, source_report)
+            # [verifier-modify-warning] 2D: post-UV structural consistency fallback.
+            # When set_enrichment can't match the pathway in top_pathways, ask an
+            # LLM judge whether the metabolites' SMILES are structurally consistent
+            # with the claimed pathway.  Only fires on final iteration to avoid
+            # burning LLM cost on intermediate feedback rounds.
+            if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+                from verifier.layers.structural_consistency import verify_structural_consistency
+                sc_claim = verify_structural_consistency(
+                    c_for_trace,
+                    source_report,
+                    cost_tracker=judge_cost_tracker,
+                    iteration=iteration,
+                )
+                if sc_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                    verified_claim = sc_claim
+        elif c_for_trace.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED):
+            # W12 C7 — route metabolite-ID claims to the Sub-6 friendly
+            # factual_sub6 layer. The original fall-through path below
+            # produces an informationally empty UV because B1 D2's
+            # Layer A / Layer B require IdentificationReport-shaped
+            # candidate pools, which SubsixSourceReport does not provide.
+            verified_claim = verify_factual_sub6(c_for_trace, source_report)
+        elif c_for_trace.claim_type == ClaimType.DRIVER_METABOLITE:
+            verified_claim = (
                 verify_driver_metabolite(
-                    c, source_report, lookup=driver_lookup,
+                    c_for_trace, source_report, lookup=driver_lookup,
                 )
             )
-        elif c.claim_type == ClaimType.PATHWAY_RELATIONSHIP:
-            out.append(
+        elif c_for_trace.claim_type == ClaimType.PATHWAY_RELATIONSHIP:
+            verified_claim = (
                 verify_pathway_relationship(
-                    c, source_report,
+                    c_for_trace, source_report,
                     db_path=ramp_db_path, conn=ramp_conn,
                 )
             )
-        elif c.claim_type == ClaimType.BIOLOGICAL:
-            out.append(
+        elif c_for_trace.claim_type == ClaimType.BIOLOGICAL:
+            verified_claim = (
                 verify_biological_sub6(
-                    c, source_report,
+                    c_for_trace, source_report,
                     db_path=ramp_db_path, conn=ramp_conn,
                 )
             )
-        elif c.claim_type == ClaimType.PEAK_MECHANISTIC:
+        elif c_for_trace.claim_type == ClaimType.PEAK_MECHANISTIC:
             # Phase 6.3: Layer F dispatch for Sub-6A real-id narratives.
             # SubsixSourceReport now exposes experimental_spectrum/candidates
             # adapters (schemas/sub6_report.py) so Layer F can run without
             # changes. The first differential_spectra row is used as the
             # spectrum proxy — see Phase 6.3 report §10 for the
             # per-claim-spectrum-routing future-work caveat.
-            out.append(layer_f.verify_peak_mechanistic(c, source_report))
+            verified_claim = layer_f.verify_peak_mechanistic(c_for_trace, source_report)
         else:
             # Spectrum-centric layers cannot consume SubsixSourceReport;
-            # surface as UNVERIFIABLE_V0 with explicit reasoning.
-            out.append(
-                VerifiedClaim(
-                    claim_id=c.claim_id,
-                    claim_text=c.claim_text,
-                    claim_type=c.claim_type,
-                    claim_subtype=c.claim_subtype,
-                    subject=c.subject,
-                    subject_kind=c.subject_kind,
-                    candidate_ref=c.candidate_ref,
-                    verdict=ClaimVerdict.UNVERIFIABLE_V0,
-                    evidence=(
-                        f"Sub-6 verifier does not support claim_type "
-                        f"{c.claim_type.value!r}: existing layer requires "
-                        "IdentificationReport (spectrum-centric), but "
-                        "Sub-6 supplies SubsixSourceReport. Treated as "
-                        "declared limitation."
-                    ),
-                    extracted_fields=c.extracted_fields,
-                    verifier_layer="verify_sub6",
-                    trace_summary=f"sub6 cannot verify {c.claim_type.value}",
-                )
+            # surface as UNVERIFIABLE_V0 with explicit reasoning. Phase
+            # B1 D4 keeps this v1-legacy fallback alive but
+            # ``_maybe_warn_v1_legacy_in_v2_path`` above logs whenever a
+            # v2 claim lands here so the ablation can audit drift.
+            verified_claim = VerifiedClaim(
+                claim_id=c_for_trace.claim_id,
+                claim_text=c_for_trace.claim_text,
+                claim_type=c_for_trace.claim_type,
+                claim_subtype=c_for_trace.claim_subtype,
+                subject=c_for_trace.subject,
+                subject_kind=c_for_trace.subject_kind,
+                candidate_ref=c_for_trace.candidate_ref,
+                verdict=ClaimVerdict.UNVERIFIABLE_V0,
+                evidence=(
+                    f"Sub-6 verifier does not support claim_type "
+                    f"{c_for_trace.claim_type.value!r}: existing layer requires "
+                    "IdentificationReport (spectrum-centric), but "
+                    "Sub-6 supplies SubsixSourceReport. Treated as "
+                    "declared limitation."
+                ),
+                extracted_fields=c_for_trace.extracted_fields,
+                verifier_layer="verify_sub6",
+                trace_summary=f"sub6 cannot verify {c_for_trace.claim_type.value}",
             )
-    return out
+        # [W16-ROLLBACK 2026-06-08] signal_sub6 catch-all disabled pending W18 beta
+        # rebuild with source-aware conservative behavior. See:
+        #   reports/agent/w16_signal_sub6_d4_diagnostic.md
+        #   feedback_multi_paradigm_data_carrier_audit
+        # Re-enable only after signal_sub6 honors method/source compatibility.
+        # if (
+        #     c.claim_type in (ClaimType.FACTUAL, ClaimType.GROUNDED, ClaimType.OTHER)
+        #     and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0
+        # ):
+        #     signal_claim = verify_signal_sub6(c, source_report)
+        #     if signal_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+        #         verified_claim = signal_claim
+        # [verifier-modify-warning] W19 D3: post-UV ReAct tool-output route.
+        if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+            from verifier.helpers.tool_output_lookup import lookup_tool_output_evidence
+            from verifier.helpers.tool_output_trace import write_tool_output_trace
+
+            tool_output_func = globals().get("verify_tool_output_sub6") or _verify_tool_output_sub6_default
+            tool_output_claim = tool_output_func(c_for_trace, source_report)
+            tool_output_trace_path = os.environ.get("METAGENT_TOOL_OUTPUT_TRACE_PATH")
+            if tool_output_trace_path:
+                tool_output_evidence = lookup_tool_output_evidence(c_for_trace.claim_text, source_report)
+                write_tool_output_trace(
+                    path=tool_output_trace_path,
+                    task_id=_source_report_task_id(source_report),
+                    iteration=iteration,
+                    claim_id=c_for_trace.claim_id,
+                    claim_type=c_for_trace.claim_type.value,
+                    method=tool_output_evidence.method,
+                    status=tool_output_evidence.status,
+                    verdict=tool_output_claim.verdict.value,
+                    source_field=tool_output_evidence.source_field,
+                )
+            if tool_output_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                verified_claim = tool_output_claim
+        # [verifier-modify-warning] W18 D3: post-UV LLM-judge route.
+        if is_final_iteration and verified_claim.verdict == ClaimVerdict.UNVERIFIABLE_V0:
+            judge_func = globals().get("verify_llm_judge_sub6")
+            if judge_func is None and os.environ.get("METAGENT_ENABLE_LLM_JUDGE_SUB6") == "1":
+                judge_func = _verify_llm_judge_sub6_default
+            if judge_func is not None:
+                judge_claim = judge_func(
+                    c_for_trace,
+                    source_report,
+                    cost_tracker=judge_cost_tracker,
+                    iteration=iteration,
+                )
+                if judge_claim.verdict != ClaimVerdict.UNVERIFIABLE_V0:
+                    verified_claim = judge_claim
+        out.append(verified_claim)
+    return _stamp_grammar_from_classified(out, classified)
+
+
+def _source_report_task_id(source_report: Any) -> str | None:
+    if isinstance(source_report, dict):
+        value = source_report.get("task_id")
+    else:
+        value = getattr(source_report, "task_id", None)
+    return str(value) if value is not None else None

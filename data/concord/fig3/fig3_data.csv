@@ -1,0 +1,16 @@
+panel,method_a,method_b,mean_jaccard,std_jaccard,source_pair,layer,n_disagree,n_total,pct
+A,ramp,ramp,1.0,0.0,,,,,
+A,ramp,sspa,0.09998670919723551,0.09266701507832259,,,,,
+A,ramp,mummichog,0.024853801169590625,0.027882009955540576,,,,,
+A,sspa,ramp,0.09998670919723551,0.09266701507832259,,,,,
+A,sspa,sspa,1.0,0.0,,,,,
+A,sspa,mummichog,0.011961722488038272,0.022575369854152018,,,,,
+A,mummichog,ramp,0.024853801169590625,0.027882009955540576,,,,,
+A,mummichog,sspa,0.011961722488038272,0.022575369854152018,,,,,
+A,mummichog,mummichog,1.0,0.0,,,,,
+B,,,,,chebi_vs hmdb,block14,1.0,109.0,0.9174311926605505
+B,,,,,chebi_vs hmdb,full,2.0,109.0,1.834862385321101
+B,,,,,chebi_vs lipidmaps,block14,1.0,24.0,4.166666666666667
+B,,,,,chebi_vs lipidmaps,full,1.0,24.0,4.166666666666667
+B,,,,,hmdb_vs lipidmaps,block14,0.0,25.0,0.0
+B,,,,,hmdb_vs lipidmaps,full,2.0,25.0,8.0

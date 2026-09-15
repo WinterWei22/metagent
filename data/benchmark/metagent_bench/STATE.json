@@ -1,0 +1,54 @@
+{
+  "created_at": "2026-05-25T00:43:18.483421+00:00",
+  "phases": {
+    "assembly": {
+      "status": "complete_partial",
+      "tasks": 184,
+      "updated_at": "2026-05-25T02:04:32.247903+00:00"
+    },
+    "audit": {
+      "duplicate_task_ids": [],
+      "errors": 0,
+      "status": "complete",
+      "tasks": 184,
+      "updated_at": "2026-05-25T02:04:32.334134+00:00"
+    },
+    "controls": {
+      "status": "complete",
+      "updated_at": "2026-05-25T00:43:18.483421+00:00"
+    },
+    "id_mapping_gap_report": {
+      "noncanonical_metabolite_ids": {
+        "Human1": 2925,
+        "Recon2.2": 1600
+      },
+      "noncanonical_pathway_tasks": {
+        "Human1": 117,
+        "Recon2.2": 64
+      },
+      "status": "complete",
+      "updated_at": "2026-05-25T02:04:32.371463+00:00"
+    },
+    "s1": {
+      "status": "complete_below_lower_bound",
+      "tasks": 2,
+      "updated_at": "2026-05-25T00:47:26.576808+00:00"
+    },
+    "s3": {
+      "status": "complete",
+      "tasks": 1,
+      "updated_at": "2026-05-25T01:45:09.599574+00:00"
+    },
+    "s4": {
+      "status": "complete",
+      "tasks": 181,
+      "updated_at": "2026-05-25T01:45:08.614774+00:00"
+    },
+    "s6": {
+      "status": "no_tasks_missing_source_gold_pathway",
+      "tasks": 0,
+      "updated_at": "2026-05-25T02:04:32.203754+00:00"
+    }
+  },
+  "updated_at": "2026-05-25T02:04:32.371463+00:00"
+}

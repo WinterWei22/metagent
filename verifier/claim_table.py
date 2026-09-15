@@ -31,6 +31,8 @@ _TOOL_BY_TYPE = {
 _SEVERITY_BY_VERDICT = {
     ClaimVerdict.SUPPORTED: "info",
     ClaimVerdict.UNVERIFIABLE_V0: "minor",
+    ClaimVerdict.NEEDS_HUMAN_REVIEW: "minor",
+    ClaimVerdict.INSUFFICIENT_EVIDENCE: "minor",
     ClaimVerdict.UNSUPPORTED: "major",
     ClaimVerdict.CONTRADICTED: "critical",
     ClaimVerdict.ERROR: "major",

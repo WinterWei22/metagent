@@ -19,7 +19,7 @@ def _mock_chat_factory(responses: list[str]):
     """Build a chat_fn that returns ``responses`` in order on each call."""
     state = {"i": 0}
 
-    def chat(messages, *, temperature, model, trace_id, caller):
+    def chat(messages, *, temperature, model, trace_id, caller, response_format=None):
         i = state["i"]
         if i >= len(responses):
             raise IndexError("mock exhausted")
@@ -121,7 +121,7 @@ def test_no_ground_truth_in_chat_call_arguments():
     """
     captured: list[list[dict]] = []
 
-    def chat(messages, *, temperature, model, trace_id, caller):
+    def chat(messages, *, temperature, model, trace_id, caller, response_format=None):
         captured.append(messages)
         return "ok"
 

@@ -21,13 +21,19 @@ import json
 import re
 
 from common.llm_client import chat, strip_thinking
+from verifier import grammar as _grammar
 from verifier.claim_fields import (
     infer_claim_subtype,
     normalize_claim_text,
     parse_claim_fields,
 )
 from verifier.prompts import extract_claims as prompts
-from verifier.schemas import ExtractedClaim
+from verifier.schemas import (
+    ClaimExtractedFields,
+    ClaimSubtype,
+    DroppedClaim,
+    ExtractedClaim,
+)
 
 
 _FENCE_RE = re.compile(r"^```(?:json|JSON)?\s*|\s*```$", re.MULTILINE)
@@ -166,13 +172,179 @@ class ClaimExtractionError(RuntimeError):
     """
 
 
+# ---------------------------------------------------------------------------
+# Phase B1 D2 — grammar-validated JSON extraction (zero LLM calls)
+# ---------------------------------------------------------------------------
+
+
+# Per-grammar mapping from v2 claim field names to ClaimExtractedFields
+# field names. Used to populate ``extracted_fields`` so downstream
+# Stage 2 / Stage 3 layers see the same structure they would from a
+# legacy LLM extraction. Unmapped fields are kept verbatim on
+# ``raw_object`` in DroppedClaim or threaded through as-is.
+_GRAMMAR_TO_SUBTYPE: dict[str, ClaimSubtype] = {
+    "pathway_membership": ClaimSubtype.PATHWAY_MEMBERSHIP,
+    "metabolite_pathway_link": ClaimSubtype.PATHWAY_MEMBERSHIP,
+    "pathway_enrichment": ClaimSubtype.ENRICHMENT_PATHWAY,
+    "driver_metabolite": ClaimSubtype.DRIVER_LIST,
+}
+
+
+def _to_extracted_claim(claim_obj: dict) -> ExtractedClaim:
+    """Convert a grammar-validated v2 claim dict to an ExtractedClaim.
+
+    Only called *after* :func:`verifier.grammar.validate` returned
+    ``is_valid=True``, so every field required by the grammar shape is
+    present.
+
+    Phase B1 D3: also stamps ``ExtractedClaim.grammar`` with the v2
+    grammar enum so the downstream classifier can route directly via
+    ``route_v2_claim`` without re-inferring the type.
+    """
+    from verifier.grammar import ClaimGrammar
+
+    text = claim_obj["claim_text"].strip()
+    grammar_str = claim_obj["grammar"]
+    grammar_enum = ClaimGrammar(grammar_str)
+
+    # Populate the downstream-visible extracted_fields. Pathway name and
+    # subject are the two fields the Sub-6 verifier layers actually
+    # consume (cf. verifier/layers/biological_sub6.py et al.).
+    fields_kwargs: dict = {}
+    pathway = claim_obj.get("pathway_name") or claim_obj.get("term_name")
+    if pathway:
+        fields_kwargs["pathway_name"] = pathway
+
+    subject = claim_obj.get("subject")
+    normalized = normalize_claim_text(text)
+
+    return ExtractedClaim(
+        source_text=text,
+        claim_text=text,
+        normalized_text=normalized,
+        subject=subject.strip() if isinstance(subject, str) and subject.strip() else None,
+        claim_subtype=_GRAMMAR_TO_SUBTYPE.get(grammar_str, ClaimSubtype.UNKNOWN),
+        extracted_fields=ClaimExtractedFields(**fields_kwargs) if fields_kwargs else ClaimExtractedFields(),
+        grammar=grammar_enum,
+    )
+
+
+def _try_parse_grammar_payload(text: str) -> dict | None:
+    """Return the parsed dict if ``text`` is a v2 grammar JSON payload,
+    else ``None``.
+
+    The v2 contract: ``{"narrative_text": str, "claims": list[dict]}``.
+    Anything missing either key or having the wrong type falls through
+    to the legacy LLM extractor path so v1 callers and partial
+    outputs do not regress.
+    """
+    if not text or not text.strip():
+        return None
+    candidate = strip_thinking(text)
+    candidate = _FENCE_RE.sub("", candidate).strip()
+    if not candidate.startswith("{"):
+        return None
+    try:
+        obj = json.loads(candidate)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(obj, dict):
+        return None
+    if "claims" not in obj or not isinstance(obj["claims"], list):
+        return None
+    return obj
+
+
+def extract_claims_from_json(
+    narrative_payload: str | dict,
+    *,
+    trace_id: str,
+) -> tuple[list[ExtractedClaim], list[DroppedClaim]]:
+    """Schema-validate a v2 grammar JSON payload — zero LLM calls.
+
+    Each ``claims[]`` entry goes through
+    :func:`verifier.grammar.validate`. Valid entries become
+    ``ExtractedClaim`` instances; invalid entries become
+    ``DroppedClaim`` instances bucketed for the
+    ``dropped_by_grammar`` metric.
+
+    ``narrative_payload`` may be the raw LLM string (the runner just
+    passes ``msg["content"]``) or an already-parsed dict.
+
+    ``trace_id`` is kept for parity with the legacy extractor signature
+    so callers can swap freely. It is not used by this implementation
+    because no LLM call is made.
+    """
+    del trace_id  # unused — kept for signature parity
+
+    if isinstance(narrative_payload, dict):
+        obj: dict | None = narrative_payload
+    else:
+        obj = _try_parse_grammar_payload(narrative_payload)
+
+    if obj is None:
+        raise ClaimExtractionError(
+            "extract_claims_from_json received a payload that is not a "
+            "v2 grammar JSON object (no 'claims' list). Caller should "
+            "fall back to ``extract_claims`` (LLM path) for legacy "
+            "narratives."
+        )
+
+    extracted: list[ExtractedClaim] = []
+    dropped: list[DroppedClaim] = []
+    for i, raw in enumerate(obj.get("claims", [])):
+        if not isinstance(raw, dict):
+            dropped.append(
+                DroppedClaim(
+                    claim_text=str(raw)[:200],
+                    grammar_attempt=None,
+                    drop_reason=f"claims[{i}] is not a JSON object",
+                    raw_object=None,
+                )
+            )
+            continue
+        result = _grammar.validate(raw)
+        if result.is_valid:
+            extracted.append(_to_extracted_claim(raw))
+        else:
+            dropped.append(
+                DroppedClaim(
+                    claim_text=str(raw.get("claim_text") or "")[:500],
+                    grammar_attempt=raw.get("grammar")
+                    if isinstance(raw.get("grammar"), str)
+                    else None,
+                    drop_reason=result.drop_reason or "unknown",
+                    raw_object=raw,
+                )
+            )
+    return extracted, dropped
+
+
+# ---------------------------------------------------------------------------
+# Legacy LLM extractor (kept as fallback for v1 narratives + degraded paths)
+# ---------------------------------------------------------------------------
+
+
 def extract_claims(llm_output: str, *, trace_id: str) -> list[ExtractedClaim]:
     """Run the Stage 1 extractor on ``llm_output``.
 
+    Phase B1 D2: if ``llm_output`` is a v2 grammar JSON object
+    (recognised by :func:`_try_parse_grammar_payload`), the function
+    delegates to :func:`extract_claims_from_json` and DROPS dropped
+    claims silently — the legacy callers cannot see them. Callers that
+    care about dropped counts must call :func:`extract_claims_from_json`
+    directly and surface the dropped list themselves.
+
     Returns a list (possibly empty if the model legitimately found no
-    claims, e.g. an empty input). Raises :class:`ClaimExtractionError` when
-    the response cannot be parsed into the expected JSON shape.
+    claims, e.g. an empty input). Raises :class:`ClaimExtractionError`
+    when the response cannot be parsed into the expected JSON shape.
     """
+    # Phase B1 D2: prefer schema validation if the payload is a v2 JSON.
+    obj = _try_parse_grammar_payload(llm_output)
+    if obj is not None:
+        valid, _dropped = extract_claims_from_json(obj, trace_id=trace_id)
+        return valid
+    # ---- legacy LLM-based extractor below ----
     if not llm_output.strip():
         return []
 

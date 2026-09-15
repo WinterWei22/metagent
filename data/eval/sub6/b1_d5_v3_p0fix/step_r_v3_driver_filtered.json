@@ -1,0 +1,15 @@
+{
+  "n_total": 182,
+  "n_correct": 158,
+  "n_wrong": 24,
+  "n_correct_with_driver": 102,
+  "n_wrong_with_driver": 13,
+  "supp_driver_correct_mean": 0.7272875816993465,
+  "supp_driver_wrong_mean": 0.6923076923076923,
+  "supp_driver_delta_pp": 3.4979889391654195,
+  "supp_all_correct_mean": 0.9684444072102301,
+  "supp_all_wrong_mean": 0.9413510101010102,
+  "supp_all_delta_pp": 2.7093397109219874,
+  "ci95_supp_driver_correct_pp": 8.06482129282896,
+  "ci95_supp_driver_wrong_pp": 23.639217907413133
+}

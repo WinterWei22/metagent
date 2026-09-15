@@ -1,0 +1,1431 @@
+{
+  "_about": "V3 Part2 structure-axis exclusions; see docs/decisions/2026-06-23_v3_part2_embedding_method_upgrade.md",
+  "_counts": {
+    "non_single_structure": 49,
+    "structure_unavailable": 128
+  },
+  "_subcategories": {
+    "polymer_complex_pool": 26,
+    "obscure_conjugate_or_unnamed": 128,
+    "pseudo_node_no_xref": 15,
+    "generic_glycan": 8
+  },
+  "excluded": {
+    "human1|Human1|MAM03595": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03595",
+      "name": "Beta glucan-glycocholate complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03909": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03909",
+      "name": "Psyllium-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03907": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03907",
+      "name": "Psyllium",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM01610": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01610",
+      "name": "Core5 g",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01111": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01111",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03971": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03971",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01570": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01570",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM01569": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01569",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03638": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03638",
+      "name": "Gums",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM02047": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02047",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM02048": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02048",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02560": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02560",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03639": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03639",
+      "name": "Guar gum-deoxyxholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03708": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03708",
+      "name": "Lithocholic acid-3glucuronide, CDCA-3G",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03641": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03641",
+      "name": "Guar gum-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03910": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03910",
+      "name": "Psyllium-taurodeoxycholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM02353": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02353",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02352": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02352",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03209": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03209",
+      "name": "3-dehydro-Lithocholate",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02331": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02331",
+      "name": "Lacto-N-fucopentaosyl III ceramide",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "human1|Human1|MAM01999": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01999",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01851": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01851",
+      "name": "V3Fuc,III3Fuc-nLc6Cer",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "human1|Human1|MAM01852": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01852",
+      "name": "(Gal)4 (Glc)1 (GlcNAc)3 (LFuc)3 (Cer)1",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "human1|Human1|MAM03234": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03234",
+      "name": "3-(3-Hydroxy-Phenyl)Propionate Hydroxy Derivative Glucuronide",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02909": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02909",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03206": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03206",
+      "name": "3-Dehydrochenodeoxychollyc acid; 7oxo-3alpha-hydroxy-5beta-cholan-24-oic acid",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03147": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03147",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03146": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03146",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM01883": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01883",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02001": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02001",
+      "name": "Glycophosphatidylinositol (GPI)-anchored protein precursor",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM02022": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02022",
+      "name": "Glycophosphatidylinositol (GPI) signal sequence (C-terminal peptide)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01884": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01884",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02516": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02516",
+      "name": "((N-acetyl-D-glucosaminyl)5-(alpha-D-mannosyl)2-beta-D-mannosyl-diacetylchitobiosyl)-L-asparagine (protein)",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM01887": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01887",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03854": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03854",
+      "name": "Pectin-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03330": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03330",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03963": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03963",
+      "name": "Taurochenodeoxycholic acid 3-sulfate",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03782": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03782",
+      "name": "Lactone form of nifedipine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03566": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03566",
+      "name": "Desacyl dehydro-pravastatin",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03784": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03784",
+      "name": "Hydroxy metabolite of nifedipine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03781": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03781",
+      "name": "Acid metabolite of nifedipine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02054": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02054",
+      "name": "Heparan sulfate proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01554": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01554",
+      "name": "Chondroitin sulfate E (GalNAc4,6diS-GlcA) proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03908": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03908",
+      "name": "Psillium-glycocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03540": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03540",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03494": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03494",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03684": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03684",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03640": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03640",
+      "name": "Guar gum-glycocholate complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM02278": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02278",
+      "name": "Keratan sulfate I",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02510": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02510",
+      "name": "N-Acetyl-beta-D-glucosaminyl-1,2-alpha-D-mannosyl-1,3-(N-acetyl-beta-D-glucosaminyl-1,2-alpha-D-mannosyl-1,6)-(N-acetyl-beta-D-glucosaminyl-1,4)-beta-D-mannosyl-1,4-N-acetyl-beta-D-glucosaminyl-R",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01525": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01525",
+      "name": "Chondroitin sulfate B / dermatan sulfate (IdoA2S-GalNAc4S) proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03783": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03783",
+      "name": "Nitropyridine metabolite of nifedipine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03483": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03483",
+      "name": "Beta-glucans",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM01992": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01992",
+      "name": "Glycogen, structure 2 (glycogenin-1,6-{7[1,4-Glc], 4[1,4-Glc]})",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03604": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03604",
+      "name": "Beta glucan-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM01881": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01881",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02303": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02303",
+      "name": "Keratan sulfate II (core 4-linked)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02288": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02288",
+      "name": "Keratan sulfate II (core 2-linked)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01651": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01651",
+      "name": "De-Fuc form of PA6 (w/o peptide linkage)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01321": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01321",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01533": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01533",
+      "name": "Chondroitin sulfate C (GalNAc6S-GlcA) proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01517": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01517",
+      "name": "Chondroitin sulfate A (GalNAc4S-GlcA) proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01543": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01543",
+      "name": "Chondroitin sulfate D (GlcNAc6S-GlcA2S) proteoglycan",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01359": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01359",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02563": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02563",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01354": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01354",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01801": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01801",
+      "name": "F1alpha",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02010": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02010",
+      "name": "GM1b (homo sapiens)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01945": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01945",
+      "name": "GD1c (homo sapiens)",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03586": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03586",
+      "name": "Galactosyl glucosyl ceramide",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "human1|Human1|MAM01139": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01139",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01350": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01350",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM04000": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM04000",
+      "name": "Torasemide",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03623": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03623",
+      "name": "Glycogen, structure 5 (glycogenin-2[1,4-Glc])",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03622": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03622",
+      "name": "Glycogen, structure 4 (glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03605": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03605",
+      "name": "Beta glucan-taurodeoxycholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03853": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03853",
+      "name": "Pectin-glycocholate complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM03318": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03318",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM02672": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02672",
+      "name": "PA6",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01652": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01652",
+      "name": "De-Fuc form of PA6",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02434": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02434",
+      "name": "M3Gacpail Prot Heparan Sulfate",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01612": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01612",
+      "name": "Core7 g",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01872": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01872",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02837": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02837",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03644": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03644",
+      "name": "Hyodeoxycholic acid-24glucuronide, HDCA-24G",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM02753": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM02753",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01308": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01308",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03637": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03637",
+      "name": "Glycoursodeoxycholic acid 3-sulfate",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03502": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03502",
+      "name": "Suberyl carnitine; octanedioyl carnitine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03399": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03399",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM00613": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM00613",
+      "name": "24R,25-Dihyoxyvitamin D2",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM01687": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01687",
+      "name": "Deacylated-glycophosphatidylinositol (GPI)-anchored protein",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "human1|Human1|MAM01665": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM01665",
+      "name": "Deacylated-(phosphoethanolaminyl-dimannosyl),(phosphoethanolaminyl)-mannosyl-glucosaminyl-acylphosphatidylinositol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03961": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03961",
+      "name": "",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "pseudo_node_no_xref"
+    },
+    "human1|Human1|MAM03315": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03315",
+      "name": "Fatty acid 9-cis-retinol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03642": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03642",
+      "name": "Hyocholic acid-24glucuronide, HCA-24G",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03499": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03499",
+      "name": "Adipoyl carnitine; 5-Carboxypentanoyl carnitine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03489": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03489",
+      "name": "Sebacoyl carnitine; decanedioyl carnitin",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "human1|Human1|MAM03985": {
+      "stratum": "human1",
+      "id_type": "Human1",
+      "id": "MAM03985",
+      "name": "Threo-isomer of fluvastain",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|retfa": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "retfa",
+      "name": "Fatty acid retinol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|gumgchol": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "gumgchol",
+      "name": "Guar gum-glycocholate complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|rib_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "rib_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|lac_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "lac_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|arab_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "arab_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|HC01610": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "HC01610",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|psylchol": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "psylchol",
+      "name": "Psillium-glycocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|gltcho": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "gltcho",
+      "name": "Beta glucan-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|6epvs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "6epvs",
+      "name": "6-epipravastatin",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|tagat_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "tagat_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|fucgal14acglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "fucgal14acglcgalgluside_hs",
+      "name": "Lacto-N-fucopentaosyl III ceramide",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "recon22|Recon2.2|fucgalgbside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "fucgalgbside_hs",
+      "name": "Fucosyl galactosylgloboside (homo sapiens)",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "recon22|Recon2.2|fuc14galacglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "fuc14galacglcgalgluside_hs",
+      "name": "Lea glycolipid",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|glygn5": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "glygn5",
+      "name": "Glycogen, structure 5 (glycogenin-2[1,4-Glc])",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|glygn4": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "glygn4",
+      "name": "Glycogen, structure 4 (glycogenin-1,6-{2[1,4-Glc], [1,4-Glc]})",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|glygn2": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "glygn2",
+      "name": "Glycogen, structure 2 (glycogenin-1,6-{7[1,4-Glc], 4[1,4-Glc]})",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|citr_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "citr_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|met_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "met_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|psyl": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "psyl",
+      "name": "Psyllium",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|bglc": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "bglc",
+      "name": "Beta-glucans",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|thrfvs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "thrfvs",
+      "name": "Threo-isomer of fluvastain",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|3ispvs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "3ispvs",
+      "name": "3-alpha-iso-pravastatin",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|pnto_R": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "pnto_R",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|psyltchol": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "psyltchol",
+      "name": "Psyllium-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|val_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "val_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|asn_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "asn_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|arg_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "arg_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|asp_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "asp_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|glu_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "glu_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|pro_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "pro_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|1glyc_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "1glyc_hs",
+      "name": "1 acyl phosphoglycerol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|his_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "his_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|trp_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "trp_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|ascb_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "ascb_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|n2m2nmasn": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "n2m2nmasn",
+      "name": "N-Acetyl-beta-D-glucosaminyl-1,2-alpha-D-mannosyl-1,3-(N-acetyl-beta-D-glucosaminyl-1,2-alpha-D-mannosyl-1,6)-(N-acetyl-beta-D-glucosaminyl-1,4)-beta-D-mannosyl-1,4-N-acetyl-beta-D-glucosaminyl-R",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|lac_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "lac_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|ala_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "ala_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|biomass": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "biomass",
+      "name": "Biomass: total",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|ile_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "ile_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|lys_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "lys_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|thr_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "thr_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|3ttetddcoacrn": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "3ttetddcoacrn",
+      "name": "3-Hydroxy Trans5,8Tetradecadienoyl Carnitine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|phe_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "phe_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|leu_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "leu_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|hx": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "hx",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|tyr_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "tyr_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|3tetd7ecoacrn": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "3tetd7ecoacrn",
+      "name": "3-Hydroxy Tetradecenoyl-7-Carnitine",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|sbt_D": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "sbt_D",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|acgalfucgalacgalfucgalacglcgal14acglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "acgalfucgalacgalfucgalacglcgal14acglcgalgluside_hs",
+      "name": "Type IIIAb",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|fucfucfucgalacglc13galacglcgal14acglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "fucfucfucgalacglc13galacglcgal14acglcgalgluside_hs",
+      "name": "(Gal)4 (Glc)1 (GlcNAc)3 (LFuc)3 (Cer)1",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "recon22|Recon2.2|acgalfucgalacgalfuc12gal14acglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "acgalfucgalacgalfuc12gal14acglcgalgluside_hs",
+      "name": "Type IIIA glycolipid",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|galfucgalacglcgal14acglcgalgluside_hs": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "galfucgalacglcgal14acglcgalgluside_hs",
+      "name": "(Gal)4 (Glc)1 (GlcNAc)2 (LFuc)1 (Cer)1",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "generic_glycan"
+    },
+    "recon22|Recon2.2|cys_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "cys_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|gum": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "gum",
+      "name": "Gums",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|11_cis_retfa": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "11_cis_retfa",
+      "name": "Fatty acid 11-cis-retinol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|9_cis_retfa": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "9_cis_retfa",
+      "name": "Fatty acid 9-cis-retinol",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|3ohacmp": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "3ohacmp",
+      "name": "3-hydroxy-acetaminophen",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "recon22|Recon2.2|glgchlo": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "glgchlo",
+      "name": "Beta glucan-glycocholate complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|gumtchol": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "gumtchol",
+      "name": "Guar gum-taurocholic acid complex",
+      "exclusion_class": "non_single_structure",
+      "subcategory": "polymer_complex_pool"
+    },
+    "recon22|Recon2.2|ala_L": {
+      "stratum": "recon22",
+      "id_type": "Recon2.2",
+      "id": "ala_L",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "sub6_enrich|KEGG|C01074": {
+      "stratum": "sub6_enrich",
+      "id_type": "KEGG",
+      "id": "C01074",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "sub6_enrich|KEGG|C16459": {
+      "stratum": "sub6_enrich",
+      "id_type": "KEGG",
+      "id": "C16459",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|HMDB|HMDB0259938": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "HMDB",
+      "id": "HMDB0259938",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|18059": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "18059",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|26125": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "26125",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|15841": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "15841",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|25696": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "25696",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|87715": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "87715",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|36080": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "36080",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|202940": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "202940",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|61120": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "61120",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|30212": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "30212",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|HMDB|HMDB0258844": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "HMDB",
+      "id": "HMDB0258844",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|15824": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "15824",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|26034": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "26034",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|17634": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "17634",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|35457": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "35457",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    },
+    "hmdb_ramp_membership|ChEBI|27306": {
+      "stratum": "hmdb_ramp_membership",
+      "id_type": "ChEBI",
+      "id": "27306",
+      "name": "",
+      "exclusion_class": "structure_unavailable",
+      "subcategory": "obscure_conjugate_or_unnamed"
+    }
+  }
+}

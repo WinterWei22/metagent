@@ -1,0 +1,51 @@
+sample_idx,orig_idx,claim_id,task_id_short,llm_category,claim_text,evidence_short
+0,9,v1:c019,MP_P_000000016_seed1,C7,L-cysteine has KEGG ID C00097,
+1,30,v1:c011,MP_P_000000016_seed2,C9,L-cystathionine is identified by MetaboAnalystR PSEA,
+2,60,v1:c008,MP_P_000000016_seed6,C3,MetaboAnalystR KEGG PSEA has p-value 3.3e-07,
+3,61,v1:c015,MP_P_000000016_seed6,C7,The glycine N-methyltransferase reaction uses SAM to methylate glycine,
+4,73,v1:c014,MP_P_000000016_seed7,C3,L-homocysteine has molecular formula C4H9NO2S,
+5,85,v1:c027,MP_P_000000016_seed7,C5,Cysteine oxidation yields cysteic acid,
+6,121,v1:c015,MP_P_000000016_seed9,C5,L-Threonine participates as a substrate in threonine aldolase reactions,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+7,129,v1:c023,MP_P_000000016_seed9,C7,Choline has HMDB ID C00114,
+8,143,v1:c025,MP_P_000000106_seed0,C1,Norepinephrine is a driver metabolite,
+9,170,v1:c027,MP_P_000000106_seed2,C7,Pyrocatechol appears in Hawkinsinuria,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+10,174,v1:c031,MP_P_000000106_seed2,C7,Pyrocatechol appears in Dopamine Î²-hydroxylase deficiency,Disease / clinical-significance claims fall outside Sub-6 v0 scope: no curated disease-pathway DB is available. Treat as a declared limitation rather 
+11,185,v1:c046,MP_P_000000106_seed2,C7,Eicosapentaenoic acid has KEGG ID C06428,
+12,192,v1:c060,MP_P_000000106_seed2,C4,This is a true biological consensus rather than a namespace artefact,
+13,220,v1:c010,MP_P_000000106_seed8,C3,3-Methoxytyramine has InChIKey DIVQKHQLANKJQO,
+14,221,v1:c011,MP_P_000000106_seed8,C9,Tyramine is a driver metabolite of the enrichment,
+15,290,v1:c038,MP_P_000000141_seed3,C9,Ureidosuccinic acid is a peripheral metabolite,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+16,322,v1:c025,MP_P_000000141_seed7,C1,"Cross-paradigm consensus across ORA, network-activity, and m/z-direct paradigms converges on treatment-induced reprogramming of tryptophan catabolism",METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds.
+17,378,v1:c041,MP_P_000000398_seed2,C5,The treatment perturbation drives a broader glycerophospholipid biosynthetic response,
+18,381,v1:c000,MP_P_000000398_seed3,C3,"RaMP multi-DB ORA, MetaboAnalystR KEGG PSEA, and Mummichog m/z-network analysis converge on Galactose Metabolism as the dominant perturbed pathway",METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds.
+19,388,v1:c010,MP_P_000000398_seed3,C7,MUMM:galactose_metabolism has p=0.0052,
+20,389,v1:c019,MP_P_000000398_seed3,C5,Glycerol and myo-inositol suggest a secondary lipid-relevant signal,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+21,400,v1:c010,MP_P_000000398_seed4,C3,Galactitol is part of the four-metabolite hit set,
+22,470,v1:c018,MP_P_000000421_seed1,C3,17Î²-estradiol is a driver steroid,"Layer 6b found no driver compound names / IDs in the claim. The classifier may have misrouted a non-driver claim, or the names need a different extrac"
+23,478,v1:c000,MP_P_000000421_seed2,C1,Four independent pathway-enrichment paradigms converge on steroid hormone metabolism as the dominant signal in the treatment-versus-control comparison,METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds.
+24,495,v1:c024,MP_P_000000421_seed2,C5,"Androsta-5-ene-3beta,17beta-diol is an additional network intermediate in MUMM:c21_steroid_hormone_biosynthesis_and_metabolism",
+25,520,v1:c025,MP_P_000000421_seed3,C7,MUMM:C21_steroid_hormone_biosynthesis_and_metabolism was tied at the same significance,
+26,569,v1:c007,MP_P_000000421_seed6,C7,17Î²-hydroxy-5Î±-androstan-3-one has KEGG ID C03917,
+27,591,v1:c008,MP_P_000000421_seed8,C3,The six steroid metabolites include androstenedione,
+28,602,v1:c022,MP_P_000000421_seed8,C4,The signal is confirmed at the network level,
+29,621,v1:c025,MP_P_000025682_seed2,C3,The six arachidonic acid oxygenated metabolites constitute the clear winner across paradigms,"Layer 6a found no pathway ID or name in the claim, and no top_pathways canonical name appears verbatim in the claim text. Cannot map to a verdict."
+30,645,v1:c017,MP_P_000050021_seed1,C5,Phase I - Functionalization of compounds reinforces the dual-substrate picture,
+31,668,v1:c018,MP_P_000050021_seed3,C7,Prostaglandin formation from arachidonate has MUMM ID prostaglandin_formation_from_arachidonate,
+32,811,v1:c039,MP_P_000050096_seed6,C4,Squalene is consistent with a side-arm of the broader metabolic perturbation,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+33,820,v1:c013,MP_P_000050099_seed6,C1,MetaboAnalystR KEGG PSEA corroborates the finding,
+34,833,v1:c012,MP_P_000052855_seed0,C3,The p-value is 0.000168,
+35,902,v1:c014,_pathway_WP167_seed0,C7,CDP mapped to MUMM:vitamin_b5_coa_biosynthesis_from_pantothenate at rank-8,
+36,914,v1:c019,_pathway_WP167_seed1,C5,ALOX5 metabolises arachidonate to produce leukotriene A4 epoxide intermediate,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+37,925,v1:c030,_pathway_WP167_seed1,C4,6-methylmercaptopurine lacks confirmed membership in the eicosanoid synthesis roster,
+38,926,v1:c031,_pathway_WP167_seed1,C1,Three independent enrichment analyses converge on a lipid-eicosanoid biological signal,METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds.
+39,927,v1:c000,_pathway_WP167_seed2,C1,Eight differentially abundant metabolites converge on arachidonic acid metabolism and downstream eicosanoid biosynthesis,METAGENT_RAMP_PATH not set and no db_path supplied; cannot open RaMP-DB to count shared compounds.
+40,936,v1:c015,_pathway_WP167_seed2,C5,The 5-lipoxygenase branch produces 5-HETE,Layer biological_sub6 found no pathway phrase / ID and no concrete entity to verify. Free-text biological role claims are out of v0 scope.
+41,950,v1:c001,_pathway_WP167_seed3,C9,RaMP ORA returned Eicosanoid synthesis as the top hit,
+42,953,v1:c010,_pathway_WP167_seed3,C5,COX and lipoxygenase branches generate the observed eicosanoids,
+43,974,v1:c014,_pathway_WP167_seed4,C3,"The five driver metabolites are 15-deoxy-Î12,14-prostaglandin J2",
+44,1023,v1:c029,_pathway_WP167_seed6,C6,Acetylcysteine is an electrophilic scavenger,
+45,1040,v1:c008,_pathway_WP167_seed7,C4,Eicosanoid synthesis ranks first among all WikiPathways entries,
+46,1048,v1:c028,_pathway_WP167_seed7,C4,Methylmalonic acid does not appear in the top-10 hits of any paradigm,
+47,1050,v1:c030,_pathway_WP167_seed7,C4,5-androstenediol does not appear in the top-10 hits of any paradigm,
+48,1063,v1:c015,_pathway_WP167_seed8,C7,5-HETE has HMDB ID C04805,
+49,1082,v1:c035,_pathway_WP167_seed8,C5,Mercaptopurine is a structural purine analogue,

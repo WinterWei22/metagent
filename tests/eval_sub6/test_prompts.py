@@ -40,12 +40,12 @@ def test_render_block_preserves_order_and_count():
     assert "A" in lines[0] and "B" in lines[1] and "C" in lines[2]
 
 
-def test_user_prompt_contains_template_questions():
+def test_user_prompt_specifies_grammar_v2_output():
     out = prompts.render_user_prompt([{"name": "Tyrosine", "kegg_id": "C00082"}])
-    assert "metabolic pathway" in out.lower()
-    assert "key drivers" in out.lower()
-    assert "biological significance" in out.lower()
-    assert "upstream/downstream" in out.lower() or "upstream / downstream" in out.lower()
+    assert "narrative_text" in out
+    assert "claims" in out
+    assert "pathway_membership" in out
+    assert "driver_metabolite" in out
 
 
 def test_user_prompt_does_not_leak_ground_truth():

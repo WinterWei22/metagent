@@ -1,0 +1,18 @@
+{
+  "n_task_records": 61,
+  "n_error_rows": 1,
+  "counts": {
+    "supported": 588,
+    "unsupported": 389,
+    "contradicted": 139,
+    "unverifiable_v0": 2263,
+    "total_claims": 3379
+  },
+  "pct": {
+    "supported": 17.401598105948505,
+    "unsupported": 11.51228174015981,
+    "contradicted": 4.1136430896715,
+    "unverifiable_v0": 66.97247706422019
+  },
+  "source_jsonl": "data/eval/sub6/v3/sub6b_opus/verdicts_v9_phaseC.jsonl"
+}

@@ -1,0 +1,11 @@
+method_a,method_b,mean_jaccard,n_tasks
+sspa_ora,sspa_ora,1.0000,30
+sspa_ora,ramp,0.1112,30
+sspa_ora,metaboanalystr_psea,0.0000,30
+sspa_ora,fella_diffusion,0.0000,30
+ramp,ramp,1.0000,30
+ramp,metaboanalystr_psea,0.0000,30
+ramp,fella_diffusion,0.0000,30
+metaboanalystr_psea,metaboanalystr_psea,1.0000,30
+metaboanalystr_psea,fella_diffusion,0.0815,30
+fella_diffusion,fella_diffusion,0.6333,30

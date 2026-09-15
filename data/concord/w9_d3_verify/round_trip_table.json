@@ -1,0 +1,385 @@
+{
+  "tasks": {
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed3": {
+      "gt_pathway_name": "Eicosanoid synthesis",
+      "gt_pathway_id": "lm_pathway:WP167",
+      "gt_external_id": "WP167",
+      "n_input_kegg_ids": 9,
+      "compound_ids": [
+        "C01074",
+        "C00109",
+        "C04742",
+        "C04805",
+        "C14717",
+        "C00116",
+        "C00219",
+        "C00909",
+        "C00156"
+      ],
+      "tools": {
+        "run_sspa_ora": {
+          "ok": false,
+          "error": "wrapper_unavailable",
+          "reason_excerpt": "sspa unavailable: ModuleNotFoundError: No module named 'sspa'",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 284,
+          "wall_seconds": 0.21
+        },
+        "run_ramp_enrichment": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "WP:WP167",
+          "first_pathway_name": "Eicosanoid synthesis",
+          "envelope_bytes": 18232,
+          "wall_seconds": 2.88
+        },
+        "run_metaboanalystr_psea": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 8,
+          "first_pathway_id": "KEGG:hsa00590",
+          "first_pathway_name": "hsa00590",
+          "envelope_bytes": 5775,
+          "wall_seconds": 16.98
+        },
+        "run_mummichog": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "MUMM:arachidonic_acid_metabolism",
+          "first_pathway_name": "Arachidonic acid metabolism",
+          "envelope_bytes": 28014,
+          "wall_seconds": 12.05
+        },
+        "run_fella_rwr": {
+          "ok": false,
+          "error": "wrapper_runtime_error",
+          "reason_excerpt": "FELLA exception: argument is of length zero",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 342,
+          "wall_seconds": 6.84
+        }
+      }
+    },
+    "compound_only_enrich_mammalian_lm_pathway_WP167_seed7": {
+      "gt_pathway_name": "Eicosanoid synthesis",
+      "gt_pathway_id": "lm_pathway:WP167",
+      "gt_external_id": "WP167",
+      "n_input_kegg_ids": 9,
+      "compound_ids": [
+        "C00219",
+        "C05529",
+        "C02170",
+        "C00909",
+        "C04295",
+        "C14717",
+        "C04805",
+        "C04742",
+        "C00385"
+      ],
+      "tools": {
+        "run_sspa_ora": {
+          "ok": false,
+          "error": "wrapper_unavailable",
+          "reason_excerpt": "sspa unavailable: ModuleNotFoundError: No module named 'sspa'",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 284,
+          "wall_seconds": 0.05
+        },
+        "run_ramp_enrichment": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "WP:WP167",
+          "first_pathway_name": "Eicosanoid synthesis",
+          "envelope_bytes": 18211,
+          "wall_seconds": 0.94
+        },
+        "run_metaboanalystr_psea": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 5,
+          "first_pathway_id": "KEGG:hsa00590",
+          "first_pathway_name": "hsa00590",
+          "envelope_bytes": 4147,
+          "wall_seconds": 16.67
+        },
+        "run_mummichog": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "MUMM:arachidonic_acid_metabolism",
+          "first_pathway_name": "Arachidonic acid metabolism",
+          "envelope_bytes": 30490,
+          "wall_seconds": 12.83
+        },
+        "run_fella_rwr": {
+          "ok": false,
+          "error": "wrapper_runtime_error",
+          "reason_excerpt": "FELLA exception: argument is of length zero",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 342,
+          "wall_seconds": 6.8
+        }
+      }
+    },
+    "compound_only_enrich_mammalian_RAMP_P_000000421_seed1": {
+      "gt_pathway_name": "Androgen and Estrogen Metabolism",
+      "gt_pathway_id": "RAMP_P_000000421",
+      "gt_external_id": "map00150",
+      "n_input_kegg_ids": 8,
+      "compound_ids": [
+        "C01541",
+        "C00951",
+        "C04043",
+        "C00280",
+        "C00468",
+        "C01227",
+        "C03917",
+        "C00535"
+      ],
+      "tools": {
+        "run_sspa_ora": {
+          "ok": false,
+          "error": "wrapper_unavailable",
+          "reason_excerpt": "sspa unavailable: ModuleNotFoundError: No module named 'sspa'",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 284,
+          "wall_seconds": 0.0
+        },
+        "run_ramp_enrichment": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "SMPDB:SMP00356",
+          "first_pathway_name": "17-Beta Hydroxysteroid Dehydrogenase III Deficiency",
+          "envelope_bytes": 18841,
+          "wall_seconds": 0.93
+        },
+        "run_metaboanalystr_psea": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 2,
+          "first_pathway_id": "KEGG:hsa00140",
+          "first_pathway_name": "hsa00140",
+          "envelope_bytes": 2942,
+          "wall_seconds": 17.03
+        },
+        "run_mummichog": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "MUMM:androgen_and_estrogen_biosynthesis_and_metabolism",
+          "first_pathway_name": "Androgen and estrogen biosynthesis and metabolism",
+          "envelope_bytes": 16386,
+          "wall_seconds": 11.88
+        },
+        "run_fella_rwr": {
+          "ok": false,
+          "error": "wrapper_runtime_error",
+          "reason_excerpt": "FELLA exception: argument is of length zero",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 342,
+          "wall_seconds": 7.19
+        }
+      }
+    },
+    "compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
+      "gt_pathway_name": "Tryptophan metabolism",
+      "gt_pathway_id": "RAMP_P_000000141",
+      "gt_external_id": "map00380",
+      "n_input_kegg_ids": 10,
+      "compound_ids": [
+        "C00078",
+        "C01598",
+        "C03912",
+        "C00183",
+        "C03722",
+        "C04281",
+        "C00637",
+        "C00780",
+        "C00632",
+        "C00398"
+      ],
+      "tools": {
+        "run_sspa_ora": {
+          "ok": false,
+          "error": "wrapper_unavailable",
+          "reason_excerpt": "sspa unavailable: ModuleNotFoundError: No module named 'sspa'",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 284,
+          "wall_seconds": 0.01
+        },
+        "run_ramp_enrichment": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "KEGG:map00380",
+          "first_pathway_name": "Tryptophan metabolism",
+          "envelope_bytes": 18471,
+          "wall_seconds": 1.06
+        },
+        "run_metaboanalystr_psea": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 7,
+          "first_pathway_id": "KEGG:hsa00380",
+          "first_pathway_name": "hsa00380",
+          "envelope_bytes": 5796,
+          "wall_seconds": 17.28
+        },
+        "run_mummichog": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "MUMM:tryptophan_metabolism",
+          "first_pathway_name": "Tryptophan metabolism",
+          "envelope_bytes": 23831,
+          "wall_seconds": 11.57
+        },
+        "run_fella_rwr": {
+          "ok": false,
+          "error": "wrapper_runtime_error",
+          "reason_excerpt": "FELLA exception: argument is of length zero",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 342,
+          "wall_seconds": 6.8
+        }
+      }
+    },
+    "compound_only_enrich_mammalian_RAMP_P_000000398_seed0": {
+      "gt_pathway_name": "Galactose Metabolism",
+      "gt_pathway_id": "RAMP_P_000000398",
+      "gt_external_id": "map00052",
+      "n_input_kegg_ids": 11,
+      "compound_ids": [
+        "C03758",
+        "C05302",
+        "C01697",
+        "C00137",
+        "C00189",
+        "C01235",
+        "C00221",
+        "C05768",
+        "C00089",
+        "C00116",
+        "C00751"
+      ],
+      "tools": {
+        "run_sspa_ora": {
+          "ok": false,
+          "error": "wrapper_unavailable",
+          "reason_excerpt": "sspa unavailable: ModuleNotFoundError: No module named 'sspa'",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 284,
+          "wall_seconds": 0.01
+        },
+        "run_ramp_enrichment": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "SMPDB:SMP00182",
+          "first_pathway_name": "Galactosemia",
+          "envelope_bytes": 14722,
+          "wall_seconds": 1.39
+        },
+        "run_metaboanalystr_psea": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 8,
+          "first_pathway_id": "KEGG:hsa00052",
+          "first_pathway_name": "hsa00052",
+          "envelope_bytes": 6060,
+          "wall_seconds": 16.96
+        },
+        "run_mummichog": {
+          "ok": true,
+          "error": null,
+          "reason_excerpt": null,
+          "_n_pathways": 10,
+          "first_pathway_id": "MUMM:sialic_acid_metabolism",
+          "first_pathway_name": "Sialic acid metabolism",
+          "envelope_bytes": 47361,
+          "wall_seconds": 14.05
+        },
+        "run_fella_rwr": {
+          "ok": false,
+          "error": "wrapper_runtime_error",
+          "reason_excerpt": "FELLA exception: argument is of length zero",
+          "_n_pathways": 0,
+          "first_pathway_id": null,
+          "first_pathway_name": null,
+          "envelope_bytes": 342,
+          "wall_seconds": 6.77
+        }
+      }
+    }
+  },
+  "tool_aggregate_counts": {
+    "run_sspa_ora": {
+      "ok": 0,
+      "err": 5,
+      "wrapper_unavailable": 5,
+      "wrapper_runtime_error": 0
+    },
+    "run_ramp_enrichment": {
+      "ok": 5,
+      "err": 0,
+      "wrapper_unavailable": 0,
+      "wrapper_runtime_error": 0
+    },
+    "run_metaboanalystr_psea": {
+      "ok": 5,
+      "err": 0,
+      "wrapper_unavailable": 0,
+      "wrapper_runtime_error": 0
+    },
+    "run_mummichog": {
+      "ok": 5,
+      "err": 0,
+      "wrapper_unavailable": 0,
+      "wrapper_runtime_error": 0
+    },
+    "run_fella_rwr": {
+      "ok": 0,
+      "err": 5,
+      "wrapper_unavailable": 0,
+      "wrapper_runtime_error": 5
+    }
+  },
+  "total_wall_seconds": 189.18,
+  "generated_at": "2026-05-19T14:07:27"
+}

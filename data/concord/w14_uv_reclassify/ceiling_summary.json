@@ -1,0 +1,12 @@
+{
+  "n_c8c9_total": 148,
+  "n_strict_noise": 14,
+  "n_valid_content": 134,
+  "n_unclassified": 0,
+  "failed_batches": 0,
+  "n_batches": 3,
+  "w11_uv_total": 1102,
+  "strict_noise_ceiling_pp": 1.27,
+  "target_pp_at_0p6_ceiling": 0.76,
+  "wall_seconds": 87.8
+}

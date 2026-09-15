@@ -1,0 +1,120 @@
+{
+  "md5": {
+    "per_file": {
+      "data/benchmark/sub6/sub6b_mammalian_tasks_v3.jsonl": {
+        "expected_md5": "331b30a64017debe9d5ce07ed238e4f5",
+        "actual_md5": "331b30a64017debe9d5ce07ed238e4f5",
+        "match": true
+      },
+      "data/benchmark/sub6/curated_hmdb_mammalian_v3.jsonl": {
+        "actual_md5": "3f6227a21b9a67d18e50027f832e7cd7",
+        "note": "v3-only, no original-audit expected MD5"
+      }
+    },
+    "all_match": true
+  },
+  "p0_1": {
+    "n_tasks": 63,
+    "noise_zero_count": 0,
+    "noise_min": 2,
+    "noise_max": 5,
+    "noise_mean": 3.492063492063492
+  },
+  "p0_2": {
+    "n_pathways": 13,
+    "n_tasks_per_pathway": {
+      "RAMP_P_000052855": 1,
+      "RAMP_P_000000421": 7,
+      "RAMP_P_000053042": 1,
+      "RAMP_P_000000016": 6,
+      "RAMP_P_000025682": 1,
+      "RAMP_P_000000398": 10,
+      "RAMP_P_000053306": 2,
+      "RAMP_P_000050099": 1,
+      "RAMP_P_000050021": 10,
+      "RAMP_P_000000106": 4,
+      "RAMP_P_000050096": 1,
+      "lm_pathway:WP167": 10,
+      "RAMP_P_000000141": 9
+    },
+    "n_singletons": 5
+  },
+  "p0_4": {
+    "curated_size": 250,
+    "curated_unique_kegg": 249,
+    "task_used_unique_kegg": 178,
+    "task_used_subset_of_curated": true,
+    "task_used_pct_of_curated": 71.4859437751004
+  },
+  "p1_1": {
+    "n_tasks": 63,
+    "n_identical_pairs": 83,
+    "n_jaccard_ge_09_pairs": 83,
+    "n_jaccard_ge_07_pairs": 179,
+    "n_tasks_in_high_overlap_clusters": 50,
+    "pct_tasks_in_high_overlap": 79.36507936507937,
+    "n_identical_multi_clusters": 12,
+    "n_unique_signal_sets": 34,
+    "n_pathway_clusters": 13
+  },
+  "p1_3": {
+    "n_pathway_groups": 13,
+    "n_inconsistent_groups": 0
+  },
+  "deep_p1_1": {
+    "n_naive": 63,
+    "n_eff_by_unique_signal_set": 34,
+    "n_eff_by_pathway_cluster": 13,
+    "n_identical_multi_clusters": 12,
+    "se_multiplier_under_pathway_cluster": 2.2013981571160284,
+    "se_multiplier_under_unique_set": 1.3612278194595453
+  },
+  "e1": {
+    "label": "sub6b",
+    "n_lines": 63,
+    "n_valid_json": 63,
+    "n_parse_errors": 0,
+    "parse_error_sample": [],
+    "n_unique_task_ids": 63,
+    "n_dup_task_ids": 0,
+    "sample_dups": []
+  },
+  "e2": {
+    "n_tasks": 63,
+    "n_mismatch": 0,
+    "samples": []
+  },
+  "e3": {
+    "n_pids_total": 63,
+    "n_pids_unique": 13,
+    "ramp_pid_prefix_distribution": {
+      "RaMP": 53,
+      "LIPID_MAPS": 10
+    },
+    "pathway_source_distribution": {
+      "wikipathways": 4,
+      "kegg": 36,
+      "smpdb": 1,
+      "reactome": 12,
+      "lipidmaps": 10
+    }
+  },
+  "e4": {
+    "n_tasks": 63,
+    "n_violating": 0
+  },
+  "e6_lipid": {
+    "n_lipid_tasks": 10,
+    "n_unique_lipid_pathways": 1,
+    "pathway_replication_counts": {
+      "Eicosanoid synthesis (WP167)": 10
+    },
+    "lipid_task_ids_sample": [
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed3",
+      "compound_only_enrich_mammalian_lm_pathway_WP167_seed4"
+    ]
+  }
+}

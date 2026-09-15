@@ -1,0 +1,1727 @@
+{
+ "s4_cooke_2025_human1_group1": null,
+ "s4_cooke_2025_human1_group3": null,
+ "s4_cooke_2025_human1_group8": null,
+ "s4_cooke_2025_human1_group9": null,
+ "s4_cooke_2025_human1_group11": null,
+ "s4_cooke_2025_human1_group19": null,
+ "s4_cooke_2025_human1_group26": null,
+ "s4_cooke_2025_human1_group28": null,
+ "s4_cooke_2025_human1_group30": null,
+ "s4_cooke_2025_human1_group32": null,
+ "s4_cooke_2025_human1_group33": null,
+ "s4_cooke_2025_human1_group34": null,
+ "s4_cooke_2025_human1_group36": null,
+ "s4_cooke_2025_human1_group40": null,
+ "s4_cooke_2025_human1_group45": null,
+ "s4_cooke_2025_human1_group47": null,
+ "s4_cooke_2025_human1_group48": null,
+ "s4_cooke_2025_human1_group49": null,
+ "s4_cooke_2025_human1_group52": null,
+ "s4_cooke_2025_human1_group62": null,
+ "s4_cooke_2025_human1_group63": null,
+ "s4_cooke_2025_human1_group64": null,
+ "s4_cooke_2025_human1_group65": null,
+ "s4_cooke_2025_human1_group69": null,
+ "s4_cooke_2025_human1_group71": null,
+ "s4_cooke_2025_human1_group75": null,
+ "s4_cooke_2025_human1_group83": null,
+ "s4_cooke_2025_human1_group87": null,
+ "s4_cooke_2025_human1_group88": null,
+ "s4_cooke_2025_human1_group90": null,
+ "s4_cooke_2025_human1_group97": null,
+ "s4_cooke_2025_human1_group101": null,
+ "s4_cooke_2025_human1_group102": null,
+ "s4_cooke_2025_human1_group105": null,
+ "s4_cooke_2025_human1_group109": null,
+ "s4_cooke_2025_human1_group110": null,
+ "s4_cooke_2025_human1_group111": null,
+ "s4_cooke_2025_human1_group112": null,
+ "s4_cooke_2025_human1_group121": null,
+ "s4_cooke_2025_human1_group129": null,
+ "s4_cooke_2025_human1_group131": null,
+ "s4_cooke_2025_human1_group142": null,
+ "s4_cooke_2025_human1_group82": null,
+ "s4_cooke_2025_human1_group103": null,
+ "s4_cooke_2025_human1_group91": null,
+ "s4_cooke_2025_human1_group104": null,
+ "s4_cooke_2025_human1_group134": null,
+ "s4_cooke_2025_human1_group68": null,
+ "s4_cooke_2025_human1_group120": null,
+ "s4_cooke_2025_human1_group116": null,
+ "s4_cooke_2025_human1_group122": null,
+ "s4_cooke_2025_human1_group31": null,
+ "s4_cooke_2025_human1_group37": null,
+ "s4_cooke_2025_human1_group38": null,
+ "s4_cooke_2025_human1_group39": null,
+ "s4_cooke_2025_human1_group99": null,
+ "s4_cooke_2025_human1_group124": null,
+ "s4_cooke_2025_human1_group41": null,
+ "s4_cooke_2025_human1_group42": null,
+ "s4_cooke_2025_human1_group73": null,
+ "s4_cooke_2025_human1_group74": null,
+ "s4_cooke_2025_human1_group76": null,
+ "s4_cooke_2025_human1_group85": null,
+ "s4_cooke_2025_human1_group86": null,
+ "s4_cooke_2025_human1_group93": null,
+ "s4_cooke_2025_human1_group96": null,
+ "s4_cooke_2025_human1_group2": null,
+ "s4_cooke_2025_human1_group7": null,
+ "s4_cooke_2025_human1_group12": null,
+ "s4_cooke_2025_human1_group13": null,
+ "s4_cooke_2025_human1_group14": null,
+ "s4_cooke_2025_human1_group15": null,
+ "s4_cooke_2025_human1_group16": null,
+ "s4_cooke_2025_human1_group17": null,
+ "s4_cooke_2025_human1_group20": null,
+ "s4_cooke_2025_human1_group21": null,
+ "s4_cooke_2025_human1_group23": null,
+ "s4_cooke_2025_human1_group24": null,
+ "s4_cooke_2025_human1_group22": null,
+ "s4_cooke_2025_human1_group27": null,
+ "s4_cooke_2025_human1_group50": null,
+ "s4_cooke_2025_human1_group53": null,
+ "s4_cooke_2025_human1_group54": null,
+ "s4_cooke_2025_human1_group55": null,
+ "s4_cooke_2025_human1_group56": null,
+ "s4_cooke_2025_human1_group57": null,
+ "s4_cooke_2025_human1_group58": null,
+ "s4_cooke_2025_human1_group59": null,
+ "s4_cooke_2025_human1_group60": null,
+ "s4_cooke_2025_human1_group61": null,
+ "s4_cooke_2025_human1_group67": null,
+ "s4_cooke_2025_human1_group77": null,
+ "s4_cooke_2025_human1_group80": null,
+ "s4_cooke_2025_human1_group98": null,
+ "s4_cooke_2025_human1_group123": null,
+ "s4_cooke_2025_human1_group29": null,
+ "s4_cooke_2025_human1_group108": null,
+ "s4_cooke_2025_human1_group132": null,
+ "s4_cooke_2025_human1_group138": null,
+ "s4_cooke_2025_human1_group135": null,
+ "s4_cooke_2025_human1_group78": null,
+ "s4_cooke_2025_human1_group125": null,
+ "s4_cooke_2025_human1_group18": null,
+ "s4_cooke_2025_human1_group100": null,
+ "s4_cooke_2025_human1_group79": null,
+ "s4_cooke_2025_human1_group106": null,
+ "s4_cooke_2025_human1_group130": null,
+ "s4_cooke_2025_human1_group81": null,
+ "s4_cooke_2025_human1_group113": null,
+ "s4_cooke_2025_human1_group89": null,
+ "s4_cooke_2025_human1_group43": null,
+ "s4_cooke_2025_human1_group44": null,
+ "s4_cooke_2025_human1_group137": null,
+ "s4_cooke_2025_human1_group25": null,
+ "s4_cooke_2025_human1_group133": null,
+ "s4_cooke_2025_human1_group139": null,
+ "s4_cooke_2025_human1_group119": null,
+ "s4_cooke_2025_recon2_2_subsystem27": null,
+ "s4_cooke_2025_recon2_2_subsystem76": null,
+ "s4_cooke_2025_recon2_2_subsystem70": null,
+ "s4_cooke_2025_recon2_2_subsystem45": null,
+ "s4_cooke_2025_recon2_2_subsystem9": null,
+ "s4_cooke_2025_recon2_2_subsystem69": null,
+ "s4_cooke_2025_recon2_2_subsystem59": null,
+ "s4_cooke_2025_recon2_2_subsystem6": null,
+ "s4_cooke_2025_recon2_2_subsystem17": null,
+ "s4_cooke_2025_recon2_2_subsystem85": null,
+ "s4_cooke_2025_recon2_2_subsystem30": null,
+ "s4_cooke_2025_recon2_2_subsystem90": null,
+ "s4_cooke_2025_recon2_2_subsystem40": null,
+ "s4_cooke_2025_recon2_2_subsystem75": null,
+ "s4_cooke_2025_recon2_2_subsystem61": null,
+ "s4_cooke_2025_recon2_2_subsystem12": null,
+ "s4_cooke_2025_recon2_2_subsystem15": null,
+ "s4_cooke_2025_recon2_2_subsystem48": null,
+ "s4_cooke_2025_recon2_2_subsystem19": null,
+ "s4_cooke_2025_recon2_2_subsystem5": null,
+ "s4_cooke_2025_recon2_2_subsystem38": null,
+ "s4_cooke_2025_recon2_2_subsystem10": null,
+ "s4_cooke_2025_recon2_2_subsystem36": null,
+ "s4_cooke_2025_recon2_2_subsystem7": null,
+ "s4_cooke_2025_recon2_2_subsystem39": null,
+ "s4_cooke_2025_recon2_2_subsystem78": null,
+ "s4_cooke_2025_recon2_2_subsystem63": null,
+ "s4_cooke_2025_recon2_2_subsystem2": null,
+ "s4_cooke_2025_recon2_2_subsystem8": null,
+ "s4_cooke_2025_recon2_2_subsystem21": null,
+ "s4_cooke_2025_recon2_2_subsystem55": null,
+ "s4_cooke_2025_recon2_2_subsystem33": null,
+ "s4_cooke_2025_recon2_2_subsystem68": null,
+ "s4_cooke_2025_recon2_2_subsystem14": null,
+ "s4_cooke_2025_recon2_2_subsystem80": null,
+ "s4_cooke_2025_recon2_2_subsystem83": null,
+ "s4_cooke_2025_recon2_2_subsystem74": null,
+ "s4_cooke_2025_recon2_2_subsystem54": null,
+ "s4_cooke_2025_recon2_2_subsystem79": null,
+ "s4_cooke_2025_recon2_2_subsystem20": null,
+ "s4_cooke_2025_recon2_2_subsystem16": null,
+ "s4_cooke_2025_recon2_2_subsystem3": null,
+ "s4_cooke_2025_recon2_2_subsystem28": null,
+ "s4_cooke_2025_recon2_2_subsystem47": null,
+ "s4_cooke_2025_recon2_2_subsystem4": null,
+ "s4_cooke_2025_recon2_2_subsystem82": null,
+ "s4_cooke_2025_recon2_2_subsystem22": null,
+ "s4_cooke_2025_recon2_2_subsystem87": null,
+ "s4_cooke_2025_recon2_2_subsystem67": null,
+ "s4_cooke_2025_recon2_2_subsystem77": null,
+ "s4_cooke_2025_recon2_2_subsystem44": null,
+ "s4_cooke_2025_recon2_2_subsystem46": null,
+ "s4_cooke_2025_recon2_2_subsystem23": null,
+ "s4_cooke_2025_recon2_2_subsystem53": null,
+ "s4_cooke_2025_recon2_2_subsystem49": null,
+ "s4_cooke_2025_recon2_2_subsystem66": null,
+ "s4_cooke_2025_recon2_2_subsystem52": null,
+ "s4_cooke_2025_recon2_2_subsystem62": null,
+ "s4_cooke_2025_recon2_2_subsystem31": null,
+ "s4_cooke_2025_recon2_2_subsystem41": null,
+ "s4_cooke_2025_recon2_2_subsystem13": null,
+ "s4_cooke_2025_recon2_2_subsystem26": null,
+ "s4_cooke_2025_recon2_2_subsystem1": null,
+ "s4_cooke_2025_recon2_2_subsystem81": null,
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000052855_seed0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed3": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed4": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed5": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000421_seed8": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000097",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053042_seed9": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000000054",
+   "RAMP_C_000000093",
+   "RAMP_C_000000156",
+   "RAMP_C_000001715"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000003",
+   "RAMP_C_000218469",
+   "RAMP_C_000218554",
+   "RAMP_C_000218711",
+   "RAMP_C_000218715",
+   "RAMP_C_000262345"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000065",
+   "RAMP_C_000218542",
+   "RAMP_C_000218658",
+   "RAMP_C_000218857",
+   "RAMP_C_000219437",
+   "RAMP_C_000219481",
+   "RAMP_C_000262345"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed4": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000078",
+   "RAMP_C_000218469",
+   "RAMP_C_000218542",
+   "RAMP_C_000218715",
+   "RAMP_C_000218724",
+   "RAMP_C_000219437",
+   "RAMP_C_000219481",
+   "RAMP_C_000219492"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000065",
+   "RAMP_C_000000078",
+   "RAMP_C_000002701",
+   "RAMP_C_000218440",
+   "RAMP_C_000218469",
+   "RAMP_C_000218724",
+   "RAMP_C_000218857"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed7": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000065",
+   "RAMP_C_000218397",
+   "RAMP_C_000218711",
+   "RAMP_C_000218724",
+   "RAMP_C_000218762",
+   "RAMP_C_000218857",
+   "RAMP_C_000262345"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000016_seed9": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000065",
+   "RAMP_C_000007697",
+   "RAMP_C_000218028",
+   "RAMP_C_000218397",
+   "RAMP_C_000218724",
+   "RAMP_C_000274401"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000025682_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000200",
+   "RAMP_C_000001102",
+   "RAMP_C_000002136",
+   "RAMP_C_000006718",
+   "RAMP_C_000262755",
+   "RAMP_C_000268533"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed3": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed4": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed5": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed7": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed8": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000069",
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000398_seed9": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000077",
+   "RAMP_C_000000085",
+   "RAMP_C_000000136",
+   "RAMP_C_000000176",
+   "RAMP_C_000002543"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000007",
+   "RAMP_C_000000053",
+   "RAMP_C_000001024",
+   "RAMP_C_000217833",
+   "RAMP_C_000218716",
+   "RAMP_C_000218746"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050099_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000007",
+   "RAMP_C_000000008",
+   "RAMP_C_000000053",
+   "RAMP_C_000000056",
+   "RAMP_C_000001341"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000053306_seed7": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000007",
+   "RAMP_C_000000008",
+   "RAMP_C_000000053",
+   "RAMP_C_000001024",
+   "RAMP_C_000217833",
+   "RAMP_C_000218746"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218469",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000047",
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558",
+   "RAMP_C_000220596"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000080",
+   "RAMP_C_000000849",
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000040363",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed3": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001102",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed4": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218469",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed5": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000080",
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed7": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000009133",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed8": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000001073",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050021_seed9": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000930",
+   "RAMP_C_000041802",
+   "RAMP_C_000041972",
+   "RAMP_C_000160336",
+   "RAMP_C_000218558",
+   "RAMP_C_000273906"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000019",
+   "RAMP_C_000000749",
+   "RAMP_C_000218061",
+   "RAMP_C_000218762",
+   "RAMP_C_000218778",
+   "RAMP_C_000219112"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000027",
+   "RAMP_C_000000506",
+   "RAMP_C_000000749",
+   "RAMP_C_000001936",
+   "RAMP_C_000002004"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed3": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000027",
+   "RAMP_C_000000209",
+   "RAMP_C_000218061",
+   "RAMP_C_000218778",
+   "RAMP_C_000218860",
+   "RAMP_C_000273906"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000050096_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000117",
+   "RAMP_C_000002004",
+   "RAMP_C_000218028",
+   "RAMP_C_000218061",
+   "RAMP_C_000218394",
+   "RAMP_C_000218778",
+   "RAMP_C_000218779",
+   "RAMP_C_000219112"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000106_seed8": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000027",
+   "RAMP_C_000000209",
+   "RAMP_C_000000506",
+   "RAMP_C_000000749",
+   "RAMP_C_000002004",
+   "RAMP_C_000271691"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed0": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed1": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed2": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed3": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed4": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed5": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed6": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed7": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed8": null,
+ "sub6_easy_compound_only_enrich_mammalian_lm_pathway_WP167_seed9": null,
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed2": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed3": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed4": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed5": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed6": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000000909",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed7": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389",
+   "RAMP_C_000262759"
+  ]
+ },
+ "sub6_easy_compound_only_enrich_mammalian_RAMP_P_000000141_seed8": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000177",
+   "RAMP_C_000001056",
+   "RAMP_C_000218721",
+   "RAMP_C_000220389"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000080",
+   "RAMP_C_000000104",
+   "RAMP_C_000000142",
+   "RAMP_C_000001815",
+   "RAMP_C_000218028",
+   "RAMP_C_000218495",
+   "RAMP_C_000218784",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000158_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000079",
+   "RAMP_C_000001009",
+   "RAMP_C_000009677",
+   "RAMP_C_000218397",
+   "RAMP_C_000218525",
+   "RAMP_C_000218742",
+   "RAMP_C_000218766"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000092",
+   "RAMP_C_000000497",
+   "RAMP_C_000001294",
+   "RAMP_C_000001819",
+   "RAMP_C_000007773",
+   "RAMP_C_000218028",
+   "RAMP_C_000218400",
+   "RAMP_C_000218547"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000303_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000092",
+   "RAMP_C_000164914",
+   "RAMP_C_000218400",
+   "RAMP_C_000218547",
+   "RAMP_C_000218670",
+   "RAMP_C_000218784",
+   "RAMP_C_000261933"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000932",
+   "RAMP_C_000001047",
+   "RAMP_C_000001485",
+   "RAMP_C_000001535",
+   "RAMP_C_000002141",
+   "RAMP_C_000008455",
+   "RAMP_C_000168128",
+   "RAMP_C_000263923"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025679_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000142",
+   "RAMP_C_000001010",
+   "RAMP_C_000001047",
+   "RAMP_C_000001102",
+   "RAMP_C_000001752",
+   "RAMP_C_000002060",
+   "RAMP_C_000009677",
+   "RAMP_C_000215105"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001145",
+   "RAMP_C_000001294",
+   "RAMP_C_000002935",
+   "RAMP_C_000218291",
+   "RAMP_C_000218397",
+   "RAMP_C_000218542",
+   "RAMP_C_000261825",
+   "RAMP_C_000262942"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000116_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000145",
+   "RAMP_C_000000199",
+   "RAMP_C_000000347",
+   "RAMP_C_000001047",
+   "RAMP_C_000001835",
+   "RAMP_C_000042003",
+   "RAMP_C_000218399",
+   "RAMP_C_000218703"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000002747",
+   "RAMP_C_000162834",
+   "RAMP_C_000217324",
+   "RAMP_C_000218051",
+   "RAMP_C_000264780",
+   "RAMP_C_000274496"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000446_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000407",
+   "RAMP_C_000001016",
+   "RAMP_C_000001152",
+   "RAMP_C_000001318",
+   "RAMP_C_000162834",
+   "RAMP_C_000217324",
+   "RAMP_C_000274496"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000028",
+   "RAMP_C_000000042",
+   "RAMP_C_000000416",
+   "RAMP_C_000001045",
+   "RAMP_C_000041799",
+   "RAMP_C_000162834",
+   "RAMP_C_000218399",
+   "RAMP_C_000218542"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000301_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000028",
+   "RAMP_C_000000042",
+   "RAMP_C_000000407",
+   "RAMP_C_000000416",
+   "RAMP_C_000000839",
+   "RAMP_C_000001123",
+   "RAMP_C_000041799",
+   "RAMP_C_000162834"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001047",
+   "RAMP_C_000001213",
+   "RAMP_C_000001306",
+   "RAMP_C_000001313",
+   "RAMP_C_000001405",
+   "RAMP_C_000001746",
+   "RAMP_C_000001752",
+   "RAMP_C_000273400"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048620_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001083",
+   "RAMP_C_000001306",
+   "RAMP_C_000001686",
+   "RAMP_C_000001746",
+   "RAMP_C_000006693",
+   "RAMP_C_000162834",
+   "RAMP_C_000166539",
+   "RAMP_C_000273400"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000051",
+   "RAMP_C_000000416",
+   "RAMP_C_000000829",
+   "RAMP_C_000000915",
+   "RAMP_C_000001009",
+   "RAMP_C_000001042",
+   "RAMP_C_000218394",
+   "RAMP_C_000261993"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000163_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000829",
+   "RAMP_C_000000915",
+   "RAMP_C_000001009",
+   "RAMP_C_000162782",
+   "RAMP_C_000218028",
+   "RAMP_C_000218394",
+   "RAMP_C_000218399",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000199",
+   "RAMP_C_000001752",
+   "RAMP_C_000002935",
+   "RAMP_C_000022298",
+   "RAMP_C_000166539",
+   "RAMP_C_000262026",
+   "RAMP_C_000262077",
+   "RAMP_C_000269910"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000407_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001047",
+   "RAMP_C_000001752",
+   "RAMP_C_000001848",
+   "RAMP_C_000002935",
+   "RAMP_C_000022298",
+   "RAMP_C_000166539",
+   "RAMP_C_000262026",
+   "RAMP_C_000269910"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000145",
+   "RAMP_C_000000828",
+   "RAMP_C_000000839",
+   "RAMP_C_000001013",
+   "RAMP_C_000001967",
+   "RAMP_C_000001968",
+   "RAMP_C_000001969",
+   "RAMP_C_000041713"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048412_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000142",
+   "RAMP_C_000001152",
+   "RAMP_C_000001926",
+   "RAMP_C_000001962",
+   "RAMP_C_000001967",
+   "RAMP_C_000001968",
+   "RAMP_C_000041619",
+   "RAMP_C_000269910"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000146",
+   "RAMP_C_000000416",
+   "RAMP_C_000000828",
+   "RAMP_C_000001962",
+   "RAMP_C_000001964",
+   "RAMP_C_000001969",
+   "RAMP_C_000041799",
+   "RAMP_C_000220181"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000345_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000146",
+   "RAMP_C_000001013",
+   "RAMP_C_000001014",
+   "RAMP_C_000001294",
+   "RAMP_C_000001721",
+   "RAMP_C_000001962",
+   "RAMP_C_000002697",
+   "RAMP_C_000041799"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000112",
+   "RAMP_C_000000142",
+   "RAMP_C_000000145",
+   "RAMP_C_000000167",
+   "RAMP_C_000000407",
+   "RAMP_C_000000852",
+   "RAMP_C_000001016",
+   "RAMP_C_000002887"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000025671_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000110",
+   "RAMP_C_000000145",
+   "RAMP_C_000000407",
+   "RAMP_C_000000811",
+   "RAMP_C_000002677",
+   "RAMP_C_000002887",
+   "RAMP_C_000262414",
+   "RAMP_C_000262430"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000080",
+   "RAMP_C_000000407",
+   "RAMP_C_000000809",
+   "RAMP_C_000001016",
+   "RAMP_C_000001752",
+   "RAMP_C_000001815",
+   "RAMP_C_000012515",
+   "RAMP_C_000263954"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000503_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000055",
+   "RAMP_C_000000080",
+   "RAMP_C_000000145",
+   "RAMP_C_000000809",
+   "RAMP_C_000001752",
+   "RAMP_C_000002643",
+   "RAMP_C_000218469",
+   "RAMP_C_000263954"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000085",
+   "RAMP_C_000000142",
+   "RAMP_C_000000407",
+   "RAMP_C_000001605",
+   "RAMP_C_000001828",
+   "RAMP_C_000218080",
+   "RAMP_C_000219234"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048381_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000085",
+   "RAMP_C_000000142",
+   "RAMP_C_000000811",
+   "RAMP_C_000001013",
+   "RAMP_C_000001016",
+   "RAMP_C_000001605",
+   "RAMP_C_000003853",
+   "RAMP_C_000219234"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000077",
+   "RAMP_C_000000450",
+   "RAMP_C_000000852",
+   "RAMP_C_000001009",
+   "RAMP_C_000001294",
+   "RAMP_C_000261993",
+   "RAMP_C_000263270",
+   "RAMP_C_000272797"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000173_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000077",
+   "RAMP_C_000000416",
+   "RAMP_C_000000450",
+   "RAMP_C_000001009",
+   "RAMP_C_000001819",
+   "RAMP_C_000001838",
+   "RAMP_C_000218525",
+   "RAMP_C_000218682"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000407",
+   "RAMP_C_000001016",
+   "RAMP_C_000001294",
+   "RAMP_C_000001752",
+   "RAMP_C_000041874",
+   "RAMP_C_000218223",
+   "RAMP_C_000218426",
+   "RAMP_C_000218542"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000003_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000125",
+   "RAMP_C_000000786",
+   "RAMP_C_000009677",
+   "RAMP_C_000022298",
+   "RAMP_C_000041874",
+   "RAMP_C_000218426",
+   "RAMP_C_000218857",
+   "RAMP_C_000262775"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000042",
+   "RAMP_C_000000792",
+   "RAMP_C_000001045",
+   "RAMP_C_000001123",
+   "RAMP_C_000001294",
+   "RAMP_C_000162834",
+   "RAMP_C_000218399",
+   "RAMP_C_000218499"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000038_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000042",
+   "RAMP_C_000000792",
+   "RAMP_C_000001045",
+   "RAMP_C_000001123",
+   "RAMP_C_000001191",
+   "RAMP_C_000001294",
+   "RAMP_C_000218399",
+   "RAMP_C_000218499"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000142",
+   "RAMP_C_000000145",
+   "RAMP_C_000001014",
+   "RAMP_C_000001042",
+   "RAMP_C_000001047",
+   "RAMP_C_000001752",
+   "RAMP_C_000041799",
+   "RAMP_C_000166539"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000048397_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001042",
+   "RAMP_C_000001294",
+   "RAMP_C_000001842",
+   "RAMP_C_000002908",
+   "RAMP_C_000041616",
+   "RAMP_C_000162834",
+   "RAMP_C_000218062",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000003",
+   "RAMP_C_000000034",
+   "RAMP_C_000000407",
+   "RAMP_C_000000893",
+   "RAMP_C_000000954",
+   "RAMP_C_000001320",
+   "RAMP_C_000218658",
+   "RAMP_C_000218715"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000026_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000954",
+   "RAMP_C_000001016",
+   "RAMP_C_000001129",
+   "RAMP_C_000041906",
+   "RAMP_C_000218395",
+   "RAMP_C_000218440",
+   "RAMP_C_000218711",
+   "RAMP_C_000271503"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000142",
+   "RAMP_C_000000416",
+   "RAMP_C_000000543",
+   "RAMP_C_000000868",
+   "RAMP_C_000000898",
+   "RAMP_C_000002049",
+   "RAMP_C_000218542",
+   "RAMP_C_000218857"
+  ]
+ },
+ "hmdb_ramp_easy_kegg_RAMP_P_000000365_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000155",
+   "RAMP_C_000000189",
+   "RAMP_C_000000868",
+   "RAMP_C_000001047",
+   "RAMP_C_000002048",
+   "RAMP_C_000166539",
+   "RAMP_C_000218857"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000189",
+   "RAMP_C_000000416",
+   "RAMP_C_000001158",
+   "RAMP_C_000218542",
+   "RAMP_C_000218768",
+   "RAMP_C_000219694",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051473_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000189",
+   "RAMP_C_000000416",
+   "RAMP_C_000001158",
+   "RAMP_C_000218542",
+   "RAMP_C_000218768",
+   "RAMP_C_000219694",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000047",
+   "RAMP_C_000000802",
+   "RAMP_C_000001016",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050442_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000802",
+   "RAMP_C_000001016",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000450",
+   "RAMP_C_000218291"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050660_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000802",
+   "RAMP_C_000001016",
+   "RAMP_C_000009536",
+   "RAMP_C_000159555"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000200",
+   "RAMP_C_000001009",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050242_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001009",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000416",
+   "RAMP_C_000001016",
+   "RAMP_C_000218758",
+   "RAMP_C_000218761",
+   "RAMP_C_000220596"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051201_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000416",
+   "RAMP_C_000001016",
+   "RAMP_C_000218758",
+   "RAMP_C_000218761",
+   "RAMP_C_000220596"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001016",
+   "RAMP_C_000008675",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051383_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001016",
+   "RAMP_C_000008675",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000536",
+   "RAMP_C_000000768",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000218124",
+   "RAMP_C_000218399",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050295_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000536",
+   "RAMP_C_000000768",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000218124",
+   "RAMP_C_000218399",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000536",
+   "RAMP_C_000000768",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000218124",
+   "RAMP_C_000218399",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050296_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000536",
+   "RAMP_C_000000768",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000218124",
+   "RAMP_C_000218399",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000126",
+   "RAMP_C_000000416",
+   "RAMP_C_000000802"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050582_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000126",
+   "RAMP_C_000000416",
+   "RAMP_C_000001016",
+   "RAMP_C_000039685"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000113",
+   "RAMP_C_000000126",
+   "RAMP_C_000009677",
+   "RAMP_C_000218542"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050583_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000200",
+   "RAMP_C_000009375"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000001213",
+   "RAMP_C_000022294",
+   "RAMP_C_000041972"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051211_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000008722",
+   "RAMP_C_000009291",
+   "RAMP_C_000022294",
+   "RAMP_C_000041972"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000065",
+   "RAMP_C_000000368",
+   "RAMP_C_000000699",
+   "RAMP_C_000001016",
+   "RAMP_C_000039685"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050313_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000065",
+   "RAMP_C_000000368",
+   "RAMP_C_000000451",
+   "RAMP_C_000001016",
+   "RAMP_C_000039685"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000699",
+   "RAMP_C_000000802",
+   "RAMP_C_000001016",
+   "RAMP_C_000218256",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050320_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000699",
+   "RAMP_C_000218178",
+   "RAMP_C_000218256",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000156",
+   "RAMP_C_000001016",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000218399",
+   "RAMP_C_000274401"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051083_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000037",
+   "RAMP_C_000001016",
+   "RAMP_C_000001047",
+   "RAMP_C_000001083",
+   "RAMP_C_000001294",
+   "RAMP_C_000001715"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000537",
+   "RAMP_C_000001016"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051572_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000537"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000078",
+   "RAMP_C_000000347",
+   "RAMP_C_000000451",
+   "RAMP_C_000001016",
+   "RAMP_C_000218758",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050684_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000078",
+   "RAMP_C_000000347",
+   "RAMP_C_000000416",
+   "RAMP_C_000218397",
+   "RAMP_C_000220596",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000804",
+   "RAMP_C_000001315",
+   "RAMP_C_000009677",
+   "RAMP_C_000219234",
+   "RAMP_C_000263009",
+   "RAMP_C_000263195"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000051362_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000804",
+   "RAMP_C_000001315",
+   "RAMP_C_000009677",
+   "RAMP_C_000219234",
+   "RAMP_C_000263009",
+   "RAMP_C_000263195"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000450",
+   "RAMP_C_000000802",
+   "RAMP_C_000000995",
+   "RAMP_C_000218751",
+   "RAMP_C_000218761"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050613_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000450",
+   "RAMP_C_000000451",
+   "RAMP_C_000000802",
+   "RAMP_C_000000995",
+   "RAMP_C_000218751"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050453_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000802",
+   "RAMP_C_000218189"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050453_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000802",
+   "RAMP_C_000218155",
+   "RAMP_C_000218178",
+   "RAMP_C_000218189",
+   "RAMP_C_000218471",
+   "RAMP_C_000219422"
+  ]
+ },
+ "hmdb_ramp_easy_reactome_RAMP_P_000050455_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000085",
+   "RAMP_C_000000802",
+   "RAMP_C_000218155",
+   "RAMP_C_000218471",
+   "RAMP_C_000219422"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000416",
+   "RAMP_C_000000450",
+   "RAMP_C_000000802",
+   "RAMP_C_000001423",
+   "RAMP_C_000159555",
+   "RAMP_C_000218397",
+   "RAMP_C_000218711"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053490_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000450",
+   "RAMP_C_000000802",
+   "RAMP_C_000039685",
+   "RAMP_C_000159555",
+   "RAMP_C_000218397",
+   "RAMP_C_000218711",
+   "RAMP_C_000218857"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000416",
+   "RAMP_C_000000451",
+   "RAMP_C_000001009",
+   "RAMP_C_000002035",
+   "RAMP_C_000040423"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053537_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000416",
+   "RAMP_C_000000451",
+   "RAMP_C_000000699",
+   "RAMP_C_000001009",
+   "RAMP_C_000001610",
+   "RAMP_C_000002035"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000061",
+   "RAMP_C_000000186",
+   "RAMP_C_000000201",
+   "RAMP_C_000218758"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052739_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000034",
+   "RAMP_C_000000061",
+   "RAMP_C_000000186",
+   "RAMP_C_000000201",
+   "RAMP_C_000001016",
+   "RAMP_C_000218542",
+   "RAMP_C_000218758"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000009536",
+   "RAMP_C_000015251",
+   "RAMP_C_000040476",
+   "RAMP_C_000159878",
+   "RAMP_C_000220829"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053408_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000015251",
+   "RAMP_C_000040476",
+   "RAMP_C_000159878"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000450",
+   "RAMP_C_000009666",
+   "RAMP_C_000218122",
+   "RAMP_C_000218256",
+   "RAMP_C_000218398"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053441_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000450",
+   "RAMP_C_000009666",
+   "RAMP_C_000218122",
+   "RAMP_C_000218256",
+   "RAMP_C_000218398"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000158340",
+   "RAMP_C_000261878"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052905_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000451",
+   "RAMP_C_000220777"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000022"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053192_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000220381"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000218036",
+   "RAMP_C_000218291",
+   "RAMP_C_000262942"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000053439_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000218036",
+   "RAMP_C_000218291",
+   "RAMP_C_000262942"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000010",
+   "RAMP_C_000000026",
+   "RAMP_C_000000799",
+   "RAMP_C_000002069",
+   "RAMP_C_000041044",
+   "RAMP_C_000219831"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052896_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000010",
+   "RAMP_C_000000026",
+   "RAMP_C_000000347",
+   "RAMP_C_000000799",
+   "RAMP_C_000041044",
+   "RAMP_C_000219820"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep0": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000802",
+   "RAMP_C_000217410",
+   "RAMP_C_000218693",
+   "RAMP_C_000218762",
+   "RAMP_C_000219526",
+   "RAMP_C_000219535"
+  ]
+ },
+ "hmdb_ramp_easy_wiki_RAMP_P_000052741_rep1": {
+  "gold_ramp_ids": [
+   "RAMP_C_000000347",
+   "RAMP_C_000000868",
+   "RAMP_C_000001438",
+   "RAMP_C_000001857",
+   "RAMP_C_000002011",
+   "RAMP_C_000218469",
+   "RAMP_C_000219506"
+  ]
+ }
+}

@@ -1,0 +1,708 @@
+{
+  "n_tasks": 63,
+  "total_blocks_parsed": 2100,
+  "total_uv_extracted": 1102,
+  "total_parse_failures": 42,
+  "expected_uv_from_summary": 1112,
+  "delta": -10,
+  "per_task": [
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed1",
+      "final_iter_idx": 0,
+      "n_blocks_found": 55,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 28,
+        "SUPPORTED": 11,
+        "UNSUPPORTED": 15,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 46,
+      "n_parse_failures": 2,
+      "verdict_distribution": {
+        "SUPPORTED": 19,
+        "UNSUPPORTED": 3,
+        "UNVERIFIABLE_V0": 21,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed4",
+      "final_iter_idx": 2,
+      "n_blocks_found": 21,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 12,
+        "UNSUPPORTED": 1,
+        "UNVERIFIABLE_V0": 8
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed6",
+      "final_iter_idx": 2,
+      "n_blocks_found": 29,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 6,
+        "UNSUPPORTED": 6,
+        "SUPPORTED": 13,
+        "CONTRADICTED": 4
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed7",
+      "final_iter_idx": 0,
+      "n_blocks_found": 62,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 52,
+        "SUPPORTED": 8,
+        "UNSUPPORTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000016_seed9",
+      "final_iter_idx": 2,
+      "n_blocks_found": 28,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 17,
+        "UNSUPPORTED": 11
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed0",
+      "final_iter_idx": 1,
+      "n_blocks_found": 31,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 16,
+        "SUPPORTED": 11,
+        "UNSUPPORTED": 3,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 61,
+      "n_parse_failures": 1,
+      "verdict_distribution": {
+        "SUPPORTED": 8,
+        "UNVERIFIABLE_V0": 45,
+        "UNSUPPORTED": 5,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed3",
+      "final_iter_idx": 2,
+      "n_blocks_found": 31,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 25,
+        "SUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000106_seed8",
+      "final_iter_idx": 1,
+      "n_blocks_found": 45,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 20,
+        "UNVERIFIABLE_V0": 21,
+        "UNSUPPORTED": 3,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed0",
+      "final_iter_idx": 2,
+      "n_blocks_found": 31,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 3,
+        "SUPPORTED": 27,
+        "UNSUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed1",
+      "final_iter_idx": 0,
+      "n_blocks_found": 32,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 13,
+        "SUPPORTED": 8,
+        "UNSUPPORTED": 9,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 42,
+      "n_parse_failures": 1,
+      "verdict_distribution": {
+        "SUPPORTED": 13,
+        "UNVERIFIABLE_V0": 22,
+        "UNSUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed3",
+      "final_iter_idx": 0,
+      "n_blocks_found": 46,
+      "n_parse_failures": 1,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 18,
+        "SUPPORTED": 26,
+        "UNSUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed4",
+      "final_iter_idx": 2,
+      "n_blocks_found": 0,
+      "n_parse_failures": 0,
+      "verdict_distribution": {}
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed5",
+      "final_iter_idx": 1,
+      "n_blocks_found": 27,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 13,
+        "UNSUPPORTED": 10,
+        "UNVERIFIABLE_V0": 4
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed6",
+      "final_iter_idx": 0,
+      "n_blocks_found": 28,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 5,
+        "UNSUPPORTED": 14,
+        "UNVERIFIABLE_V0": 9
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed7",
+      "final_iter_idx": 2,
+      "n_blocks_found": 26,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 6,
+        "UNSUPPORTED": 3,
+        "UNVERIFIABLE_V0": 15,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000141_seed8",
+      "final_iter_idx": 2,
+      "n_blocks_found": 25,
+      "n_parse_failures": 3,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 14,
+        "UNSUPPORTED": 4,
+        "SUPPORTED": 4
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed0",
+      "final_iter_idx": 0,
+      "n_blocks_found": 45,
+      "n_parse_failures": 1,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 26,
+        "UNSUPPORTED": 7,
+        "SUPPORTED": 11
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed1",
+      "final_iter_idx": 1,
+      "n_blocks_found": 20,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 9,
+        "SUPPORTED": 8,
+        "UNSUPPORTED": 3
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 46,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 9,
+        "SUPPORTED": 31,
+        "UNSUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed3",
+      "final_iter_idx": 1,
+      "n_blocks_found": 23,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 11,
+        "SUPPORTED": 6,
+        "UNSUPPORTED": 5,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed4",
+      "final_iter_idx": 2,
+      "n_blocks_found": 20,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 12,
+        "UNSUPPORTED": 2,
+        "CONTRADICTED": 1,
+        "SUPPORTED": 5
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed5",
+      "final_iter_idx": 2,
+      "n_blocks_found": 19,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 5,
+        "UNVERIFIABLE_V0": 10,
+        "UNSUPPORTED": 3,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed6",
+      "final_iter_idx": 2,
+      "n_blocks_found": 25,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 9,
+        "SUPPORTED": 13,
+        "UNSUPPORTED": 3
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed7",
+      "final_iter_idx": 0,
+      "n_blocks_found": 36,
+      "n_parse_failures": 2,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 9,
+        "SUPPORTED": 18,
+        "UNSUPPORTED": 6,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed8",
+      "final_iter_idx": 0,
+      "n_blocks_found": 47,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 18,
+        "SUPPORTED": 25,
+        "UNSUPPORTED": 4
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000398_seed9",
+      "final_iter_idx": 0,
+      "n_blocks_found": 28,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 18,
+        "SUPPORTED": 5,
+        "UNSUPPORTED": 5
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed1",
+      "final_iter_idx": 0,
+      "n_blocks_found": 31,
+      "n_parse_failures": 3,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 10,
+        "UNSUPPORTED": 12,
+        "SUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed2",
+      "final_iter_idx": 2,
+      "n_blocks_found": 34,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 25,
+        "SUPPORTED": 2,
+        "UNSUPPORTED": 6,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed3",
+      "final_iter_idx": 1,
+      "n_blocks_found": 41,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 33,
+        "SUPPORTED": 2,
+        "UNSUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed4",
+      "final_iter_idx": 1,
+      "n_blocks_found": 32,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 13,
+        "SUPPORTED": 18,
+        "UNSUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed5",
+      "final_iter_idx": 0,
+      "n_blocks_found": 29,
+      "n_parse_failures": 5,
+      "verdict_distribution": {
+        "UNSUPPORTED": 5,
+        "UNVERIFIABLE_V0": 18,
+        "SUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed6",
+      "final_iter_idx": 2,
+      "n_blocks_found": 29,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNSUPPORTED": 6,
+        "SUPPORTED": 4,
+        "UNVERIFIABLE_V0": 19
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000000421_seed8",
+      "final_iter_idx": 2,
+      "n_blocks_found": 38,
+      "n_parse_failures": 1,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 23,
+        "UNSUPPORTED": 10,
+        "SUPPORTED": 3,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000025682_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 27,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 14,
+        "UNSUPPORTED": 13
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed0",
+      "final_iter_idx": 0,
+      "n_blocks_found": 30,
+      "n_parse_failures": 4,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 14,
+        "UNSUPPORTED": 6,
+        "SUPPORTED": 6
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed1",
+      "final_iter_idx": 1,
+      "n_blocks_found": 39,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 14,
+        "UNVERIFIABLE_V0": 18,
+        "UNSUPPORTED": 4,
+        "CONTRADICTED": 3
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed2",
+      "parse_error": "verdict_not_str"
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed3",
+      "final_iter_idx": 2,
+      "n_blocks_found": 30,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 20,
+        "UNSUPPORTED": 9,
+        "SUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed4",
+      "final_iter_idx": 2,
+      "n_blocks_found": 25,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNSUPPORTED": 7,
+        "UNVERIFIABLE_V0": 11,
+        "SUPPORTED": 7
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed5",
+      "final_iter_idx": 0,
+      "n_blocks_found": 46,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 23,
+        "UNSUPPORTED": 6,
+        "SUPPORTED": 14,
+        "CONTRADICTED": 3
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed6",
+      "final_iter_idx": 0,
+      "n_blocks_found": 34,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 18,
+        "SUPPORTED": 15,
+        "UNSUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed7",
+      "final_iter_idx": 0,
+      "n_blocks_found": 68,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 31,
+        "SUPPORTED": 23,
+        "UNSUPPORTED": 12,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed8",
+      "final_iter_idx": 0,
+      "n_blocks_found": 44,
+      "n_parse_failures": 10,
+      "verdict_distribution": {
+        "UNSUPPORTED": 4,
+        "UNVERIFIABLE_V0": 13,
+        "SUPPORTED": 15,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050021_seed9",
+      "final_iter_idx": 2,
+      "n_blocks_found": 37,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 17,
+        "SUPPORTED": 16,
+        "UNSUPPORTED": 4
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050096_seed6",
+      "final_iter_idx": 0,
+      "n_blocks_found": 45,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 12,
+        "UNSUPPORTED": 5,
+        "UNVERIFIABLE_V0": 26,
+        "CONTRADICTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000050099_seed6",
+      "final_iter_idx": 1,
+      "n_blocks_found": 28,
+      "n_parse_failures": 4,
+      "verdict_distribution": {
+        "UNSUPPORTED": 1,
+        "UNVERIFIABLE_V0": 16,
+        "SUPPORTED": 7
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000052855_seed0",
+      "final_iter_idx": 2,
+      "n_blocks_found": 38,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNSUPPORTED": 10,
+        "UNVERIFIABLE_V0": 20,
+        "SUPPORTED": 8
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053042_seed9",
+      "final_iter_idx": 2,
+      "n_blocks_found": 22,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 9,
+        "UNVERIFIABLE_V0": 4,
+        "UNSUPPORTED": 9
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed1",
+      "final_iter_idx": 2,
+      "n_blocks_found": 22,
+      "n_parse_failures": 4,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 13,
+        "UNSUPPORTED": 5
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_RAMP_P_000053306_seed7",
+      "final_iter_idx": 2,
+      "n_blocks_found": 35,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 12,
+        "UNVERIFIABLE_V0": 21,
+        "UNSUPPORTED": 1,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed0",
+      "final_iter_idx": 2,
+      "n_blocks_found": 20,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 20
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed1",
+      "final_iter_idx": 2,
+      "n_blocks_found": 33,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 19,
+        "SUPPORTED": 7,
+        "UNSUPPORTED": 6,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed2",
+      "final_iter_idx": 0,
+      "n_blocks_found": 31,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 23,
+        "UNSUPPORTED": 6,
+        "SUPPORTED": 2
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed3",
+      "final_iter_idx": 2,
+      "n_blocks_found": 23,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "SUPPORTED": 8,
+        "UNVERIFIABLE_V0": 14,
+        "UNSUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed4",
+      "final_iter_idx": 0,
+      "n_blocks_found": 41,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 30,
+        "SUPPORTED": 2,
+        "CONTRADICTED": 1,
+        "UNSUPPORTED": 8
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed5",
+      "final_iter_idx": 1,
+      "n_blocks_found": 22,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 6,
+        "SUPPORTED": 8,
+        "UNSUPPORTED": 7,
+        "CONTRADICTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed6",
+      "final_iter_idx": 0,
+      "n_blocks_found": 43,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 34,
+        "UNSUPPORTED": 9
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed7",
+      "final_iter_idx": 1,
+      "n_blocks_found": 35,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 21,
+        "SUPPORTED": 7,
+        "UNSUPPORTED": 7
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed8",
+      "final_iter_idx": 0,
+      "n_blocks_found": 46,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNSUPPORTED": 8,
+        "UNVERIFIABLE_V0": 37,
+        "SUPPORTED": 1
+      }
+    },
+    {
+      "task_id": "compound_only_enrich_mammalian_lm_pathway_WP167_seed9",
+      "final_iter_idx": 2,
+      "n_blocks_found": 27,
+      "n_parse_failures": 0,
+      "verdict_distribution": {
+        "UNVERIFIABLE_V0": 10,
+        "SUPPORTED": 10,
+        "UNSUPPORTED": 7
+      }
+    }
+  ]
+}

@@ -77,6 +77,29 @@ _TYPE_TO_SOURCE: dict[str, str] = {
     "hmdb":     "smpdb",  # RaMP stores SMPDB pathways under type='hmdb'
 }
 
+# All known RaMP pathway.type values (source labels map back via _TYPE_TO_SOURCE;
+# pfocr is figure-OCR noise, always excluded).
+_ALL_PATHWAY_TYPES: frozenset[str] = frozenset(_TYPE_TO_SOURCE) | {"pfocr"}
+# source label → pathway.type (reverse of _TYPE_TO_SOURCE)
+_SOURCE_TO_TYPE: dict[str, str] = {v: k for k, v in _TYPE_TO_SOURCE.items()}
+
+
+def _sources_to_excluded_types(sources: Iterable[str]) -> tuple[str, ...]:
+    """Translate INCLUDE-semantics source labels → excluded ``pathway.type`` list.
+
+    LLM-facing API uses source labels (``"kegg"`` / ``"reactome"`` /
+    ``"wikipathways"`` / ``"smpdb"``); the enrichment core filters by
+    ``excluded_pathway_types``. Requesting ``["kegg"]`` therefore excludes
+    every other type (incl. always-noisy ``pfocr``), so only KEGG canonical
+    metabolic pathways are returned. Unknown labels are ignored.
+    """
+    wanted_types = {
+        _SOURCE_TO_TYPE[s.strip().lower()]
+        for s in sources
+        if s and s.strip().lower() in _SOURCE_TO_TYPE
+    }
+    return tuple(sorted(_ALL_PATHWAY_TYPES - wanted_types))
+
 
 # ---------------------------------------------------------------------------
 # Errors
