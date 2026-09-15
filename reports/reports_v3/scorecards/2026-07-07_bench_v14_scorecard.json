@@ -1,0 +1,81 @@
+{
+  "n_tasks": 20,
+  "n_seeds": 3,
+  "strict_mean": 0.6167,
+  "strict_ci95": [
+    0.45,
+    0.7833
+  ],
+  "lenient_mean": 0.7167,
+  "lenient_ci95": [
+    0.55,
+    0.8667
+  ],
+  "seed_strict_overall": {
+    "run_v13_seed1": 0.5,
+    "run_v13_seed2": 0.7,
+    "run_v13_seed3": 0.65
+  },
+  "seed_strict_range": [
+    0.5,
+    0.7
+  ],
+  "per_family": {
+    "BCAA": {
+      "n": 1,
+      "strict": 1.0,
+      "lenient": 1.0
+    },
+    "Carnitine": {
+      "n": 1,
+      "strict": 1.0,
+      "lenient": 1.0
+    },
+    "Leucine": {
+      "n": 2,
+      "strict": 0.5,
+      "lenient": 1.0
+    },
+    "Lysine": {
+      "n": 1,
+      "strict": 0.0,
+      "lenient": 0.0
+    },
+    "Methionine": {
+      "n": 1,
+      "strict": 1.0,
+      "lenient": 1.0
+    },
+    "Phenylalanine": {
+      "n": 1,
+      "strict": 0.6667,
+      "lenient": 0.6667
+    },
+    "Propanoate": {
+      "n": 3,
+      "strict": 0.1111,
+      "lenient": 0.4444
+    },
+    "TCA/oncometabolite": {
+      "n": 4,
+      "strict": 0.8333,
+      "lenient": 0.8333
+    },
+    "Tyrosine": {
+      "n": 1,
+      "strict": 1.0,
+      "lenient": 1.0
+    },
+    "Urea cycle": {
+      "n": 5,
+      "strict": 0.6,
+      "lenient": 0.6
+    }
+  },
+  "tier_distribution": {
+    "exact": 36,
+    "miss": 17,
+    "parent_child": 1,
+    "adjacent": 6
+  }
+}
